@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { ThemeProvider } from "next-themes";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -24,6 +26,10 @@ import BlogCommercialVsResidential from "@/pages/blog/commercial-vs-residential-
 import Checkout from "@/pages/checkout";
 import PaymentConfirmation from "@/pages/payment-confirmation";
 import ProCalculator from "@/pages/pro-calculator";
+import AuthPage from "@/pages/auth";
+// TODO: Add these pages when implemented
+// import ForumPage from "@/pages/forum";
+// import AdminDashboard from "@/pages/admin-dashboard";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -40,6 +46,7 @@ function Router() {
     <>
       <ScrollToTop />
       <Switch>
+        {/* Public routes */}
         <Route path="/" component={Home} />
         <Route path="/about" component={About} />
         <Route path="/gallery" component={Gallery} />
@@ -49,9 +56,19 @@ function Router() {
         <Route path="/blog" component={BlogIndex} />
         <Route path="/blog/prepare-furnace-winter" component={BlogFurnaceWinter} />
         <Route path="/blog/commercial-vs-residential-hvac" component={BlogCommercialVsResidential} />
-        <Route path="/checkout" component={Checkout} />
-        <Route path="/payment-confirmation" component={PaymentConfirmation} />
-        <Route path="/pro-calculator" component={ProCalculator} />
+        <Route path="/auth" component={AuthPage} />
+        
+        {/* Protected routes that require authentication */}
+        <ProtectedRoute path="/checkout" component={Checkout} />
+        <ProtectedRoute path="/payment-confirmation" component={PaymentConfirmation} />
+        <ProtectedRoute path="/pro-calculator" component={ProCalculator} />
+        {/* TODO: Add forum route when implemented */}
+        {/* <ProtectedRoute path="/forum" component={ForumPage} /> */}
+        
+        {/* Admin-only routes */}
+        {/* <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} /> */}
+        
+        {/* 404 fallback */}
         <Route component={NotFound} />
       </Switch>
     </>
@@ -62,17 +79,19 @@ function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow">
-              <Router />
-            </main>
-            <Footer />
-            <EmergencyBanner />
-          </div>
-          <Toaster />
-        </TooltipProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow">
+                <Router />
+              </main>
+              <Footer />
+              <EmergencyBanner />
+            </div>
+            <Toaster />
+          </TooltipProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );
