@@ -9,10 +9,14 @@ import { formatCurrency } from '@/lib/utils';
 
 // Make sure to call `loadStripe` outside of a component's render to avoid
 // recreating the `Stripe` object on every render.
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+let stripePromise: Promise<any> | null = null;
+
+if (stripePublicKey) {
+  stripePromise = loadStripe(stripePublicKey);
+} else {
+  console.warn('Stripe public key not found. Payment functionality will be disabled.');
 }
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 type PaymentData = {
   service: string;

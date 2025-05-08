@@ -40,11 +40,109 @@ interface CalculatorResults {
   installationTime: string;
   carbonReduction: number;
   equipmentDetails: {
-    furnace: string;
-    ac?: string;
-    thermostat: string;
-    accessories: string[];
+    furnace: {
+      model: string;
+      manufacturer: string;
+      btuOutput: number;
+      afueRating: number;
+      price: number;
+      installationCost: number;
+      annualOperatingCost: number;
+      lifespan: number;
+    };
+    ac?: {
+      model: string;
+      manufacturer: string;
+      btuOutput: number;
+      seerRating: number;
+      price: number;
+      installationCost: number;
+      annualOperatingCost: number;
+      lifespan: number;
+    };
+    heatPump?: {
+      model: string;
+      manufacturer: string;
+      btuOutput: number;
+      seerRating: number;
+      hspfRating: number;
+      price: number;
+      installationCost: number;
+      annualOperatingCost: number;
+      lifespan: number;
+    };
+    thermostat: {
+      model: string;
+      manufacturer: string;
+      features: string[];
+      price: number;
+      installationCost: number;
+      lifespan: number;
+    };
+    accessories: Array<{
+      name: string;
+      description: string;
+      price: number;
+      installationCost: number;
+      lifespan: number;
+    }>;
   };
+  materialsDetails: {
+    ductwork: Array<{
+      type: string;
+      length: number;
+      diameter: number;
+      materialCost: number;
+      installationCost: number;
+    }>;
+    insulation: Array<{
+      type: string;
+      rValue: number;
+      area: number;
+      materialCost: number;
+      installationCost: number;
+    }>;
+    refrigerant: {
+      type: string;
+      amount: number;
+      costPerUnit: number;
+    };
+    electrical: Array<{
+      description: string;
+      quantity: number;
+      costPerUnit: number;
+      installationCost: number;
+    }>;
+    mounts: Array<{
+      type: string;
+      quantity: number;
+      costPerUnit: number;
+      installationCost: number;
+    }>;
+    venting: Array<{
+      type: string;
+      length: number;
+      diameter: number;
+      materialCost: number;
+      installationCost: number;
+    }>;
+    additionalMaterials: Array<{
+      description: string;
+      quantity: number;
+      costPerUnit: number;
+    }>;
+  };
+  laborDetails: {
+    technicians: Array<{
+      role: string;
+      hours: number;
+      hourlyRate: number;
+    }>;
+    permitFees: number;
+    inspectionFees: number;
+    travelCosts: number;
+  };
+  isEditable: boolean;
 }
 
 const ProCalculator = () => {
@@ -74,11 +172,264 @@ const ProCalculator = () => {
   });
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<CalculatorResults | null>(null);
+  const [editableResults, setEditableResults] = useState<CalculatorResults | null>(null);
   const [formStep, setFormStep] = useState(1);
   const [isGeneratingQuote, setIsGeneratingQuote] = useState(false);
+  
+  // States for Pro Calculator editing
+  const [isEquipmentEditMode, setIsEquipmentEditMode] = useState(false);
+  const [isAccessoriesEditMode, setIsAccessoriesEditMode] = useState(false);
+  const [isMaterialsEditMode, setIsMaterialsEditMode] = useState(false);
+  const [isLaborEditMode, setIsLaborEditMode] = useState(false);
+  
+  // When results come in, set up the editable copy
+  useEffect(() => {
+    if (results) {
+      setEditableResults(JSON.parse(JSON.stringify(results)));
+    }
+  }, [results]);
+  
+  // Handler for equipment changes
+  const handleEquipmentChange = (
+    equipmentType: 'furnace' | 'ac' | 'heatPump' | 'thermostat', 
+    field: string, 
+    value: string | number | string[] | boolean
+  ) => {
+    if (!editableResults) return;
+    
+    setEditableResults(prev => {
+      if (!prev) return prev;
+      const newResults = { ...prev };
+      
+      if (equipmentType === 'furnace') {
+        newResults.equipmentDetails.furnace = {
+          ...newResults.equipmentDetails.furnace,
+          [field]: value
+        };
+      } else if (equipmentType === 'ac' && newResults.equipmentDetails.ac) {
+        newResults.equipmentDetails.ac = {
+          ...newResults.equipmentDetails.ac,
+          [field]: value
+        };
+      } else if (equipmentType === 'heatPump' && newResults.equipmentDetails.heatPump) {
+        newResults.equipmentDetails.heatPump = {
+          ...newResults.equipmentDetails.heatPump,
+          [field]: value
+        };
+      } else if (equipmentType === 'thermostat') {
+        newResults.equipmentDetails.thermostat = {
+          ...newResults.equipmentDetails.thermostat,
+          [field]: value
+        };
+      }
+      
+      return newResults;
+    });
+  };
+  
+  // Handler for accessory changes
+  const handleAccessoryChange = (
+    index: number,
+    field: 'name' | 'description' | 'price' | 'installationCost' | 'lifespan',
+    value: string | number
+  ) => {
+    if (!editableResults) return;
+    
+    setEditableResults(prev => {
+      if (!prev) return prev;
+      const newResults = { ...prev };
+      const newAccessories = [...newResults.equipmentDetails.accessories];
+      
+      newAccessories[index] = {
+        ...newAccessories[index],
+        [field]: value
+      };
+      
+      newResults.equipmentDetails.accessories = newAccessories;
+      return newResults;
+    });
+  };
+  
+  // Add a new accessory
+  const handleAddAccessory = () => {
+    if (!editableResults) return;
+    
+    setEditableResults(prev => {
+      if (!prev) return prev;
+      const newResults = { ...prev };
+      const newAccessories = [...newResults.equipmentDetails.accessories];
+      
+      newAccessories.push({
+        name: 'New Accessory',
+        description: 'Description',
+        price: 0,
+        installationCost: 0,
+        lifespan: 1
+      });
+      
+      newResults.equipmentDetails.accessories = newAccessories;
+      return newResults;
+    });
+  };
+  
+  // Remove an accessory
+  const handleRemoveAccessory = (index: number) => {
+    if (!editableResults) return;
+    
+    setEditableResults(prev => {
+      if (!prev) return prev;
+      const newResults = { ...prev };
+      const newAccessories = [...newResults.equipmentDetails.accessories];
+      
+      newAccessories.splice(index, 1);
+      
+      newResults.equipmentDetails.accessories = newAccessories;
+      return newResults;
+    });
+  };
+  
+  // Handle material changes (ductwork, etc)
+  const handleMaterialChange = (
+    materialType: 'ductwork' | 'insulation' | 'electrical' | 'mounts' | 'venting' | 'additionalMaterials',
+    index: number,
+    field: string,
+    value: string | number
+  ) => {
+    if (!editableResults) return;
+    
+    setEditableResults(prev => {
+      if (!prev) return prev;
+      const newResults = { ...prev };
+      
+      if (materialType === 'ductwork') {
+        const newDuctwork = [...newResults.materialsDetails.ductwork];
+        newDuctwork[index] = {
+          ...newDuctwork[index],
+          [field]: value
+        };
+        newResults.materialsDetails.ductwork = newDuctwork;
+      } else if (materialType === 'insulation') {
+        const newInsulation = [...newResults.materialsDetails.insulation];
+        newInsulation[index] = {
+          ...newInsulation[index],
+          [field]: value
+        };
+        newResults.materialsDetails.insulation = newInsulation;
+      } else if (materialType === 'electrical') {
+        const newElectrical = [...newResults.materialsDetails.electrical];
+        newElectrical[index] = {
+          ...newElectrical[index],
+          [field]: value
+        };
+        newResults.materialsDetails.electrical = newElectrical;
+      } else if (materialType === 'mounts') {
+        const newMounts = [...newResults.materialsDetails.mounts];
+        newMounts[index] = {
+          ...newMounts[index],
+          [field]: value
+        };
+        newResults.materialsDetails.mounts = newMounts;
+      } else if (materialType === 'venting') {
+        const newVenting = [...newResults.materialsDetails.venting];
+        newVenting[index] = {
+          ...newVenting[index],
+          [field]: value
+        };
+        newResults.materialsDetails.venting = newVenting;
+      } else if (materialType === 'additionalMaterials') {
+        const newAdditionalMaterials = [...newResults.materialsDetails.additionalMaterials];
+        newAdditionalMaterials[index] = {
+          ...newAdditionalMaterials[index],
+          [field]: value
+        };
+        newResults.materialsDetails.additionalMaterials = newAdditionalMaterials;
+      }
+      
+      return newResults;
+    });
+  };
+  
+  // Handle refrigerant changes
+  const handleRefrigerantChange = (field: 'type' | 'amount' | 'costPerUnit', value: string | number) => {
+    if (!editableResults) return;
+    
+    setEditableResults(prev => {
+      if (!prev) return prev;
+      const newResults = { ...prev };
+      
+      newResults.materialsDetails.refrigerant = {
+        ...newResults.materialsDetails.refrigerant,
+        [field]: value
+      };
+      
+      return newResults;
+    });
+  };
+  
+  // Handle labor changes
+  const handleLaborChange = (
+    index: number,
+    field: 'role' | 'hours' | 'hourlyRate',
+    value: string | number
+  ) => {
+    if (!editableResults) return;
+    
+    setEditableResults(prev => {
+      if (!prev) return prev;
+      const newResults = { ...prev };
+      const newTechnicians = [...newResults.laborDetails.technicians];
+      
+      newTechnicians[index] = {
+        ...newTechnicians[index],
+        [field]: value
+      };
+      
+      newResults.laborDetails.technicians = newTechnicians;
+      return newResults;
+    });
+  };
+  
+  // Handle additional labor costs
+  const handleAdditionalLaborCostChange = (
+    field: 'permitFees' | 'inspectionFees' | 'travelCosts',
+    value: number
+  ) => {
+    if (!editableResults) return;
+    
+    setEditableResults(prev => {
+      if (!prev) return prev;
+      const newResults = { ...prev };
+      
+      newResults.laborDetails = {
+        ...newResults.laborDetails,
+        [field]: value
+      };
+      
+      return newResults;
+    });
+  };
+  
+  // Save all edits
+  const saveAllEdits = () => {
+    if (!editableResults) return;
+    
+    // Apply all changes to the main results
+    setResults(editableResults);
+    
+    // Turn off edit modes
+    setIsEquipmentEditMode(false);
+    setIsAccessoriesEditMode(false);
+    setIsMaterialsEditMode(false);
+    setIsLaborEditMode(false);
+    
+    toast({
+      title: "Changes Saved",
+      description: "Your customized HVAC configuration has been updated.",
+    });
+  };
 
   // Check if user has access to Pro Calculator
-  const { data: accessData, isLoading: checkingAccess } = useQuery({
+  const { data: accessData, isLoading: checkingAccess } = useQuery<{ hasAccess: boolean }>({
     queryKey: ['/api/check-pro-access'],
     retry: false,
     staleTime: 60000, // 1 minute
@@ -261,7 +612,7 @@ const ProCalculator = () => {
         'UV Air Purifier'
       ].filter(item => item !== '');
       
-      // Enhanced results
+      // Enhanced results with exhaustive details for pro calculator
       const enhancedResults: CalculatorResults = {
         currentCost: enhancedCurrentCost,
         newCost: enhancedNewCost,
@@ -276,11 +627,206 @@ const ProCalculator = () => {
         installationTime: formData.propertyType === 'commercial' ? '3-5 days' : '1-2 days',
         carbonReduction: carbonReduction,
         equipmentDetails: {
-          furnace: furnaceModel,
-          ac: formData.acType !== 'none' ? acModel : undefined,
-          thermostat: thermostat,
-          accessories: accessories
-        }
+          furnace: {
+            model: formData.furnaceType === 'premium' ? 'Infinity 98' : 'Performance 96',
+            manufacturer: 'Carrier',
+            btuOutput: formData.propertyType === 'commercial' ? 120000 : Math.round((parseInt(formData.squareFootage) || 2000) * 25),
+            afueRating: formData.furnaceType === 'premium' ? 97.5 : 96.0,
+            price: Math.round((formData.propertyType === 'commercial' ? 8500 : 4500) * (formData.furnaceType === 'premium' ? 1.4 : 1)),
+            installationCost: formData.propertyType === 'commercial' ? 2200 : 1800,
+            annualOperatingCost: Math.round(enhancedNewCost * 0.6),
+            lifespan: 15
+          },
+          ac: formData.acType !== 'none' ? {
+            model: formData.acType === 'premium' ? 'Infinity 20' : 'Performance 16',
+            manufacturer: 'Carrier',
+            btuOutput: formData.propertyType === 'commercial' ? 80000 : Math.round((parseInt(formData.squareFootage) || 2000) * 20),
+            seerRating: formData.acType === 'premium' ? 20 : 16,
+            price: Math.round((formData.propertyType === 'commercial' ? 9000 : 5000) * (formData.acType === 'premium' ? 1.5 : 1)),
+            installationCost: formData.propertyType === 'commercial' ? 2000 : 1500,
+            annualOperatingCost: Math.round(enhancedNewCost * 0.4),
+            lifespan: 12
+          } : undefined,
+          heatPump: formData.acType === 'premium' ? {
+            model: 'Infinity 24 Heat Pump',
+            manufacturer: 'Carrier',
+            btuOutput: formData.propertyType === 'commercial' ? 60000 : Math.round((parseInt(formData.squareFootage) || 2000) * 15),
+            seerRating: 24,
+            hspfRating: 13,
+            price: Math.round(formData.propertyType === 'commercial' ? 12000 : 8000),
+            installationCost: formData.propertyType === 'commercial' ? 2500 : 2000,
+            annualOperatingCost: Math.round(enhancedNewCost * 0.5),
+            lifespan: 15
+          } : undefined,
+          thermostat: {
+            model: formData.furnaceType === 'premium' || formData.acType === 'premium' ? 'Infinity Touch Control' : 'Côr 7-Day Programmable',
+            manufacturer: 'Carrier',
+            features: formData.furnaceType === 'premium' || formData.acType === 'premium' ? 
+              ['Wi-Fi', 'Touchscreen', 'Smart Home Integration', 'Zoning Control'] : 
+              ['7-Day Programming', 'Wi-Fi', 'Smart Home Integration'],
+            price: formData.furnaceType === 'premium' || formData.acType === 'premium' ? 450 : 250,
+            installationCost: 150,
+            lifespan: 10
+          },
+          accessories: [
+            {
+              name: 'Media Air Cleaner',
+              description: 'High-efficiency air purification system',
+              price: 450,
+              installationCost: 150,
+              lifespan: 5
+            },
+            {
+              name: 'Humidifier',
+              description: 'Whole-home humidity control system',
+              price: 550,
+              installationCost: 200,
+              lifespan: 8
+            },
+            {
+              name: formData.propertyType === 'commercial' ? 'Commercial Zoning System' : 'Residential Zoning System',
+              description: 'Multi-zone temperature control system',
+              price: formData.propertyType === 'commercial' ? 2500 : 1200,
+              installationCost: formData.propertyType === 'commercial' ? 800 : 600,
+              lifespan: 15
+            },
+            {
+              name: 'UV Air Purifier',
+              description: 'UV-C light air treatment system',
+              price: 600,
+              installationCost: 200,
+              lifespan: 3
+            },
+            {
+              name: 'Smart Vents',
+              description: 'Automated vent control system for room-by-room temperature management',
+              price: 800,
+              installationCost: 400,
+              lifespan: 10
+            },
+            {
+              name: 'Carbon Monoxide Detector',
+              description: 'Safety device integrated with HVAC system',
+              price: 120,
+              installationCost: 80,
+              lifespan: 7
+            }
+          ]
+        },
+        materialsDetails: {
+          ductwork: [
+            {
+              type: 'Flexible Insulated Duct',
+              length: formData.existingDuctwork === 'yes' ? 20 : 120,
+              diameter: 8,
+              materialCost: formData.existingDuctwork === 'yes' ? 200 : 1200,
+              installationCost: formData.existingDuctwork === 'yes' ? 250 : 1500
+            },
+            {
+              type: 'Rigid Metal Duct',
+              length: formData.existingDuctwork === 'yes' ? 10 : 60,
+              diameter: 12,
+              materialCost: formData.existingDuctwork === 'yes' ? 300 : 1800,
+              installationCost: formData.existingDuctwork === 'yes' ? 400 : 2400
+            }
+          ],
+          insulation: [
+            {
+              type: 'Fiberglass Duct Insulation',
+              rValue: 8,
+              area: 200,
+              materialCost: 400,
+              installationCost: 600
+            }
+          ],
+          refrigerant: {
+            type: 'R-410A',
+            amount: 6,
+            costPerUnit: 40
+          },
+          electrical: [
+            {
+              description: 'Circuit Breaker & Wiring',
+              quantity: 1,
+              costPerUnit: 300,
+              installationCost: 450
+            },
+            {
+              description: 'Disconnect Switch',
+              quantity: 2,
+              costPerUnit: 85,
+              installationCost: 120
+            }
+          ],
+          mounts: [
+            {
+              type: 'Concrete Pad',
+              quantity: 1,
+              costPerUnit: 120,
+              installationCost: 250
+            },
+            {
+              type: 'Roof Mounting Bracket',
+              quantity: formData.propertyType === 'commercial' ? 4 : 0,
+              costPerUnit: 85,
+              installationCost: 150
+            }
+          ],
+          venting: [
+            {
+              type: 'PVC Exhaust Vent',
+              length: 15,
+              diameter: 3,
+              materialCost: 180,
+              installationCost: 350
+            }
+          ],
+          additionalMaterials: [
+            {
+              description: 'Condensate Drain Kit',
+              quantity: 1,
+              costPerUnit: 45
+            },
+            {
+              description: 'Vibration Dampeners',
+              quantity: 4,
+              costPerUnit: 15
+            },
+            {
+              description: 'Refrigerant Line Set',
+              quantity: 1,
+              costPerUnit: 150
+            },
+            {
+              description: 'Air Registers and Grilles',
+              quantity: parseInt(formData.numberOfFloors) * 6 || 6,
+              costPerUnit: 35
+            }
+          ]
+        },
+        laborDetails: {
+          technicians: [
+            {
+              role: 'Lead HVAC Technician',
+              hours: formData.propertyType === 'commercial' ? 16 : 10,
+              hourlyRate: 85
+            },
+            {
+              role: 'HVAC Assistant',
+              hours: formData.propertyType === 'commercial' ? 16 : 10,
+              hourlyRate: 55
+            },
+            {
+              role: 'Electrical Specialist',
+              hours: 4,
+              hourlyRate: 90
+            }
+          ],
+          permitFees: formData.propertyType === 'commercial' ? 750 : 350,
+          inspectionFees: formData.propertyType === 'commercial' ? 500 : 250,
+          travelCosts: 180
+        },
+        isEditable: true
       };
       
       setResults(enhancedResults);
@@ -329,22 +875,143 @@ const ProCalculator = () => {
         newEfficiency
       );
 
-      // Create simplified results
+      // Create simplified results for basic calculator
+      const lowCost = Math.round(squareFootage * (formData.propertyType === 'residential' ? 5.5 : 7));
+      const highCost = Math.round(squareFootage * (formData.propertyType === 'residential' ? 9 : 11.5));
+      
       const basicResults: CalculatorResults = {
-        ...calculationResults,
+        currentCost: calculationResults.currentCost,
+        newCost: calculationResults.newCost,
+        savings: calculationResults.savings,
+        roi: Math.round((lowCost / calculationResults.savings) * 10) / 10,
         systemRecommendation: formData.propertyType === 'residential' ? 'High-Efficiency Residential System' : 'Commercial Rooftop System',
         costRange: {
-          low: Math.round(squareFootage * (formData.propertyType === 'residential' ? 5.5 : 7)),
-          high: Math.round(squareFootage * (formData.propertyType === 'residential' ? 9 : 11.5))
+          low: lowCost,
+          high: highCost
         },
         installationTime: formData.propertyType === 'residential' ? '1-2 days' : '2-4 days',
         carbonReduction: Math.round(calculationResults.savings * 0.5), // Simplified carbon calculation
         equipmentDetails: {
-          furnace: formData.furnaceType === 'premium' ? 'High-Efficiency Premium Furnace (96%+)' : 'Standard High-Efficiency Furnace (92%+)',
-          ac: formData.acType !== 'none' ? (formData.acType === 'premium' ? 'Premium AC Unit' : 'Standard AC Unit') : undefined,
-          thermostat: 'Programmable Thermostat',
-          accessories: ['Air Filter', 'Humidifier']
-        }
+          furnace: {
+            model: formData.furnaceType === 'premium' ? 'High-Efficiency Premium Furnace' : 'Standard High-Efficiency Furnace',
+            manufacturer: 'Various',
+            btuOutput: formData.propertyType === 'commercial' ? 100000 : Math.round((parseInt(formData.squareFootage) || 2000) * 20),
+            afueRating: formData.furnaceType === 'premium' ? 96.0 : 92.0,
+            price: Math.round(lowCost * 0.4),
+            installationCost: Math.round(lowCost * 0.2),
+            annualOperatingCost: Math.round(calculationResults.newCost * 0.6),
+            lifespan: 15
+          },
+          ac: formData.acType !== 'none' ? {
+            model: formData.acType === 'premium' ? 'Premium AC Unit' : 'Standard AC Unit',
+            manufacturer: 'Various',
+            btuOutput: formData.propertyType === 'commercial' ? 60000 : Math.round((parseInt(formData.squareFootage) || 2000) * 15),
+            seerRating: formData.acType === 'premium' ? 18 : 14,
+            price: Math.round(lowCost * 0.3),
+            installationCost: Math.round(lowCost * 0.1),
+            annualOperatingCost: Math.round(calculationResults.newCost * 0.4),
+            lifespan: 10
+          } : undefined,
+          thermostat: {
+            model: 'Programmable Thermostat',
+            manufacturer: 'Various',
+            features: ['Programmable', 'Digital Display'],
+            price: 200,
+            installationCost: 100,
+            lifespan: 8
+          },
+          accessories: [
+            {
+              name: 'Air Filter',
+              description: 'Standard air filtration system',
+              price: 150,
+              installationCost: 50,
+              lifespan: 1
+            },
+            {
+              name: 'Humidifier',
+              description: 'Basic whole-home humidifier',
+              price: 300,
+              installationCost: 150,
+              lifespan: 5
+            }
+          ]
+        },
+        materialsDetails: {
+          ductwork: [
+            {
+              type: 'Standard Ductwork',
+              length: 30,
+              diameter: 8,
+              materialCost: Math.round(lowCost * 0.1),
+              installationCost: Math.round(lowCost * 0.15)
+            }
+          ],
+          insulation: [
+            {
+              type: 'Standard Insulation',
+              rValue: 6,
+              area: 100,
+              materialCost: 250,
+              installationCost: 350
+            }
+          ],
+          refrigerant: {
+            type: 'Standard Refrigerant',
+            amount: 4,
+            costPerUnit: 30
+          },
+          electrical: [
+            {
+              description: 'Basic Electrical Work',
+              quantity: 1,
+              costPerUnit: 200,
+              installationCost: 300
+            }
+          ],
+          mounts: [
+            {
+              type: 'Standard Mount',
+              quantity: 1,
+              costPerUnit: 100,
+              installationCost: 150
+            }
+          ],
+          venting: [
+            {
+              type: 'Standard Venting',
+              length: 10,
+              diameter: 3,
+              materialCost: 120,
+              installationCost: 180
+            }
+          ],
+          additionalMaterials: [
+            {
+              description: 'Miscellaneous Materials',
+              quantity: 1,
+              costPerUnit: 200
+            }
+          ]
+        },
+        laborDetails: {
+          technicians: [
+            {
+              role: 'HVAC Technician',
+              hours: formData.propertyType === 'commercial' ? 12 : 8,
+              hourlyRate: 75
+            },
+            {
+              role: 'Helper',
+              hours: formData.propertyType === 'commercial' ? 12 : 8,
+              hourlyRate: 45
+            }
+          ],
+          permitFees: formData.propertyType === 'commercial' ? 500 : 250,
+          inspectionFees: formData.propertyType === 'commercial' ? 400 : 200,
+          travelCosts: 150
+        },
+        isEditable: false
       };
 
       setResults(basicResults);
@@ -1193,34 +1860,452 @@ const ProCalculator = () => {
                                 <span className="text-lightgray">Estimated Installation Time:</span>
                                 <span>{results.installationTime}</span>
                               </div>
-                              {results.equipmentDetails && (
-                                <>
-                                  <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                                    <span className="text-lightgray">Furnace:</span>
-                                    <span>{results.equipmentDetails.furnace}</span>
-                                  </div>
-                                  {results.equipmentDetails.ac && (
-                                    <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                                      <span className="text-lightgray">Air Conditioning:</span>
-                                      <span>{results.equipmentDetails.ac}</span>
-                                    </div>
-                                  )}
-                                  <div className="flex justify-between items-center">
-                                    <span className="text-lightgray">Thermostat:</span>
-                                    <span>{results.equipmentDetails.thermostat}</span>
-                                  </div>
-                                </>
-                              )}
                             </div>
                             
-                            {hasAccess && results.equipmentDetails.accessories.length > 0 && (
+                            {/* Pro Calculator Equipment Details with Editable Capability */}
+                            {hasAccess && results.isEditable && (
+                              <div className="mt-4 pt-4 border-t border-gray-700">
+                                <div className="flex justify-between items-center mb-3">
+                                  <h4 className="font-semibold text-lg">Equipment Details</h4>
+                                  <button
+                                    className="text-xs bg-secondary py-1 px-2 rounded text-white"
+                                    onClick={() => {
+                                      if (isEquipmentEditMode) {
+                                        saveAllEdits();
+                                      } else {
+                                        setIsEquipmentEditMode(true);
+                                      }
+                                    }}
+                                  >
+                                    {isEquipmentEditMode ? 'Save Changes' : 'Edit Equipment'}
+                                  </button>
+                                </div>
+                                
+                                {/* Furnace Details */}
+                                <div className="bg-darkgray p-3 rounded-lg mb-3">
+                                  <div className="font-semibold mb-2 border-b border-gray-700 pb-1">Furnace</div>
+                                  {isEquipmentEditMode ? (
+                                    <div className="space-y-2">
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <label className="text-xs text-lightgray">Model</label>
+                                          <input 
+                                            type="text" 
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.furnace.model}
+                                            onChange={(e) => handleEquipmentChange('furnace', 'model', e.target.value)}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-xs text-lightgray">Manufacturer</label>
+                                          <input 
+                                            type="text" 
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.furnace.manufacturer}
+                                            onChange={(e) => handleEquipmentChange('furnace', 'manufacturer', e.target.value)}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <label className="text-xs text-lightgray">BTU Output</label>
+                                          <input 
+                                            type="number" 
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.furnace.btuOutput}
+                                            onChange={(e) => handleEquipmentChange('furnace', 'btuOutput', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-xs text-lightgray">AFUE Rating</label>
+                                          <input 
+                                            type="number" 
+                                            step="0.1"
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.furnace.afueRating}
+                                            onChange={(e) => handleEquipmentChange('furnace', 'afueRating', parseFloat(e.target.value))}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <label className="text-xs text-lightgray">Equipment Price</label>
+                                          <input 
+                                            type="number" 
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.furnace.price}
+                                            onChange={(e) => handleEquipmentChange('furnace', 'price', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-xs text-lightgray">Installation Cost</label>
+                                          <input 
+                                            type="number" 
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.furnace.installationCost}
+                                            onChange={(e) => handleEquipmentChange('furnace', 'installationCost', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <label className="text-xs text-lightgray">Annual Operating Cost</label>
+                                          <input 
+                                            type="number" 
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.furnace.annualOperatingCost}
+                                            onChange={(e) => handleEquipmentChange('furnace', 'annualOperatingCost', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-xs text-lightgray">Expected Lifespan (years)</label>
+                                          <input 
+                                            type="number" 
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.furnace.lifespan}
+                                            onChange={(e) => handleEquipmentChange('furnace', 'lifespan', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="space-y-1 text-sm">
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <span className="text-xs text-lightgray">Model:</span>
+                                          <div>{results.equipmentDetails.furnace.model}</div>
+                                        </div>
+                                        <div>
+                                          <span className="text-xs text-lightgray">Manufacturer:</span>
+                                          <div>{results.equipmentDetails.furnace.manufacturer}</div>
+                                        </div>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <span className="text-xs text-lightgray">BTU Output:</span>
+                                          <div>{results.equipmentDetails.furnace.btuOutput.toLocaleString()} BTU</div>
+                                        </div>
+                                        <div>
+                                          <span className="text-xs text-lightgray">AFUE Rating:</span>
+                                          <div>{results.equipmentDetails.furnace.afueRating}%</div>
+                                        </div>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <span className="text-xs text-lightgray">Price:</span>
+                                          <div>{formatCurrency(results.equipmentDetails.furnace.price)}</div>
+                                        </div>
+                                        <div>
+                                          <span className="text-xs text-lightgray">Installation:</span>
+                                          <div>{formatCurrency(results.equipmentDetails.furnace.installationCost)}</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                                
+                                {/* Air Conditioner Details */}
+                                {results.equipmentDetails.ac && (
+                                  <div className="bg-darkgray p-3 rounded-lg mb-3">
+                                    <div className="font-semibold mb-2 border-b border-gray-700 pb-1">Air Conditioner</div>
+                                    {isEquipmentEditMode ? (
+                                      <div className="space-y-2">
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <label className="text-xs text-lightgray">Model</label>
+                                            <input 
+                                              type="text" 
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={editableResults.equipmentDetails.ac?.model || ''}
+                                              onChange={(e) => handleEquipmentChange('ac', 'model', e.target.value)}
+                                            />
+                                          </div>
+                                          <div>
+                                            <label className="text-xs text-lightgray">Manufacturer</label>
+                                            <input 
+                                              type="text" 
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={editableResults.equipmentDetails.ac?.manufacturer || ''}
+                                              onChange={(e) => handleEquipmentChange('ac', 'manufacturer', e.target.value)}
+                                            />
+                                          </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <label className="text-xs text-lightgray">BTU Output</label>
+                                            <input 
+                                              type="number" 
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={editableResults.equipmentDetails.ac?.btuOutput || 0}
+                                              onChange={(e) => handleEquipmentChange('ac', 'btuOutput', parseInt(e.target.value))}
+                                            />
+                                          </div>
+                                          <div>
+                                            <label className="text-xs text-lightgray">SEER Rating</label>
+                                            <input 
+                                              type="number" 
+                                              step="0.1"
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={editableResults.equipmentDetails.ac?.seerRating || 0}
+                                              onChange={(e) => handleEquipmentChange('ac', 'seerRating', parseFloat(e.target.value))}
+                                            />
+                                          </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <label className="text-xs text-lightgray">Equipment Price</label>
+                                            <input 
+                                              type="number" 
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={editableResults.equipmentDetails.ac?.price || 0}
+                                              onChange={(e) => handleEquipmentChange('ac', 'price', parseInt(e.target.value))}
+                                            />
+                                          </div>
+                                          <div>
+                                            <label className="text-xs text-lightgray">Installation Cost</label>
+                                            <input 
+                                              type="number" 
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={editableResults.equipmentDetails.ac?.installationCost || 0}
+                                              onChange={(e) => handleEquipmentChange('ac', 'installationCost', parseInt(e.target.value))}
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className="space-y-1 text-sm">
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <span className="text-xs text-lightgray">Model:</span>
+                                            <div>{results.equipmentDetails.ac.model}</div>
+                                          </div>
+                                          <div>
+                                            <span className="text-xs text-lightgray">Manufacturer:</span>
+                                            <div>{results.equipmentDetails.ac.manufacturer}</div>
+                                          </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <span className="text-xs text-lightgray">BTU Output:</span>
+                                            <div>{results.equipmentDetails.ac.btuOutput.toLocaleString()} BTU</div>
+                                          </div>
+                                          <div>
+                                            <span className="text-xs text-lightgray">SEER Rating:</span>
+                                            <div>{results.equipmentDetails.ac.seerRating}</div>
+                                          </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <span className="text-xs text-lightgray">Price:</span>
+                                            <div>{formatCurrency(results.equipmentDetails.ac.price)}</div>
+                                          </div>
+                                          <div>
+                                            <span className="text-xs text-lightgray">Installation:</span>
+                                            <div>{formatCurrency(results.equipmentDetails.ac.installationCost)}</div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                                
+                                {/* Thermostat Details */}
+                                <div className="bg-darkgray p-3 rounded-lg mb-3">
+                                  <div className="font-semibold mb-2 border-b border-gray-700 pb-1">Thermostat</div>
+                                  {isEquipmentEditMode ? (
+                                    <div className="space-y-2">
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <label className="text-xs text-lightgray">Model</label>
+                                          <input 
+                                            type="text" 
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.thermostat.model}
+                                            onChange={(e) => handleEquipmentChange('thermostat', 'model', e.target.value)}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-xs text-lightgray">Manufacturer</label>
+                                          <input 
+                                            type="text" 
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.thermostat.manufacturer}
+                                            onChange={(e) => handleEquipmentChange('thermostat', 'manufacturer', e.target.value)}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <label className="text-xs text-lightgray">Price</label>
+                                          <input 
+                                            type="number" 
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.thermostat.price}
+                                            onChange={(e) => handleEquipmentChange('thermostat', 'price', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-xs text-lightgray">Installation Cost</label>
+                                          <input 
+                                            type="number" 
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults.equipmentDetails.thermostat.installationCost}
+                                            onChange={(e) => handleEquipmentChange('thermostat', 'installationCost', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="space-y-1 text-sm">
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <span className="text-xs text-lightgray">Model:</span>
+                                          <div>{results.equipmentDetails.thermostat.model}</div>
+                                        </div>
+                                        <div>
+                                          <span className="text-xs text-lightgray">Features:</span>
+                                          <div>{results.equipmentDetails.thermostat.features.join(', ')}</div>
+                                        </div>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <span className="text-xs text-lightgray">Price:</span>
+                                          <div>{formatCurrency(results.equipmentDetails.thermostat.price)}</div>
+                                        </div>
+                                        <div>
+                                          <span className="text-xs text-lightgray">Installation:</span>
+                                          <div>{formatCurrency(results.equipmentDetails.thermostat.installationCost)}</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Accessories Section - Simpler for basic version, detailed for Pro */}
+                            {hasAccess ? (
+                              <div className="mt-4 pt-4 border-t border-gray-700">
+                                <div className="flex justify-between items-center mb-3">
+                                  <h4 className="font-semibold">Recommended Accessories</h4>
+                                  {results.isEditable && (
+                                    <button
+                                      className="text-xs bg-secondary py-1 px-2 rounded text-white"
+                                      onClick={() => {
+                                        if (isAccessoriesEditMode) {
+                                          saveAllEdits();
+                                        } else {
+                                          setIsAccessoriesEditMode(true);
+                                        }
+                                      }}
+                                    >
+                                      {isAccessoriesEditMode ? 'Save Changes' : 'Edit Accessories'}
+                                    </button>
+                                  )}
+                                </div>
+                                
+                                {isAccessoriesEditMode && results.isEditable ? (
+                                  <div className="space-y-3">
+                                    {editableResults.equipmentDetails.accessories.map((accessory, index) => (
+                                      <div key={index} className="bg-darkgray p-2 rounded border border-gray-700">
+                                        <div className="grid grid-cols-2 gap-2 mb-2">
+                                          <div>
+                                            <label className="text-xs text-lightgray">Name</label>
+                                            <input 
+                                              type="text" 
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={accessory.name}
+                                              onChange={(e) => handleAccessoryChange(index, 'name', e.target.value)}
+                                            />
+                                          </div>
+                                          <div>
+                                            <label className="text-xs text-lightgray">Description</label>
+                                            <input 
+                                              type="text" 
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={accessory.description}
+                                              onChange={(e) => handleAccessoryChange(index, 'description', e.target.value)}
+                                            />
+                                          </div>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-2">
+                                          <div>
+                                            <label className="text-xs text-lightgray">Price</label>
+                                            <input 
+                                              type="number" 
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={accessory.price}
+                                              onChange={(e) => handleAccessoryChange(index, 'price', parseInt(e.target.value))}
+                                            />
+                                          </div>
+                                          <div>
+                                            <label className="text-xs text-lightgray">Installation</label>
+                                            <input 
+                                              type="number" 
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={accessory.installationCost}
+                                              onChange={(e) => handleAccessoryChange(index, 'installationCost', parseInt(e.target.value))}
+                                            />
+                                          </div>
+                                          <div>
+                                            <label className="text-xs text-lightgray">Lifespan (years)</label>
+                                            <input 
+                                              type="number" 
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={accessory.lifespan}
+                                              onChange={(e) => handleAccessoryChange(index, 'lifespan', parseInt(e.target.value))}
+                                            />
+                                          </div>
+                                        </div>
+                                        <div className="mt-2 text-right">
+                                          <button
+                                            className="text-xs bg-red-900 hover:bg-red-800 py-1 px-2 rounded text-white"
+                                            onClick={() => handleRemoveAccessory(index)}
+                                          >
+                                            Remove
+                                          </button>
+                                        </div>
+                                      </div>
+                                    ))}
+                                    <button
+                                      className="w-full text-sm bg-dark hover:bg-opacity-80 border border-dashed border-gray-600 py-2 rounded text-lightgray"
+                                      onClick={handleAddAccessory}
+                                    >
+                                      + Add Accessory
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {results.equipmentDetails.accessories.map((accessory, index) => (
+                                      <div key={index} className="bg-darkgray p-2 rounded flex items-start">
+                                        <i className="fas fa-plus-circle text-green-500 mr-2 mt-1"></i>
+                                        <div>
+                                          <div className="font-medium">{accessory.name}</div>
+                                          {hasAccess && (
+                                            <>
+                                              <div className="text-sm text-lightgray">{accessory.description}</div>
+                                              <div className="text-sm mt-1">
+                                                <span className="text-secondary font-semibold">{formatCurrency(accessory.price)}</span>
+                                                <span className="text-xs text-lightgray ml-2">
+                                                  (Install: {formatCurrency(accessory.installationCost)})
+                                                </span>
+                                              </div>
+                                            </>
+                                          )}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
                               <div className="mt-4 pt-4 border-t border-gray-700">
                                 <div className="font-semibold mb-2">Recommended Accessories:</div>
                                 <ul className="space-y-1">
                                   {results.equipmentDetails.accessories.map((accessory, index) => (
                                     <li key={index} className="flex items-center">
                                       <i className="fas fa-check text-green-500 mr-2"></i>
-                                      {accessory}
+                                      {accessory.name}
                                     </li>
                                   ))}
                                 </ul>
@@ -1281,6 +2366,276 @@ const ProCalculator = () => {
                               </div>
                             )}
                           </div>
+                          
+                          {/* Materials and Labor Details for Pro Users */}
+                          {hasAccess && results && results.isEditable && (
+                            <>
+                              <div className="mt-6 pt-4 border-t border-gray-700">
+                                <div className="flex justify-between items-center mb-3">
+                                  <h4 className="font-semibold text-lg">Materials Breakdown</h4>
+                                  <button
+                                    className="text-xs bg-secondary py-1 px-2 rounded text-white"
+                                    onClick={() => {
+                                      if (isMaterialsEditMode) {
+                                        saveAllEdits();
+                                      } else {
+                                        setIsMaterialsEditMode(true);
+                                      }
+                                    }}
+                                  >
+                                    {isMaterialsEditMode ? 'Save Changes' : 'Edit Materials'}
+                                  </button>
+                                </div>
+                                
+                                {isMaterialsEditMode ? (
+                                  <div className="space-y-3 mb-4">
+                                    <div className="bg-darkgray p-3 rounded-lg">
+                                      <h6 className="font-semibold text-sm mb-2">Ductwork</h6>
+                                      {editableResults?.materialsDetails.ductwork.map((item, index) => (
+                                        <div key={`duct-${index}`} className="bg-dark p-2 rounded mb-2 border border-gray-700">
+                                          <div className="grid grid-cols-4 gap-2">
+                                            <div>
+                                              <label className="text-xs text-lightgray">Type</label>
+                                              <input
+                                                type="text"
+                                                className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                                value={item.type}
+                                                onChange={(e) => handleMaterialChange('ductwork', index, 'type', e.target.value)}
+                                              />
+                                            </div>
+                                            <div>
+                                              <label className="text-xs text-lightgray">Length (ft)</label>
+                                              <input
+                                                type="number"
+                                                className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                                value={item.length}
+                                                onChange={(e) => handleMaterialChange('ductwork', index, 'length', parseInt(e.target.value))}
+                                              />
+                                            </div>
+                                            <div>
+                                              <label className="text-xs text-lightgray">Cost</label>
+                                              <input
+                                                type="number"
+                                                className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                                value={item.materialCost}
+                                                onChange={(e) => handleMaterialChange('ductwork', index, 'materialCost', parseInt(e.target.value))}
+                                              />
+                                            </div>
+                                            <div>
+                                              <label className="text-xs text-lightgray">Install</label>
+                                              <input
+                                                type="number"
+                                                className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                                value={item.installationCost}
+                                                onChange={(e) => handleMaterialChange('ductwork', index, 'installationCost', parseInt(e.target.value))}
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                    
+                                    <div className="bg-darkgray p-3 rounded-lg">
+                                      <h6 className="font-semibold text-sm mb-2">Refrigerant</h6>
+                                      <div className="grid grid-cols-3 gap-2">
+                                        <div>
+                                          <label className="text-xs text-lightgray">Type</label>
+                                          <input
+                                            type="text"
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults?.materialsDetails.refrigerant.type}
+                                            onChange={(e) => handleRefrigerantChange('type', e.target.value)}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-xs text-lightgray">Amount (lbs)</label>
+                                          <input
+                                            type="number"
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults?.materialsDetails.refrigerant.amount}
+                                            onChange={(e) => handleRefrigerantChange('amount', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-xs text-lightgray">Cost per Unit</label>
+                                          <input
+                                            type="number"
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults?.materialsDetails.refrigerant.costPerUnit}
+                                            onChange={(e) => handleRefrigerantChange('costPerUnit', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="mb-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                      <div className="bg-darkgray p-3 rounded-lg">
+                                        <h6 className="font-semibold text-sm mb-2">Ductwork</h6>
+                                        <table className="w-full text-sm">
+                                          <thead className="text-xs text-lightgray">
+                                            <tr>
+                                              <th className="text-left pb-1">Type</th>
+                                              <th className="text-right pb-1">Length</th>
+                                              <th className="text-right pb-1">Cost</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {results.materialsDetails.ductwork.map((item, index) => (
+                                              <tr key={index} className="border-t border-gray-700">
+                                                <td className="py-1">{item.type}</td>
+                                                <td className="text-right py-1">{item.length} ft</td>
+                                                <td className="text-right py-1">{formatCurrency(item.materialCost)}</td>
+                                              </tr>
+                                            ))}
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      
+                                      <div className="bg-darkgray p-3 rounded-lg">
+                                        <h6 className="font-semibold text-sm mb-2">Other Materials</h6>
+                                        <div className="space-y-2">
+                                          <div className="flex justify-between text-sm">
+                                            <span>Refrigerant ({results.materialsDetails.refrigerant.type})</span>
+                                            <span>{results.materialsDetails.refrigerant.amount} lbs @ {formatCurrency(results.materialsDetails.refrigerant.costPerUnit)}/lb</span>
+                                          </div>
+                                          <div className="flex justify-between text-sm">
+                                            <span>Installation Materials</span>
+                                            <span>{formatCurrency(results.materialsDetails.additionalMaterials.reduce((sum, item) => sum + (item.quantity * item.costPerUnit), 0))}</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                <div className="flex justify-between items-center mb-3 pt-2">
+                                  <h4 className="font-semibold text-lg">Labor Details</h4>
+                                  <button
+                                    className="text-xs bg-secondary py-1 px-2 rounded text-white"
+                                    onClick={() => {
+                                      if (isLaborEditMode) {
+                                        saveAllEdits();
+                                      } else {
+                                        setIsLaborEditMode(true);
+                                      }
+                                    }}
+                                  >
+                                    {isLaborEditMode ? 'Save Changes' : 'Edit Labor'}
+                                  </button>
+                                </div>
+                                
+                                {isLaborEditMode ? (
+                                  <div className="space-y-3 mb-4">
+                                    {editableResults?.laborDetails.technicians.map((tech, index) => (
+                                      <div key={`tech-${index}`} className="bg-darkgray p-2 rounded border border-gray-700">
+                                        <div className="grid grid-cols-3 gap-2">
+                                          <div>
+                                            <label className="text-xs text-lightgray">Role</label>
+                                            <input
+                                              type="text"
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={tech.role}
+                                              onChange={(e) => handleLaborChange(index, 'role', e.target.value)}
+                                            />
+                                          </div>
+                                          <div>
+                                            <label className="text-xs text-lightgray">Hours</label>
+                                            <input
+                                              type="number"
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={tech.hours}
+                                              onChange={(e) => handleLaborChange(index, 'hours', parseInt(e.target.value))}
+                                            />
+                                          </div>
+                                          <div>
+                                            <label className="text-xs text-lightgray">Hourly Rate</label>
+                                            <input
+                                              type="number"
+                                              className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                              value={tech.hourlyRate}
+                                              onChange={(e) => handleLaborChange(index, 'hourlyRate', parseInt(e.target.value))}
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                    
+                                    <div className="bg-darkgray p-3 rounded-lg">
+                                      <h6 className="font-semibold text-sm mb-2">Additional Costs</h6>
+                                      <div className="grid grid-cols-3 gap-2">
+                                        <div>
+                                          <label className="text-xs text-lightgray">Permit Fees</label>
+                                          <input
+                                            type="number"
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults?.laborDetails.permitFees}
+                                            onChange={(e) => handleAdditionalLaborCostChange('permitFees', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-xs text-lightgray">Inspection Fees</label>
+                                          <input
+                                            type="number"
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults?.laborDetails.inspectionFees}
+                                            onChange={(e) => handleAdditionalLaborCostChange('inspectionFees', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-xs text-lightgray">Travel Costs</label>
+                                          <input
+                                            type="number"
+                                            className="w-full bg-dark border border-gray-700 rounded px-2 py-1 text-sm"
+                                            value={editableResults?.laborDetails.travelCosts}
+                                            onChange={(e) => handleAdditionalLaborCostChange('travelCosts', parseInt(e.target.value))}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="mb-4">
+                                    <div className="bg-darkgray p-3 rounded-lg">
+                                      <table className="w-full text-sm">
+                                        <thead className="text-xs text-lightgray">
+                                          <tr>
+                                            <th className="text-left pb-1">Labor</th>
+                                            <th className="text-right pb-1">Hours</th>
+                                            <th className="text-right pb-1">Rate</th>
+                                            <th className="text-right pb-1">Total</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {results.laborDetails.technicians.map((tech, index) => (
+                                            <tr key={index} className="border-t border-gray-700">
+                                              <td className="py-1">{tech.role}</td>
+                                              <td className="text-right py-1">{tech.hours}</td>
+                                              <td className="text-right py-1">{formatCurrency(tech.hourlyRate)}/hr</td>
+                                              <td className="text-right py-1">{formatCurrency(tech.hours * tech.hourlyRate)}</td>
+                                            </tr>
+                                          ))}
+                                          <tr className="border-t border-gray-700">
+                                            <td className="py-1">Permits & Fees</td>
+                                            <td className="text-right py-1">-</td>
+                                            <td className="text-right py-1">-</td>
+                                            <td className="text-right py-1">{formatCurrency(results.laborDetails.permitFees + results.laborDetails.inspectionFees)}</td>
+                                          </tr>
+                                          <tr className="border-t border-gray-700">
+                                            <td className="py-1">Travel</td>
+                                            <td className="text-right py-1">-</td>
+                                            <td className="text-right py-1">-</td>
+                                            <td className="text-right py-1">{formatCurrency(results.laborDetails.travelCosts)}</td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </>
+                          )}
                           
                           {hasAccess && (
                             <div className="mt-4 flex space-x-3">
