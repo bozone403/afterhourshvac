@@ -56,9 +56,9 @@ const Home = () => {
                   <span className="text-xs bg-darkgray rounded-full px-3 py-1">Maintenance</span>
                 </div>
                 <Link href="/blog/prepare-furnace-winter">
-                  <a className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium">
+                  <div className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium cursor-pointer">
                     Read Full Article <i className="fas fa-arrow-right ml-2"></i>
-                  </a>
+                  </div>
                 </Link>
               </div>
             </div>
@@ -84,9 +84,9 @@ const Home = () => {
                   <span className="text-xs bg-darkgray rounded-full px-3 py-1">System Design</span>
                 </div>
                 <Link href="/blog/commercial-vs-residential-hvac">
-                  <a className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium">
+                  <div className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium cursor-pointer">
                     Read Full Article <i className="fas fa-arrow-right ml-2"></i>
-                  </a>
+                  </div>
                 </Link>
               </div>
             </div>
@@ -94,9 +94,9 @@ const Home = () => {
           
           <div className="text-center mt-12">
             <Link href="/blog">
-              <a className="inline-flex items-center bg-dark border border-primary text-primary hover:bg-primary hover:text-white py-3 px-6 rounded-md transition-all font-semibold">
+              <div className="inline-flex items-center bg-dark border border-primary text-primary hover:bg-primary hover:text-white py-3 px-6 rounded-md transition-all font-semibold cursor-pointer">
                 <i className="fas fa-book-open mr-2"></i> View All Articles
-              </a>
+              </div>
             </Link>
           </div>
         </div>

@@ -441,6 +441,122 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // FORUM ROUTES
+  
+  // Get all forum categories
+  app.get("/api/forum/categories", async (req, res) => {
+    try {
+      const categories = await storage.getForumCategories();
+      res.json(categories);
+    } catch (error: any) {
+      console.error("Error getting forum categories:", error);
+      res.status(500).json({ 
+        error: "Error getting forum categories", 
+        message: error.message 
+      });
+    }
+  });
+  
+  // Get forum topics by category ID
+  app.get("/api/forum/categories/:categoryId/topics", async (req, res) => {
+    try {
+      const categoryId = parseInt(req.params.categoryId);
+      
+      if (!categoryId || isNaN(categoryId)) {
+        return res.status(400).json({ error: "Invalid category ID" });
+      }
+      
+      const topics = await storage.getForumTopics(categoryId);
+      res.json(topics);
+    } catch (error: any) {
+      console.error("Error getting forum topics:", error);
+      res.status(500).json({ 
+        error: "Error getting forum topics", 
+        message: error.message 
+      });
+    }
+  });
+  
+  // Get forum posts by topic ID
+  app.get("/api/forum/topics/:topicId/posts", async (req, res) => {
+    try {
+      const topicId = parseInt(req.params.topicId);
+      
+      if (!topicId || isNaN(topicId)) {
+        return res.status(400).json({ error: "Invalid topic ID" });
+      }
+      
+      const posts = await storage.getForumPosts(topicId);
+      res.json(posts);
+    } catch (error: any) {
+      console.error("Error getting forum posts:", error);
+      res.status(500).json({ 
+        error: "Error getting forum posts", 
+        message: error.message 
+      });
+    }
+  });
+  
+  // Create forum category (admin only)
+  app.post("/api/forum/categories", requireAdmin, async (req, res) => {
+    try {
+      const categoryData = insertForumCategorySchema.parse(req.body);
+      const category = await storage.createForumCategory(categoryData);
+      res.status(201).json(category);
+    } catch (error: any) {
+      console.error("Error creating forum category:", error);
+      res.status(500).json({ 
+        error: "Error creating forum category", 
+        message: error.message 
+      });
+    }
+  });
+  
+  // Create forum topic
+  app.post("/api/forum/topics", requireAuth, async (req, res) => {
+    try {
+      const topicData = {
+        ...req.body,
+        userId: (req.user as any).id,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      const result = insertForumTopicSchema.parse(topicData);
+      const topic = await storage.createForumTopic(result);
+      res.status(201).json(topic);
+    } catch (error: any) {
+      console.error("Error creating forum topic:", error);
+      res.status(500).json({ 
+        error: "Error creating forum topic", 
+        message: error.message 
+      });
+    }
+  });
+  
+  // Create forum post
+  app.post("/api/forum/posts", requireAuth, async (req, res) => {
+    try {
+      const postData = {
+        ...req.body,
+        userId: (req.user as any).id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isEdited: false
+      };
+      
+      const result = insertForumPostSchema.parse(postData);
+      const post = await storage.createForumPost(result);
+      res.status(201).json(post);
+    } catch (error: any) {
+      console.error("Error creating forum post:", error);
+      res.status(500).json({ 
+        error: "Error creating forum post", 
+        message: error.message 
+      });
+    }
+  });
+  
   // PRODUCT ROUTES
   
   // Get all products
