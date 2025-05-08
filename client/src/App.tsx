@@ -27,8 +27,8 @@ import Checkout from "@/pages/checkout";
 import PaymentConfirmation from "@/pages/payment-confirmation";
 import ProCalculator from "@/pages/pro-calculator";
 import AuthPage from "@/pages/auth";
+import ForumPage from "@/pages/forum";
 // TODO: Add these pages when implemented
-// import ForumPage from "@/pages/forum";
 // import AdminDashboard from "@/pages/admin-dashboard";
 
 function ScrollToTop() {
@@ -62,8 +62,7 @@ function Router() {
         <ProtectedRoute path="/checkout" component={Checkout} />
         <ProtectedRoute path="/payment-confirmation" component={PaymentConfirmation} />
         <ProtectedRoute path="/pro-calculator" component={ProCalculator} />
-        {/* TODO: Add forum route when implemented */}
-        {/* <ProtectedRoute path="/forum" component={ForumPage} /> */}
+        <ProtectedRoute path="/forum" component={ForumPage} />
         
         {/* Admin-only routes */}
         {/* <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} /> */}

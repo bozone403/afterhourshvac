@@ -58,11 +58,11 @@ const Header = () => {
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
             <Link href="/">
-              <a className="text-2xl md:text-3xl font-bold text-white font-header">
+              <div className="text-2xl md:text-3xl font-bold text-white font-header cursor-pointer">
                 <span className="text-primary">After</span>
                 <span className="text-secondary">Hours</span> 
                 <span className="text-white">HVAC</span>
-              </a>
+              </div>
             </Link>
           </div>
           
@@ -80,22 +80,25 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-4">
             <Link href="/">
-              <a className={`text-white hover:text-primary transition-colors font-medium ${isActive('/') ? 'text-primary' : ''}`}>Home</a>
+              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/') ? 'text-primary' : ''}`}>Home</div>
             </Link>
             <Link href="/about">
-              <a className={`text-white hover:text-primary transition-colors font-medium ${isActive('/about') ? 'text-primary' : ''}`}>About</a>
+              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/about') ? 'text-primary' : ''}`}>About</div>
             </Link>
             <Link href="/gallery">
-              <a className={`text-white hover:text-primary transition-colors font-medium ${isActive('/gallery') ? 'text-primary' : ''}`}>Gallery</a>
+              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/gallery') ? 'text-primary' : ''}`}>Gallery</div>
             </Link>
             <Link href="/pricing">
-              <a className={`text-white hover:text-primary transition-colors font-medium ${isActive('/pricing') ? 'text-primary' : ''}`}>Pricing</a>
+              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/pricing') ? 'text-primary' : ''}`}>Pricing</div>
             </Link>
             <Link href="/contact">
-              <a className={`text-white hover:text-primary transition-colors font-medium ${isActive('/contact') ? 'text-primary' : ''}`}>Contact</a>
+              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/contact') ? 'text-primary' : ''}`}>Contact</div>
             </Link>
             <Link href="/calculators">
-              <a className={`text-white hover:text-primary transition-colors font-medium ${isActive('/calculators') ? 'text-primary' : ''}`}>Calculators</a>
+              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/calculators') ? 'text-primary' : ''}`}>Calculators</div>
+            </Link>
+            <Link href="/forum">
+              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/forum') ? 'text-primary' : ''}`}>Forum</div>
             </Link>
             
             <div className="ml-2 flex items-center space-x-2">
@@ -155,72 +158,80 @@ const Header = () => {
         <div className="container mx-auto px-4 py-2">
           <nav className="flex flex-col space-y-4 py-4">
             <Link href="/">
-              <a 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 ${isActive('/') ? 'text-primary' : ''}`}
+              <div 
+                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/') ? 'text-primary' : ''}`}
                 onClick={closeMobileMenu}
               >
                 Home
-              </a>
+              </div>
             </Link>
             <Link href="/about">
-              <a 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 ${isActive('/about') ? 'text-primary' : ''}`}
+              <div 
+                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/about') ? 'text-primary' : ''}`}
                 onClick={closeMobileMenu}
               >
                 About
-              </a>
+              </div>
             </Link>
             <Link href="/gallery">
-              <a 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 ${isActive('/gallery') ? 'text-primary' : ''}`}
+              <div 
+                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/gallery') ? 'text-primary' : ''}`}
                 onClick={closeMobileMenu}
               >
                 Gallery
-              </a>
+              </div>
             </Link>
             <Link href="/pricing">
-              <a 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 ${isActive('/pricing') ? 'text-primary' : ''}`}
+              <div 
+                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/pricing') ? 'text-primary' : ''}`}
                 onClick={closeMobileMenu}
               >
                 Pricing
-              </a>
+              </div>
             </Link>
             <Link href="/contact">
-              <a 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 ${isActive('/contact') ? 'text-primary' : ''}`}
+              <div 
+                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/contact') ? 'text-primary' : ''}`}
                 onClick={closeMobileMenu}
               >
                 Contact
-              </a>
+              </div>
             </Link>
             <Link href="/calculators">
-              <a 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 ${isActive('/calculators') ? 'text-primary' : ''}`}
+              <div 
+                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/calculators') ? 'text-primary' : ''}`}
                 onClick={closeMobileMenu}
               >
                 Calculators
-              </a>
+              </div>
+            </Link>
+            <Link href="/forum">
+              <div 
+                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/forum') ? 'text-primary' : ''}`}
+                onClick={closeMobileMenu}
+              >
+                Forum
+              </div>
             </Link>
             
             {user ? (
               <>
                 <Link href="/pro-calculator">
-                  <a 
-                    className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 ${isActive('/pro-calculator') ? 'text-primary' : ''}`}
+                  <div 
+                    className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/pro-calculator') ? 'text-primary' : ''}`}
                     onClick={closeMobileMenu}
                   >
                     Pro Calculator
-                  </a>
+                  </div>
                 </Link>
                 {user.role === 'admin' && (
                   <Link href="/admin">
-                    <a 
-                      className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 ${isActive('/admin') ? 'text-primary' : ''}`}
+                    <div 
+                      className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/admin') ? 'text-primary' : ''}`}
                       onClick={closeMobileMenu}
                     >
                       Admin Dashboard
-                    </a>
+                    </div>
                   </Link>
                 )}
                 <button
@@ -232,12 +243,12 @@ const Header = () => {
               </>
             ) : (
               <Link href="/auth">
-                <a 
-                  className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 ${isActive('/auth') ? 'text-primary' : ''}`}
+                <div 
+                  className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/auth') ? 'text-primary' : ''}`}
                   onClick={closeMobileMenu}
                 >
                   Login / Register
-                </a>
+                </div>
               </Link>
             )}
             
