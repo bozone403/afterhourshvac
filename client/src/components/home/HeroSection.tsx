@@ -24,9 +24,9 @@ const HeroSection = () => {
             </p>
             <div className="flex flex-wrap gap-4">
               <Link href="/pricing">
-                <a className="bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-lg shadow-lg">
+                <div className="bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-lg shadow-lg cursor-pointer">
                   Get a Quote
-                </a>
+                </div>
               </Link>
               <a 
                 href="https://calendar.app.google/NXZB4v1PP57HhARL7" 
