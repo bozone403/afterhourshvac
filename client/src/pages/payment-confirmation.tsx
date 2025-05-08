@@ -110,7 +110,7 @@ const PaymentConfirmation = () => {
             }
           }
           
-          if (paymentIntent.status === 'succeeded') {
+          if (enhancedIntent.status === 'succeeded') {
             setStatus('success');
           } else {
             setStatus('error');

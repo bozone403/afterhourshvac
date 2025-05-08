@@ -1,18 +1,141 @@
-import { pgTable, text, serial, integer, boolean, timestamp, numeric, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, numeric, jsonb, primaryKey } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// User and Authentication Tables
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   email: text("email"),
   phone: text("phone"),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  company: text("company"),
+  role: text("role").default("user"), // user, admin, moderator
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
   hasProAccess: boolean("has_pro_access").default(false),
   proAccessGrantedAt: timestamp("pro_access_granted_at"),
+  profileImageUrl: text("profile_image_url"),
+  createdAt: timestamp("created_at").defaultNow(),
+  lastLogin: timestamp("last_login"),
 });
+
+// Product Access Tracking for different systems
+export const productAccess = pgTable("product_access", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  productId: integer("product_id").notNull().references(() => products.id),
+  purchasedAt: timestamp("purchased_at").defaultNow(),
+  expiresAt: timestamp("expires_at"), // for time-limited access
+  active: boolean("active").default(true),
+  paymentIntentId: text("payment_intent_id"),
+});
+
+// Products that can be purchased/accessed
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  price: numeric("price", { precision: 10, scale: 2 }).notNull(),
+  category: text("category").notNull(), // furnace, ac, pro_tools, maintenance
+  tier: text("tier"), // economy, mid_range, premium
+  features: jsonb("features"), // Array of features included
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Forum and Discussion
+export const forumCategories = pgTable("forum_categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  slug: text("slug").notNull().unique(),
+  sortOrder: integer("sort_order"),
+  isActive: boolean("is_active").default(true),
+});
+
+export const forumTopics = pgTable("forum_topics", {
+  id: serial("id").primaryKey(),
+  categoryId: integer("category_id").references(() => forumCategories.id),
+  userId: integer("user_id").references(() => users.id),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  slug: text("slug").notNull(),
+  views: integer("views").default(0),
+  isPinned: boolean("is_pinned").default(false),
+  isLocked: boolean("is_locked").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const forumPosts = pgTable("forum_posts", {
+  id: serial("id").primaryKey(),
+  topicId: integer("topic_id").references(() => forumTopics.id),
+  userId: integer("user_id").references(() => users.id),
+  content: text("content").notNull(),
+  isEdited: boolean("is_edited").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Gallery for photos
+export const galleryImages = pgTable("gallery_images", {
+  id: serial("id").primaryKey(),
+  title: text("title"),
+  description: text("description"),
+  imageUrl: text("image_url").notNull(),
+  altText: text("alt_text"),
+  category: text("category"), // residential, commercial, etc.
+  sortOrder: integer("sort_order"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  createdBy: integer("created_by").references(() => users.id),
+});
+
+// Reviews
+export const customerReviews = pgTable("customer_reviews", {
+  id: serial("id").primaryKey(),
+  customerName: text("customer_name").notNull(),
+  location: text("location"),
+  rating: integer("rating").notNull(), // 1-5 stars
+  reviewText: text("review_text").notNull(),
+  serviceType: text("service_type"), // what service was performed
+  isApproved: boolean("is_approved").default(false),
+  serviceDate: timestamp("service_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Blog posts
+export const blogPosts = pgTable("blog_posts", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  content: text("content").notNull(),
+  excerpt: text("excerpt"),
+  coverImageUrl: text("cover_image_url"),
+  authorId: integer("author_id").references(() => users.id),
+  isPublished: boolean("is_published").default(false),
+  publishedAt: timestamp("published_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const blogCategories = pgTable("blog_categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  description: text("description"),
+});
+
+// Many-to-many relationship between blog posts and categories
+export const blogPostCategories = pgTable("blog_post_categories", {
+  postId: integer("post_id").notNull().references(() => blogPosts.id),
+  categoryId: integer("category_id").notNull().references(() => blogCategories.id),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.postId, t.categoryId] }),
+}));
 
 // Tables for HVAC data and equipment
 export const hvacEquipmentCategories = pgTable("hvac_equipment_categories", {
@@ -88,20 +211,75 @@ export const proCalculatorQuotes = pgTable("pro_calculator_quotes", {
   notes: text("notes"),
 });
 
+// USER AND AUTH
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
   email: true,
   phone: true,
+  firstName: true,
+  lastName: true,
+  company: true,
 });
 
+export const insertUserAdminSchema = createInsertSchema(users);
+
+// PRODUCTS AND ACCESS
+export const insertProductSchema = createInsertSchema(products);
+export const insertProductAccessSchema = createInsertSchema(productAccess);
+
+// FORUM
+export const insertForumCategorySchema = createInsertSchema(forumCategories);
+export const insertForumTopicSchema = createInsertSchema(forumTopics);
+export const insertForumPostSchema = createInsertSchema(forumPosts);
+
+// GALLERY
+export const insertGalleryImageSchema = createInsertSchema(galleryImages);
+
+// REVIEWS
+export const insertCustomerReviewSchema = createInsertSchema(customerReviews);
+
+// BLOG
+export const insertBlogPostSchema = createInsertSchema(blogPosts);
+export const insertBlogCategorySchema = createInsertSchema(blogCategories);
+
+// HVAC EQUIPMENT
 export const insertHvacEquipmentSchema = createInsertSchema(hvacEquipment);
 export const insertHvacMaterialsSchema = createInsertSchema(hvacMaterials);
 export const insertHvacAccessoriesSchema = createInsertSchema(hvacAccessories);
 export const insertProCalculatorQuoteSchema = createInsertSchema(proCalculatorQuotes);
 
+// TYPES
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+
+export type InsertProduct = z.infer<typeof insertProductSchema>;
+export type Product = typeof products.$inferSelect;
+
+export type InsertProductAccess = z.infer<typeof insertProductAccessSchema>;
+export type ProductAccess = typeof productAccess.$inferSelect;
+
+export type InsertForumCategory = z.infer<typeof insertForumCategorySchema>;
+export type ForumCategory = typeof forumCategories.$inferSelect;
+
+export type InsertForumTopic = z.infer<typeof insertForumTopicSchema>;
+export type ForumTopic = typeof forumTopics.$inferSelect;
+
+export type InsertForumPost = z.infer<typeof insertForumPostSchema>;
+export type ForumPost = typeof forumPosts.$inferSelect;
+
+export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
+export type GalleryImage = typeof galleryImages.$inferSelect;
+
+export type InsertCustomerReview = z.infer<typeof insertCustomerReviewSchema>;
+export type CustomerReview = typeof customerReviews.$inferSelect;
+
+export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
+export type BlogPost = typeof blogPosts.$inferSelect;
+
+export type InsertBlogCategory = z.infer<typeof insertBlogCategorySchema>;
+export type BlogCategory = typeof blogCategories.$inferSelect;
+
 export type HvacEquipment = typeof hvacEquipment.$inferSelect;
 export type HvacMaterial = typeof hvacMaterials.$inferSelect;
 export type HvacAccessory = typeof hvacAccessories.$inferSelect;
