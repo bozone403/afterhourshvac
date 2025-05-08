@@ -2,7 +2,16 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'wouter';
 import { useEffect, useState } from 'react';
 import { useStripe } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe, PaymentIntent } from '@stripe/stripe-js';
+
+// Extend the PaymentIntent type to include metadata
+interface EnhancedPaymentIntent extends PaymentIntent {
+  metadata?: {
+    isProCalculator?: string;
+    service?: string;
+    [key: string]: string | undefined;
+  };
+}
 
 // Make sure to call `loadStripe` outside of a component's render
 if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
@@ -12,7 +21,7 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const PaymentConfirmation = () => {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [paymentIntent, setPaymentIntent] = useState<any>(null);
+  const [paymentIntent, setPaymentIntent] = useState<EnhancedPaymentIntent | null>(null);
   const [isPro, setIsPro] = useState(false);
   
   useEffect(() => {
@@ -21,6 +30,36 @@ const PaymentConfirmation = () => {
       const query = new URLSearchParams(window.location.search);
       const paymentIntentClientSecret = query.get('payment_intent_client_secret');
       const paymentIntentId = query.get('payment_intent');
+      const service = query.get('service'); // Check if service type was passed directly
+      
+      // For Pro Calculator purchases directly from checkout page
+      if (service === 'pro') {
+        setIsPro(true);
+        setStatus('success');
+        
+        // Update user access in the database (using mock user ID for demo)
+        try {
+          const mockUserId = 1; // In a real app, this would be the authenticated user's ID
+          const response = await fetch(`/api/update-pro-access?userId=${mockUserId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              hasAccess: true,
+              grantedAt: new Date().toISOString(),
+            }),
+          });
+          
+          if (!response.ok) {
+            console.error('Failed to update pro access status');
+          }
+        } catch (error) {
+          console.error('Error updating pro access status:', error);
+        }
+        
+        return;
+      }
       
       if (!paymentIntentClientSecret || !paymentIntentId) {
         // If not from a redirect, we're likely coming from a simulated success in checkout
@@ -34,14 +73,41 @@ const PaymentConfirmation = () => {
           throw new Error("Stripe failed to initialize");
         }
         
-        const { paymentIntent } = await stripe.retrievePaymentIntent(paymentIntentClientSecret);
+        const { paymentIntent: retrievedIntent } = await stripe.retrievePaymentIntent(paymentIntentClientSecret);
         
-        if (paymentIntent) {
-          setPaymentIntent(paymentIntent);
+        if (retrievedIntent) {
+          // Cast the retrieved payment intent to our enhanced type that includes metadata
+          const enhancedIntent = retrievedIntent as EnhancedPaymentIntent;
+          setPaymentIntent(enhancedIntent);
           
           // Check if this was for Pro Calculator access
-          if (paymentIntent.description && paymentIntent.description.toLowerCase().includes('pro calculator')) {
+          const isProCalculator = 
+            enhancedIntent.description?.toLowerCase().includes('pro calculator') ||
+            (enhancedIntent.metadata && enhancedIntent.metadata.isProCalculator === 'true');
+            
+          if (isProCalculator) {
             setIsPro(true);
+            
+            // Update user access in the database (using mock user ID for demo)
+            try {
+              const mockUserId = 1; // In a real app, this would be the authenticated user's ID
+              const response = await fetch(`/api/update-pro-access?userId=${mockUserId}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  hasAccess: true,
+                  grantedAt: new Date().toISOString(),
+                }),
+              });
+              
+              if (!response.ok) {
+                console.error('Failed to update pro access status');
+              }
+            } catch (error) {
+              console.error('Error updating pro access status:', error);
+            }
           }
           
           if (paymentIntent.status === 'succeeded') {

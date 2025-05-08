@@ -73,6 +73,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Update user's Pro Calculator access status
+  app.post("/api/update-pro-access", async (req, res) => {
+    try {
+      // In a real implementation with authentication, we would get userId from session
+      // For demonstration, we're using a query parameter
+      const userId = parseInt(req.query.userId as string);
+      const { hasAccess, grantedAt } = req.body;
+      
+      if (!userId || isNaN(userId)) {
+        return res.status(400).json({ error: "Invalid user ID" });
+      }
+      
+      // Convert string date to Date object
+      const grantedDate = grantedAt ? new Date(grantedAt) : new Date();
+      
+      // Update the user's pro access status
+      const user = await storage.updateUserProAccess(userId, hasAccess, grantedDate);
+      
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      res.json({ success: true, user });
+    } catch (error: any) {
+      console.error("Error updating pro access:", error);
+      res.status(500).json({ 
+        error: "Error updating pro access", 
+        message: error.message 
+      });
+    }
+  });
 
   // Handle Stripe webhook for payment confirmation
   app.post('/api/webhook', async (req, res) => {

@@ -428,9 +428,20 @@ const ProCalculator = () => {
     });
   };
 
+  // For demo purposes, we'll use a mock user ID
+  // In a real app, this would come from authentication
+  const mockUserId = 1;
+  
   // Check if user has access to Pro Calculator
   const { data: accessData, isLoading: checkingAccess } = useQuery<{ hasAccess: boolean }>({
-    queryKey: ['/api/check-pro-access'],
+    queryKey: ['/api/check-pro-access', mockUserId],
+    queryFn: async () => {
+      const response = await apiRequest(
+        'GET', 
+        `/api/check-pro-access?userId=${mockUserId}`
+      );
+      return response.json();
+    },
     retry: false,
     staleTime: 60000, // 1 minute
   });
