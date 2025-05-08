@@ -54,14 +54,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Check if user has Pro Calculator access
   app.get("/api/check-pro-access", async (req, res) => {
-    // In a real implementation, this would check the user's session
-    // and verify their access in the database
-    
     try {
-      // For demonstration, we'll return false by default
-      // In a real app, we would check the user's database record
-      const hasAccess = false; // Placeholder, would use real data in production
+      // In a real implementation with authentication, we would get userId from session
+      // For demonstration, we're using a query parameter
+      const userId = parseInt(req.query.userId as string);
       
+      if (!userId || isNaN(userId)) {
+        return res.status(400).json({ error: "Invalid user ID" });
+      }
+      
+      const hasAccess = await storage.checkProAccess(userId);
       res.json({ hasAccess });
     } catch (error: any) {
       console.error("Error checking pro access:", error);
