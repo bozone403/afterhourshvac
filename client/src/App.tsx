@@ -71,6 +71,7 @@ function Router() {
         <ProtectedRoute path="/forum" component={ForumPage} />
         
         {/* Admin-only routes */}
+        <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
         <ProtectedRoute path="/admin-data" component={AdminData} adminOnly={true} />
         <ProtectedRoute path="/supplier-data" component={SupplierData} adminOnly={true} />
         <ProtectedRoute path="/alggin-data" component={AlgginData} adminOnly={true} />

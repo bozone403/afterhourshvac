@@ -407,9 +407,16 @@ export type BlogPost = typeof blogPosts.$inferSelect;
 export type InsertBlogCategory = z.infer<typeof insertBlogCategorySchema>;
 export type BlogCategory = typeof blogCategories.$inferSelect;
 
+export type InsertHvacEquipment = z.infer<typeof insertHvacEquipmentSchema>;
 export type HvacEquipment = typeof hvacEquipment.$inferSelect;
+
+export type InsertHvacMaterial = z.infer<typeof insertHvacMaterialsSchema>;
 export type HvacMaterial = typeof hvacMaterials.$inferSelect;
+
+export type InsertHvacAccessory = z.infer<typeof insertHvacAccessoriesSchema>;
 export type HvacAccessory = typeof hvacAccessories.$inferSelect;
+
+export type InsertProCalculatorQuote = z.infer<typeof insertProCalculatorQuoteSchema>;
 export type ProCalculatorQuote = typeof proCalculatorQuotes.$inferSelect;
 
 // Customer and Analytics Types

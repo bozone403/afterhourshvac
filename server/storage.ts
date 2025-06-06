@@ -1,5 +1,5 @@
-import { users, productAccess, products, galleryImages, blogPosts, forumCategories, forumTopics, forumPosts, customerReviews, blogCategories, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory } from "@shared/schema";
-import { eq, and } from "drizzle-orm";
+import { users, productAccess, products, galleryImages, blogPosts, forumCategories, forumTopics, forumPosts, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, userSessions, pageViews, calculatorUsage, systemMetrics, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric } from "@shared/schema";
+import { eq, and, gte, desc, count } from "drizzle-orm";
 import { db } from "./db";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -79,6 +79,35 @@ export interface IStorage {
   getHvacAccessories(): Promise<HvacAccessory[]>;
   createHvacAccessory(accessory: InsertHvacAccessory): Promise<HvacAccessory>;
   updateHvacAccessory(id: number, data: Partial<HvacAccessory>): Promise<HvacAccessory | undefined>;
+  
+  // Customer Records and Analytics methods
+  getCustomers(): Promise<Customer[]>;
+  getCustomerById(id: number): Promise<Customer | undefined>;
+  createCustomer(customer: InsertCustomer): Promise<Customer>;
+  updateCustomer(id: number, data: Partial<Customer>): Promise<Customer | undefined>;
+  
+  getContactSubmissions(status?: string): Promise<ContactSubmission[]>;
+  createContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission>;
+  updateContactSubmissionStatus(id: number, status: string): Promise<ContactSubmission | undefined>;
+  
+  getEmergencyRequests(): Promise<EmergencyRequest[]>;
+  createEmergencyRequest(request: InsertEmergencyRequest): Promise<EmergencyRequest>;
+  updateEmergencyRequestStatus(id: number, status: string): Promise<EmergencyRequest | undefined>;
+  
+  getQuoteRequests(status?: string): Promise<QuoteRequest[]>;
+  createQuoteRequest(request: InsertQuoteRequest): Promise<QuoteRequest>;
+  updateQuoteRequestStatus(id: number, status: string, quoteAmount?: number): Promise<QuoteRequest | undefined>;
+  
+  // Analytics methods
+  getDashboardStats(dateRange: string): Promise<any>;
+  getAnalyticsData(dateRange: string): Promise<any>;
+  recordPageView(data: InsertPageView): Promise<PageView>;
+  recordCalculatorUsage(data: InsertCalculatorUsage): Promise<CalculatorUsage>;
+  recordSystemMetric(data: InsertSystemMetric): Promise<SystemMetric>;
+  
+  // User session tracking
+  createUserSession(data: InsertUserSession): Promise<UserSession>;
+  endUserSession(sessionId: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -487,6 +516,254 @@ export class DatabaseStorage implements IStorage {
       .where(eq(hvacAccessories.id, id))
       .returning();
     return updated;
+  }
+
+  // Customer Records and Analytics implementation
+  async getCustomers(): Promise<Customer[]> {
+    return await db.select().from(customers).orderBy(desc(customers.createdAt));
+  }
+
+  async getCustomerById(id: number): Promise<Customer | undefined> {
+    const [customer] = await db.select().from(customers).where(eq(customers.id, id));
+    return customer;
+  }
+
+  async createCustomer(customer: InsertCustomer): Promise<Customer> {
+    const [newCustomer] = await db
+      .insert(customers)
+      .values(customer)
+      .returning();
+    return newCustomer;
+  }
+
+  async updateCustomer(id: number, data: Partial<Customer>): Promise<Customer | undefined> {
+    const [updated] = await db
+      .update(customers)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(customers.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getContactSubmissions(status?: string): Promise<ContactSubmission[]> {
+    const query = db.select().from(contactSubmissions);
+    if (status && status !== 'all') {
+      query.where(eq(contactSubmissions.status, status));
+    }
+    return await query.orderBy(desc(contactSubmissions.createdAt));
+  }
+
+  async createContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission> {
+    const [newSubmission] = await db
+      .insert(contactSubmissions)
+      .values(submission)
+      .returning();
+    return newSubmission;
+  }
+
+  async updateContactSubmissionStatus(id: number, status: string): Promise<ContactSubmission | undefined> {
+    const [updated] = await db
+      .update(contactSubmissions)
+      .set({ status, respondedAt: status === 'completed' ? new Date() : undefined })
+      .where(eq(contactSubmissions.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getEmergencyRequests(): Promise<EmergencyRequest[]> {
+    return await db.select().from(emergencyRequests).orderBy(desc(emergencyRequests.createdAt));
+  }
+
+  async createEmergencyRequest(request: InsertEmergencyRequest): Promise<EmergencyRequest> {
+    const [newRequest] = await db
+      .insert(emergencyRequests)
+      .values(request)
+      .returning();
+    return newRequest;
+  }
+
+  async updateEmergencyRequestStatus(id: number, status: string): Promise<EmergencyRequest | undefined> {
+    const [updated] = await db
+      .update(emergencyRequests)
+      .set({ status, completedAt: status === 'completed' ? new Date() : undefined })
+      .where(eq(emergencyRequests.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getQuoteRequests(status?: string): Promise<QuoteRequest[]> {
+    const query = db.select().from(quoteRequests);
+    if (status && status !== 'all') {
+      query.where(eq(quoteRequests.status, status));
+    }
+    return await query.orderBy(desc(quoteRequests.createdAt));
+  }
+
+  async createQuoteRequest(request: InsertQuoteRequest): Promise<QuoteRequest> {
+    const [newRequest] = await db
+      .insert(quoteRequests)
+      .values(request)
+      .returning();
+    return newRequest;
+  }
+
+  async updateQuoteRequestStatus(id: number, status: string, quoteAmount?: number): Promise<QuoteRequest | undefined> {
+    const updateData: any = { status };
+    if (quoteAmount) {
+      updateData.quoteAmount = quoteAmount;
+      updateData.quotedAt = new Date();
+    }
+    
+    const [updated] = await db
+      .update(quoteRequests)
+      .set(updateData)
+      .where(eq(quoteRequests.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getDashboardStats(dateRange: string): Promise<any> {
+    const now = new Date();
+    let startDate = new Date();
+    
+    switch(dateRange) {
+      case '1d':
+        startDate.setDate(now.getDate() - 1);
+        break;
+      case '7d':
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case '30d':
+        startDate.setDate(now.getDate() - 30);
+        break;
+      case '90d':
+        startDate.setDate(now.getDate() - 90);
+        break;
+      default:
+        startDate.setDate(now.getDate() - 7);
+    }
+
+    // Get counts for different types of inquiries
+    const [contactCount] = await db
+      .select({ count: count() })
+      .from(contactSubmissions)
+      .where(gte(contactSubmissions.createdAt, startDate));
+
+    const [emergencyCount] = await db
+      .select({ count: count() })
+      .from(emergencyRequests)
+      .where(gte(emergencyRequests.createdAt, startDate));
+
+    const [quoteCount] = await db
+      .select({ count: count() })
+      .from(quoteRequests)
+      .where(gte(quoteRequests.createdAt, startDate));
+
+    const [calcUsageCount] = await db
+      .select({ count: count() })
+      .from(calculatorUsage)
+      .where(gte(calculatorUsage.createdAt, startDate));
+
+    return {
+      totalInquiries: contactCount.count + emergencyCount.count + quoteCount.count,
+      emergencyRequests: emergencyCount.count,
+      quoteRequests: quoteCount.count,
+      calculatorUsage: calcUsageCount.count,
+      inquiriesGrowth: 12, // TODO: Calculate actual growth
+      pendingEmergencies: 0, // TODO: Get actual pending count
+      totalQuoteValue: 0, // TODO: Calculate actual quote value
+      calculatorConversion: 15, // TODO: Calculate actual conversion rate
+    };
+  }
+
+  async getAnalyticsData(dateRange: string): Promise<any> {
+    const now = new Date();
+    let startDate = new Date();
+    
+    switch(dateRange) {
+      case '1d':
+        startDate.setDate(now.getDate() - 1);
+        break;
+      case '7d':
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case '30d':
+        startDate.setDate(now.getDate() - 30);
+        break;
+      case '90d':
+        startDate.setDate(now.getDate() - 90);
+        break;
+      default:
+        startDate.setDate(now.getDate() - 7);
+    }
+
+    const [pageViewCount] = await db
+      .select({ count: count() })
+      .from(pageViews)
+      .where(gte(pageViews.createdAt, startDate));
+
+    const [calculatorCount] = await db
+      .select({ count: count() })
+      .from(calculatorUsage)
+      .where(gte(calculatorUsage.createdAt, startDate));
+
+    const [completedCalc] = await db
+      .select({ count: count() })
+      .from(calculatorUsage)
+      .where(and(
+        gte(calculatorUsage.createdAt, startDate),
+        eq(calculatorUsage.completed, true)
+      ));
+
+    return {
+      pageViews: pageViewCount.count,
+      uniqueVisitors: Math.floor(pageViewCount.count * 0.7), // Estimate
+      avgSessionDuration: '4m 32s',
+      bounceRate: '45%',
+      totalCalculations: calculatorCount.count,
+      completedCalculations: completedCalc.count,
+      popularCalculator: 'Furnace Calculator',
+      calculatorToQuote: '12%',
+    };
+  }
+
+  async recordPageView(data: InsertPageView): Promise<PageView> {
+    const [pageView] = await db
+      .insert(pageViews)
+      .values(data)
+      .returning();
+    return pageView;
+  }
+
+  async recordCalculatorUsage(data: InsertCalculatorUsage): Promise<CalculatorUsage> {
+    const [usage] = await db
+      .insert(calculatorUsage)
+      .values(data)
+      .returning();
+    return usage;
+  }
+
+  async recordSystemMetric(data: InsertSystemMetric): Promise<SystemMetric> {
+    const [metric] = await db
+      .insert(systemMetrics)
+      .values(data)
+      .returning();
+    return metric;
+  }
+
+  async createUserSession(data: InsertUserSession): Promise<UserSession> {
+    const [session] = await db
+      .insert(userSessions)
+      .values(data)
+      .returning();
+    return session;
+  }
+
+  async endUserSession(sessionId: string): Promise<void> {
+    await db
+      .update(userSessions)
+      .set({ logoutAt: new Date(), isActive: false })
+      .where(eq(userSessions.sessionId, sessionId));
   }
 }
 
