@@ -13,6 +13,9 @@ import {
   insertCustomerReviewSchema, 
   insertBlogPostSchema, 
   insertBlogCategorySchema,
+  insertHvacEquipmentSchema,
+  insertHvacMaterialsSchema,
+  insertHvacAccessoriesSchema,
   users
 } from "@shared/schema";
 import { WebSocketServer } from 'ws';
@@ -704,7 +707,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/hvac-equipment", requireAuth, requireAdmin, async (req, res) => {
     try {
-      const equipmentData = insertHvacEquipmentSchema.parse(req.body);
+      const equipmentData = req.body;
       const equipment = await storage.createHvacEquipment(equipmentData);
       res.status(201).json(equipment);
     } catch (error: any) {
@@ -1367,6 +1370,275 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error: any) {
       res.status(500).json({ message: "Error saving products: " + error.message });
+    }
+  });
+
+  // ADMIN DASHBOARD API ENDPOINTS
+  
+  // Dashboard statistics
+  app.get("/api/admin/dashboard-stats", requireAdmin, async (req, res) => {
+    try {
+      const dateRange = req.query.range as string || '7d';
+      const stats = await storage.getDashboardStats(dateRange);
+      res.json(stats);
+    } catch (error: any) {
+      console.error("Error getting dashboard stats:", error);
+      res.status(500).json({ 
+        error: "Error getting dashboard stats", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Analytics data
+  app.get("/api/admin/analytics", requireAdmin, async (req, res) => {
+    try {
+      const dateRange = req.query.range as string || '7d';
+      const analytics = await storage.getAnalyticsData(dateRange);
+      res.json(analytics);
+    } catch (error: any) {
+      console.error("Error getting analytics:", error);
+      res.status(500).json({ 
+        error: "Error getting analytics", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Contact submissions management
+  app.get("/api/admin/contact-submissions", requireAdmin, async (req, res) => {
+    try {
+      const status = req.query.status as string;
+      const submissions = await storage.getContactSubmissions(status);
+      res.json(submissions);
+    } catch (error: any) {
+      console.error("Error getting contact submissions:", error);
+      res.status(500).json({ 
+        error: "Error getting contact submissions", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.put("/api/admin/contact-submissions/:id/status", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "Invalid submission ID" });
+      }
+      
+      const submission = await storage.updateContactSubmissionStatus(id, status);
+      
+      if (!submission) {
+        return res.status(404).json({ error: "Contact submission not found" });
+      }
+      
+      res.json(submission);
+    } catch (error: any) {
+      console.error("Error updating submission status:", error);
+      res.status(500).json({ 
+        error: "Error updating submission status", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Emergency requests management
+  app.get("/api/admin/emergency-requests", requireAdmin, async (req, res) => {
+    try {
+      const requests = await storage.getEmergencyRequests();
+      res.json(requests);
+    } catch (error: any) {
+      console.error("Error getting emergency requests:", error);
+      res.status(500).json({ 
+        error: "Error getting emergency requests", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.put("/api/admin/emergency-requests/:id/status", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "Invalid request ID" });
+      }
+      
+      const request = await storage.updateEmergencyRequestStatus(id, status);
+      
+      if (!request) {
+        return res.status(404).json({ error: "Emergency request not found" });
+      }
+      
+      res.json(request);
+    } catch (error: any) {
+      console.error("Error updating request status:", error);
+      res.status(500).json({ 
+        error: "Error updating request status", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Quote requests management
+  app.get("/api/admin/quote-requests", requireAdmin, async (req, res) => {
+    try {
+      const status = req.query.status as string;
+      const requests = await storage.getQuoteRequests(status);
+      res.json(requests);
+    } catch (error: any) {
+      console.error("Error getting quote requests:", error);
+      res.status(500).json({ 
+        error: "Error getting quote requests", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.put("/api/admin/quote-requests/:id", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { status, quoteAmount } = req.body;
+      
+      if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "Invalid request ID" });
+      }
+      
+      const request = await storage.updateQuoteRequestStatus(id, status, quoteAmount);
+      
+      if (!request) {
+        return res.status(404).json({ error: "Quote request not found" });
+      }
+      
+      res.json(request);
+    } catch (error: any) {
+      console.error("Error updating quote request:", error);
+      res.status(500).json({ 
+        error: "Error updating quote request", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Customer management
+  app.get("/api/admin/customers", requireAdmin, async (req, res) => {
+    try {
+      const customers = await storage.getCustomers();
+      res.json(customers);
+    } catch (error: any) {
+      console.error("Error getting customers:", error);
+      res.status(500).json({ 
+        error: "Error getting customers", 
+        message: error.message 
+      });
+    }
+  });
+
+  // PUBLIC FORM SUBMISSION ENDPOINTS
+
+  // Contact form submission
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const submissionData = {
+        ...req.body,
+        submittedAt: new Date(),
+        status: 'new'
+      };
+      
+      const submission = await storage.createContactSubmission(submissionData);
+      res.status(201).json(submission);
+    } catch (error: any) {
+      console.error("Error creating contact submission:", error);
+      res.status(500).json({ 
+        error: "Error submitting contact form", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Emergency request submission
+  app.post("/api/emergency", async (req, res) => {
+    try {
+      const requestData = {
+        ...req.body,
+        requestedAt: new Date(),
+        status: 'pending'
+      };
+      
+      const request = await storage.createEmergencyRequest(requestData);
+      res.status(201).json(request);
+    } catch (error: any) {
+      console.error("Error creating emergency request:", error);
+      res.status(500).json({ 
+        error: "Error submitting emergency request", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Quote request submission
+  app.post("/api/quote", async (req, res) => {
+    try {
+      const requestData = {
+        ...req.body,
+        requestedAt: new Date(),
+        status: 'pending'
+      };
+      
+      const request = await storage.createQuoteRequest(requestData);
+      res.status(201).json(request);
+    } catch (error: any) {
+      console.error("Error creating quote request:", error);
+      res.status(500).json({ 
+        error: "Error submitting quote request", 
+        message: error.message 
+      });
+    }
+  });
+
+  // ANALYTICS TRACKING ENDPOINTS
+
+  // Page view tracking
+  app.post("/api/analytics/page-view", async (req, res) => {
+    try {
+      const pageViewData = {
+        ...req.body,
+        userId: req.user ? (req.user as any).id : null,
+        createdAt: new Date()
+      };
+      
+      await storage.recordPageView(pageViewData);
+      res.status(201).json({ success: true });
+    } catch (error: any) {
+      console.error("Error recording page view:", error);
+      res.status(500).json({ 
+        error: "Error recording page view", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Calculator usage tracking
+  app.post("/api/analytics/calculator-usage", async (req, res) => {
+    try {
+      const usageData = {
+        ...req.body,
+        userId: req.user ? (req.user as any).id : null,
+        createdAt: new Date()
+      };
+      
+      await storage.recordCalculatorUsage(usageData);
+      res.status(201).json({ success: true });
+    } catch (error: any) {
+      console.error("Error recording calculator usage:", error);
+      res.status(500).json({ 
+        error: "Error recording calculator usage", 
+        message: error.message 
+      });
     }
   });
   
