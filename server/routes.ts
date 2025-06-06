@@ -238,7 +238,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PAYMENT ROUTES
   
   // Payment routes
-  app.post("/api/create-payment-intent", requireAuth, async (req, res) => {
+  app.post("/api/create-payment-intent", async (req, res) => {
     try {
       if (!stripe) {
         return res.status(500).json({ 

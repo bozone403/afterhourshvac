@@ -79,10 +79,10 @@ function Router() {
         {/* Membership and Pro routes */}
         <Route path="/membership" component={Membership} />
         <Route path="/pro-calculator" component={ProCalculator} />
+        <Route path="/checkout" component={Checkout} />
+        <Route path="/payment-confirmation" component={PaymentConfirmation} />
         
         {/* Protected routes that require authentication */}
-        <ProtectedRoute path="/checkout" component={Checkout} />
-        <ProtectedRoute path="/payment-confirmation" component={PaymentConfirmation} />
         <ProtectedRoute path="/forum" component={ForumPage} />
         
         {/* Admin-only routes */}
