@@ -11,13 +11,13 @@ const QuickContactWidget = () => {
     <section className="bg-dark py-16">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <Card className="bg-white/95 border-0 shadow-2xl overflow-hidden">
+          <Card className="bg-slate-800/80 border-slate-700 shadow-2xl overflow-hidden backdrop-blur-sm">
             <CardContent className="p-0">
               {/* Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+              <div className="bg-gradient-to-r from-blue-600/90 to-blue-700/90 text-white p-6 border-b border-slate-600/50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                    <div className="w-16 h-16 bg-blue-500/20 backdrop-blur-sm rounded-xl border border-white/20 flex items-center justify-center">
                       <div className="text-2xl font-bold">AH</div>
                     </div>
                     <div>
@@ -28,50 +28,50 @@ const QuickContactWidget = () => {
                             <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                           ))}
                         </div>
-                        <span className="text-sm opacity-90">4.9 • 127 reviews</span>
+                        <span className="text-sm text-blue-100">4.9 • 127 reviews</span>
                       </div>
-                      <p className="text-sm opacity-90 mt-1">HVAC contractor • Open 24 hours</p>
+                      <p className="text-sm text-blue-100 mt-1">HVAC contractor • Open 24 hours</p>
                     </div>
                   </div>
-                  <Badge className="bg-green-500 text-white border-0">
-                    <div className="w-2 h-2 bg-white rounded-full mr-2"></div>
-                    Open
+                  <Badge className="bg-green-500/20 text-green-300 border border-green-500/30 backdrop-blur-sm">
+                    <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+                    Open 24/7
                   </Badge>
                 </div>
               </div>
 
               {/* Main Info */}
-              <div className="p-6 space-y-4">
+              <div className="p-6 space-y-4 bg-slate-800/50">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Contact Info */}
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Phone className="h-5 w-5 text-blue-600" />
+                      <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center border border-blue-500/30">
+                        <Phone className="h-5 w-5 text-blue-400" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">(403) 613-6014</p>
-                        <p className="text-sm text-gray-600">24/7 Emergency Service</p>
+                        <p className="font-semibold text-white">(403) 613-6014</p>
+                        <p className="text-sm text-slate-300">24/7 Emergency Service</p>
                       </div>
                     </div>
 
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <MapPin className="h-5 w-5 text-green-600" />
+                      <div className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center border border-green-500/30">
+                        <MapPin className="h-5 w-5 text-green-400" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">Calgary & Surrounding Areas</p>
-                        <p className="text-sm text-gray-600">Serving residential & commercial</p>
+                        <p className="font-semibold text-white">Southern & Central Alberta</p>
+                        <p className="text-sm text-slate-300">Calgary, Edmonton, Red Deer & more</p>
                       </div>
                     </div>
 
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                        <Clock className="h-5 w-5 text-purple-600" />
+                      <div className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center border border-purple-500/30">
+                        <Clock className="h-5 w-5 text-purple-400" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">Open 24 hours</p>
-                        <p className="text-sm text-gray-600">Emergency repairs available</p>
+                        <p className="font-semibold text-white">Open 24 hours</p>
+                        <p className="text-sm text-slate-300">Emergency repairs available</p>
                       </div>
                     </div>
                   </div>
@@ -79,7 +79,7 @@ const QuickContactWidget = () => {
                   {/* Quick Actions */}
                   <div className="space-y-3">
                     <Button 
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
                       onClick={() => window.open('tel:4036136014')}
                     >
                       <Phone className="h-4 w-4 mr-2" />
@@ -88,7 +88,7 @@ const QuickContactWidget = () => {
                     
                     <Button 
                       variant="outline"
-                      className="w-full border-blue-600 text-blue-600 hover:bg-blue-50"
+                      className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
                       onClick={() => window.open('/contact')}
                     >
                       <MessageCircle className="h-4 w-4 mr-2" />

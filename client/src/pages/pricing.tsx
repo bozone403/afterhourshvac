@@ -104,14 +104,11 @@ const Pricing = () => {
                     </div>
                     
                     <div className="pt-4">
-                      <a 
-                        href="https://calendar.app.google/NXZB4v1PP57HhARL7" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="block w-full bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center"
-                      >
-                        Book Consultation
-                      </a>
+                      <Link href="/products/furnace">
+                        <div className="block w-full bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center cursor-pointer">
+                          Buy Now
+                        </div>
+                      </Link>
                       <div className="text-center mt-3 text-sm text-lightgray">
                         * Upfront payment required
                       </div>
@@ -147,14 +144,11 @@ const Pricing = () => {
                     </div>
                     
                     <div className="pt-4">
-                      <a 
-                        href="https://calendar.app.google/NXZB4v1PP57HhARL7" 
-                        target="_blank"
-                        rel="noopener noreferrer" 
-                        className="block w-full bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center"
-                      >
-                        Book Consultation
-                      </a>
+                      <Link href="/products/ac">
+                        <div className="block w-full bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center cursor-pointer">
+                          Buy Now
+                        </div>
+                      </Link>
                       <div className="text-center mt-3 text-sm text-lightgray">
                         * Upfront payment required
                       </div>
