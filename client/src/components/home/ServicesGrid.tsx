@@ -91,8 +91,8 @@ const ServicesGrid = () => {
           {/* Service Card 4 - New Installations */}
           <div className="bg-dark rounded-lg overflow-hidden border border-gray-800 transition-transform hover:transform hover:scale-105">
             <img 
-              src="https://pixabay.com/get/g6b95f0e29341f75965445a666b5b78673d1f1084c558a9bbbe11e74245b0c44123053c269b902b30f9b300bde431e8ef0e827f3328e84a2a83cea0228bc9c61d_1280.jpg" 
-              alt="New HVAC installation" 
+              src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80" 
+              alt="Professional HVAC technician installing new system components" 
               className="w-full h-48 object-cover"
             />
             <div className="p-6">

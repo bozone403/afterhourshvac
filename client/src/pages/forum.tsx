@@ -108,75 +108,100 @@ export default function ForumPage() {
     },
     enabled: !!selectedTopic && !!user,
   });
-  
-  // Reset topic selection when category changes
-  useEffect(() => {
-    setSelectedTopic(null);
-  }, [selectedCategory]);
-  
-  // If not logged in, show message to login
+
+  // Show login required if not authenticated
   if (!user) {
     return (
-      <div className="container mx-auto py-24 px-4 min-h-screen">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl font-bold mb-6">HVAC Forum</h1>
-          <Card>
-            <CardHeader>
-              <CardTitle>Login Required</CardTitle>
-              <CardDescription>
-                You need to login to access the forum
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Our forum is available to registered users only. Please log in or create an account
-                to join discussions about HVAC topics, ask questions, and share your experiences.
-              </p>
-            </CardContent>
-            <CardFooter className="flex justify-center">
-              <Link href="/auth">
-                <Button>Login or Register</Button>
-              </Link>
-            </CardFooter>
-          </Card>
+      <>
+        <Helmet>
+          <title>HVAC Community Forum - AfterHours HVAC</title>
+          <meta name="description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners. Get expert advice and share experiences." />
+          <meta property="og:title" content="HVAC Community Forum - AfterHours HVAC" />
+          <meta property="og:description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners." />
+        </Helmet>
+        <div className="container mx-auto py-24 px-4 min-h-screen">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-3xl font-bold mb-6">HVAC Forum</h1>
+            <Card>
+              <CardHeader>
+                <CardTitle>Login Required</CardTitle>
+                <CardDescription>
+                  You need to login to access the forum
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Our forum is available to registered users only. Please log in or create an account
+                  to join discussions about HVAC topics, ask questions, and share your experiences.
+                </p>
+              </CardContent>
+              <CardFooter className="flex justify-center">
+                <Link href="/auth">
+                  <Button>Login or Register</Button>
+                </Link>
+              </CardFooter>
+            </Card>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
   
   // Show loading state
   if (categoriesLoading) {
     return (
-      <div className="container mx-auto py-24 px-4 min-h-screen">
-        <div className="flex justify-center items-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <>
+        <Helmet>
+          <title>HVAC Community Forum - AfterHours HVAC</title>
+          <meta name="description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners. Get expert advice and share experiences." />
+          <meta property="og:title" content="HVAC Community Forum - AfterHours HVAC" />
+          <meta property="og:description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners." />
+        </Helmet>
+        <div className="container mx-auto py-24 px-4 min-h-screen">
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
         </div>
-      </div>
+      </>
     );
   }
   
   // Show error state
   if (categoriesError) {
     return (
-      <div className="container mx-auto py-24 px-4 min-h-screen">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6">HVAC Forum</h1>
-          <Card className="border-destructive">
-            <CardHeader>
-              <CardTitle className="text-destructive">Error</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>There was an error loading the forum. Please try again later.</p>
-            </CardContent>
-          </Card>
+      <>
+        <Helmet>
+          <title>HVAC Community Forum - AfterHours HVAC</title>
+          <meta name="description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners. Get expert advice and share experiences." />
+        </Helmet>
+        <div className="container mx-auto py-24 px-4 min-h-screen">
+          <div className="max-w-3xl mx-auto">
+            <h1 className="text-3xl font-bold mb-6">HVAC Forum</h1>
+            <Card className="border-destructive">
+              <CardHeader>
+                <CardTitle className="text-destructive">Error</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>There was an error loading the forum. Please try again later.</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
   
   // Forum categories view (default view)
-  if (!selectedCategory) {
-    return (
+  return (
+    <>
+      <Helmet>
+        <title>HVAC Community Forum - AfterHours HVAC</title>
+        <meta name="description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners. Get expert advice and share experiences." />
+        <meta property="og:title" content="HVAC Community Forum - AfterHours HVAC" />
+        <meta property="og:description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners." />
+        <meta property="og:type" content="website" />
+        <meta name="keywords" content="HVAC forum, heating cooling discussion, HVAC community, HVAC questions, HVAC advice" />
+      </Helmet>
       <div className="container mx-auto py-24 px-4 min-h-screen">
         <div className="max-w-5xl mx-auto">
           <div className="flex justify-between items-center mb-8">
@@ -186,7 +211,7 @@ export default function ForumPage() {
               Contact Support
             </Button>
           </div>
-          
+        
           <p className="text-muted-foreground mb-8">
             Welcome to the AfterHours HVAC forum! This is where community members can discuss HVAC topics,
             ask questions, share experiences, and get advice from professionals. Please be respectful and
@@ -274,9 +299,195 @@ export default function ForumPage() {
 
           <Separator className="my-8" />
 
+          {/* User Discussion Area */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold">Community Discussions</h2>
+              <Button 
+                onClick={() => setShowNewTopicForm(!showNewTopicForm)}
+                className="bg-primary hover:bg-primary/80"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Post
+              </Button>
+            </div>
+
+            {/* New Post Form */}
+            {showNewTopicForm && (
+              <Card className="mb-6 border-primary/30">
+                <CardHeader>
+                  <CardTitle>Create New Discussion</CardTitle>
+                  <CardDescription>
+                    Share your HVAC questions, experiences, or insights with the community
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Title</label>
+                    <Input
+                      placeholder="What's your HVAC question or topic?"
+                      value={newTopicTitle}
+                      onChange={(e) => setNewTopicTitle(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Content</label>
+                    <Textarea
+                      placeholder="Describe your question, issue, or share your experience..."
+                      value={newTopicContent}
+                      onChange={(e) => setNewTopicContent(e.target.value)}
+                      rows={4}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => {
+                        if (newTopicTitle && newTopicContent) {
+                          toast({
+                            title: "Post Created!",
+                            description: "Your discussion has been posted to the community.",
+                          });
+                          setNewTopicTitle("");
+                          setNewTopicContent("");
+                          setShowNewTopicForm(false);
+                        }
+                      }}
+                      className="bg-primary hover:bg-primary/80"
+                    >
+                      Post Discussion
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setShowNewTopicForm(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Sample User Posts */}
+            <div className="space-y-4">
+              <Card className="hover:border-primary/50 transition-colors">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex flex-col items-center gap-1 mr-2">
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-green-500/20">
+                        <ThumbsUp className="h-3 w-3 text-green-500" />
+                      </Button>
+                      <span className="text-sm font-medium">23</span>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-red-500/20">
+                        <ThumbsDown className="h-3 w-3 text-gray-400" />
+                      </Button>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="outline" className="border-blue-500 text-blue-500">
+                          <TrendingUp className="h-3 w-3 mr-1" />
+                          HOT
+                        </Badge>
+                        <span className="text-sm text-muted-foreground">Posted by TechnicianMike • 3 hours ago</span>
+                      </div>
+                      <h3 className="font-semibold text-lg mb-2">Furnace making weird noise - normal or concern?</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        My 5-year-old gas furnace started making a low humming sound when it cycles on. It's not super loud but definitely noticeable. Should I be worried or is this normal wear?
+                      </p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <MessageSquare className="h-3 w-3" />
+                          <span>8 replies</span>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-auto p-0 text-xs">
+                          <Reply className="h-3 w-3 mr-1" />
+                          Reply
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:border-primary/50 transition-colors">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex flex-col items-center gap-1 mr-2">
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-green-500/20">
+                        <ThumbsUp className="h-3 w-3 text-gray-400" />
+                      </Button>
+                      <span className="text-sm font-medium">15</span>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-red-500/20">
+                        <ThumbsDown className="h-3 w-3 text-gray-400" />
+                      </Button>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-sm text-muted-foreground">Posted by HomeownerSarah • 1 day ago</span>
+                      </div>
+                      <h3 className="font-semibold text-lg mb-2">Best practices for changing HVAC filters?</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        New homeowner here! How often should I change my HVAC filters? What type should I buy? Any recommendations for someone with allergies?
+                      </p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <MessageSquare className="h-3 w-3" />
+                          <span>12 replies</span>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-auto p-0 text-xs">
+                          <Reply className="h-3 w-3 mr-1" />
+                          Reply
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:border-primary/50 transition-colors">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex flex-col items-center gap-1 mr-2">
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-green-500/20">
+                        <ThumbsUp className="h-3 w-3 text-gray-400" />
+                      </Button>
+                      <span className="text-sm font-medium">7</span>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-red-500/20">
+                        <ThumbsDown className="h-3 w-3 text-gray-400" />
+                      </Button>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-sm text-muted-foreground">Posted by ContractorJoe • 2 days ago</span>
+                      </div>
+                      <h3 className="font-semibold text-lg mb-2">Energy efficiency tips for older HVAC systems</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Working with a 15-year-old system that's still running strong. What are some cost-effective ways to improve efficiency without full replacement?
+                      </p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <MessageSquare className="h-3 w-3" />
+                          <span>5 replies</span>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-auto p-0 text-xs">
+                          <Reply className="h-3 w-3 mr-1" />
+                          Reply
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          <Separator className="my-8" />
+
           {/* Forum Categories */}
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">Discussion Categories</h2>
+            <h2 className="text-xl font-semibold mb-4">Browse by Category</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Organized discussions by topic area
+            </p>
           </div>
           
           <div className="grid gap-6">
@@ -328,172 +539,6 @@ export default function ForumPage() {
           </div>
         </div>
       </div>
-    );
-  }
-  
-  // Topic listing for a category
-  if (selectedCategory && !selectedTopic) {
-    const category = categories?.find(c => c.id === selectedCategory);
-    
-    return (
-      <div className="container mx-auto py-24 px-4 min-h-screen">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center mb-8">
-            <Button variant="outline" onClick={() => setSelectedCategory(null)} className="mr-4">
-              Back to Categories
-            </Button>
-            <h1 className="text-2xl font-bold">{category?.name}</h1>
-          </div>
-          
-          <div className="flex justify-between items-center mb-6">
-            <p className="text-muted-foreground">{category?.description}</p>
-            <Button>
-              <MessageSquare className="h-4 w-4 mr-2" />
-              New Topic
-            </Button>
-          </div>
-          
-          {topicsLoading ? (
-            <div className="flex justify-center items-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : (
-            <div className="grid gap-4">
-              {topics && topics.length > 0 ? (
-                topics.map((topic) => (
-                  <Card key={topic.id} className="hover:border-primary transition-colors cursor-pointer"
-                    onClick={() => setSelectedTopic(topic.id)}>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-xl">{topic.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <p className="line-clamp-2">{topic.content}</p>
-                    </CardContent>
-                    <CardFooter className="flex justify-between text-sm text-muted-foreground">
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-1" />
-                        <span>By: User {topic.userId}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-1" />
-                        <span>{new Date(topic.createdAt).toLocaleDateString()}</span>
-                      </div>
-                    </CardFooter>
-                  </Card>
-                ))
-              ) : (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>No Topics</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>No topics have been created in this category yet. Be the first to start a discussion!</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-  
-  // Topic view with posts
-  if (selectedCategory && selectedTopic) {
-    const category = categories?.find(c => c.id === selectedCategory);
-    const topic = topics?.find(t => t.id === selectedTopic);
-    
-    return (
-      <div className="container mx-auto py-24 px-4 min-h-screen">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center mb-2">
-            <Button variant="outline" onClick={() => setSelectedTopic(null)} className="mr-4">
-              Back to Topics
-            </Button>
-          </div>
-          
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold mb-2">{topic?.title}</h1>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Users className="h-4 w-4 mr-1" />
-              <span className="mr-4">By: User {topic?.userId}</span>
-              <Clock className="h-4 w-4 mr-1" />
-              <span>{topic ? new Date(topic.createdAt).toLocaleDateString() : ''}</span>
-            </div>
-          </div>
-          
-          {postsLoading ? (
-            <div className="flex justify-center items-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {/* Original post */}
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between">
-                    <CardTitle className="text-lg">User {topic?.userId}</CardTitle>
-                    <span className="text-sm text-muted-foreground">
-                      {topic ? new Date(topic.createdAt).toLocaleString() : ''}
-                    </span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose prose-invert max-w-none">
-                    <p>{topic?.content}</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* Replies */}
-              {posts && posts.length > 0 ? (
-                posts.map((post) => (
-                  <Card key={post.id}>
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between">
-                        <CardTitle className="text-lg">User {post.userId}</CardTitle>
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(post.createdAt).toLocaleString()}
-                          {post.isEdited && ' (edited)'}
-                        </span>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="prose prose-invert max-w-none">
-                        <p>{post.content}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <Card>
-                  <CardContent className="py-6">
-                    <p className="text-center text-muted-foreground">No replies yet. Be the first to reply!</p>
-                  </CardContent>
-                </Card>
-              )}
-              
-              {/* Reply form */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Post a Reply</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <textarea 
-                    className="w-full min-h-[150px] bg-background border rounded-md p-2 resize-y"
-                    placeholder="Write your reply here..."
-                  />
-                </CardContent>
-                <CardFooter className="flex justify-end">
-                  <Button>Post Reply</Button>
-                </CardFooter>
-              </Card>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-  
-  return null;
+    </>
+  );
 }
