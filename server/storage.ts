@@ -424,6 +424,70 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return updatedReview;
   }
+
+  // HVAC Data methods
+  async getHvacEquipment(): Promise<HvacEquipment[]> {
+    return await db.select().from(hvacEquipment);
+  }
+
+  async createHvacEquipment(equipment: InsertHvacEquipment): Promise<HvacEquipment> {
+    const [newEquipment] = await db
+      .insert(hvacEquipment)
+      .values(equipment)
+      .returning();
+    return newEquipment;
+  }
+
+  async updateHvacEquipment(id: number, data: Partial<HvacEquipment>): Promise<HvacEquipment | undefined> {
+    const [updated] = await db
+      .update(hvacEquipment)
+      .set(data)
+      .where(eq(hvacEquipment.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getHvacMaterials(): Promise<HvacMaterial[]> {
+    return await db.select().from(hvacMaterials);
+  }
+
+  async createHvacMaterial(material: InsertHvacMaterial): Promise<HvacMaterial> {
+    const [newMaterial] = await db
+      .insert(hvacMaterials)
+      .values(material)
+      .returning();
+    return newMaterial;
+  }
+
+  async updateHvacMaterial(id: number, data: Partial<HvacMaterial>): Promise<HvacMaterial | undefined> {
+    const [updated] = await db
+      .update(hvacMaterials)
+      .set(data)
+      .where(eq(hvacMaterials.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getHvacAccessories(): Promise<HvacAccessory[]> {
+    return await db.select().from(hvacAccessories);
+  }
+
+  async createHvacAccessory(accessory: InsertHvacAccessory): Promise<HvacAccessory> {
+    const [newAccessory] = await db
+      .insert(hvacAccessories)
+      .values(accessory)
+      .returning();
+    return newAccessory;
+  }
+
+  async updateHvacAccessory(id: number, data: Partial<HvacAccessory>): Promise<HvacAccessory | undefined> {
+    const [updated] = await db
+      .update(hvacAccessories)
+      .set(data)
+      .where(eq(hvacAccessories.id, id))
+      .returning();
+    return updated;
+  }
 }
 
 export const storage = new DatabaseStorage();

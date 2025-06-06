@@ -29,6 +29,7 @@ import ProCalculator from "@/pages/pro-calculator";
 import AuthPage from "@/pages/auth";
 import ForumPage from "@/pages/forum";
 import AdminData from "@/pages/admin-data";
+import SupplierData from "@/pages/supplier-data";
 // TODO: Add these pages when implemented
 // import AdminDashboard from "@/pages/admin-dashboard";
 
@@ -67,6 +68,7 @@ function Router() {
         
         {/* Admin-only routes */}
         <ProtectedRoute path="/admin-data" component={AdminData} adminOnly={true} />
+        <ProtectedRoute path="/supplier-data" component={SupplierData} adminOnly={true} />
         
         {/* 404 fallback */}
         <Route component={NotFound} />
