@@ -69,10 +69,31 @@ const galleryItems: GalleryItem[] = [
 
 const Gallery = () => {
   const [filter, setFilter] = useState<'all' | 'residential' | 'commercial'>('all');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   
   const filteredItems = filter === 'all' 
     ? galleryItems 
     : galleryItems.filter(item => item.category === filter);
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % filteredItems.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length);
+  };
+
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    
+    const interval = setInterval(nextSlide, 4000);
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, filteredItems.length]);
+
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [filter]);
 
   return (
     <>
@@ -116,43 +137,97 @@ const Gallery = () => {
             </button>
           </div>
           
-          {/* Gallery Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {filteredItems.map((item) => (
-              <div key={item.id} className="bg-darkgray rounded-lg overflow-hidden">
-                <div className="relative">
-                  <img 
-                    src={item.beforeImg} 
-                    alt={item.beforeAlt} 
-                    className="w-full h-64 object-cover"
-                  />
-                  <div className="absolute top-0 left-0 bg-dark bg-opacity-75 text-white px-4 py-2 rounded-br-lg">
-                    <span className="font-medium">Before</span>
-                  </div>
-                </div>
-                <div className="relative">
-                  <img 
-                    src={item.afterImg} 
-                    alt={item.afterAlt} 
-                    className="w-full h-64 object-cover"
-                  />
-                  <div className="absolute top-0 left-0 bg-primary text-white px-4 py-2 rounded-br-lg">
-                    <span className="font-medium">After</span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold font-header mb-2">{item.title}</h3>
-                  <p className="text-lightgray mb-3">
-                    {item.category === 'residential' ? 'Residential project in ' : 'Commercial project in '}
-                    {item.location}
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-white font-medium">{item.location}</span>
-                    <span className="text-secondary">{item.benefit}: {item.benefitValue}</span>
-                  </div>
-                </div>
+          {/* Gallery Carousel */}
+          <div className="relative">
+            {/* Carousel controls */}
+            <div className="flex justify-between items-center mb-6">
+              <div className="text-sm text-lightgray">
+                {currentIndex + 1} of {filteredItems.length} projects
               </div>
-            ))}
+              <button
+                onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+                className="flex items-center space-x-2 text-primary hover:text-secondary transition-colors"
+              >
+                {isAutoPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                <span className="text-sm">{isAutoPlaying ? 'Pause' : 'Play'}</span>
+              </button>
+            </div>
+
+            <div className="overflow-hidden rounded-lg">
+              <div 
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+              >
+                {filteredItems.map((item) => (
+                  <div key={item.id} className="w-full flex-shrink-0">
+                    <div className="bg-darkgray rounded-lg overflow-hidden mx-2">
+                      <div className="grid grid-cols-1 md:grid-cols-2">
+                        <div className="relative">
+                          <img 
+                            src={item.beforeImg} 
+                            alt={item.beforeAlt} 
+                            className="w-full h-80 object-cover"
+                          />
+                          <div className="absolute top-4 left-4 bg-dark bg-opacity-75 text-white px-4 py-2 rounded-lg">
+                            <span className="font-medium">Before</span>
+                          </div>
+                        </div>
+                        <div className="relative">
+                          <img 
+                            src={item.afterImg} 
+                            alt={item.afterAlt} 
+                            className="w-full h-80 object-cover"
+                          />
+                          <div className="absolute top-4 left-4 bg-primary text-white px-4 py-2 rounded-lg">
+                            <span className="font-medium">After</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-6">
+                        <h3 className="text-2xl font-bold font-header mb-2">{item.title}</h3>
+                        <p className="text-lightgray mb-4">
+                          {item.category === 'residential' ? 'Residential project in ' : 'Commercial project in '}
+                          {item.location}
+                        </p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-white font-medium">{item.location}</span>
+                          <span className="text-secondary font-semibold">{item.benefit}: {item.benefitValue}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation buttons */}
+            <button
+              onClick={prevSlide}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-dark/80 hover:bg-dark text-white p-3 rounded-full transition-all border border-gray-700"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-dark/80 hover:bg-dark text-white p-3 rounded-full transition-all border border-gray-700"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
+
+            {/* Dots indicator */}
+            <div className="flex justify-center space-x-2 mt-6">
+              {filteredItems.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    index === currentIndex
+                      ? 'bg-primary'
+                      : 'bg-gray-600 hover:bg-gray-500'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
           
           {/* CTA Section */}

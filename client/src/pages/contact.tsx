@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import ContactForm from '@/components/forms/ContactForm';
+import ServiceAreaBanner from '@/components/contact/ServiceAreaBanner';
 
 const Contact = () => {
   return (
@@ -8,6 +9,9 @@ const Contact = () => {
         <title>Contact Us - AfterHours HVAC</title>
         <meta name="description" content="Contact AfterHours HVAC for 24/7 emergency service, installation quotes, and maintenance plans. Serving Calgary, Lethbridge, and surrounding areas." />
       </Helmet>
+      
+      {/* Service Area Banner */}
+      <ServiceAreaBanner />
       
       {/* Page Header */}
       <div className="relative pt-24 pb-10 bg-dark">
