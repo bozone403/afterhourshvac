@@ -130,7 +130,7 @@ const Header = () => {
                       <Calculator className="h-4 w-4 mr-2" />
                       Pro Calculator
                     </DropdownMenuItem>
-                    {user.role === 'admin' && (
+                    {user.isAdmin && (
                       <>
                         <DropdownMenuItem onClick={() => navigate('/admin-data')}>
                           <Settings className="h-4 w-4 mr-2" />
