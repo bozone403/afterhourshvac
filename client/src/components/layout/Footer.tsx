@@ -55,9 +55,9 @@ const Footer = () => {
         <div className="pt-8 border-t border-gray-700 text-center">
           <p className="text-lightgray text-sm">© {new Date().getFullYear()} AfterHours HVAC. All rights reserved.</p>
           <div className="flex justify-center space-x-4 mt-4">
-            <Link href="/privacy-policy"><a className="text-lightgray hover:text-white transition-colors text-sm">Privacy Policy</a></Link>
-            <Link href="/terms-of-service"><a className="text-lightgray hover:text-white transition-colors text-sm">Terms of Service</a></Link>
-            <Link href="/sitemap"><a className="text-lightgray hover:text-white transition-colors text-sm">Sitemap</a></Link>
+            <Link href="/privacy-policy"><div className="text-lightgray hover:text-white transition-colors text-sm cursor-pointer">Privacy Policy</div></Link>
+            <Link href="/terms-of-service"><div className="text-lightgray hover:text-white transition-colors text-sm cursor-pointer">Terms of Service</div></Link>
+            <Link href="/sitemap"><div className="text-lightgray hover:text-white transition-colors text-sm cursor-pointer">Sitemap</div></Link>
           </div>
         </div>
       </div>
