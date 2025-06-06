@@ -3,35 +3,43 @@ import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calculator, Building, Flame, Snowflake, Wrench, DollarSign, Zap } from 'lucide-react';
+import { Calculator, Building, Flame, Snowflake, Wrench, DollarSign, Zap, File, Crown } from 'lucide-react';
 
-const calculators = [
-  {
-    id: 'material-estimator',
-    title: 'Material Cost Estimator',
-    description: 'Calculate job costs with real supplier pricing and your multipliers',
-    icon: Calculator,
-    link: '/calculators/material-estimator',
-    type: 'free',
-    badge: 'Free Tool'
-  },
-  {
-    id: 'commercial-estimator', 
-    title: 'Commercial Job Estimator',
-    description: 'Comprehensive commercial HVAC project cost calculator',
-    icon: Building,
-    link: '/calculators/commercial-estimator',
-    type: 'free',
-    badge: 'Free Tool'
-  },
+const freeCalculators = [
   {
     id: 'btu',
     title: 'BTU Calculator',
     description: 'Calculate heating and cooling requirements for any space',
     icon: Zap,
     link: '/calculators/btu',
-    type: 'free',
     badge: 'Free Tool'
+  }
+];
+
+const proCalculators = [
+  {
+    id: 'material-estimator',
+    title: 'Advanced Material Calculator',
+    description: 'Real-time Alggin.com pricing with custom multipliers',
+    icon: Calculator,
+    link: '/membership',
+    badge: 'Pro Only'
+  },
+  {
+    id: 'commercial-estimator', 
+    title: 'Commercial Load Calculator',
+    description: 'Complex load calculations for commercial HVAC systems',
+    icon: Building,
+    link: '/membership',
+    badge: 'Pro Only'
+  },
+  {
+    id: 'project-templates',
+    title: 'Project Templates',
+    description: 'Pre-built templates for common HVAC installations',
+    icon: File,
+    link: '/membership',
+    badge: 'Pro Only'
   }
 ];
 
@@ -64,7 +72,7 @@ const Calculators = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {calculators.map((calc) => {
+              {freeCalculators.map((calc) => {
                 const IconComponent = calc.icon;
                 return (
                   <Link key={calc.id} href={calc.link}>
@@ -93,7 +101,50 @@ const Calculators = () => {
             </div>
           </div>
 
-
+          {/* Pro Calculators Section */}
+          <div className="mt-16">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center bg-green-600/10 border border-green-600/20 rounded-full px-4 py-2 mb-4">
+                <Crown className="h-4 w-4 text-green-400 mr-2" />
+                <span className="text-green-400 text-sm font-medium">Pro Tools</span>
+              </div>
+              <h2 className="text-3xl font-bold text-white mb-2">Professional Calculators</h2>
+              <p className="text-slate-400">Advanced tools with real supplier pricing - $49/month</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {proCalculators.map((calc) => {
+                const IconComponent = calc.icon;
+                return (
+                  <Link key={calc.id} href={calc.link}>
+                    <Card className="bg-slate-800/50 border-slate-700 hover:bg-green-600/10 hover:border-green-600/30 transition-all cursor-pointer group relative">
+                      <div className="absolute top-4 right-4">
+                        <Crown className="h-5 w-5 text-green-400" />
+                      </div>
+                      <CardHeader className="text-center pb-4">
+                        <div className="mx-auto mb-4 p-3 bg-green-600/10 rounded-full w-fit group-hover:bg-green-600/20 transition-colors">
+                          <IconComponent className="h-8 w-8 text-green-400" />
+                        </div>
+                        <Badge variant="outline" className="w-fit mx-auto mb-2 border-green-500 text-green-400">
+                          {calc.badge}
+                        </Badge>
+                        <CardTitle className="text-white text-xl">{calc.title}</CardTitle>
+                        <CardDescription className="text-slate-300">
+                          {calc.description}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <Button className="w-full bg-green-600 hover:bg-green-700">
+                          <Crown className="h-4 w-4 mr-2" />
+                          Upgrade to Pro
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
 
           {/* Contact Section */}
           <div className="mt-16 text-center">
