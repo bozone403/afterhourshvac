@@ -1,6 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { pool } from "./db";
 import { z } from "zod";
 import { 
   insertUserSchema, 
@@ -212,13 +213,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const booking = req.body;
       
-      // Store booking in database
-      const newBooking = await storage.createContactSubmission({
-        name: booking.customerName,
-        email: booking.email,
-        phone: booking.phone,
-        subject: `${booking.serviceType} Booking`,
-        message: `Service: ${booking.serviceType}
+      // Store booking directly in database using raw SQL to match existing table structure
+      const query = `
+        INSERT INTO contact_submissions (name, email, phone, subject, message, status, submitted_at)
+        VALUES ($1, $2, $3, $4, $5, $6, NOW())
+        RETURNING id
+      `;
+      
+      const bookingMessage = `Service: ${booking.serviceType}
 Address: ${booking.address}
 Type: ${booking.furnaceType || booking.serviceType}
 Home Size: ${booking.homeSize || 'Not specified'}
@@ -226,13 +228,20 @@ Urgency: ${booking.urgency}
 Preferred Date: ${booking.preferredDate || 'Flexible'}
 Time Slot: ${booking.timeSlot || 'Flexible'}
 Price: $${booking.price}
-Special Requirements: ${booking.specialRequirements || 'None'}`,
-        status: 'new'
-      });
+Special Requirements: ${booking.specialRequirements || 'None'}`;
+
+      const result = await pool.sql(query, [
+        booking.customerName,
+        booking.email,
+        booking.phone || null,
+        `${booking.serviceType} Booking`,
+        bookingMessage,
+        'new'
+      ]);
 
       res.json({ 
         success: true, 
-        bookingId: newBooking.id,
+        bookingId: result.rows[0].id,
         message: "Booking created successfully" 
       });
     } catch (error) {
