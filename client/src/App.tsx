@@ -32,6 +32,7 @@ import BlogCommercialVsResidential from "@/pages/blog/commercial-vs-residential-
 import Checkout from "@/pages/checkout";
 import AdminPhotos from "@/pages/admin-photos";
 import PaymentConfirmation from "@/pages/payment-confirmation";
+import FurnacePage from "@/pages/products/furnace";
 import AuthPage from "@/pages/auth";
 import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
@@ -67,6 +68,7 @@ function Router() {
         <Route path="/calculators/commercial-estimator" component={CommercialEstimator} />
         <Route path="/calculators/btu" component={BTUCalculator} />
         <Route path="/services/furnace-install" component={FurnaceInstall} />
+        <Route path="/products/furnace" component={FurnacePage} />
         <Route path="/blog" component={BlogIndex} />
         <Route path="/blog/prepare-furnace-winter" component={BlogFurnaceWinter} />
         <Route path="/blog/commercial-vs-residential-hvac" component={BlogCommercialVsResidential} />
@@ -74,14 +76,18 @@ function Router() {
         <Route path="/login" component={LoginPage} />
         <Route path="/register" component={RegisterPage} />
         
+        {/* Membership and Pro routes */}
+        <Route path="/membership" component={Membership} />
+        <Route path="/calculators/pro" component={ProCalculator} />
+        
         {/* Protected routes that require authentication */}
         <ProtectedRoute path="/checkout" component={Checkout} />
         <ProtectedRoute path="/payment-confirmation" component={PaymentConfirmation} />
-        <ProtectedRoute path="/pro-calculator" component={ProCalculator} />
         <ProtectedRoute path="/forum" component={ForumPage} />
         
         {/* Admin-only routes */}
         <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
+        <ProtectedRoute path="/admin/photos" component={AdminPhotos} adminOnly={true} />
         <ProtectedRoute path="/admin-data" component={AdminData} adminOnly={true} />
         <ProtectedRoute path="/supplier-data" component={SupplierData} adminOnly={true} />
         <ProtectedRoute path="/alggin-data" component={AlgginData} adminOnly={true} />
