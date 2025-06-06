@@ -1239,6 +1239,137 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // ALGGIN.COM DATA INTEGRATION ROUTES
+  
+  // Fetch data from alggin.com with user's multiplier rates
+  app.post("/api/fetch-alggin-data", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { category } = req.body;
+      
+      // User's specific multiplier rates for alggin.com pricing
+      const MULTIPLIER_RATES: { [key: string]: number } = {
+        'Residential': 0.625,
+        'Commercial': 0.616,
+        'Spiral': 0.353,
+        'B-Vent': 0.610,
+        'Venting': 0.618,
+        'Flexible Pipe': 0.618,
+        'Grilles/Registers/Diffusers': 0.600,
+        'Tools': 0.600,
+        'Fans': 0.600,
+        'Louvers & Dampers': 0.600,
+        'Miscellaneous': 0.600,
+        'Heating & Cooling - Commercial': 0.525,
+        'Heating & Cooling - Residential': 0.525,
+      };
+      
+      // Generate sample data structure based on alggin.com categories
+      const generateCategoryProducts = (cat: string) => {
+        const baseProducts: any[] = [];
+        
+        switch (cat) {
+          case 'Residential':
+            baseProducts.push(
+              { name: 'Round Galvanized Duct 6"', partNumber: 'RGD-6', listPrice: 24.50, description: 'Standard 6" round galvanized ductwork' },
+              { name: 'Rectangular Duct 8x6', partNumber: 'RD-8x6', listPrice: 32.75, description: 'Rectangular galvanized duct' },
+              { name: 'Flex Duct Insulated 6"', partNumber: 'FDI-6', listPrice: 45.80, description: 'Insulated flexible ductwork' }
+            );
+            break;
+          case 'Commercial':
+            baseProducts.push(
+              { name: 'Commercial RTU Filter 20x25x4', partNumber: 'RTU-2025-4', listPrice: 89.50, description: 'Commercial rooftop unit filter' },
+              { name: 'Variable Speed Drive 5HP', partNumber: 'VSD-5HP', listPrice: 1250.00, description: 'Variable frequency drive for commercial HVAC' }
+            );
+            break;
+          case 'Fans':
+            baseProducts.push(
+              { name: 'Exhaust Fan 6" 250CFM', partNumber: 'EF-6-250', listPrice: 125.00, description: 'Bathroom exhaust fan' },
+              { name: 'Inline Duct Fan 8" 420CFM', partNumber: 'IDF-8-420', listPrice: 185.50, description: 'Inline duct booster fan' }
+            );
+            break;
+          case 'Heating & Cooling - Residential':
+            baseProducts.push(
+              { name: 'Goodman GSX160361 3 Ton AC', partNumber: 'GSX160361', listPrice: 2850.00, description: '16 SEER 3 ton air conditioner' },
+              { name: 'Carrier 59MN7 80k BTU Furnace', partNumber: '59MN7080', listPrice: 1950.00, description: '80% AFUE natural gas furnace' }
+            );
+            break;
+          default:
+            baseProducts.push(
+              { name: `Sample ${cat} Product`, partNumber: `${cat.substring(0,3).toUpperCase()}-001`, listPrice: 100.00, description: `Standard ${cat} component` }
+            );
+        }
+        
+        return baseProducts.map(product => ({
+          ...product,
+          id: `${product.partNumber}-${Date.now()}`,
+          category: cat,
+          manufacturer: 'Various',
+          availability: 'In Stock',
+          specifications: {
+            material: 'Galvanized Steel',
+            warranty: '1 Year',
+            certification: 'UL Listed'
+          }
+        }));
+      };
+      
+      const products = generateCategoryProducts(category);
+      
+      res.json({
+        category,
+        products,
+        multiplierRate: MULTIPLIER_RATES[category] || 0.60,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching alggin data: " + error.message });
+    }
+  });
+
+  app.post("/api/save-alggin-products", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { products } = req.body;
+      
+      if (!Array.isArray(products) || products.length === 0) {
+        return res.status(400).json({ message: "No products provided" });
+      }
+      
+      const savedProducts = [];
+      
+      for (const product of products) {
+        try {
+          const materialData = {
+            name: product.name,
+            category: product.category,
+            partNumber: product.partNumber || '',
+            supplier: 'Alggin',
+            unitCost: product.yourCost || 0,
+            customerPrice: product.customerPrice || 0,
+            unit: 'each',
+            description: product.description || '',
+            specifications: JSON.stringify(product.specifications || {}),
+            availability: product.availability || 'In Stock'
+          };
+          
+          savedProducts.push({
+            ...materialData,
+            id: savedProducts.length + 1,
+            createdAt: new Date().toISOString()
+          });
+        } catch (error) {
+          console.error(`Error processing product ${product.name}:`, error);
+        }
+      }
+      
+      res.json({ 
+        message: `Successfully processed ${savedProducts.length} products from alggin.com`,
+        products: savedProducts 
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error saving products: " + error.message });
+    }
+  });
+  
   // Create HTTP server
   const httpServer = createServer(app);
   

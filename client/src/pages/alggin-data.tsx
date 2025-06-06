@@ -15,7 +15,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 
 // Alggin.com multiplier rates provided by user
-const MULTIPLIER_RATES = {
+const MULTIPLIER_RATES: { [key: string]: number } = {
   'Residential': 0.625,
   'Commercial': 0.616,
   'Spiral': 0.353,
