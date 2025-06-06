@@ -653,6 +653,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
+  // USER PRODUCT ACCESS ROUTES
+  
+  // Get user's product access
+  app.get("/api/user/product-access", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const userAccess = await storage.getUserProductAccess(userId);
+      
+      // Transform to include category and tier from products
+      const accessWithDetails = await Promise.all(
+        userAccess.map(async (access) => {
+          const product = await storage.getProductById(access.productId);
+          return {
+            productId: access.productId,
+            category: product?.category || '',
+            tier: product?.tier || '',
+            purchasedAt: access.purchasedAt,
+            active: access.active
+          };
+        })
+      );
+      
+      res.json(accessWithDetails);
+    } catch (error: any) {
+      console.error("Error getting user product access:", error);
+      res.status(500).json({ 
+        error: "Error getting user product access", 
+        message: error.message 
+      });
+    }
+  });
   
   // GALLERY ROUTES
   

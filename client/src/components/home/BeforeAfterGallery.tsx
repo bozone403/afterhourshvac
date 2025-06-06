@@ -77,9 +77,9 @@ const BeforeAfterGallery = () => {
         
         <div className="text-center mt-12">
           <Link href="/gallery">
-            <a className="inline-flex items-center bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold shadow-lg">
+            <div className="inline-flex items-center bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold shadow-lg cursor-pointer">
               <i className="fas fa-image mr-2"></i> View More Projects
-            </a>
+            </div>
           </Link>
         </div>
       </div>
