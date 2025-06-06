@@ -370,7 +370,7 @@ export default function AdminDashboard() {
                             </div>
                             <div className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              {formatDistanceToNow(new Date(request.createdAt), { addSuffix: true })}
+                              {request.createdAt ? formatDistanceToNow(new Date(request.createdAt), { addSuffix: true }) : 'Unknown time'}
                             </div>
                           </div>
                         </CardContent>
@@ -427,7 +427,7 @@ export default function AdminDashboard() {
                             )}
                             <div className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              {formatDistanceToNow(new Date(quote.createdAt), { addSuffix: true })}
+                              {quote.createdAt ? formatDistanceToNow(new Date(quote.createdAt), { addSuffix: true }) : 'Unknown time'}
                             </div>
                           </div>
                         </CardContent>
