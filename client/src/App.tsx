@@ -27,9 +27,12 @@ import Checkout from "@/pages/checkout";
 import PaymentConfirmation from "@/pages/payment-confirmation";
 import ProCalculator from "@/pages/pro-calculator";
 import AuthPage from "@/pages/auth";
+import LoginPage from "@/pages/login";
+import RegisterPage from "@/pages/register";
 import ForumPage from "@/pages/forum";
 import AdminData from "@/pages/admin-data";
 import SupplierData from "@/pages/supplier-data";
+import AlgginData from "@/pages/alggin-data";
 // TODO: Add these pages when implemented
 // import AdminDashboard from "@/pages/admin-dashboard";
 
@@ -59,6 +62,8 @@ function Router() {
         <Route path="/blog/prepare-furnace-winter" component={BlogFurnaceWinter} />
         <Route path="/blog/commercial-vs-residential-hvac" component={BlogCommercialVsResidential} />
         <Route path="/auth" component={AuthPage} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/register" component={RegisterPage} />
         
         {/* Protected routes that require authentication */}
         <ProtectedRoute path="/checkout" component={Checkout} />
@@ -69,6 +74,7 @@ function Router() {
         {/* Admin-only routes */}
         <ProtectedRoute path="/admin-data" component={AdminData} adminOnly={true} />
         <ProtectedRoute path="/supplier-data" component={SupplierData} adminOnly={true} />
+        <ProtectedRoute path="/alggin-data" component={AlgginData} adminOnly={true} />
         
         {/* 404 fallback */}
         <Route component={NotFound} />

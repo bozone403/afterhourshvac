@@ -125,10 +125,20 @@ const Header = () => {
                       Pro Calculator
                     </DropdownMenuItem>
                     {user.role === 'admin' && (
-                      <DropdownMenuItem onClick={() => navigate('/admin')}>
-                        <Settings className="h-4 w-4 mr-2" />
-                        Admin Dashboard
-                      </DropdownMenuItem>
+                      <>
+                        <DropdownMenuItem onClick={() => navigate('/admin-data')}>
+                          <Settings className="h-4 w-4 mr-2" />
+                          Admin Data
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate('/supplier-data')}>
+                          <Settings className="h-4 w-4 mr-2" />
+                          Manual Data Entry
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate('/alggin-data')}>
+                          <Settings className="h-4 w-4 mr-2" />
+                          Alggin.com Import
+                        </DropdownMenuItem>
+                      </>
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout}>
