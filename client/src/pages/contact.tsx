@@ -1,3 +1,4 @@
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import ContactForm from '@/components/forms/ContactForm';
 import ServiceAreaBanner from '@/components/contact/ServiceAreaBanner';

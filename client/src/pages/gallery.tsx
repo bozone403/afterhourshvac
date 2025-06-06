@@ -1,5 +1,5 @@
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 
