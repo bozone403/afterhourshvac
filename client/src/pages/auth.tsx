@@ -50,9 +50,15 @@ export default function AuthPage() {
   const [location, navigate] = useLocation();
   const { user, isLoading, loginMutation, registerMutation } = useAuth();
 
-  // Redirect if already logged in
+  // Use useEffect for navigation to avoid rendering during render
+  React.useEffect(() => {
+    if (user && !isLoading) {
+      navigate("/");
+    }
+  }, [user, isLoading, navigate]);
+
+  // Show loading or return early if redirecting
   if (user && !isLoading) {
-    navigate("/");
     return null;
   }
 
