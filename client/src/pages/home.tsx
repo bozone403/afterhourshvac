@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import HeroSection from '@/components/home/HeroSection';
-import ServicesGrid from '@/components/home/ServicesGrid';
+import ServicesCarousel from '@/components/home/ServicesCarousel';
 import QuickContactWidget from '@/components/home/QuickContactWidget';
 import { Link } from 'wouter';
 
@@ -15,8 +15,8 @@ const Home = () => {
       {/* Hero Section */}
       <HeroSection />
       
-      {/* Services Grid */}
-      <ServicesGrid />
+      {/* Services Carousel */}
+      <ServicesCarousel />
       
       {/* Quick Contact Widget */}
       <QuickContactWidget />
