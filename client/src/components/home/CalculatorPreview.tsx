@@ -73,14 +73,14 @@ const CalculatorPreview = () => {
             
             <div className="flex flex-wrap gap-4">
               <Link href="/calculators">
-                <a className="bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold shadow-lg">
+                <div className="bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold shadow-lg cursor-pointer">
                   Try Free Calculator
-                </a>
+                </div>
               </Link>
-              <Link href="/calculators">
-                <a className="bg-dark border border-primary text-primary hover:bg-primary hover:text-white py-3 px-6 rounded-md transition-all font-semibold">
+              <Link href="/pro-calculator">
+                <div className="bg-dark border border-primary text-primary hover:bg-primary hover:text-white py-3 px-6 rounded-md transition-all font-semibold cursor-pointer">
                   Upgrade to Pro
-                </a>
+                </div>
               </Link>
             </div>
           </div>

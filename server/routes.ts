@@ -114,7 +114,7 @@ function setupAuth(app: Express) {
 
   // Admin authentication middleware
   const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
-    if (!req.isAuthenticated() || req.user?.role !== "admin") {
+    if (!req.isAuthenticated() || (req.user as any)?.role !== "admin") {
       return res.status(403).json({ error: "Forbidden" });
     }
     next();
