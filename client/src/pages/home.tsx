@@ -109,8 +109,13 @@ const Home = () => {
             <div className="lg:col-span-2">
               <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700">
                 <div className="p-6">
-                  <h3 className="text-xl font-bold font-header mb-6">Send Us a Message</h3>
-                  <ContactForm />
+                  <h3 className="text-xl font-bold font-header mb-6">Get Started Today</h3>
+                  <p className="text-lightgray mb-4">Ready to improve your HVAC system? Contact us for a free consultation.</p>
+                  <Link href="/contact">
+                    <div className="bg-primary hover:bg-primary/80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center cursor-pointer">
+                      Get Free Quote
+                    </div>
+                  </Link>
                 </div>
               </div>
             </div>

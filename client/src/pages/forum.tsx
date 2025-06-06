@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { Helmet } from 'react-helmet-async';
 import {
   Card,
   CardContent,
@@ -12,7 +13,14 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Loader2, MessageSquare, Clock, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { Loader2, MessageSquare, Clock, Users, Pin, Shield, ThumbsUp, ThumbsDown, Reply, Plus, TrendingUp } from "lucide-react";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { formatDistanceToNow } from 'date-fns';
 
 // Type definitions for our forum data
 type ForumCategory = {
@@ -49,8 +57,13 @@ type ForumPost = {
 
 export default function ForumPage() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<number | null>(null);
+  const [showNewTopicForm, setShowNewTopicForm] = useState(false);
+  const [newTopicTitle, setNewTopicTitle] = useState("");
+  const [newTopicContent, setNewTopicContent] = useState("");
+  const [replyContent, setReplyContent] = useState("");
   
   // Get forum categories
   const {
@@ -179,6 +192,92 @@ export default function ForumPage() {
             ask questions, share experiences, and get advice from professionals. Please be respectful and
             follow our community guidelines.
           </p>
+          
+          {/* Pinned Admin Posts Section */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Pin className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Pinned by Admin</h2>
+              <Shield className="h-4 w-4 text-yellow-500" />
+            </div>
+            
+            <div className="space-y-3">
+              <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/30">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-500">
+                          <Pin className="h-3 w-3 mr-1" />
+                          PINNED
+                        </Badge>
+                        <Badge variant="outline" className="border-green-500 text-green-500">
+                          <Shield className="h-3 w-3 mr-1" />
+                          ADMIN
+                        </Badge>
+                      </div>
+                      <h3 className="font-semibold text-lg mb-2">Welcome to AfterHours HVAC Forum!</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Please read our community guidelines before posting. We're here to help with all your HVAC questions and share professional insights.
+                      </p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <ThumbsUp className="h-3 w-3" />
+                          <span>42</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <MessageSquare className="h-3 w-3" />
+                          <span>12 replies</span>
+                        </div>
+                        <span>by JordanBoz • 2 days ago</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-r from-blue-500/10 to-primary/10 border-blue-500/30">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-500">
+                          <Pin className="h-3 w-3 mr-1" />
+                          PINNED
+                        </Badge>
+                        <Badge variant="outline" className="border-green-500 text-green-500">
+                          <Shield className="h-3 w-3 mr-1" />
+                          ADMIN
+                        </Badge>
+                      </div>
+                      <h3 className="font-semibold text-lg mb-2">Winter HVAC Maintenance Tips</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Essential maintenance checklist for winter season. Keep your system running efficiently when you need it most.
+                      </p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <ThumbsUp className="h-3 w-3" />
+                          <span>67</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <MessageSquare className="h-3 w-3" />
+                          <span>23 replies</span>
+                        </div>
+                        <span>by JordanBoz • 1 week ago</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          <Separator className="my-8" />
+
+          {/* Forum Categories */}
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-4">Discussion Categories</h2>
+          </div>
           
           <div className="grid gap-6">
             {categories && categories.length > 0 ? (
