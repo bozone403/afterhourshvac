@@ -101,6 +101,12 @@ const Header = () => {
               <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/forum') ? 'text-primary' : ''}`}>Forum</div>
             </Link>
             
+            {!user && (
+              <Link href="/login">
+                <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/login') ? 'text-primary' : ''}`}>Login</div>
+              </Link>
+            )}
+            
             <div className="ml-2 flex items-center space-x-2">
               <a 
                 href="tel:4036136014" 

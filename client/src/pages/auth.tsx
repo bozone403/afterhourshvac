@@ -50,18 +50,6 @@ export default function AuthPage() {
   const [location, navigate] = useLocation();
   const { user, isLoading, loginMutation, registerMutation } = useAuth();
 
-  // Use useEffect for navigation to avoid rendering during render
-  React.useEffect(() => {
-    if (user && !isLoading) {
-      navigate("/");
-    }
-  }, [user, isLoading, navigate]);
-
-  // Show loading or return early if redirecting
-  if (user && !isLoading) {
-    return null;
-  }
-
   // Login form
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -70,10 +58,6 @@ export default function AuthPage() {
       password: "",
     },
   });
-
-  const onLoginSubmit = (data: LoginFormValues) => {
-    loginMutation.mutate(data);
-  };
 
   // Register form
   const registerForm = useForm<RegisterFormValues>({
@@ -89,9 +73,29 @@ export default function AuthPage() {
     },
   });
 
+  const onLoginSubmit = (data: LoginFormValues) => {
+    loginMutation.mutate(data);
+  };
+
   const onRegisterSubmit = (data: RegisterFormValues) => {
     registerMutation.mutate(data);
   };
+
+  // Use useEffect for navigation to avoid rendering during render
+  React.useEffect(() => {
+    if (user && !isLoading) {
+      navigate("/");
+    }
+  }, [user, isLoading, navigate]);
+
+  // Show loading if redirecting
+  if (user && !isLoading) {
+    return (
+      <div className="container mx-auto flex min-h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto flex min-h-screen flex-col items-center justify-center">
