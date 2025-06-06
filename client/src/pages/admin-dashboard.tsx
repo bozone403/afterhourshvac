@@ -203,9 +203,12 @@ export default function AdminDashboard() {
           </div>
 
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-8">
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="contact">Contact Forms</TabsTrigger>
+              <TabsTrigger value="content">Content</TabsTrigger>
+              <TabsTrigger value="gallery">Gallery</TabsTrigger>
+              <TabsTrigger value="blog">Blog</TabsTrigger>
+              <TabsTrigger value="contact">Contact</TabsTrigger>
               <TabsTrigger value="emergency">Emergency</TabsTrigger>
               <TabsTrigger value="quotes">Quotes</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -267,6 +270,109 @@ export default function AdminDashboard() {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            <TabsContent value="content" className="mt-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Google Reviews Carousel</CardTitle>
+                    <CardDescription>Manage customer reviews displayed on homepage</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full mb-4">Add New Review</Button>
+                    <div className="space-y-3">
+                      <div className="p-3 border rounded-lg">
+                        <div className="flex justify-between items-start mb-2">
+                          <strong>Jordan M.</strong>
+                          <div className="flex space-x-2">
+                            <Button size="sm" variant="outline">Edit</Button>
+                            <Button size="sm" variant="destructive">Delete</Button>
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-1">⭐⭐⭐⭐⭐</p>
+                        <p className="text-sm">Excellent service and professional installation...</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Service Area Banner</CardTitle>
+                    <CardDescription>Manage rotating cities in service area</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full mb-4">Add New City</Button>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="p-2 bg-muted rounded">Calgary</div>
+                      <div className="p-2 bg-muted rounded">Edmonton</div>
+                      <div className="p-2 bg-muted rounded">Red Deer</div>
+                      <div className="p-2 bg-muted rounded">Lethbridge</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="gallery" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Project Gallery Management</CardTitle>
+                      <CardDescription>Manage before/after project photos in carousel</CardDescription>
+                    </div>
+                    <Button>Add New Project</Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="border rounded-lg p-4">
+                        <img src="https://via.placeholder.com/300x200" alt="Project" className="w-full h-32 object-cover rounded mb-2" />
+                        <h4 className="font-semibold">High-Efficiency Furnace Upgrade</h4>
+                        <p className="text-sm text-muted-foreground">Coaldale, AB • Residential</p>
+                        <div className="flex space-x-2 mt-2">
+                          <Button size="sm" variant="outline">Edit</Button>
+                          <Button size="sm" variant="destructive">Delete</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="blog" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Blog Post Management</CardTitle>
+                      <CardDescription>Create and manage blog articles</CardDescription>
+                    </div>
+                    <Button>Create New Post</Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className="font-semibold">Winter HVAC Maintenance Tips</h4>
+                          <p className="text-sm text-muted-foreground">Published • December 15, 2024</p>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button size="sm" variant="outline">Edit</Button>
+                          <Button size="sm" variant="destructive">Delete</Button>
+                        </div>
+                      </div>
+                      <p className="text-sm">Essential maintenance tips to keep your HVAC system running efficiently during Alberta winters...</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="contact" className="mt-6">

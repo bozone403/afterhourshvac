@@ -1272,6 +1272,199 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // CONTENT MANAGEMENT ROUTES (Admin Only)
+  
+  // Google Reviews Management
+  app.get("/api/admin/reviews-carousel", requireAdmin, async (req, res) => {
+    try {
+      const reviews = await storage.getReviews(false); // Get all reviews, not just approved
+      res.json(reviews);
+    } catch (error: any) {
+      console.error("Error getting reviews for admin:", error);
+      res.status(500).json({ 
+        error: "Error getting reviews", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.post("/api/admin/reviews-carousel", requireAdmin, async (req, res) => {
+    try {
+      const reviewData = {
+        ...req.body,
+        isApproved: true, // Admin-created reviews are auto-approved
+        isVerified: true
+      };
+      
+      const review = await storage.createReview(reviewData);
+      res.json(review);
+    } catch (error: any) {
+      console.error("Error creating review:", error);
+      res.status(500).json({ 
+        error: "Error creating review", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.put("/api/admin/reviews-carousel/:id", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const review = await storage.approveReview(id);
+      res.json(review);
+    } catch (error: any) {
+      console.error("Error updating review:", error);
+      res.status(500).json({ 
+        error: "Error updating review", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Service Area Management 
+  app.get("/api/admin/service-areas", requireAdmin, async (req, res) => {
+    try {
+      // For now, return the hardcoded cities - later can be stored in database
+      const cities = [
+        'Calgary', 'Edmonton', 'Red Deer', 'Lethbridge', 'Medicine Hat', 'Airdrie',
+        'Okotoks', 'Cochrane', 'Canmore', 'Banff', 'Camrose', 'Lacombe',
+        'Innisfail', 'Olds', 'Didsbury', 'Strathmore', 'High River', 'Turner Valley',
+        'Black Diamond', 'Chestermere', 'Rocky View County', 'Foothills County',
+        'Mountain View County', 'Drumheller'
+      ];
+      res.json(cities);
+    } catch (error: any) {
+      console.error("Error getting service areas:", error);
+      res.status(500).json({ 
+        error: "Error getting service areas", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Gallery Project Management for Carousel
+  app.post("/api/admin/gallery-projects", requireAdmin, async (req, res) => {
+    try {
+      const projectData = {
+        title: req.body.title,
+        description: req.body.description,
+        beforeImageUrl: req.body.beforeImageUrl,
+        afterImageUrl: req.body.afterImageUrl,
+        location: req.body.location,
+        category: req.body.category || 'residential',
+        isVisible: true
+      };
+      
+      const project = await storage.createGalleryImage(projectData);
+      res.json(project);
+    } catch (error: any) {
+      console.error("Error creating gallery project:", error);
+      res.status(500).json({ 
+        error: "Error creating gallery project", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.put("/api/admin/gallery-projects/:id", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const project = await storage.updateGalleryImage(id, req.body);
+      res.json(project);
+    } catch (error: any) {
+      console.error("Error updating gallery project:", error);
+      res.status(500).json({ 
+        error: "Error updating gallery project", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.delete("/api/admin/gallery-projects/:id", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteGalleryImage(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Gallery project not found" });
+      }
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error deleting gallery project:", error);
+      res.status(500).json({ 
+        error: "Error deleting gallery project", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Blog Management
+  app.get("/api/admin/blog-posts", requireAdmin, async (req, res) => {
+    try {
+      const posts = await storage.getBlogPosts(false); // Get all posts including unpublished
+      res.json(posts);
+    } catch (error: any) {
+      console.error("Error getting blog posts for admin:", error);
+      res.status(500).json({ 
+        error: "Error getting blog posts", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.post("/api/admin/blog-posts", requireAdmin, async (req, res) => {
+    try {
+      const postData = {
+        ...req.body,
+        authorId: (req.user as any).id,
+        slug: req.body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      };
+      
+      const post = await storage.createBlogPost(postData);
+      res.json(post);
+    } catch (error: any) {
+      console.error("Error creating blog post:", error);
+      res.status(500).json({ 
+        error: "Error creating blog post", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.put("/api/admin/blog-posts/:id", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const post = await storage.updateBlogPost(id, req.body);
+      res.json(post);
+    } catch (error: any) {
+      console.error("Error updating blog post:", error);
+      res.status(500).json({ 
+        error: "Error updating blog post", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.delete("/api/admin/blog-posts/:id", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteBlogPost(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error deleting blog post:", error);
+      res.status(500).json({ 
+        error: "Error deleting blog post", 
+        message: error.message 
+      });
+    }
+  });
+  
   // ALGGIN.COM DATA INTEGRATION ROUTES
   
   // Fetch data from alggin.com with user's multiplier rates
