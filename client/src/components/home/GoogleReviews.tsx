@@ -1,6 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Star, Quote, ExternalLink } from 'lucide-react';
+import { Star, Quote, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 interface Review {
   id: string;
@@ -65,6 +66,27 @@ const reviews: Review[] = [
 const GoogleReviews = () => {
   const averageRating = 4.9;
   const totalReviews = 127;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const reviewsPerPage = 3;
+
+  const nextReviews = () => {
+    setCurrentIndex((prev) => 
+      prev + reviewsPerPage >= reviews.length ? 0 : prev + reviewsPerPage
+    );
+  };
+
+  const prevReviews = () => {
+    setCurrentIndex((prev) => 
+      prev - reviewsPerPage < 0 ? Math.max(0, reviews.length - reviewsPerPage) : prev - reviewsPerPage
+    );
+  };
+
+  useEffect(() => {
+    const interval = setInterval(nextReviews, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const visibleReviews = reviews.slice(currentIndex, currentIndex + reviewsPerPage);
 
   return (
     <section className="bg-slate-900 py-16">
@@ -91,51 +113,84 @@ const GoogleReviews = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {reviews.map((review) => (
-            <Card key={review.id} className="bg-slate-800/50 border-slate-700 hover:bg-slate-800/70 transition-all">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-1">
-                    {[1,2,3,4,5].map(star => (
-                      <Star 
-                        key={star} 
-                        className={`h-4 w-4 ${star <= review.rating 
-                          ? 'fill-yellow-400 text-yellow-400' 
-                          : 'text-slate-600'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  {review.verified && (
-                    <Badge variant="outline" className="border-green-500 text-green-400 text-xs">
-                      Verified
-                    </Badge>
-                  )}
-                </div>
-                
-                <div className="mb-4">
-                  <Quote className="h-5 w-5 text-blue-400 mb-2" />
-                  <p className="text-slate-300 text-sm leading-relaxed">{review.text}</p>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-white text-sm">{review.author}</p>
-                    <p className="text-slate-400 text-xs">{review.date}</p>
-                  </div>
-                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">
-                      {review.author.split(' ').map(n => n[0]).join('')}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="relative">
+          <div className="overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {visibleReviews.map((review) => (
+                <Card key={review.id} className="bg-slate-800/50 border-slate-700 hover:bg-slate-800/70 transition-all">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-1">
+                        {[1,2,3,4,5].map(star => (
+                          <Star 
+                            key={star} 
+                            className={`h-4 w-4 ${star <= review.rating 
+                              ? 'fill-yellow-400 text-yellow-400' 
+                              : 'text-slate-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      {review.verified && (
+                        <Badge variant="outline" className="border-green-500 text-green-400 text-xs">
+                          Verified
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div className="mb-4">
+                      <Quote className="h-5 w-5 text-blue-400 mb-2" />
+                      <p className="text-slate-300 text-sm leading-relaxed">{review.text}</p>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-semibold text-white text-sm">{review.author}</p>
+                        <p className="text-slate-400 text-xs">{review.date}</p>
+                      </div>
+                      <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-bold">
+                          {review.author.split(' ').map(n => n[0]).join('')}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Navigation buttons */}
+          <button
+            onClick={prevReviews}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-slate-800/80 hover:bg-slate-700 text-white p-2 rounded-full transition-all border border-slate-600"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            onClick={nextReviews}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-slate-800/80 hover:bg-slate-700 text-white p-2 rounded-full transition-all border border-slate-600"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+
+          {/* Dots indicator */}
+          <div className="flex justify-center space-x-2 mt-6">
+            {Array.from({ length: Math.ceil(reviews.length / reviewsPerPage) }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index * reviewsPerPage)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  Math.floor(currentIndex / reviewsPerPage) === index
+                    ? 'bg-blue-400'
+                    : 'bg-slate-600 hover:bg-slate-500'
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
-        <div className="text-center">
+        <div className="text-center mt-8">
           <a 
             href="https://www.google.com/search?q=AfterHours+HVAC+Calgary+reviews"
             target="_blank"

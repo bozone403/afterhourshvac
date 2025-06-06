@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
+import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 
 type GalleryItem = {
   id: number;
