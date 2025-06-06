@@ -1,9 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import HeroSection from '@/components/home/HeroSection';
 import ServicesGrid from '@/components/home/ServicesGrid';
-import BeforeAfterGallery from '@/components/home/BeforeAfterGallery';
-import CalculatorPreview from '@/components/home/CalculatorPreview';
-import ContactForm from '@/components/forms/ContactForm';
+import QuickContactWidget from '@/components/home/QuickContactWidget';
 import { Link } from 'wouter';
 
 const Home = () => {
@@ -20,11 +18,8 @@ const Home = () => {
       {/* Services Grid */}
       <ServicesGrid />
       
-      {/* Before After Gallery */}
-      <BeforeAfterGallery />
-      
-      {/* Calculator Preview */}
-      <CalculatorPreview />
+      {/* Quick Contact Widget */}
+      <QuickContactWidget />
       
       {/* Blog Section Preview */}
       <section className="bg-darkgray py-20">

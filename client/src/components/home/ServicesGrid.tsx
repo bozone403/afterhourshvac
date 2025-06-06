@@ -13,8 +13,8 @@ const ServicesGrid = () => {
           {/* Service Card 1 - Furnace Services */}
           <div className="bg-dark rounded-lg overflow-hidden border border-gray-800 transition-transform hover:transform hover:scale-105">
             <img 
-              src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80" 
-              alt="HVAC technician servicing a furnace" 
+              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80" 
+              alt="Professional technician installing a modern gas furnace" 
               className="w-full h-48 object-cover"
             />
             <div className="p-6">
@@ -39,8 +39,8 @@ const ServicesGrid = () => {
           {/* Service Card 2 - Air Conditioning */}
           <div className="bg-dark rounded-lg overflow-hidden border border-gray-800 transition-transform hover:transform hover:scale-105">
             <img 
-              src="https://pixabay.com/get/g0931b0b5caf4e8fb8de593236e0345e9b6ed7d4981ff39056847ba96274eaa1273c0ea61f0782c8bbd49968a85511f5b0e50d38d7e66137b2a28c4300d074c9e_1280.jpg" 
-              alt="Air conditioning unit installation" 
+              src="https://images.unsplash.com/photo-1631545804013-8b3eb4e9c19d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80" 
+              alt="HVAC technician installing outdoor air conditioning condenser unit" 
               className="w-full h-48 object-cover"
             />
             <div className="p-6">
@@ -65,8 +65,8 @@ const ServicesGrid = () => {
           {/* Service Card 3 - Maintenance Plans */}
           <div className="bg-dark rounded-lg overflow-hidden border border-gray-800 transition-transform hover:transform hover:scale-105">
             <img 
-              src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80" 
-              alt="HVAC maintenance service" 
+              src="https://images.unsplash.com/photo-1566489916446-4468b9c3ebcd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500&q=80" 
+              alt="HVAC technician performing maintenance on air handler unit" 
               className="w-full h-48 object-cover"
             />
             <div className="p-6">

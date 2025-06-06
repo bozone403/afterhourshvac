@@ -111,22 +111,13 @@ const ProCalculator = () => {
             </div>
 
             <div className="pt-4">
-              {hasUserAccess ? (
-                <Button 
-                  onClick={() => setSelectedCalculator(`${product.category}_${product.tier}`)}
-                  className="w-full bg-green-600 hover:bg-green-700"
-                >
-                  <Calculator className="h-4 w-4 mr-2" />
-                  Open Calculator
-                </Button>
-              ) : (
-                <Link href={`/checkout?product=${product.id}`}>
-                  <Button className="w-full bg-secondary hover:bg-secondary/80">
-                    <Lock className="h-4 w-4 mr-2" />
-                    Purchase Access
-                  </Button>
-                </Link>
-              )}
+              <Button 
+                onClick={() => setSelectedCalculator(`${product.category}_${product.tier}`)}
+                className="w-full bg-green-600 hover:bg-green-700"
+              >
+                <Calculator className="h-4 w-4 mr-2" />
+                Open Calculator
+              </Button>
             </div>
           </div>
         </CardContent>
