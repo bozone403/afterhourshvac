@@ -66,6 +66,19 @@ export interface IStorage {
   getReviews(approvedOnly?: boolean): Promise<CustomerReview[]>;
   createReview(review: InsertCustomerReview): Promise<CustomerReview>;
   approveReview(id: number): Promise<CustomerReview | undefined>;
+  
+  // HVAC Data methods
+  getHvacEquipment(): Promise<HvacEquipment[]>;
+  createHvacEquipment(equipment: InsertHvacEquipment): Promise<HvacEquipment>;
+  updateHvacEquipment(id: number, data: Partial<HvacEquipment>): Promise<HvacEquipment | undefined>;
+  
+  getHvacMaterials(): Promise<HvacMaterial[]>;
+  createHvacMaterial(material: InsertHvacMaterial): Promise<HvacMaterial>;
+  updateHvacMaterial(id: number, data: Partial<HvacMaterial>): Promise<HvacMaterial | undefined>;
+  
+  getHvacAccessories(): Promise<HvacAccessory[]>;
+  createHvacAccessory(accessory: InsertHvacAccessory): Promise<HvacAccessory>;
+  updateHvacAccessory(id: number, data: Partial<HvacAccessory>): Promise<HvacAccessory | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {

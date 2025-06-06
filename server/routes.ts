@@ -685,6 +685,164 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
+  // HVAC DATA MANAGEMENT ROUTES (Admin Only)
+  
+  // Equipment endpoints
+  app.get("/api/admin/hvac-equipment", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const equipment = await storage.getHvacEquipment();
+      res.json(equipment);
+    } catch (error: any) {
+      console.error("Error getting HVAC equipment:", error);
+      res.status(500).json({ 
+        error: "Error getting HVAC equipment", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.post("/api/admin/hvac-equipment", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const equipmentData = insertHvacEquipmentSchema.parse(req.body);
+      const equipment = await storage.createHvacEquipment(equipmentData);
+      res.status(201).json(equipment);
+    } catch (error: any) {
+      console.error("Error creating HVAC equipment:", error);
+      res.status(500).json({ 
+        error: "Error creating HVAC equipment", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.put("/api/admin/hvac-equipment/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "Invalid equipment ID" });
+      }
+      
+      const equipmentData = req.body;
+      const equipment = await storage.updateHvacEquipment(id, equipmentData);
+      
+      if (!equipment) {
+        return res.status(404).json({ error: "Equipment not found" });
+      }
+      
+      res.json(equipment);
+    } catch (error: any) {
+      console.error("Error updating HVAC equipment:", error);
+      res.status(500).json({ 
+        error: "Error updating HVAC equipment", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Materials endpoints
+  app.get("/api/admin/hvac-materials", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const materials = await storage.getHvacMaterials();
+      res.json(materials);
+    } catch (error: any) {
+      console.error("Error getting HVAC materials:", error);
+      res.status(500).json({ 
+        error: "Error getting HVAC materials", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.post("/api/admin/hvac-materials", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const materialData = insertHvacMaterialsSchema.parse(req.body);
+      const material = await storage.createHvacMaterial(materialData);
+      res.status(201).json(material);
+    } catch (error: any) {
+      console.error("Error creating HVAC material:", error);
+      res.status(500).json({ 
+        error: "Error creating HVAC material", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.put("/api/admin/hvac-materials/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "Invalid material ID" });
+      }
+      
+      const materialData = req.body;
+      const material = await storage.updateHvacMaterial(id, materialData);
+      
+      if (!material) {
+        return res.status(404).json({ error: "Material not found" });
+      }
+      
+      res.json(material);
+    } catch (error: any) {
+      console.error("Error updating HVAC material:", error);
+      res.status(500).json({ 
+        error: "Error updating HVAC material", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Accessories endpoints
+  app.get("/api/admin/hvac-accessories", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const accessories = await storage.getHvacAccessories();
+      res.json(accessories);
+    } catch (error: any) {
+      console.error("Error getting HVAC accessories:", error);
+      res.status(500).json({ 
+        error: "Error getting HVAC accessories", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.post("/api/admin/hvac-accessories", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const accessoryData = insertHvacAccessoriesSchema.parse(req.body);
+      const accessory = await storage.createHvacAccessory(accessoryData);
+      res.status(201).json(accessory);
+    } catch (error: any) {
+      console.error("Error creating HVAC accessory:", error);
+      res.status(500).json({ 
+        error: "Error creating HVAC accessory", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.put("/api/admin/hvac-accessories/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "Invalid accessory ID" });
+      }
+      
+      const accessoryData = req.body;
+      const accessory = await storage.updateHvacAccessory(id, accessoryData);
+      
+      if (!accessory) {
+        return res.status(404).json({ error: "Accessory not found" });
+      }
+      
+      res.json(accessory);
+    } catch (error: any) {
+      console.error("Error updating HVAC accessory:", error);
+      res.status(500).json({ 
+        error: "Error updating HVAC accessory", 
+        message: error.message 
+      });
+    }
+  });
   
   // GALLERY ROUTES
   
