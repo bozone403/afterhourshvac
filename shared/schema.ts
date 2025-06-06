@@ -16,7 +16,11 @@ export const users = pgTable("users", {
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
   hasProAccess: boolean("has_pro_access").default(false),
+  hasPro: boolean("has_pro").default(false),
+  isAdmin: boolean("is_admin").default(false),
   proAccessGrantedAt: timestamp("pro_access_granted_at"),
+  membershipType: text("membership_type"), // 'monthly', 'yearly', 'lifetime'
+  membershipExpiresAt: timestamp("membership_expires_at"),
   profileImageUrl: text("profile_image_url"),
   createdAt: timestamp("created_at").defaultNow(),
   lastLogin: timestamp("last_login"),
