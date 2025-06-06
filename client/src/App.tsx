@@ -31,10 +31,9 @@ import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
 import ForumPage from "@/pages/forum";
 import AdminData from "@/pages/admin-data";
+import AdminDashboard from "@/pages/admin-dashboard";
 import SupplierData from "@/pages/supplier-data";
 import AlgginData from "@/pages/alggin-data";
-// TODO: Add these pages when implemented
-// import AdminDashboard from "@/pages/admin-dashboard";
 
 function ScrollToTop() {
   const [location] = useLocation();

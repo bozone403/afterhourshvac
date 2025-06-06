@@ -211,6 +211,133 @@ export const proCalculatorQuotes = pgTable("pro_calculator_quotes", {
   notes: text("notes"),
 });
 
+// Customer Records and Analytics
+export const customers = pgTable("customers", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  address: text("address"),
+  city: text("city"),
+  province: text("province"),
+  postalCode: text("postal_code"),
+  company: text("company"),
+  customerType: text("customer_type").default("residential"), // residential, commercial
+  source: text("source"), // website, referral, marketing
+  notes: text("notes"),
+  totalSpent: numeric("total_spent", { precision: 10, scale: 2 }).default("0"),
+  lastContactDate: timestamp("last_contact_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Contact Form Submissions
+export const contactSubmissions = pgTable("contact_submissions", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customer_id").references(() => customers.id),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  subject: text("subject"),
+  message: text("message").notNull(),
+  source: text("source").default("contact_form"), // contact_form, emergency_form, quote_request
+  priority: text("priority").default("normal"), // low, normal, high, urgent
+  status: text("status").default("new"), // new, in_progress, completed, closed
+  assignedTo: integer("assigned_to").references(() => users.id),
+  responseRequired: boolean("response_required").default(true),
+  respondedAt: timestamp("responded_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Emergency Service Requests
+export const emergencyRequests = pgTable("emergency_requests", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customer_id").references(() => customers.id),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  address: text("address").notNull(),
+  emergencyType: text("emergency_type").notNull(), // no_heat, no_cooling, gas_leak, etc
+  description: text("description").notNull(),
+  severity: text("severity").default("high"), // medium, high, critical
+  status: text("status").default("received"), // received, dispatched, in_progress, completed
+  assignedTechnician: integer("assigned_technician").references(() => users.id),
+  estimatedArrival: timestamp("estimated_arrival"),
+  completedAt: timestamp("completed_at"),
+  totalCost: numeric("total_cost", { precision: 10, scale: 2 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Quote Requests
+export const quoteRequests = pgTable("quote_requests", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customer_id").references(() => customers.id),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  address: text("address"),
+  serviceType: text("service_type").notNull(), // installation, repair, maintenance
+  systemType: text("system_type"), // furnace, ac, heat_pump, etc
+  description: text("description"),
+  preferredContactMethod: text("preferred_contact_method").default("email"), // email, phone, text
+  preferredContactTime: text("preferred_contact_time"),
+  budget: text("budget"),
+  timeline: text("timeline"),
+  status: text("status").default("pending"), // pending, quoted, approved, declined, completed
+  quoteAmount: numeric("quote_amount", { precision: 10, scale: 2 }),
+  quotedAt: timestamp("quoted_at"),
+  validUntil: timestamp("valid_until"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// User Sessions and Activity Tracking
+export const userSessions = pgTable("user_sessions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  sessionId: text("session_id").notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  loginAt: timestamp("login_at").defaultNow(),
+  logoutAt: timestamp("logout_at"),
+  isActive: boolean("is_active").default(true),
+});
+
+// Website Analytics
+export const pageViews = pgTable("page_views", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  sessionId: text("session_id"),
+  page: text("page").notNull(),
+  referrer: text("referrer"),
+  userAgent: text("user_agent"),
+  ipAddress: text("ip_address"),
+  duration: integer("duration"), // time spent on page in seconds
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Calculator Usage Analytics
+export const calculatorUsage = pgTable("calculator_usage", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  calculatorType: text("calculator_type").notNull(), // furnace, ac, maintenance
+  tier: text("tier"), // economy, mid_range, premium
+  inputData: jsonb("input_data"),
+  completed: boolean("completed").default(false),
+  conversionToQuote: boolean("conversion_to_quote").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// System Performance Metrics
+export const systemMetrics = pgTable("system_metrics", {
+  id: serial("id").primaryKey(),
+  metricType: text("metric_type").notNull(), // response_time, error_count, user_count
+  value: numeric("value", { precision: 10, scale: 2 }).notNull(),
+  metadata: jsonb("metadata"),
+  recordedAt: timestamp("recorded_at").defaultNow(),
+});
+
 // USER AND AUTH
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -284,3 +411,28 @@ export type HvacEquipment = typeof hvacEquipment.$inferSelect;
 export type HvacMaterial = typeof hvacMaterials.$inferSelect;
 export type HvacAccessory = typeof hvacAccessories.$inferSelect;
 export type ProCalculatorQuote = typeof proCalculatorQuotes.$inferSelect;
+
+// Customer and Analytics Types
+export type InsertCustomer = typeof customers.$inferInsert;
+export type Customer = typeof customers.$inferSelect;
+
+export type InsertContactSubmission = typeof contactSubmissions.$inferInsert;
+export type ContactSubmission = typeof contactSubmissions.$inferSelect;
+
+export type InsertEmergencyRequest = typeof emergencyRequests.$inferInsert;
+export type EmergencyRequest = typeof emergencyRequests.$inferSelect;
+
+export type InsertQuoteRequest = typeof quoteRequests.$inferInsert;
+export type QuoteRequest = typeof quoteRequests.$inferSelect;
+
+export type InsertUserSession = typeof userSessions.$inferInsert;
+export type UserSession = typeof userSessions.$inferSelect;
+
+export type InsertPageView = typeof pageViews.$inferInsert;
+export type PageView = typeof pageViews.$inferSelect;
+
+export type InsertCalculatorUsage = typeof calculatorUsage.$inferInsert;
+export type CalculatorUsage = typeof calculatorUsage.$inferSelect;
+
+export type InsertSystemMetric = typeof systemMetrics.$inferInsert;
+export type SystemMetric = typeof systemMetrics.$inferSelect;
