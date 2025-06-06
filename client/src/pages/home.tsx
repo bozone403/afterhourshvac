@@ -30,14 +30,14 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/contact">
-              <a className="bg-primary hover:bg-primarydark text-dark font-bold py-3 px-8 rounded-lg transition-colors">
+              <div className="bg-primary hover:bg-primarydark text-dark font-bold py-3 px-8 rounded-lg transition-colors cursor-pointer">
                 Get Quote
-              </a>
+              </div>
             </Link>
             <Link href="/calculators">
-              <a className="bg-dark hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg border border-gray-600 transition-colors">
+              <div className="bg-dark hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg border border-gray-600 transition-colors cursor-pointer">
                 Cost Calculator
-              </a>
+              </div>
             </Link>
           </div>
         </div>
