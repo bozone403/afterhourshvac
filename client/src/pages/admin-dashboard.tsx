@@ -28,8 +28,14 @@ import {
   MapPin,
   CheckCircle,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  Plus,
+  Edit,
+  Trash2
 } from "lucide-react";
+import ReviewForm from '@/components/admin/ReviewForm';
+import GalleryForm from '@/components/admin/GalleryForm';
+import BlogForm from '@/components/admin/BlogForm';
 import { formatDistanceToNow } from 'date-fns';
 import type { 
   ContactSubmission, 
@@ -47,6 +53,12 @@ export default function AdminDashboard() {
   const [selectedTab, setSelectedTab] = useState("overview");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateRange, setDateRange] = useState("7d");
+  
+  // Modal states for content management
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showGalleryForm, setShowGalleryForm] = useState(false);
+  const [showBlogForm, setShowBlogForm] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
 
   // Check if user is admin
   if (!user || user.role !== 'admin') {
@@ -280,14 +292,24 @@ export default function AdminDashboard() {
                     <CardDescription>Manage customer reviews displayed on homepage</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button className="w-full mb-4">Add New Review</Button>
+                    <Button 
+                      className="w-full mb-4" 
+                      onClick={() => setShowReviewForm(true)}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add New Review
+                    </Button>
                     <div className="space-y-3">
                       <div className="p-3 border rounded-lg">
                         <div className="flex justify-between items-start mb-2">
                           <strong>Jordan M.</strong>
                           <div className="flex space-x-2">
-                            <Button size="sm" variant="outline">Edit</Button>
-                            <Button size="sm" variant="destructive">Delete</Button>
+                            <Button size="sm" variant="outline">
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            <Button size="sm" variant="destructive">
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
                           </div>
                         </div>
                         <p className="text-sm text-muted-foreground mb-1">⭐⭐⭐⭐⭐</p>
@@ -323,7 +345,10 @@ export default function AdminDashboard() {
                       <CardTitle>Project Gallery Management</CardTitle>
                       <CardDescription>Manage before/after project photos in carousel</CardDescription>
                     </div>
-                    <Button>Add New Project</Button>
+                    <Button onClick={() => setShowGalleryForm(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add New Project
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -352,7 +377,10 @@ export default function AdminDashboard() {
                       <CardTitle>Blog Post Management</CardTitle>
                       <CardDescription>Create and manage blog articles</CardDescription>
                     </div>
-                    <Button>Create New Post</Button>
+                    <Button onClick={() => setShowBlogForm(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create New Post
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent>

@@ -1346,13 +1346,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/gallery-projects", requireAdmin, async (req, res) => {
     try {
       const projectData = {
+        imageUrl: req.body.beforeImageUrl, // Primary image URL for database
         title: req.body.title,
         description: req.body.description,
-        beforeImageUrl: req.body.beforeImageUrl,
-        afterImageUrl: req.body.afterImageUrl,
         location: req.body.location,
         category: req.body.category || 'residential',
-        isVisible: true
+        isActive: true,
+        altText: req.body.title,
+        // Store additional data in metadata if needed
+        metadata: {
+          beforeImageUrl: req.body.beforeImageUrl,
+          afterImageUrl: req.body.afterImageUrl,
+          benefit: req.body.benefit,
+          benefitValue: req.body.benefitValue
+        }
       };
       
       const project = await storage.createGalleryImage(projectData);
