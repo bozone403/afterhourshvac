@@ -205,6 +205,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
   const { requireAuth, requireAdmin } = setupAuth(app);
 
+  // SERVICE BOOKING ROUTES
+  
+  // Service booking API for furnace installation, AC installation, maintenance
+  app.post("/api/service-booking", async (req, res) => {
+    try {
+      const booking = req.body;
+      
+      // Store booking in database
+      const newBooking = await storage.createContactSubmission({
+        name: booking.customerName,
+        email: booking.email,
+        phone: booking.phone,
+        subject: `${booking.serviceType} Booking`,
+        message: `Service: ${booking.serviceType}
+Address: ${booking.address}
+Type: ${booking.furnaceType || booking.serviceType}
+Home Size: ${booking.homeSize || 'Not specified'}
+Urgency: ${booking.urgency}
+Preferred Date: ${booking.preferredDate || 'Flexible'}
+Time Slot: ${booking.timeSlot || 'Flexible'}
+Price: $${booking.price}
+Special Requirements: ${booking.specialRequirements || 'None'}`,
+        status: 'new'
+      });
+
+      res.json({ 
+        success: true, 
+        bookingId: newBooking.id,
+        message: "Booking created successfully" 
+      });
+    } catch (error) {
+      console.error("Service booking error:", error);
+      res.status(500).json({ error: "Failed to create booking" });
+    }
+  });
+
   // PAYMENT ROUTES
   
   // Payment routes
