@@ -759,7 +759,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/hvac-materials", requireAuth, requireAdmin, async (req, res) => {
     try {
-      const materialData = insertHvacMaterialsSchema.parse(req.body);
+      const materialData = req.body;
       const material = await storage.createHvacMaterial(materialData);
       res.status(201).json(material);
     } catch (error: any) {
@@ -811,7 +811,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/hvac-accessories", requireAuth, requireAdmin, async (req, res) => {
     try {
-      const accessoryData = insertHvacAccessoriesSchema.parse(req.body);
+      const accessoryData = req.body;
       const accessory = await storage.createHvacAccessory(accessoryData);
       res.status(201).json(accessory);
     } catch (error: any) {

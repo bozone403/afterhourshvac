@@ -322,7 +322,7 @@ export default function AdminDashboard() {
                             )}
                             <div className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              {formatDistanceToNow(new Date(submission.createdAt), { addSuffix: true })}
+                              {submission.createdAt ? formatDistanceToNow(new Date(submission.createdAt), { addSuffix: true }) : 'Unknown time'}
                             </div>
                           </div>
                         </CardContent>
