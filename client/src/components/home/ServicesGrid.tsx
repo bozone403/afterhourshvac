@@ -29,9 +29,9 @@ const ServicesGrid = () => {
                 <span className="text-xs bg-dark border border-gray-700 rounded-full px-3 py-1">24/7 Service</span>
               </div>
               <Link href="/pricing">
-                <a className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium">
+                <div className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium cursor-pointer">
                   View Details <i className="fas fa-arrow-right ml-2"></i>
-                </a>
+                </div>
               </Link>
             </div>
           </div>
@@ -55,9 +55,9 @@ const ServicesGrid = () => {
                 <span className="text-xs bg-dark border border-gray-700 rounded-full px-3 py-1">Efficiency</span>
               </div>
               <Link href="/pricing">
-                <a className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium">
+                <div className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium cursor-pointer">
                   View Details <i className="fas fa-arrow-right ml-2"></i>
-                </a>
+                </div>
               </Link>
             </div>
           </div>
@@ -81,9 +81,9 @@ const ServicesGrid = () => {
                 <span className="text-xs bg-dark border border-gray-700 rounded-full px-3 py-1">Discounts</span>
               </div>
               <Link href="/pricing">
-                <a className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium">
+                <div className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium cursor-pointer">
                   View Details <i className="fas fa-arrow-right ml-2"></i>
-                </a>
+                </div>
               </Link>
             </div>
           </div>
@@ -107,9 +107,9 @@ const ServicesGrid = () => {
                 <span className="text-xs bg-dark border border-gray-700 rounded-full px-3 py-1">Warranties</span>
               </div>
               <Link href="/pricing">
-                <a className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium">
+                <div className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium cursor-pointer">
                   View Details <i className="fas fa-arrow-right ml-2"></i>
-                </a>
+                </div>
               </Link>
             </div>
           </div>
@@ -160,9 +160,9 @@ const ServicesGrid = () => {
                 <span className="text-xs bg-dark border border-gray-700 rounded-full px-3 py-1">Businesses</span>
               </div>
               <Link href="/pricing">
-                <a className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium">
+                <div className="inline-flex items-center text-secondary hover:text-primary transition-colors font-medium cursor-pointer">
                   View Details <i className="fas fa-arrow-right ml-2"></i>
-                </a>
+                </div>
               </Link>
             </div>
           </div>
