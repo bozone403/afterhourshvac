@@ -23,7 +23,7 @@ import Calculators from "@/pages/calculators";
 import MaterialEstimator from "@/pages/calculators/material-estimator";
 import CommercialEstimator from "@/pages/calculators/commercial-estimator";
 import BTUCalculator from "@/pages/calculators/btu";
-import ProCalculator from "@/pages/calculators/pro-calculator";
+import ProCalculator from "@/pages/pro-calculator";
 import Membership from "@/pages/membership";
 import FurnaceInstall from "@/pages/services/furnace-install";
 import BlogIndex from "@/pages/blog/index";
@@ -78,7 +78,7 @@ function Router() {
         
         {/* Membership and Pro routes */}
         <Route path="/membership" component={Membership} />
-        <Route path="/calculators/pro" component={ProCalculator} />
+        <Route path="/pro-calculator" component={ProCalculator} />
         
         {/* Protected routes that require authentication */}
         <ProtectedRoute path="/checkout" component={Checkout} />
