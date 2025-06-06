@@ -324,9 +324,9 @@ const CommercialEstimator = () => {
                         <SelectValue placeholder="Select occupancy" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="low">Low (< 5 people/1000 sq ft)</SelectItem>
+                        <SelectItem value="low">Low (&lt; 5 people/1000 sq ft)</SelectItem>
                         <SelectItem value="normal">Normal (5-15 people/1000 sq ft)</SelectItem>
-                        <SelectItem value="high">High (> 15 people/1000 sq ft)</SelectItem>
+                        <SelectItem value="high">High (&gt; 15 people/1000 sq ft)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

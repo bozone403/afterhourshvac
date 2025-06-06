@@ -20,6 +20,10 @@ import Gallery from "@/pages/gallery";
 import Pricing from "@/pages/pricing";
 import Contact from "@/pages/contact";
 import Calculators from "@/pages/calculators";
+import MaterialEstimator from "@/pages/calculators/material-estimator";
+import CommercialEstimator from "@/pages/calculators/commercial-estimator";
+import BTUCalculator from "@/pages/calculators/btu";
+import FurnaceInstall from "@/pages/services/furnace-install";
 import BlogIndex from "@/pages/blog/index";
 import BlogFurnaceWinter from "@/pages/blog/prepare-furnace-winter";
 import BlogCommercialVsResidential from "@/pages/blog/commercial-vs-residential-hvac";
@@ -57,6 +61,10 @@ function Router() {
         <Route path="/pricing" component={Pricing} />
         <Route path="/contact" component={Contact} />
         <Route path="/calculators" component={Calculators} />
+        <Route path="/calculators/material-estimator" component={MaterialEstimator} />
+        <Route path="/calculators/commercial-estimator" component={CommercialEstimator} />
+        <Route path="/calculators/btu" component={BTUCalculator} />
+        <Route path="/services/furnace-install" component={FurnaceInstall} />
         <Route path="/blog" component={BlogIndex} />
         <Route path="/blog/prepare-furnace-winter" component={BlogFurnaceWinter} />
         <Route path="/blog/commercial-vs-residential-hvac" component={BlogCommercialVsResidential} />
