@@ -236,7 +236,6 @@ export const customers = pgTable("customers", {
 // Contact Form Submissions
 export const contactSubmissions = pgTable("contact_submissions", {
   id: serial("id").primaryKey(),
-  customerId: integer("customer_id").references(() => customers.id),
   name: text("name").notNull(),
   email: text("email").notNull(),
   phone: text("phone"),
