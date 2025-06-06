@@ -632,6 +632,43 @@ export default function AdminDashboard() {
           </Tabs>
         </div>
       </div>
+
+      {/* Modal Overlays for Content Management */}
+      {showReviewForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <ReviewForm 
+            onClose={() => {
+              setShowReviewForm(false);
+              setEditingItem(null);
+            }}
+            review={editingItem}
+          />
+        </div>
+      )}
+
+      {showGalleryForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <GalleryForm 
+            onClose={() => {
+              setShowGalleryForm(false);
+              setEditingItem(null);
+            }}
+            project={editingItem}
+          />
+        </div>
+      )}
+
+      {showBlogForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <BlogForm 
+            onClose={() => {
+              setShowBlogForm(false);
+              setEditingItem(null);
+            }}
+            post={editingItem}
+          />
+        </div>
+      )}
     </>
   );
 }
