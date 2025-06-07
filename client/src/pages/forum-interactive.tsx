@@ -635,23 +635,75 @@ export default function ForumInteractive() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="font-medium text-slate-900">{post.userName}</span>
-                                <span className="text-sm text-slate-500">
-                                  {formatDate(post.createdAt)}
-                                </span>
-                                {post.isEdited && (
-                                  <Badge variant="secondary" className="text-xs">
-                                    Edited
-                                  </Badge>
-                                )}
-                                {index === 0 && (
-                                  <Badge variant="outline" className="text-xs">
-                                    Original Post
-                                  </Badge>
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-slate-900">{post.userName}</span>
+                                  <span className="text-sm text-slate-500">
+                                    {formatDate(post.createdAt)}
+                                  </span>
+                                  {post.isEdited && (
+                                    <Badge variant="secondary" className="text-xs">
+                                      Edited
+                                    </Badge>
+                                  )}
+                                  {index === 0 && (
+                                    <Badge variant="outline" className="text-xs">
+                                      Original Post
+                                    </Badge>
+                                  )}
+                                </div>
+                                {canEditPost(post) && (
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="sm">
+                                        <MoreVertical className="h-4 w-4" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                      <DropdownMenuItem onClick={() => handleEditPost(post.id, post.content)}>
+                                        <Edit className="h-4 w-4 mr-2" />
+                                        Edit Post
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem 
+                                        onClick={() => handleDeletePost(post.id)}
+                                        className="text-red-600"
+                                      >
+                                        <Trash2 className="h-4 w-4 mr-2" />
+                                        Delete Post
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
                                 )}
                               </div>
-                              <p className="text-slate-700 whitespace-pre-wrap mb-4">{post.content}</p>
+                              
+                              {editingPostId === post.id ? (
+                                <div className="space-y-3 mb-4">
+                                  <Textarea
+                                    value={editingContent}
+                                    onChange={(e) => setEditingContent(e.target.value)}
+                                    rows={4}
+                                  />
+                                  <div className="flex gap-2">
+                                    <Button 
+                                      size="sm" 
+                                      onClick={() => handleSaveEdit(post.id)}
+                                      disabled={editPostMutation.isPending}
+                                    >
+                                      {editPostMutation.isPending ? "Saving..." : "Save"}
+                                    </Button>
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline" 
+                                      onClick={handleCancelEdit}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <p className="text-slate-700 whitespace-pre-wrap mb-4">{post.content}</p>
+                              )}
+                              
                               <div className="flex items-center gap-2">
                                 <Button
                                   variant="ghost"
