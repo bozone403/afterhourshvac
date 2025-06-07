@@ -72,7 +72,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/user"],
     queryFn: async () => {
       try {
-        const res = await fetch("/api/user");
+        const res = await fetch("/api/user", {
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+          }
+        });
         if (res.status === 401) {
           return null;
         }
@@ -80,14 +85,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const error = await res.json();
           throw new Error(error.error || "Failed to fetch user");
         }
-        return res.json();
+        const userData = await res.json();
+        console.log('useAuth - Successfully fetched user:', userData);
+        return userData;
       } catch (err) {
+        console.error('useAuth - Auth fetch error:', err);
         if ((err as Error).message === "Failed to fetch") {
           return null;
         }
         throw err;
       }
     },
+    retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000,
   });
 
   // Login mutation

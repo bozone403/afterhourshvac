@@ -506,9 +506,9 @@ const ProCalculator = () => {
                 {(searchTerm || selectedCategory) && (
                   <div className="max-h-48 overflow-y-auto bg-gray-900 rounded-lg p-3 space-y-2">
                     {filteredCatalog.slice(0, 10).map((item) => (
-                      <div key={item.id} className="flex items-center justify-between p-2 bg-gray-800 rounded hover:bg-gray-700">
+                      <div key={item.stockNumber} className="flex items-center justify-between p-2 bg-gray-800 rounded hover:bg-gray-700">
                         <div>
-                          <div className="font-medium text-white text-sm">{item.name}</div>
+                          <div className="font-medium text-white text-sm">{item.description}</div>
                           <div className="text-green-400 font-bold">${item.price.toFixed(2)}</div>
                         </div>
                         <Button
@@ -530,7 +530,7 @@ const ProCalculator = () => {
                     <div className="space-y-2 max-h-32 overflow-y-auto">
                       {materials.map((material) => (
                         <div key={material.id} className="flex items-center justify-between text-sm">
-                          <span className="text-white">{material.catalogItem.name}</span>
+                          <span className="text-white">{material.catalogItem.description}</span>
                           <div className="flex items-center gap-2">
                             <Button onClick={() => updateMaterialQuantity(material.id, material.quantity - 1)} size="sm" variant="outline" className="w-6 h-6 p-0">-</Button>
                             <span className="text-white w-8 text-center">{material.quantity}</span>
