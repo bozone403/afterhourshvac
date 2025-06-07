@@ -10,7 +10,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { Building, Calculator, DollarSign, FileText, Wrench } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { Link } from 'wouter';
+import { Building, Calculator, DollarSign, FileText, Wrench, Lock, Crown } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 
 interface CommercialProject {
@@ -37,6 +39,65 @@ interface SystemCalculation {
 
 const CommercialEstimator = () => {
   const { toast } = useToast();
+  const { user, isLoading } = useAuth();
+
+  // Check Pro access
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || !user.hasPro) {
+    return (
+      <>
+        <Helmet>
+          <title>Commercial Load Calculator - Pro Required | AfterHours HVAC</title>
+          <meta name="description" content="Commercial HVAC load calculator requires Pro membership access." />
+        </Helmet>
+        
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-2xl mx-auto text-center">
+              <div className="mb-8">
+                <Lock className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
+                <h1 className="text-4xl font-bold mb-4">Pro Access Required</h1>
+                <p className="text-xl text-slate-300 mb-8">
+                  The Commercial Load Calculator is available exclusively to Pro members.
+                </p>
+              </div>
+              
+              <Card className="bg-slate-800/50 border-slate-700 mb-8">
+                <CardHeader className="text-center">
+                  <Crown className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+                  <CardTitle className="text-white text-2xl">Upgrade to Pro</CardTitle>
+                  <CardDescription className="text-slate-300">
+                    Get access to commercial HVAC calculations and advanced tools
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="pt-4">
+                    <Link href="/membership">
+                      <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
+                        <Crown className="h-4 w-4 mr-2" />
+                        Upgrade to Pro Access
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   const [project, setProject] = useState<CommercialProject>({
     buildingType: '',
     squareFootage: 0,

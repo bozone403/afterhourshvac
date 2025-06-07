@@ -192,11 +192,98 @@ const MULTIPLIER_RATES = {
 
 const MaterialEstimator = () => {
   const { toast } = useToast();
+  const { user, isLoading } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedItem, setSelectedItem] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(1);
   const [customMultiplier, setCustomMultiplier] = useState<number>(0);
   const [useCustomMultiplier, setUseCustomMultiplier] = useState<boolean>(false);
+
+  // Check Pro access
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || !user.hasPro) {
+    return (
+      <>
+        <Helmet>
+          <title>Material Cost Estimator - Pro Required | AfterHours HVAC</title>
+          <meta name="description" content="Professional HVAC material cost estimator requires Pro membership access." />
+        </Helmet>
+        
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-2xl mx-auto text-center">
+              <div className="mb-8">
+                <Lock className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
+                <h1 className="text-4xl font-bold mb-4">Pro Access Required</h1>
+                <p className="text-xl text-slate-300 mb-8">
+                  The Advanced Material Calculator with real-time Alggin.com pricing is available exclusively to Pro members.
+                </p>
+              </div>
+              
+              <Card className="bg-slate-800/50 border-slate-700 mb-8">
+                <CardHeader className="text-center">
+                  <Crown className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+                  <CardTitle className="text-white text-2xl">Upgrade to Pro</CardTitle>
+                  <CardDescription className="text-slate-300">
+                    Get access to advanced calculators with real supplier pricing
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div className="p-4 bg-slate-900/50 rounded-lg">
+                      <h3 className="font-semibold text-white mb-2">Monthly</h3>
+                      <p className="text-2xl font-bold text-green-400">$49</p>
+                      <p className="text-sm text-slate-400">per month</p>
+                    </div>
+                    <div className="p-4 bg-slate-900/50 rounded-lg border-2 border-yellow-500">
+                      <Badge className="mb-2 bg-yellow-500 text-black">Best Value</Badge>
+                      <h3 className="font-semibold text-white mb-2">Annual</h3>
+                      <p className="text-2xl font-bold text-green-400">$499</p>
+                      <p className="text-sm text-slate-400">per year</p>
+                    </div>
+                    <div className="p-4 bg-slate-900/50 rounded-lg">
+                      <h3 className="font-semibold text-white mb-2">Lifetime</h3>
+                      <p className="text-2xl font-bold text-green-400">$1,500</p>
+                      <p className="text-sm text-slate-400">one-time</p>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <Link href="/membership">
+                      <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
+                        <Crown className="h-4 w-4 mr-2" />
+                        Upgrade to Pro Access
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <div className="text-left bg-slate-800/30 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold text-white mb-4">Pro Features Include:</h3>
+                <ul className="space-y-2 text-slate-300">
+                  <li className="flex items-center"><Calculator className="h-4 w-4 mr-2 text-green-400" /> Real-time Alggin.com supplier pricing</li>
+                  <li className="flex items-center"><DollarSign className="h-4 w-4 mr-2 text-green-400" /> Custom multiplier rates for accurate job costing</li>
+                  <li className="flex items-center"><ShoppingCart className="h-4 w-4 mr-2 text-green-400" /> Comprehensive material catalog with 500+ items</li>
+                  <li className="flex items-center"><Percent className="h-4 w-4 mr-2 text-green-400" /> Advanced pricing calculations with tax and discounts</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
   
   const [estimate, setEstimate] = useState<JobEstimate>({
     materials: [],

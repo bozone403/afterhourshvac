@@ -80,6 +80,31 @@ export default function ForumPage() {
     },
   });
 
+  // Edit topic mutation
+  const editTopicMutation = useMutation({
+    mutationFn: async (data: { id: number; title: string; content: string }) => {
+      const response = await apiRequest("PUT", `/api/forum/topics/${data.id}`, {
+        title: data.title,
+        content: data.content
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/forum/topics"] });
+      toast({
+        title: "Topic Updated",
+        description: "Your changes have been saved.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error Updating Topic",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   // Delete topic mutation
   const deleteTopicMutation = useMutation({
     mutationFn: async (topicId: number) => {
