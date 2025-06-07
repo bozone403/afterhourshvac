@@ -6,6 +6,7 @@ import QuickContactWidget from '@/components/home/QuickContactWidget';
 import GoogleReviews from '@/components/home/GoogleReviews';
 import ForumPreview from '@/components/home/ForumPreview';
 import { Carousel } from '@/components/ui/carousel';
+import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
 
