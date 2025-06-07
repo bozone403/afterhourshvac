@@ -94,10 +94,10 @@ const Home = () => {
     {
       icon: Settings,
       title: "Maintenance Plans",
-      description: "Annual service plans to keep your equipment running at peak efficiency",
-      features: ["Starting at $299/year", "Priority Service", "Parts Discounts"],
+      description: "From quick diagnostics to comprehensive care plans with emergency coverage",
+      features: ["Starting at $199", "Residential & Commercial", "Emergency Response"],
       link: "/shop/maintenance-plans",
-      badge: "Save 20%"
+      badge: "Complete Care"
     }
   ];
 

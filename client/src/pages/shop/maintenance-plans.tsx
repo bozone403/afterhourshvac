@@ -10,81 +10,142 @@ import { Link } from 'wouter';
 const MaintenancePlansShop = () => {
   const [isAnnual, setIsAnnual] = useState(true);
 
-  const maintenancePlans = [
+  const residentialPlans = [
     {
       id: 1,
-      name: "Essential Care",
-      type: "basic",
-      monthlyPrice: 29,
-      annualPrice: 299,
-      savings: 49,
-      popular: false,
+      name: "QuickShot Diagnostic",
+      type: "diagnostic",
+      oneTimePrice: 199,
       features: [
-        "Annual system inspection",
-        "Filter replacement reminder",
-        "10% discount on repairs",
-        "Priority scheduling",
-        "Basic system cleaning"
+        "20-Point System Report",
+        "Basic Filter & Zone Checks",
+        "Thermostat Calibration",
+        "Visual Leak & Efficiency Scan",
+        "$50 Credit Toward Repairs"
       ],
-      includes: [
-        "1 Annual Visit",
-        "Safety Inspection",
-        "Filter Check",
-        "Basic Tune-up"
-      ],
-      badge: null
+      duration: "~1hr",
+      badge: "One-Time Service",
+      popular: false,
+      description: "Perfect for system checkups and troubleshooting"
     },
     {
       id: 2,
-      name: "Premium Protection",
-      type: "premium",
-      monthlyPrice: 49,
-      annualPrice: 499,
-      savings: 89,
-      popular: true,
+      name: "Protect+ Seasonal Optimizer",
+      type: "seasonal",
+      visitPrice: 349,
       features: [
-        "Bi-annual system maintenance",
-        "Free filter replacements (4/year)",
-        "15% discount on repairs",
-        "Priority emergency service",
-        "Complete system cleaning",
-        "Thermostat optimization"
+        "Includes QuickShot diagnostics",
+        "Deep Coil Clean (Evap & Condenser)",
+        "Refrigerant Top-Up (1 lb R-410A)",
+        "Blower Motor Amp Draw & Lube",
+        "Drain Flush + Basic Sanitization",
+        "Smart Thermostat Optimization",
+        "$100 Priority Voucher (6-month expiry)"
       ],
-      includes: [
-        "2 Annual Visits",
-        "Complete Inspection",
-        "4 Free Filters",
-        "System Optimization",
-        "Performance Report"
-      ],
-      badge: "Most Popular"
+      badge: "Seasonal Service",
+      popular: false,
+      description: "Comprehensive seasonal tune-up service"
     },
     {
       id: 3,
-      name: "Ultimate Coverage",
-      type: "ultimate",
-      monthlyPrice: 79,
-      annualPrice: 799,
-      savings: 149,
-      popular: false,
+      name: "Dominion Maintenance Plan",
+      type: "plan",
+      monthlyPrice: 59,
+      annualPrice: 659,
+      savings: 49,
       features: [
-        "Quarterly system maintenance",
-        "Free premium filter replacements",
-        "20% discount on repairs",
-        "24/7 emergency priority",
-        "Advanced diagnostics",
-        "Smart thermostat upgrade",
-        "Indoor air quality testing"
+        "2x Seasonal Precision Tune-Ups",
+        "Zero Diagnostic Fees",
+        "15% Off All Repairs",
+        "48h Guaranteed Emergency Response",
+        "Annual Air Quality Report",
+        "$100 Loyalty Equipment Credit (annual)",
+        "Priority Scheduling Access",
+        "Auto-Renew w/ Cancel-Anytime"
       ],
-      includes: [
-        "4 Annual Visits",
-        "Advanced Diagnostics",
-        "Premium Filters",
-        "Smart Controls",
-        "Air Quality Testing",
-        "Extended Warranty"
+      badge: "Most Popular",
+      popular: true,
+      description: "Complete annual maintenance coverage"
+    },
+    {
+      id: 4,
+      name: "Ultimate AfterHours Care Plan",
+      type: "ultimate",
+      monthlyPrice: 199,
+      annualPrice: 2149,
+      savings: 239,
+      features: [
+        "Everything in Dominion, plus:",
+        "Unlimited Emergency Visits (After-Hours Included)",
+        "Free Nest or ecobee Smart Thermostat",
+        "Annual CO2 + Radon Testing Package",
+        "Annual Full Duct Disinfection",
+        "Free Furnace Certification Letter",
+        "Transferable Coverage (home sale/rental)",
+        "Lifetime Thermostat Coverage",
+        "$250/year Equipment Replacement Credit",
+        "$500 Breakdown Shield rebate"
       ],
-      badge: "Best Value"
+      badge: "Estate Homes",
+      popular: false,
+      description: "Built for estate homes and multi-system houses"
+    }
+  ];
+
+  const commercialPlans = [
+    {
+      id: 1,
+      name: "Basic Business Maintenance",
+      type: "commercial-basic",
+      annualPrice: 1295,
+      features: [
+        "2x System Tune-Ups / Year",
+        "Filter Change + Coil Clean",
+        "24h On-Site Response SLA",
+        "Inspection Letter for Insurance/Audit",
+        "$100 Diagnostic Credit / Incident",
+        "Service Window: Business Hours Only"
+      ],
+      badge: "Commercial",
+      popular: false,
+      description: "Essential maintenance for small businesses"
+    },
+    {
+      id: 2,
+      name: "Protect Pro Commercial",
+      type: "commercial-pro",
+      annualPrice: 2995,
+      features: [
+        "Everything in Basic, plus:",
+        "4x Visits / Year (Quarterly Tune-Ups)",
+        "Smart Building Thermostat Optimization",
+        "Drain Line & Compressor Checks",
+        "Refrigerant Pressure Test",
+        "Early Failure Detection Reports",
+        "After-Hours Support (2 Free Calls/Year)"
+      ],
+      badge: "Professional",
+      popular: true,
+      description: "Advanced commercial HVAC maintenance"
+    },
+    {
+      id: 3,
+      name: "Enterprise Building Contract",
+      type: "commercial-enterprise",
+      annualPrice: 5995,
+      priceNote: "Starting at",
+      features: [
+        "Custom Maintenance Schedule (6–12x visits/year)",
+        "Full System Reporting for Insurance/Compliance",
+        "Priority Equipment Replacement Pipeline",
+        "Remote Thermostat & System Diagnostics",
+        "Dedicated Account Manager",
+        "Emergency After-Hours SLA: 4 Hours Max",
+        "Employee Air Quality Certification Option"
+      ],
+      badge: "Enterprise",
+      popular: false,
+      description: "For buildings with 5+ rooftop units and complex systems"
     }
   ];
 
@@ -124,95 +185,131 @@ const MaintenancePlansShop = () => {
                   <Settings className="w-8 h-8 text-white" />
                 </div>
                 <h1 className="text-4xl lg:text-5xl font-black text-gray-900">
-                  HVAC Maintenance Plans
+                  AfterHours HVAC Premium Packages
                 </h1>
               </div>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                Keep your HVAC system running efficiently year-round with our comprehensive maintenance plans. 
-                Save money on repairs and extend your equipment's lifespan.
+                Professional maintenance plans for residential and commercial properties. 
+                From quick diagnostics to comprehensive care plans with emergency coverage.
               </p>
-              
-              {/* Billing Toggle */}
-              <div className="flex items-center justify-center gap-4 bg-white rounded-full p-2 shadow-lg max-w-xs mx-auto">
-                <span className={`text-sm font-medium ${!isAnnual ? 'text-blue-600' : 'text-gray-500'}`}>
-                  Monthly
-                </span>
-                <Switch
-                  checked={isAnnual}
-                  onCheckedChange={setIsAnnual}
-                  className="data-[state=checked]:bg-blue-600"
-                />
-                <span className={`text-sm font-medium ${isAnnual ? 'text-blue-600' : 'text-gray-500'}`}>
-                  Annual
-                </span>
-                {isAnnual && (
-                  <Badge className="bg-green-500 text-white text-xs">Save up to 20%</Badge>
-                )}
-              </div>
             </div>
 
-            {/* Plans Grid */}
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
-              {maintenancePlans.map((plan) => (
-                <Card key={plan.id} className={`relative bg-white shadow-lg transition-all duration-300 overflow-hidden ${plan.popular ? 'ring-2 ring-blue-500 scale-105' : 'hover:shadow-xl'}`}>
-                  {plan.badge && (
-                    <div className="absolute top-4 right-4 z-10">
-                      <Badge className={`${plan.popular ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gradient-to-r from-blue-500 to-purple-500'} text-white font-bold`}>
-                        {plan.badge}
-                      </Badge>
-                    </div>
-                  )}
-                  
-                  <CardHeader className="text-center pb-4">
-                    <CardTitle className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</CardTitle>
-                    <div className="mb-4">
-                      <div className="text-4xl font-black text-blue-600">
-                        ${isAnnual ? plan.annualPrice : plan.monthlyPrice}
+            {/* Residential Plans */}
+            <div className="mb-16">
+              <h2 className="text-3xl font-bold text-center mb-8">Residential Maintenance Plans</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {residentialPlans.map((plan) => (
+                  <Card key={plan.id} className={`relative bg-white shadow-lg transition-all duration-300 overflow-hidden ${plan.popular ? 'ring-2 ring-blue-500 scale-105' : 'hover:shadow-xl'}`}>
+                    {plan.badge && (
+                      <div className="absolute top-4 right-4 z-10">
+                        <Badge className={`${plan.popular ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gradient-to-r from-blue-500 to-purple-500'} text-white font-bold text-xs`}>
+                          {plan.badge}
+                        </Badge>
                       </div>
-                      <div className="text-gray-500">
-                        {isAnnual ? '/year' : '/month'}
-                      </div>
-                      {isAnnual && plan.savings > 0 && (
-                        <div className="text-green-600 font-semibold text-sm">
-                          Save ${plan.savings}/year
-                        </div>
-                      )}
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent className="space-y-6">
-                    <div className="space-y-3">
-                      <h4 className="font-semibold text-gray-900 mb-3">Plan Features:</h4>
-                      {plan.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-                          <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                          {feature}
-                        </div>
-                      ))}
-                    </div>
+                    )}
                     
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2">What's Included:</h4>
-                      <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
-                        {plan.includes.map((item, idx) => (
-                          <div key={idx} className="flex items-center gap-1">
-                            <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
-                            {item}
+                    <CardHeader className="text-center pb-4">
+                      <CardTitle className="text-lg font-bold text-gray-900 mb-2">{plan.name}</CardTitle>
+                      <div className="mb-4">
+                        {plan.oneTimePrice && (
+                          <div className="text-3xl font-black text-blue-600">${plan.oneTimePrice}</div>
+                        )}
+                        {plan.visitPrice && (
+                          <div className="text-3xl font-black text-blue-600">${plan.visitPrice}/visit</div>
+                        )}
+                        {plan.monthlyPrice && plan.annualPrice && (
+                          <>
+                            <div className="text-3xl font-black text-blue-600">
+                              ${isAnnual ? plan.annualPrice : plan.monthlyPrice}
+                            </div>
+                            <div className="text-gray-500">
+                              {isAnnual ? '/year' : '/month'}
+                            </div>
+                            {isAnnual && plan.savings > 0 && (
+                              <div className="text-green-600 font-semibold text-sm">
+                                Save ${plan.savings}/year
+                              </div>
+                            )}
+                          </>
+                        )}
+                        {plan.duration && (
+                          <div className="text-gray-500 text-sm">{plan.duration}</div>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600">{plan.description}</p>
+                    </CardHeader>
+                    
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        {plan.features.slice(0, 6).map((feature, idx) => (
+                          <div key={idx} className="flex items-start gap-2 text-xs text-gray-700">
+                            <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0 mt-0.5" />
+                            {feature}
                           </div>
                         ))}
                       </div>
-                    </div>
-                    
-                    <Button 
-                      className={`w-full ${plan.popular ? 'bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
-                      size="lg"
-                    >
-                      Choose This Plan
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+                      
+                      <Button 
+                        className={`w-full ${plan.popular ? 'bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
+                        size="sm"
+                      >
+                        Choose Plan
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
+
+            {/* Commercial Plans */}
+            <div className="mb-16">
+              <h2 className="text-3xl font-bold text-center mb-8">Commercial HVAC Contracts</h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                {commercialPlans.map((plan) => (
+                  <Card key={plan.id} className={`relative bg-white shadow-lg transition-all duration-300 overflow-hidden ${plan.popular ? 'ring-2 ring-blue-500 scale-105' : 'hover:shadow-xl'}`}>
+                    {plan.badge && (
+                      <div className="absolute top-4 right-4 z-10">
+                        <Badge className={`${plan.popular ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gradient-to-r from-blue-500 to-purple-500'} text-white font-bold`}>
+                          {plan.badge}
+                        </Badge>
+                      </div>
+                    )}
+                    
+                    <CardHeader className="text-center pb-4">
+                      <CardTitle className="text-xl font-bold text-gray-900 mb-2">{plan.name}</CardTitle>
+                      <div className="mb-4">
+                        <div className="text-3xl font-black text-blue-600">
+                          {plan.priceNote && <span className="text-lg font-normal">{plan.priceNote} </span>}
+                          ${plan.annualPrice.toLocaleString()}
+                        </div>
+                        <div className="text-gray-500">/year</div>
+                      </div>
+                      <p className="text-sm text-gray-600">{plan.description}</p>
+                    </CardHeader>
+                    
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        {plan.features.map((feature, idx) => (
+                          <div key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                            <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                            {feature}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <Button 
+                        className={`w-full ${plan.popular ? 'bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
+                        size="lg"
+                      >
+                        Get Quote
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+
 
             {/* Add-Ons Section */}
             <div className="bg-white rounded-2xl shadow-lg p-8 mb-12">
