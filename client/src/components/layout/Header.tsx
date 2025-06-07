@@ -47,19 +47,6 @@ const Header = () => {
         { name: "Maintenance Plans", href: "/shop/maintenance-plans" }
       ]
     },
-    {
-      name: "Tools",
-      href: "/calculators",
-      icon: Calculator,
-      submenu: [
-        { name: "BTU Calculator", href: "/calculators/btu" },
-        { name: "Energy Savings", href: "/calculators/energy-savings" },
-        { name: "Load Calculator", href: "/calculators/load-calculator" },
-        ...(user?.hasProAccess || user?.has_pro_access ? [
-          { name: "Pro Calculator", href: "/pro-calculator", isPro: true }
-        ] : [])
-      ]
-    },
     { name: "Forum", href: "/forum", icon: MessageSquare },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" }

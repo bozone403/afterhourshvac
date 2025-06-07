@@ -407,9 +407,11 @@ For complete terms, consult full legal document.`;
                     <CardDescription>Manual D ductwork design and sizing tool</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button className="w-full" variant="outline">
-                      Coming Soon
-                    </Button>
+                    <Link href="/calculators/duct-sizing">
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                        Open Calculator
+                      </Button>
+                    </Link>
                   </CardContent>
                 </Card>
 
@@ -420,9 +422,11 @@ For complete terms, consult full legal document.`;
                     <CardDescription>Real-time quoting with Alggin pricing</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button className="w-full" variant="outline">
-                      Coming Soon
-                    </Button>
+                    <Link href="/calculators/quote-builder">
+                      <Button className="w-full bg-green-600 hover:bg-green-700">
+                        Open Calculator
+                      </Button>
+                    </Link>
                   </CardContent>
                 </Card>
               </div>

@@ -26,6 +26,9 @@ import BTUCalculator from "@/pages/calculators/btu";
 import BTUCalc from "@/pages/calculators/btu-calculator";
 import EnergySavingsCalculator from "@/pages/calculators/energy-savings";
 import LoadCalculator from "@/pages/calculators/load-calculator";
+import ProBTUCalculator from "@/pages/calculators/pro-btu-calculator";
+import DuctSizingCalculator from "@/pages/calculators/duct-sizing-calculator";
+import QuoteBuilder from "@/pages/calculators/quote-builder";
 import ServiceTracking from "@/pages/service-tracking";
 import ProCalculator from "@/pages/pro-calculator";
 import ProCalculatorV2 from "@/pages/pro-calculator-v2";
@@ -103,6 +106,9 @@ function Router() {
         <Route path="/membership" component={MembershipSimple} />
         <Route path="/pro-calculator" component={ProCalculatorV2} />
         <Route path="/pro-portal" component={ProPortal} />
+        <Route path="/calculators/pro-btu" component={ProBTUCalculator} />
+        <Route path="/calculators/duct-sizing" component={DuctSizingCalculator} />
+        <Route path="/calculators/quote-builder" component={QuoteBuilder} />
         <Route path="/checkout/:productId" component={Checkout} />
         <Route path="/payment/:productId" component={Payment} />
         <Route path="/stripe-checkout" component={StripeCheckout} />
