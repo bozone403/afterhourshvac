@@ -167,15 +167,9 @@ const StripeCheckoutPage = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Payment Information</CardTitle>
-                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-                  <h4 className="font-semibold text-blue-800 mb-2">Test Card Information:</h4>
-                  <div className="text-sm text-blue-700 space-y-1">
-                    <p><strong>Card Number:</strong> 4242 4242 4242 4242</p>
-                    <p><strong>Expiry:</strong> Any future date (e.g., 12/25)</p>
-                    <p><strong>CVC:</strong> Any 3 digits (e.g., 123)</p>
-                    <p><strong>ZIP:</strong> Any 5 digits (e.g., 12345)</p>
-                  </div>
-                </div>
+                <p className="text-sm text-gray-600">
+                  Your payment is secure and encrypted. We never store your payment information.
+                </p>
               </CardHeader>
               <CardContent>
                 <Elements 
