@@ -4,6 +4,7 @@ import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Check, Star, Zap, Shield, Clock, Wrench, Home, Building, Factory } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
@@ -11,6 +12,8 @@ import { useToast } from '@/hooks/use-toast';
 const Pricing = () => {
   const [location, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState('pro-membership');
+  const [selectedFurnaceType, setSelectedFurnaceType] = useState('');
+  const [selectedACType, setSelectedACType] = useState('');
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -36,6 +39,24 @@ const Pricing = () => {
 
   const handleServicePayment = (serviceType: string, amount: number, description: string) => {
     setLocation(`/checkout?service=${serviceType}&amount=${amount}&description=${encodeURIComponent(description)}`);
+  };
+
+  const getFurnaceDetails = () => {
+    const options = {
+      '80-afue': { price: 3500, label: '80% AFUE Standard Efficiency' },
+      '90-afue': { price: 4800, label: '90% AFUE High Efficiency' },
+      '95-afue': { price: 6200, label: '95% AFUE Premium Efficiency' }
+    };
+    return options[selectedFurnaceType as keyof typeof options] || options['90-afue'];
+  };
+
+  const getACDetails = () => {
+    const options = {
+      '13-seer': { price: 5200, label: '13-14 SEER Standard System' },
+      '16-seer': { price: 7200, label: '16 SEER High Efficiency' },
+      'heat-pump': { price: 9000, label: 'Heat Pump System' }
+    };
+    return options[selectedACType as keyof typeof options] || options['16-seer'];
   };
 
   return (
@@ -257,24 +278,43 @@ const Pricing = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4 mb-6">
-                    <div className="flex justify-between text-white">
-                      <span>80% AFUE Unit</span>
-                      <span className="font-semibold">$3,500 - $4,500</span>
+                    <div className="space-y-3">
+                      <label className="text-white font-medium">Select Furnace Type:</label>
+                      <Select value={selectedFurnaceType} onValueChange={setSelectedFurnaceType}>
+                        <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                          <SelectValue placeholder="Choose efficiency rating" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="80-afue">80% AFUE - $3,500</SelectItem>
+                          <SelectItem value="90-afue">90% AFUE - $4,800</SelectItem>
+                          <SelectItem value="95-afue">95% AFUE - $6,200</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <div className="flex justify-between text-white">
-                      <span>90% AFUE Unit</span>
-                      <span className="font-semibold">$4,200 - $5,800</span>
-                    </div>
-                    <div className="flex justify-between text-white">
-                      <span>95% AFUE Unit</span>
-                      <span className="font-semibold">$5,500 - $7,200</span>
-                    </div>
+                    
+                    {selectedFurnaceType && (
+                      <div className="p-4 bg-slate-900/50 rounded-lg">
+                        <div className="flex justify-between text-white mb-2">
+                          <span>Selected:</span>
+                          <span className="font-semibold">{getFurnaceDetails().label}</span>
+                        </div>
+                        <div className="flex justify-between text-green-400 text-lg font-bold">
+                          <span>Total Price:</span>
+                          <span>${getFurnaceDetails().price.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
+                  
                   <Button 
-                    className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => handleServicePayment('furnace-install', 4000, 'Furnace Installation - Complete Service')}
+                    className="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-600"
+                    disabled={!selectedFurnaceType}
+                    onClick={() => {
+                      const details = getFurnaceDetails();
+                      handleServicePayment('furnace-install', details.price, `Furnace Installation - ${details.label}`);
+                    }}
                   >
-                    Pay $4,000 - Mid-Efficiency Furnace
+                    {selectedFurnaceType ? `Pay $${getFurnaceDetails().price.toLocaleString()} - Install Furnace` : 'Select Furnace Type'}
                   </Button>
                 </CardContent>
               </Card>
@@ -290,24 +330,43 @@ const Pricing = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4 mb-6">
-                    <div className="flex justify-between text-white">
-                      <span>13-14 SEER System</span>
-                      <span className="font-semibold">$4,800 - $6,500</span>
+                    <div className="space-y-3">
+                      <label className="text-white font-medium">Select AC System:</label>
+                      <Select value={selectedACType} onValueChange={setSelectedACType}>
+                        <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                          <SelectValue placeholder="Choose system efficiency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="13-seer">13-14 SEER - $5,200</SelectItem>
+                          <SelectItem value="16-seer">16 SEER - $7,200</SelectItem>
+                          <SelectItem value="heat-pump">Heat Pump - $9,000</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <div className="flex justify-between text-white">
-                      <span>16 SEER System</span>
-                      <span className="font-semibold">$6,200 - $8,200</span>
-                    </div>
-                    <div className="flex justify-between text-white">
-                      <span>Heat Pump System</span>
-                      <span className="font-semibold">$7,500 - $10,500</span>
-                    </div>
+                    
+                    {selectedACType && (
+                      <div className="p-4 bg-slate-900/50 rounded-lg">
+                        <div className="flex justify-between text-white mb-2">
+                          <span>Selected:</span>
+                          <span className="font-semibold">{getACDetails().label}</span>
+                        </div>
+                        <div className="flex justify-between text-green-400 text-lg font-bold">
+                          <span>Total Price:</span>
+                          <span>${getACDetails().price.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
+                  
                   <Button 
-                    className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => handleServicePayment('ac-install', 6500, 'Air Conditioning Installation - Complete System')}
+                    className="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-600"
+                    disabled={!selectedACType}
+                    onClick={() => {
+                      const details = getACDetails();
+                      handleServicePayment('ac-install', details.price, `Air Conditioning Installation - ${details.label}`);
+                    }}
                   >
-                    Pay $6,500 - 16 SEER AC System
+                    {selectedACType ? `Pay $${getACDetails().price.toLocaleString()} - Install AC` : 'Select AC System'}
                   </Button>
                 </CardContent>
               </Card>
