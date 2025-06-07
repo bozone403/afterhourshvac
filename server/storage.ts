@@ -1,4 +1,4 @@
-import { users, productAccess, products, galleryImages, blogPosts, forumCategories, forumTopics, forumPosts, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, userSessions, pageViews, calculatorUsage, systemMetrics, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric } from "@shared/schema";
+import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, userSessions, pageViews, calculatorUsage, systemMetrics, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric } from "@shared/schema";
 import { eq, and, gte, desc, count } from "drizzle-orm";
 import { db } from "./db";
 import session from "express-session";
@@ -42,6 +42,12 @@ export interface IStorage {
   createGalleryImage(image: InsertGalleryImage): Promise<GalleryImage>;
   updateGalleryImage(id: number, data: Partial<GalleryImage>): Promise<GalleryImage | undefined>;
   deleteGalleryImage(id: number): Promise<boolean>;
+  
+  // Carousel methods
+  getCarouselImages(): Promise<CarouselImage[]>;
+  createCarouselImage(image: InsertCarouselImage): Promise<CarouselImage>;
+  updateCarouselImage(id: number, data: Partial<CarouselImage>): Promise<CarouselImage | undefined>;
+  deleteCarouselImage(id: number): Promise<boolean>;
   
   // Blog methods
   getBlogPosts(publishedOnly?: boolean): Promise<BlogPost[]>;
@@ -315,6 +321,40 @@ export class DatabaseStorage implements IStorage {
       .update(galleryImages)
       .set({ isActive: false })
       .where(eq(galleryImages.id, id));
+    return !!result;
+  }
+
+  // CAROUSEL METHODS
+  async getCarouselImages(): Promise<CarouselImage[]> {
+    return db
+      .select()
+      .from(carouselImages)
+      .where(eq(carouselImages.isActive, true))
+      .orderBy(carouselImages.sortOrder);
+  }
+
+  async createCarouselImage(image: InsertCarouselImage): Promise<CarouselImage> {
+    const [newImage] = await db
+      .insert(carouselImages)
+      .values(image)
+      .returning();
+    return newImage;
+  }
+
+  async updateCarouselImage(id: number, data: Partial<CarouselImage>): Promise<CarouselImage | undefined> {
+    const [updatedImage] = await db
+      .update(carouselImages)
+      .set(data)
+      .where(eq(carouselImages.id, id))
+      .returning();
+    return updatedImage;
+  }
+
+  async deleteCarouselImage(id: number): Promise<boolean> {
+    const result = await db
+      .update(carouselImages)
+      .set({ isActive: false })
+      .where(eq(carouselImages.id, id));
     return !!result;
   }
   
