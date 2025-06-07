@@ -46,7 +46,7 @@ const proCalculators = [
     title: 'Advanced Material Calculator',
     description: 'Real-time Alggin.com pricing with custom multipliers',
     icon: Calculator,
-    link: '/calculators/material-estimator',
+    link: '/pro-calculator',
     badge: 'Pro Only'
   },
   {
