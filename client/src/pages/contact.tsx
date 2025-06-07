@@ -44,52 +44,52 @@ const Contact = () => {
                   
                   <div className="space-y-6">
                     <div className="flex items-start">
-                      <div className="bg-primary rounded-full p-2 mr-4 mt-1">
+                      <div className="bg-orange-600 rounded-full p-2 mr-4 mt-1">
                         <i className="fas fa-phone-alt text-white"></i>
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-1">Phone</h4>
+                        <h4 className="font-semibold mb-1 text-gray-900">Phone</h4>
                         <a 
                           href="tel:4036136014" 
-                          className="text-lightgray hover:text-white transition-colors"
+                          className="text-gray-600 hover:text-orange-600 transition-colors"
                         >
                           (403) 613-6014
                         </a>
-                        <p className="text-sm text-lightgray mt-1">Available 24/7 for emergencies</p>
+                        <p className="text-sm text-gray-500 mt-1">Available 24/7 for emergencies</p>
                       </div>
                     </div>
                     
                     <div className="flex items-start">
-                      <div className="bg-primary rounded-full p-2 mr-4 mt-1">
+                      <div className="bg-blue-600 rounded-full p-2 mr-4 mt-1">
                         <i className="fas fa-envelope text-white"></i>
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-1">Email</h4>
+                        <h4 className="font-semibold mb-1 text-gray-900">Email</h4>
                         <a 
                           href="mailto:Jordan@AfterhoursHVAC.ca" 
-                          className="text-lightgray hover:text-white transition-colors"
+                          className="text-gray-600 hover:text-blue-600 transition-colors"
                         >
                           Jordan@AfterhoursHVAC.ca
                         </a>
-                        <p className="text-sm text-lightgray mt-1">We typically respond within 24 hours</p>
+                        <p className="text-sm text-gray-500 mt-1">We typically respond within 24 hours</p>
                       </div>
                     </div>
                     
                     <div className="flex items-start">
-                      <div className="bg-primary rounded-full p-2 mr-4 mt-1">
+                      <div className="bg-orange-600 rounded-full p-2 mr-4 mt-1">
                         <i className="fas fa-calendar-alt text-white"></i>
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-1">Book Online</h4>
+                        <h4 className="font-semibold mb-1 text-gray-900">Book Online</h4>
                         <a 
                           href="https://calendar.app.google/NXZB4v1PP57HhARL7" 
                           target="_blank"
                           rel="noopener noreferrer" 
-                          className="text-lightgray hover:text-white transition-colors"
+                          className="text-gray-600 hover:text-orange-600 transition-colors"
                         >
                           Schedule an Appointment
                         </a>
-                        <p className="text-sm text-lightgray mt-1">Select a convenient date and time</p>
+                        <p className="text-sm text-gray-500 mt-1">Select a convenient date and time</p>
                       </div>
                     </div>
                     
