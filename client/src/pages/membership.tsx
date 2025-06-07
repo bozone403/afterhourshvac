@@ -133,11 +133,10 @@ const Membership = () => {
 
   const handleSubscribe = (planId: string) => {
     if (!user) {
-      toast({
-        title: "Login Required",
-        description: "Please log in to subscribe to Pro features",
-        variant: "destructive"
-      });
+      // Store the intended plan in sessionStorage to redirect after auth
+      sessionStorage.setItem('pendingSubscription', planId);
+      // Redirect to registration/login with return URL
+      window.location.href = `/auth?returnUrl=${encodeURIComponent('/membership')}`;
       return;
     }
 
@@ -151,31 +150,31 @@ const Membership = () => {
         <meta name="description" content="Unlock professional HVAC calculation tools with real supplier pricing and advanced features for contractors and engineers." />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
         <div className="container mx-auto px-4 py-12">
           
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <div className="inline-flex items-center bg-green-600/10 border border-green-600/20 rounded-full px-4 py-2 mb-6">
-              <Crown className="h-4 w-4 text-green-400 mr-2" />
-              <span className="text-green-400 text-sm font-medium">Professional Tools</span>
+            <div className="inline-flex items-center bg-orange-100 border border-orange-200 rounded-full px-4 py-2 mb-6">
+              <Crown className="h-4 w-4 text-orange-600 mr-2" />
+              <span className="text-orange-600 text-sm font-medium">Professional Tools</span>
             </div>
             
-            <h1 className="text-5xl font-bold mb-6">
-              Unlock Pro <span className="text-green-400">HVAC Tools</span>
+            <h1 className="text-5xl font-bold mb-6 text-gray-900">
+              Unlock Pro <span className="text-orange-600">HVAC Tools</span>
             </h1>
             
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
               Access advanced calculators with real supplier pricing, commercial load calculations, 
               and professional templates designed for HVAC contractors and engineers.
             </p>
 
             {user?.hasPro && (
-              <div className="inline-flex items-center bg-green-600/20 border border-green-600/30 rounded-lg px-6 py-3 mb-8">
-                <Crown className="h-5 w-5 text-green-400 mr-2" />
-                <span className="text-green-400 font-medium">You have Pro access!</span>
-                <Link href="/calculators/pro">
-                  <Button className="ml-4 bg-green-600 hover:bg-green-700 text-white">
+              <div className="inline-flex items-center bg-orange-100 border border-orange-200 rounded-lg px-6 py-3 mb-8">
+                <Crown className="h-5 w-5 text-orange-600 mr-2" />
+                <span className="text-orange-600 font-medium">You have Pro access!</span>
+                <Link href="/pro-calculator">
+                  <Button className="ml-4 bg-orange-600 hover:bg-orange-700 text-white">
                     Access Pro Tools
                   </Button>
                 </Link>
@@ -218,41 +217,41 @@ const Membership = () => {
                 return (
                   <Card 
                     key={plan.id} 
-                    className={`relative bg-slate-800/50 border-slate-700 hover:border-green-600/50 transition-all ${
-                      plan.popular ? 'ring-2 ring-green-600/30 scale-105' : ''
+                    className={`relative bg-white border-gray-200 hover:border-orange-300 transition-all shadow-sm ${
+                      plan.popular ? 'ring-2 ring-orange-200 scale-105' : ''
                     }`}
                   >
                     {plan.popular && (
                       <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                        <Badge className="bg-green-600 text-white px-4 py-1">
+                        <Badge className="bg-orange-600 text-white px-4 py-1">
                           Most Popular
                         </Badge>
                       </div>
                     )}
 
                     <CardHeader className="text-center pb-4">
-                      <div className="mx-auto mb-4 p-3 bg-green-600/10 rounded-full w-fit">
-                        <IconComponent className="h-8 w-8 text-green-400" />
+                      <div className="mx-auto mb-4 p-3 bg-orange-100 rounded-full w-fit">
+                        <IconComponent className="h-8 w-8 text-orange-600" />
                       </div>
                       
-                      <Badge variant="outline" className="w-fit mx-auto mb-2 border-green-500 text-green-400">
+                      <Badge variant="outline" className="w-fit mx-auto mb-2 border-orange-500 text-orange-600">
                         {plan.badge}
                       </Badge>
                       
-                      <CardTitle className="text-white text-2xl">{plan.name}</CardTitle>
-                      <CardDescription className="text-slate-300">
+                      <CardTitle className="text-gray-900 text-2xl">{plan.name}</CardTitle>
+                      <CardDescription className="text-gray-600">
                         {plan.description}
                       </CardDescription>
                       
                       <div className="mt-4">
                         <div className="flex items-baseline justify-center">
-                          <span className="text-4xl font-bold text-white">${plan.price}</span>
+                          <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
                           {plan.interval !== 'lifetime' && (
-                            <span className="text-slate-400 ml-1">/{plan.interval}</span>
+                            <span className="text-gray-500 ml-1">/{plan.interval}</span>
                           )}
                         </div>
                         {plan.savings && (
-                          <p className="text-green-400 text-sm mt-1">{plan.savings}</p>
+                          <p className="text-orange-600 text-sm mt-1">{plan.savings}</p>
                         )}
                       </div>
                     </CardHeader>
@@ -281,7 +280,7 @@ const Membership = () => {
                         ) : (
                           <>
                             <DollarSign className="h-4 w-4 mr-2" />
-                            {plan.interval === 'lifetime' ? 'Buy Lifetime' : 'Start Free Trial'}
+                            Buy Now
                           </>
                         )}
                       </Button>
