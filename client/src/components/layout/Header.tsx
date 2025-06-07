@@ -1,7 +1,25 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'wouter';
-import { useAuth } from '@/hooks/use-auth';
+import { useState } from "react";
+import { Link, useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { 
+  Menu, 
+  X, 
+  Phone, 
+  Clock,
+  ChevronDown,
+  Home,
+  Wrench,
+  Calculator,
+  MessageSquare,
+  User,
+  Settings,
+  LogOut,
+  Crown,
+  Shield
+} from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -9,284 +27,367 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { 
-  User, 
-  LogOut, 
-  Settings, 
-  Calculator, 
-  Menu,
-  LogIn
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 const Header = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [location, navigate] = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [location] = useLocation();
   const { user, logoutMutation } = useAuth();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+  const navigationItems = [
+    { name: "Home", href: "/", icon: Home },
+    {
+      name: "Services",
+      href: "/services",
+      icon: Wrench,
+      submenu: [
+        { name: "Furnace Installation", href: "/services/furnace-install" },
+        { name: "AC Repair & Installation", href: "/services/ac-repair" },
+        { name: "Duct Cleaning", href: "/services/duct-cleaning" },
+        { name: "HVAC Maintenance", href: "/services/maintenance" },
+        { name: "Emergency Service", href: "/emergency" }
+      ]
+    },
+    {
+      name: "Tools",
+      href: "/calculators",
+      icon: Calculator,
+      submenu: [
+        { name: "BTU Calculator", href: "/calculators/btu" },
+        { name: "Energy Savings", href: "/calculators/energy-savings" },
+        { name: "Load Calculator", href: "/calculators/load-calculator" },
+        ...(user?.hasProAccess || user?.has_pro_access ? [
+          { name: "Pro Calculator", href: "/pro-calculator", isPro: true }
+        ] : [])
+      ]
+    },
+    { name: "Forum", href: "/forum", icon: MessageSquare },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" }
+  ];
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
+  const isActivePage = (href: string) => {
+    if (href === "/" && location === "/") return true;
+    if (href !== "/" && location.startsWith(href)) return true;
+    return false;
   };
 
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-  };
-
-  const handleLogout = () => {
-    logoutMutation.mutate();
-    navigate('/');
-    closeMobileMenu();
-  };
-
-  const isActive = (path: string) => {
-    return location === path;
+  const handleLogout = async () => {
+    try {
+      await logoutMutation.mutateAsync();
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900 bg-opacity-95 shadow-md' : 'bg-gray-900 bg-opacity-80'}`}>
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
-          <div className="flex items-center">
-            <Link href="/">
-              <div className="text-2xl md:text-3xl font-bold text-white font-header cursor-pointer">
-                <span className="text-primary">After</span>
-                <span className="text-secondary">Hours</span> 
-                <span className="text-white">HVAC</span>
-              </div>
-            </Link>
-          </div>
-          
-          {/* Mobile Menu Button */}
-          <div className="lg:hidden">
-            <button 
-              onClick={toggleMobileMenu} 
-              className="text-white focus:outline-none"
-              aria-label="Toggle menu"
-            >
-              <Menu className="h-6 w-6" />
-            </button>
-          </div>
-          
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-4">
-            <Link href="/">
-              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/') ? 'text-primary' : ''}`}>Home</div>
-            </Link>
-            <Link href="/about">
-              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/about') ? 'text-primary' : ''}`}>About</div>
-            </Link>
-
-            <Link href="/membership">
-              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/membership') ? 'text-primary' : ''}`}>Membership</div>
-            </Link>
-            <Link href="/contact">
-              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/contact') ? 'text-primary' : ''}`}>Contact</div>
-            </Link>
-            <Link href="/calculators">
-              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/calculators') ? 'text-primary' : ''}`}>Calculators</div>
-            </Link>
-            <Link href="/forum">
-              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/forum') ? 'text-primary' : ''}`}>Forum</div>
-            </Link>
-            
-            {!user && (
-              <>
-                <Link href="/login">
-                  <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/login') ? 'text-primary' : ''}`}>Login</div>
-                </Link>
-                <Link href="/register">
-                  <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/register') ? 'text-primary' : ''}`}>Register</div>
-                </Link>
-              </>
-            )}
-            
-            <div className="ml-2 flex items-center space-x-2">
-              <a 
-                href="tel:4036136014" 
-                className="bg-primary hover:bg-primary/80 text-white py-2 px-4 rounded-md transition-all font-semibold"
-              >
-                <i className="fas fa-phone-alt mr-2"></i>(403) 613-6014
-              </a>
-              
-              {user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="ml-2">
-                      <User className="h-4 w-4 mr-1" />
-                      {user.username}
-                      {user.hasPro && (
-                        <span className="ml-2 bg-orange-600 text-white px-2 py-1 text-xs rounded-full">PRO</span>
-                      )}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <Link href="/settings">
-                      <DropdownMenuItem>
-                        <User className="h-4 w-4 mr-2" />
-                        Account Settings
-                      </DropdownMenuItem>
-                    </Link>
-                    <Link href="/pro-calculator">
-                      <DropdownMenuItem>
-                        <Calculator className="h-4 w-4 mr-2" />
-                        Pro Calculator
-                      </DropdownMenuItem>
-                    </Link>
-                    {user && user.isAdmin && (
-                      <>
-                        <Link href="/admin">
-                          <DropdownMenuItem>
-                            <Settings className="h-4 w-4 mr-2" />
-                            Admin Dashboard
-                          </DropdownMenuItem>
-                        </Link>
-                      </>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout}>
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="ml-2"
-                  onClick={() => navigate('/auth')}
-                >
-                  <LogIn className="h-4 w-4 mr-1" />
-                  Login
-                </Button>
-              )}
+    <header className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
+      {/* Emergency Banner */}
+      <div className="hvac-gradient-secondary text-white py-2">
+        <div className="hvac-container">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center space-x-2">
+              <Clock className="w-4 h-4" />
+              <span className="font-medium">24/7 Emergency HVAC Service Available</span>
             </div>
-          </nav>
+            <div className="hidden sm:flex items-center space-x-4">
+              <a href="tel:4035550123" className="flex items-center space-x-1 hover:text-orange-100 transition-colors">
+                <Phone className="w-4 h-4" />
+                <span className="font-semibold">(403) 555-0123</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
-      
-      {/* Mobile Menu */}
-      <div className={`lg:hidden bg-darkgray transition-all duration-300 overflow-hidden ${mobileMenuOpen ? 'max-h-screen' : 'max-h-0'}`}>
-        <div className="container mx-auto px-4 py-2">
-          <nav className="flex flex-col space-y-4 py-4">
-            <Link href="/">
-              <div 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/') ? 'text-primary' : ''}`}
-                onClick={closeMobileMenu}
-              >
-                Home
-              </div>
-            </Link>
-            <Link href="/about">
-              <div 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/about') ? 'text-primary' : ''}`}
-                onClick={closeMobileMenu}
-              >
-                About
-              </div>
-            </Link>
 
-            <Link href="/pricing">
-              <div 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/pricing') ? 'text-primary' : ''}`}
-                onClick={closeMobileMenu}
-              >
-                Pricing
-              </div>
-            </Link>
-            <Link href="/contact">
-              <div 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/contact') ? 'text-primary' : ''}`}
-                onClick={closeMobileMenu}
-              >
-                Contact
-              </div>
-            </Link>
-            <Link href="/calculators">
-              <div 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/calculators') ? 'text-primary' : ''}`}
-                onClick={closeMobileMenu}
-              >
-                Calculators
-              </div>
-            </Link>
-            <Link href="/forum">
-              <div 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/forum') ? 'text-primary' : ''}`}
-                onClick={closeMobileMenu}
-              >
-                Forum
-              </div>
-            </Link>
-            
-            {user ? (
-              <>
-                <Link href="/pro-calculator">
-                  <div 
-                    className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/pro-calculator') ? 'text-primary' : ''}`}
-                    onClick={closeMobileMenu}
+      {/* Main Navigation */}
+      <nav className="hvac-container py-4">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="hvac-gradient-primary p-3 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300">
+              <Wrench className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">AfterHours</h1>
+              <p className="text-sm text-blue-600 font-medium">HVAC Solutions</p>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-1">
+            {navigationItems.map((item) => (
+              <div key={item.name} className="relative group">
+                {item.submenu ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className={`nav-link flex items-center space-x-1 px-4 py-2 rounded-xl transition-all duration-200 ${
+                          isActivePage(item.href) ? "nav-link-active bg-blue-50" : "hover:bg-gray-50"
+                        }`}
+                      >
+                        {item.icon && <item.icon className="w-4 h-4" />}
+                        <span>{item.name}</span>
+                        <ChevronDown className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 bg-white border border-gray-200 shadow-xl rounded-xl">
+                      <DropdownMenuLabel className="text-gray-900 font-semibold">{item.name}</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {item.submenu.map((subItem) => (
+                        <DropdownMenuItem key={subItem.name} asChild>
+                          <Link href={subItem.href} className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                            {subItem.isPro && <Crown className="w-4 h-4 text-orange-500" />}
+                            <span>{subItem.name}</span>
+                            {subItem.isPro && <Badge className="bg-orange-100 text-orange-600 text-xs">Pro</Badge>}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className={`nav-link flex items-center space-x-1 px-4 py-2 rounded-xl transition-all duration-200 ${
+                      isActivePage(item.href) ? "nav-link-active bg-blue-50" : "hover:bg-gray-50"
+                    }`}
                   >
-                    Pro Calculator
-                  </div>
-                </Link>
-                {user.role === 'admin' && (
-                  <Link href="/admin">
-                    <div 
-                      className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/admin') ? 'text-primary' : ''}`}
-                      onClick={closeMobileMenu}
-                    >
-                      Admin Dashboard
-                    </div>
-                  </Link>
+                    <Link href={item.href}>
+                      {item.icon && <item.icon className="w-4 h-4" />}
+                      <span>{item.name}</span>
+                    </Link>
+                  </Button>
                 )}
-                <button
-                  className="text-white hover:text-primary transition-colors font-medium py-2 px-4 text-left"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
-              </>
+              </div>
+            ))}
+          </div>
+
+          {/* User Menu & CTA */}
+          <div className="hidden lg:flex items-center space-x-4">
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center space-x-2 px-4 py-2 rounded-xl hover:bg-gray-50">
+                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                      <User className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="text-left">
+                      <div className="text-sm font-medium text-gray-900">{user.username}</div>
+                      <div className="text-xs text-gray-500 flex items-center space-x-1">
+                        {user.hasProAccess || user.has_pro_access ? (
+                          <>
+                            <Crown className="w-3 h-3 text-orange-500" />
+                            <span>Pro Member</span>
+                          </>
+                        ) : (
+                          <span>Standard</span>
+                        )}
+                      </div>
+                    </div>
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 bg-white border border-gray-200 shadow-xl rounded-xl">
+                  <DropdownMenuLabel className="text-gray-900 font-semibold">My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  
+                  {user.hasProAccess || user.has_pro_access ? (
+                    <DropdownMenuItem asChild>
+                      <Link href="/pro-portal" className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg">
+                        <Crown className="w-4 h-4 text-orange-500" />
+                        <span>Pro Portal</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem asChild>
+                      <Link href="/membership" className="flex items-center space-x-2 px-3 py-2 text-orange-600 hover:bg-orange-50 rounded-lg">
+                        <Crown className="w-4 h-4" />
+                        <span>Upgrade to Pro</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard" className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg">
+                      <Settings className="w-4 h-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  
+                  {user.isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg">
+                        <Shield className="w-4 h-4" />
+                        <span>Admin Panel</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="flex items-center space-x-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer">
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
-              <Link href="/auth">
-                <div 
-                  className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/auth') ? 'text-primary' : ''}`}
-                  onClick={closeMobileMenu}
-                >
-                  Login / Register
-                </div>
-              </Link>
+              <div className="flex items-center space-x-3">
+                <Button variant="ghost" asChild className="nav-link">
+                  <Link href="/auth">Sign In</Link>
+                </Button>
+                <Button asChild className="hvac-button-primary">
+                  <Link href="/contact">Get Quote</Link>
+                </Button>
+              </div>
             )}
-            
-            <a 
-              href="tel:4036136014" 
-              className="bg-primary hover:bg-opacity-80 text-white py-3 px-4 rounded-md transition-all font-semibold text-center"
-              onClick={closeMobileMenu}
+
+            <Button asChild className="hvac-button-secondary">
+              <a href="tel:4035550123" className="flex items-center space-x-2">
+                <Phone className="w-4 h-4" />
+                <span className="hidden xl:inline">Call Now</span>
+              </a>
+            </Button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden flex items-center space-x-2">
+            {user && (
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2"
             >
-              <i className="fas fa-phone-alt mr-2"></i>(403) 613-6014
-            </a>
-            
-            <a 
-              href="mailto:Jordan@Afterhourshvac.ca" 
-              className="bg-secondary hover:bg-opacity-80 text-white py-3 px-4 rounded-md transition-all font-semibold text-center"
-              onClick={closeMobileMenu}
-            >
-              <i className="fas fa-envelope mr-2"></i>Jordan@Afterhourshvac.ca
-            </a>
-          </nav>
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </Button>
+          </div>
         </div>
-      </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
+            <div className="space-y-2">
+              {navigationItems.map((item) => (
+                <div key={item.name}>
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className={`w-full justify-start px-4 py-3 rounded-xl ${
+                      isActivePage(item.href) ? "nav-link-active bg-blue-50" : "hover:bg-gray-50"
+                    }`}
+                    onClick={() => !item.submenu && setIsMobileMenuOpen(false)}
+                  >
+                    <Link href={item.href}>
+                      {item.icon && <item.icon className="w-4 h-4 mr-3" />}
+                      {item.name}
+                    </Link>
+                  </Button>
+                  
+                  {item.submenu && (
+                    <div className="ml-4 mt-2 space-y-1">
+                      {item.submenu.map((subItem) => (
+                        <Button
+                          key={subItem.name}
+                          variant="ghost"
+                          asChild
+                          className="w-full justify-start px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <Link href={subItem.href} className="flex items-center space-x-2">
+                            {subItem.isPro && <Crown className="w-3 h-3 text-orange-500" />}
+                            <span>{subItem.name}</span>
+                            {subItem.isPro && <Badge className="bg-orange-100 text-orange-600 text-xs">Pro</Badge>}
+                          </Link>
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+              
+              {/* Mobile User Actions */}
+              <div className="border-t border-gray-200 pt-4 mt-4 space-y-2">
+                {user ? (
+                  <>
+                    <div className="px-4 py-2">
+                      <div className="text-sm font-medium text-gray-900">{user.username}</div>
+                      <div className="text-xs text-gray-500 flex items-center space-x-1">
+                        {user.hasProAccess || user.has_pro_access ? (
+                          <>
+                            <Crown className="w-3 h-3 text-orange-500" />
+                            <span>Pro Member</span>
+                          </>
+                        ) : (
+                          <span>Standard Member</span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {user.hasProAccess || user.has_pro_access ? (
+                      <Button variant="ghost" asChild className="w-full justify-start px-4 py-3 rounded-xl">
+                        <Link href="/pro-portal" onClick={() => setIsMobileMenuOpen(false)}>
+                          <Crown className="w-4 h-4 mr-3 text-orange-500" />
+                          Pro Portal
+                        </Link>
+                      </Button>
+                    ) : (
+                      <Button variant="ghost" asChild className="w-full justify-start px-4 py-3 rounded-xl text-orange-600">
+                        <Link href="/membership" onClick={() => setIsMobileMenuOpen(false)}>
+                          <Crown className="w-4 h-4 mr-3" />
+                          Upgrade to Pro
+                        </Link>
+                      </Button>
+                    )}
+                    
+                    <Button variant="ghost" asChild className="w-full justify-start px-4 py-3 rounded-xl">
+                      <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Settings className="w-4 h-4 mr-3" />
+                        Dashboard
+                      </Link>
+                    </Button>
+                    
+                    <Button 
+                      variant="ghost" 
+                      onClick={handleLogout}
+                      className="w-full justify-start px-4 py-3 rounded-xl text-red-600 hover:bg-red-50"
+                    >
+                      <LogOut className="w-4 h-4 mr-3" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="ghost" asChild className="w-full justify-start px-4 py-3 rounded-xl">
+                      <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
+                        <User className="w-4 h-4 mr-3" />
+                        Sign In
+                      </Link>
+                    </Button>
+                    <Button asChild className="w-full hvac-button-primary mx-4">
+                      <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                        Get Quote
+                      </Link>
+                    </Button>
+                  </>
+                )}
+                
+                <Button asChild className="w-full hvac-button-secondary mx-4 mt-2">
+                  <a href="tel:4035550123">
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call (403) 555-0123
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </nav>
     </header>
   );
 };
