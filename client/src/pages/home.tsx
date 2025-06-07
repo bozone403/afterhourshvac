@@ -37,17 +37,19 @@ const Home = () => {
           </div>
           
           {!isLoading && carouselImages && Array.isArray(carouselImages) && carouselImages.length > 0 && (
-            <Carousel 
-              images={carouselImages.map((img: any) => ({
-                id: img.id,
-                url: img.imageUrl,
-                title: img.title,
-                description: img.description || ''
-              }))}
-              autoPlay={true}
-              interval={6000}
-              className="max-w-4xl mx-auto"
-            />
+            <div className="max-w-4xl mx-auto">
+              <Carousel 
+                images={carouselImages.map((img: any) => ({
+                  id: img.id,
+                  url: img.imageUrl,
+                  title: img.title,
+                  description: img.description || ''
+                }))}
+                autoPlay={true}
+                interval={6000}
+                className="w-full"
+              />
+            </div>
           )}
         </div>
       </section>
@@ -73,14 +75,14 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/contact">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white font-bold">
+              <div className="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-6 rounded-lg transition-colors cursor-pointer text-center">
                 Get Quote
-              </Button>
+              </div>
             </Link>
             <Link href="/calculators">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900 font-bold">
+              <div className="border border-white text-white hover:bg-white hover:text-gray-900 font-bold py-3 px-6 rounded-lg transition-colors cursor-pointer text-center">
                 Cost Calculator
-              </Button>
+              </div>
             </Link>
           </div>
         </div>
