@@ -85,7 +85,7 @@ const ProCalculator = () => {
       items = searchCatalog(searchTerm);
     }
     
-    if (selectedCategory) {
+    if (selectedCategory && selectedCategory !== 'all') {
       items = items.filter(item => item.category === selectedCategory);
     }
     
@@ -494,7 +494,7 @@ const ProCalculator = () => {
                       <SelectValue placeholder="Filter" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All</SelectItem>
+                      <SelectItem value="all">All</SelectItem>
                       {categories.map(cat => (
                         <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                       ))}

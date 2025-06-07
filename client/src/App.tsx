@@ -47,6 +47,8 @@ import ForumPage from "@/pages/forum-functional";
 import AdminDashboard from "@/pages/admin-dashboard-enhanced";
 import UserSettings from "@/pages/user-settings";
 import CustomerDashboard from "@/pages/customer-dashboard";
+import FurnacesShop from "@/pages/shop/furnaces";
+import MaintenancePlansShop from "@/pages/shop/maintenance-plans";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -79,6 +81,11 @@ function Router() {
         <Route path="/service-tracking" component={ServiceTracking} />
         <Route path="/services/furnace-install" component={FurnaceInstall} />
         <Route path="/products/furnace" component={FurnacePage} />
+        
+        {/* Shop routes */}
+        <Route path="/shop/furnaces" component={FurnacesShop} />
+        <Route path="/shop/maintenance-plans" component={MaintenancePlansShop} />
+        
         <Route path="/blog" component={BlogIndex} />
         <Route path="/blog/prepare-furnace-winter" component={BlogFurnaceWinter} />
         <Route path="/blog/commercial-vs-residential-hvac" component={BlogCommercialVsResidential} />
