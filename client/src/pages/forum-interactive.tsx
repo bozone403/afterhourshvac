@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Helmet } from "react-helmet-async";
@@ -21,7 +22,10 @@ import {
   Pin,
   Lock,
   Reply,
-  Heart
+  Heart,
+  Edit,
+  Trash2,
+  MoreVertical
 } from "lucide-react";
 import type { ForumTopic, ForumPost, ForumCategory, ForumLike, User as UserType } from "@shared/schema";
 
@@ -45,6 +49,8 @@ export default function ForumInteractive() {
   const [newTopicContent, setNewTopicContent] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
   const [showNewTopicDialog, setShowNewTopicDialog] = useState(false);
+  const [editingPostId, setEditingPostId] = useState<number | null>(null);
+  const [editingContent, setEditingContent] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -248,6 +254,52 @@ export default function ForumInteractive() {
     }
   });
 
+  // Edit post mutation
+  const editPostMutation = useMutation({
+    mutationFn: async ({ postId, content }: { postId: number; content: string }) => {
+      const response = await apiRequest("PUT", `/api/forum/posts/${postId}`, { content });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/forum/posts"] });
+      setEditingPostId(null);
+      setEditingContent("");
+      toast({
+        title: "Success",
+        description: "Post updated successfully!"
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Delete post mutation
+  const deletePostMutation = useMutation({
+    mutationFn: async (postId: number) => {
+      const response = await apiRequest("DELETE", `/api/forum/posts/${postId}`);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/forum/posts"] });
+      toast({
+        title: "Success",
+        description: "Post deleted successfully!"
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleCreateTopic = () => {
     if (!user) {
       toast({
@@ -338,6 +390,43 @@ export default function ForumInteractive() {
       postId,
       isLiking: !currentlyLiked
     });
+  };
+
+  const handleEditPost = (postId: number, currentContent: string) => {
+    setEditingPostId(postId);
+    setEditingContent(currentContent);
+  };
+
+  const handleSaveEdit = (postId: number) => {
+    if (!editingContent.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter post content",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    editPostMutation.mutate({
+      postId,
+      content: editingContent
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPostId(null);
+    setEditingContent("");
+  };
+
+  const handleDeletePost = (postId: number) => {
+    if (confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
+      deletePostMutation.mutate(postId);
+    }
+  };
+
+  const canEditPost = (post: ExtendedForumPost) => {
+    if (!user) return false;
+    return user.isAdmin || user.username === 'JordanBoz' || post.userId === user.id;
   };
 
   const formatDate = (dateString: string | Date | null) => {

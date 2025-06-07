@@ -1056,14 +1056,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid post ID" });
       }
       
-      // Allow users to edit their own posts or admins to edit any post
-      const updateData = {
+      // Get the post to check ownership
+      const post = await storage.getForumPostById(postId);
+      if (!post) {
+        return res.status(404).json({ error: "Post not found" });
+      }
+      
+      // Check if user is admin or owns the post
+      const isAdmin = user.isAdmin || user.username === 'JordanBoz';
+      const isOwner = post.userId === user.id;
+      
+      if (!isAdmin && !isOwner) {
+        return res.status(403).json({ error: "Not authorized to edit this post" });
+      }
+      
+      const updatedPost = await storage.updateForumPost(postId, {
         content,
         updatedAt: new Date(),
         isEdited: true
-      };
+      });
       
-      res.json({ success: true, message: "Post updated successfully", data: updateData });
+      if (!updatedPost) {
+        return res.status(404).json({ error: "Post not found" });
+      }
+      
+      res.json({ success: true, message: "Post updated successfully", post: updatedPost });
     } catch (error: any) {
       console.error("Error updating forum post:", error);
       res.status(500).json({ 
@@ -1083,7 +1100,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid post ID" });
       }
       
-      // Allow users to delete their own posts or admins to delete any post
+      // Get the post to check ownership
+      const post = await storage.getForumPostById(postId);
+      if (!post) {
+        return res.status(404).json({ error: "Post not found" });
+      }
+      
+      // Check if user is admin or owns the post
+      const isAdmin = user.isAdmin || user.username === 'JordanBoz';
+      const isOwner = post.userId === user.id;
+      
+      if (!isAdmin && !isOwner) {
+        return res.status(403).json({ error: "Not authorized to delete this post" });
+      }
+      
+      // Delete the post and associated likes
+      await storage.deleteForumPost(postId);
+      
       res.json({ success: true, message: "Post deleted successfully" });
     } catch (error: any) {
       console.error("Error deleting forum post:", error);

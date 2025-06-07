@@ -549,6 +549,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteForumPost(id: number): Promise<boolean> {
+    // Delete associated likes first
+    await db.delete(forumLikes).where(eq(forumLikes.postId, id));
+    // Delete the post
     await db.delete(forumPosts).where(eq(forumPosts.id, id));
     return true;
   }
