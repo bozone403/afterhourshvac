@@ -37,7 +37,7 @@ import AuthPage from "@/pages/auth";
 import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
 import ForumPage from "@/pages/forum-functional";
-import AdminDashboard from "@/pages/admin-dashboard";
+import AdminDashboard from "@/pages/admin-dashboard-enhanced";
 
 function ScrollToTop() {
   const [location] = useLocation();

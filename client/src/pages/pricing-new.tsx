@@ -272,9 +272,9 @@ const Pricing = () => {
                   </div>
                   <Button 
                     className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => handleServicePayment('furnace-install', 175, 'Furnace Installation Deposit')}
+                    onClick={() => handleServicePayment('furnace-install', 4000, 'Furnace Installation - Complete Service')}
                   >
-                    Get Quote - $175 Deposit
+                    Pay $4,000 - Mid-Efficiency Furnace
                   </Button>
                 </CardContent>
               </Card>
@@ -305,9 +305,9 @@ const Pricing = () => {
                   </div>
                   <Button 
                     className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => handleServicePayment('ac-install', 225, 'Air Conditioning Installation Deposit')}
+                    onClick={() => handleServicePayment('ac-install', 6500, 'Air Conditioning Installation - Complete System')}
                   >
-                    Get Quote - $225 Deposit
+                    Pay $6,500 - 16 SEER AC System
                   </Button>
                 </CardContent>
               </Card>
@@ -338,9 +338,9 @@ const Pricing = () => {
                   </div>
                   <Button 
                     className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => handleServicePayment('repair-service', 125, 'Service Diagnostic Fee')}
+                    onClick={() => handleServicePayment('repair-service', 450, 'HVAC Repair Service - Complete Fix')}
                   >
-                    Schedule Service - $125
+                    Pay $450 - Standard Repair Service
                   </Button>
                 </CardContent>
               </Card>
@@ -364,9 +364,9 @@ const Pricing = () => {
                   </div>
                   <Button 
                     className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => handleServicePayment('duct-cleaning', 400, 'Duct Cleaning Service')}
+                    onClick={() => handleServicePayment('duct-cleaning', 600, 'Professional Duct Cleaning Service')}
                   >
-                    Book Service - $400
+                    Pay $600 - Complete Duct Cleaning
                   </Button>
                 </CardContent>
               </Card>

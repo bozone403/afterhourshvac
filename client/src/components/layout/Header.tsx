@@ -145,12 +145,6 @@ const Header = () => {
                             Admin Dashboard
                           </DropdownMenuItem>
                         </Link>
-                        <Link href="/admin-photos">
-                          <DropdownMenuItem>
-                            <Settings className="h-4 w-4 mr-2" />
-                            Photo Management
-                          </DropdownMenuItem>
-                        </Link>
                       </>
                     )}
                     <DropdownMenuSeparator />
