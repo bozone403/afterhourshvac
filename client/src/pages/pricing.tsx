@@ -83,19 +83,21 @@ const Pricing = () => {
     };
     setLocation(`/checkout?service=maintenance&plan=${plan}&amount=${amounts[plan as keyof typeof amounts]}`);
   };
-  
+
   return (
     <>
       <Helmet>
-        <title>HVAC Pricing & Packages - AfterHours HVAC</title>
-        <meta name="description" content="Transparent pricing for HVAC services in Calgary and surrounding areas. View our residential and commercial heating and cooling service rates and packages." />
+        <title>Pricing - AfterHours HVAC | Competitive Rates & Service Plans</title>
+        <meta name="description" content="Transparent pricing for all HVAC services including installations, repairs, maintenance plans, and emergency service. Get quotes for residential and commercial HVAC solutions." />
+        <meta property="og:title" content="HVAC Service Pricing - AfterHours HVAC" />
+        <meta property="og:description" content="Competitive pricing for HVAC installations, repairs, maintenance, and emergency services. Pro membership available for advanced calculator access." />
       </Helmet>
-      
-      {/* Page Header */}
-      <div className="relative pt-24 pb-10 bg-dark">
+
+      {/* Hero Section */}
+      <div className="bg-dark text-white py-20">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold font-header mb-4">Transparent <span className="text-primary">Pricing & Packages</span></h1>
+            <h1 className="text-5xl font-bold font-header mb-6">Transparent Pricing</h1>
             <p className="text-lightgray max-w-3xl mx-auto">We offer competitive pricing and flexible payment options for all our HVAC services.</p>
           </div>
         </div>
@@ -318,458 +320,449 @@ const Pricing = () => {
                         <span className="font-medium">Removal of Old Unit</span>
                         <span className="font-semibold">Included</span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Warranty</span>
-                        <span className="font-semibold">10 Years</span>
+                      <div className="flex justify-between items-center pb-2">
+                        <span className="font-medium">10-Year Parts Warranty</span>
+                        <span className="font-semibold">Included</span>
                       </div>
                     </div>
                     
-                    <div className="pt-4">
-                      <Link href="/products/furnace">
-                        <div className="block w-full bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center cursor-pointer">
-                          Buy Now
-                        </div>
-                      </Link>
-                      <div className="text-center mt-3 text-sm text-lightgray">
-                        * Upfront payment required
-                      </div>
+                    <div className="text-sm text-lightgray mb-4">
+                      * Financing available with approved credit
                     </div>
+                    
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/80"
+                      onClick={() => setLocation('/contact')}
+                    >
+                      Get Quote
+                    </Button>
                   </div>
                 </div>
-                
-                {/* Residential AC */}
+
+                {/* Air Conditioning */}
                 <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-xl font-bold font-header">AC Systems</h3>
-                      <span className="text-secondary"><i className="fas fa-snowflake text-2xl"></i></span>
+                      <span className="text-primary"><i className="fas fa-snowflake text-2xl"></i></span>
                     </div>
                     
                     <div className="space-y-4 mb-6">
                       <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">High-Efficiency Units</span>
-                        <span className="font-semibold">$4,800 - $8,900</span>
+                        <span className="font-medium">Central Air (16+ SEER)</span>
+                        <span className="font-semibold">$4,800 - $8,500</span>
                       </div>
                       <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Standard Installation</span>
-                        <span className="font-semibold">Included</span>
+                        <span className="font-medium">Heat Pump System</span>
+                        <span className="font-semibold">$6,200 - $12,000</span>
                       </div>
                       <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Removal of Old Unit</span>
-                        <span className="font-semibold">Included</span>
+                        <span className="font-medium">Ductwork Modification</span>
+                        <span className="font-semibold">$2,500 - $4,000</span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Warranty</span>
-                        <span className="font-semibold">10 Years</span>
+                      <div className="flex justify-between items-center pb-2">
+                        <span className="font-medium">Smart Thermostat</span>
+                        <span className="font-semibold">Included</span>
                       </div>
                     </div>
                     
-                    <div className="pt-4">
-                      <Link href="/products/ac">
-                        <div className="block w-full bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center cursor-pointer">
-                          Buy Now
-                        </div>
-                      </Link>
-                      <div className="text-center mt-3 text-sm text-lightgray">
-                        * Upfront payment required
-                      </div>
+                    <div className="text-sm text-lightgray mb-4">
+                      * Energy rebates may apply
                     </div>
+                    
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/80"
+                      onClick={() => setLocation('/contact')}
+                    >
+                      Get Quote
+                    </Button>
                   </div>
                 </div>
-                
-                {/* Residential Repairs */}
+
+                {/* Service & Repairs */}
                 <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold font-header">Repair Services</h3>
+                      <h3 className="text-xl font-bold font-header">Service & Repairs</h3>
                       <span className="text-primary"><i className="fas fa-tools text-2xl"></i></span>
                     </div>
                     
                     <div className="space-y-4 mb-6">
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Service Call</span>
-                        <span className="font-semibold">$175</span>
-                      </div>
                       <div className="flex justify-between items-center pb-2 border-b border-gray-700">
                         <span className="font-medium">Diagnostic Fee</span>
-                        <span className="font-semibold">Included</span>
+                        <span className="font-semibold">$125</span>
                       </div>
                       <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Parts Replacement</span>
-                        <span className="font-semibold">+ Cost of Parts</span>
+                        <span className="font-medium">Standard Repair</span>
+                        <span className="font-semibold">$200 - $800</span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Labor Rate</span>
-                        <span className="font-semibold">$125/hr</span>
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
+                        <span className="font-medium">Thermostat Replacement</span>
+                        <span className="font-semibold">$350 - $650</span>
+                      </div>
+                      <div className="flex justify-between items-center pb-2">
+                        <span className="font-medium">Duct Cleaning</span>
+                        <span className="font-semibold">$400 - $800</span>
                       </div>
                     </div>
                     
-                    <div className="pt-4">
-                      <button 
-                        onClick={handlePayDeposit}
-                        className="block w-full bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center"
-                      >
-                        Pay Deposit
-                      </button>
-                      <div className="text-center mt-3 text-sm text-lightgray">
-                        * Service deposit applied to final bill
-                      </div>
+                    <div className="text-sm text-lightgray mb-4">
+                      * Diagnostic fee waived with repair
                     </div>
+                    
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/80"
+                      onClick={() => setLocation('/contact')}
+                    >
+                      Schedule Service
+                    </Button>
                   </div>
                 </div>
               </div>
             )}
-            
+
             {/* Commercial Tab Content */}
             {activeTab === 'commercial' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Light Commercial */}
                 <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold font-header">RTU By Tonnage</h3>
-                      <span className="text-secondary"><i className="fas fa-building text-2xl"></i></span>
+                      <h3 className="text-xl font-bold font-header">Light Commercial</h3>
+                      <span className="text-primary"><i className="fas fa-building text-2xl"></i></span>
                     </div>
                     
                     <div className="space-y-4 mb-6">
                       <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">5-Ton RTU</span>
-                        <span className="font-semibold">$9,000 - $10,500</span>
+                        <span className="font-medium">Rooftop Units (RTU)</span>
+                        <span className="font-semibold">$8,500 - $25,000</span>
                       </div>
                       <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">7.5-Ton RTU</span>
-                        <span className="font-semibold">$11,500 - $13,000</span>
+                        <span className="font-medium">Split System</span>
+                        <span className="font-semibold">$6,000 - $18,000</span>
                       </div>
                       <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">10-Ton RTU</span>
-                        <span className="font-semibold">$15,000 - $17,000</span>
+                        <span className="font-medium">VRF Systems</span>
+                        <span className="font-semibold">$15,000 - $45,000</span>
                       </div>
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">12.5-Ton RTU</span>
-                        <span className="font-semibold">$18,000 - $22,000</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">15-Ton RTU</span>
-                        <span className="font-semibold">$21,000 - $25,000</span>
+                      <div className="flex justify-between items-center pb-2">
+                        <span className="font-medium">Building Automation</span>
+                        <span className="font-semibold">$5,000 - $15,000</span>
                       </div>
                     </div>
                     
-                    <div className="pt-4">
-                      <Link href="/contact">
-                        <a className="block w-full bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center">
-                          Request Quote
-                        </a>
-                      </Link>
-                    </div>
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/80"
+                      onClick={() => setLocation('/contact')}
+                    >
+                      Request Proposal
+                    </Button>
                   </div>
                 </div>
-                
+
+                {/* Industrial */}
                 <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold font-header">Commercial Services</h3>
-                      <span className="text-primary"><i className="fas fa-tools text-2xl"></i></span>
+                      <h3 className="text-xl font-bold font-header">Industrial</h3>
+                      <span className="text-primary"><i className="fas fa-industry text-2xl"></i></span>
                     </div>
                     
                     <div className="space-y-4 mb-6">
                       <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Service Call</span>
-                        <span className="font-semibold">$250</span>
+                        <span className="font-medium">Process Cooling</span>
+                        <span className="font-semibold">$50,000+</span>
                       </div>
                       <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Preventative Maintenance</span>
+                        <span className="font-medium">Chiller Systems</span>
+                        <span className="font-semibold">$75,000+</span>
+                      </div>
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
+                        <span className="font-medium">Custom Fabrication</span>
                         <span className="font-semibold">Custom Quote</span>
                       </div>
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">System Commissioning</span>
-                        <span className="font-semibold">$150/hour</span>
-                      </div>
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Refrigerant Charge</span>
-                        <span className="font-semibold">$85/lb + Labor</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Comprehensive Contracts</span>
-                        <span className="font-semibold">Ask for Details</span>
+                      <div className="flex justify-between items-center pb-2">
+                        <span className="font-medium">24/7 Service Contract</span>
+                        <span className="font-semibold">$2,000+/month</span>
                       </div>
                     </div>
                     
-                    <div className="pt-4">
-                      <a 
-                        href="https://calendar.app.google/NXZB4v1PP57HhARL7" 
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center"
-                      >
-                        Schedule Consultation
-                      </a>
-                    </div>
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/80"
+                      onClick={() => setLocation('/contact')}
+                    >
+                      Contact Engineer
+                    </Button>
                   </div>
                 </div>
               </div>
             )}
-            
+
             {/* Maintenance Tab Content */}
             {activeTab === 'maintenance' && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Basic Plan */}
                 <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700">
-                  <div className="bg-dark py-3 text-center">
-                    <h3 className="text-xl font-bold font-header">Basic Plan</h3>
-                  </div>
                   <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-xl font-bold font-header">Basic Plan</h3>
+                      <span className="text-primary"><i className="fas fa-tools text-2xl"></i></span>
+                    </div>
+                    
                     <div className="text-center mb-6">
-                      <div className="text-3xl font-bold text-white">$399<span className="text-sm font-normal text-lightgray">/year</span></div>
-                      <p className="text-lightgray mt-2">Annual maintenance for one system</p>
+                      <div className="text-3xl font-bold text-white mb-2">$399</div>
+                      <div className="text-lightgray">per year</div>
                     </div>
                     
-                    <div className="space-y-3 mb-8">
+                    <div className="space-y-3 mb-6">
                       <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>Annual inspection</span>
-                      </div>
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>Filter replacement</span>
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>2 tune-ups per year</span>
                       </div>
                       <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>System cleaning</span>
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>Filter replacements</span>
                       </div>
                       <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>10% off repairs</span>
-                      </div>
-                      <div className="flex items-center text-lightgray">
-                        <i className="fas fa-times mr-3"></i>
-                        <span>Priority scheduling</span>
-                      </div>
-                      <div className="flex items-center text-lightgray">
-                        <i className="fas fa-times mr-3"></i>
-                        <span>No overtime fees</span>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <button 
-                        onClick={() => handleSelectMaintenancePlan('basic')}
-                        className="block w-full bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center"
-                      >
-                        Select Plan
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-darkgray rounded-lg overflow-hidden border border-primary transform scale-105 shadow-xl">
-                  <div className="bg-primary py-3 text-center">
-                    <h3 className="text-xl font-bold font-header text-white">Premium Plan</h3>
-                  </div>
-                  <div className="p-6">
-                    <div className="text-center mb-6">
-                      <div className="text-3xl font-bold text-white">$799<span className="text-sm font-normal text-lightgray">/year</span></div>
-                      <p className="text-lightgray mt-2">Complete coverage for two systems</p>
-                    </div>
-                    
-                    <div className="space-y-3 mb-8">
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>Bi-annual inspections</span>
-                      </div>
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>Filter replacement (3x/year)</span>
-                      </div>
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>Deep system cleaning</span>
-                      </div>
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>15% off repairs</span>
-                      </div>
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>Priority scheduling</span>
-                      </div>
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>24/7 phone support</span>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <button 
-                        onClick={() => handleSelectMaintenancePlan('premium')}
-                        className="block w-full bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center"
-                      >
-                        Select Plan
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700">
-                  <div className="bg-dark py-3 text-center">
-                    <h3 className="text-xl font-bold font-header">Commercial Plan</h3>
-                  </div>
-                  <div className="p-6">
-                    <div className="text-center mb-6">
-                      <div className="text-3xl font-bold text-white">$1,200<span className="text-sm font-normal text-lightgray">/year</span></div>
-                      <p className="text-lightgray mt-2">Custom business solution</p>
-                    </div>
-                    
-                    <div className="space-y-3 mb-8">
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>Quarterly maintenance</span>
-                      </div>
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>Customized schedule</span>
-                      </div>
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>Filter program</span>
-                      </div>
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
+                        <Check className="h-4 w-4 text-primary mr-2" />
                         <span>20% off repairs</span>
                       </div>
                       <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>Same-day service</span>
-                      </div>
-                      <div className="flex items-center">
-                        <i className="fas fa-check text-primary mr-3"></i>
-                        <span>Dedicated account manager</span>
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>Priority scheduling</span>
                       </div>
                     </div>
                     
-                    <div>
-                      <button 
-                        onClick={() => handleSelectMaintenancePlan('commercial')}
-                        className="block w-full bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center"
-                      >
-                        Select Plan
-                      </button>
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/80"
+                      onClick={() => handleSelectMaintenancePlan('basic')}
+                    >
+                      Select Basic
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Premium Plan */}
+                <div className="bg-darkgray rounded-lg overflow-hidden border border-primary transform scale-105">
+                  <div className="bg-primary text-white text-center py-2 text-sm font-medium">
+                    MOST POPULAR
+                  </div>
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-xl font-bold font-header">Premium Plan</h3>
+                      <span className="text-primary"><i className="fas fa-star text-2xl"></i></span>
                     </div>
+                    
+                    <div className="text-center mb-6">
+                      <div className="text-3xl font-bold text-white mb-2">$799</div>
+                      <div className="text-lightgray">per year</div>
+                    </div>
+                    
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>All Basic features</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>Indoor air quality check</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>Duct inspection</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>Emergency service calls</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>30% off repairs</span>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/80"
+                      onClick={() => handleSelectMaintenancePlan('premium')}
+                    >
+                      Select Premium
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Commercial Plan */}
+                <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-xl font-bold font-header">Commercial Plan</h3>
+                      <span className="text-primary"><i className="fas fa-building text-2xl"></i></span>
+                    </div>
+                    
+                    <div className="text-center mb-6">
+                      <div className="text-3xl font-bold text-white mb-2">$1,200</div>
+                      <div className="text-lightgray">per unit/year</div>
+                    </div>
+                    
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>Quarterly inspections</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>Detailed reporting</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>Energy optimization</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>24/7 emergency service</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>Account manager</span>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/80"
+                      onClick={() => handleSelectMaintenancePlan('commercial')}
+                    >
+                      Select Commercial
+                    </Button>
                   </div>
                 </div>
               </div>
             )}
-            
+
             {/* Emergency Tab Content */}
             {activeTab === 'emergency' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                {/* Evening/Weekend */}
                 <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold font-header">Regular Hours</h3>
-                      <span className="text-secondary"><i className="fas fa-sun text-2xl"></i></span>
+                      <h3 className="text-xl font-bold font-header">Evening/Weekend</h3>
+                      <span className="text-primary"><i className="fas fa-clock text-2xl"></i></span>
                     </div>
                     
-                    <div className="space-y-4 mb-6">
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Service Deposit</span>
-                        <span className="font-semibold">$175</span>
+                    <div className="text-center mb-6">
+                      <div className="text-3xl font-bold text-white mb-2">$250</div>
+                      <div className="text-lightgray">service call + labor</div>
+                    </div>
+                    
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>Mon-Fri 6PM-8AM</span>
                       </div>
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Monday - Friday</span>
-                        <span className="font-semibold">8am - 5pm</span>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>Weekends & Holidays</span>
                       </div>
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Hourly Rate</span>
-                        <span className="font-semibold">$125/hour</span>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>4-hour response time</span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Response Time</span>
-                        <span className="font-semibold">Same Day</span>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>$175 deposit required</span>
                       </div>
                     </div>
                     
-                    <div className="pt-4">
-                      <a 
-                        href="tel:4036136014" 
-                        className="block w-full bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center"
+                    <div className="space-y-2">
+                      <Button 
+                        className="w-full bg-primary hover:bg-primary/80"
+                        onClick={() => handlePayEmergency('evening')}
                       >
-                        <i className="fas fa-phone-alt mr-2"></i> Call Now
-                      </a>
+                        Book Evening Service
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={handlePayDeposit}
+                      >
+                        Pay Deposit Only
+                      </Button>
                     </div>
                   </div>
                 </div>
-                
+
+                {/* Late Night */}
                 <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold font-header">After Hours</h3>
+                      <h3 className="text-xl font-bold font-header">Late Night</h3>
                       <span className="text-primary"><i className="fas fa-moon text-2xl"></i></span>
                     </div>
                     
-                    <div className="space-y-4 mb-6">
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Evening (5pm-12am)</span>
-                        <span className="font-semibold">$250 (2hr min)</span>
+                    <div className="text-center mb-6">
+                      <div className="text-3xl font-bold text-white mb-2">$275</div>
+                      <div className="text-lightgray">service call + labor</div>
+                    </div>
+                    
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>11PM-6AM daily</span>
                       </div>
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Overnight (12am-8am)</span>
-                        <span className="font-semibold">$275 (3hr min)</span>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>True 24/7 coverage</span>
                       </div>
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-                        <span className="font-medium">Weekends & Holidays</span>
-                        <span className="font-semibold">After Hours Rates</span>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>2-hour response time</span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Response Time</span>
-                        <span className="font-semibold">ASAP</span>
+                      <div className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        <span>$175 deposit required</span>
                       </div>
                     </div>
                     
-                    <div className="pt-4 space-y-3">
-                      <button 
-                        onClick={() => handlePayEmergency('evening')}
-                        className="block w-full bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center"
+                    <div className="space-y-2">
+                      <Button 
+                        className="w-full bg-primary hover:bg-primary/80"
+                        onClick={() => handlePayEmergency('night')}
                       >
-                        Pay Evening Deposit ($250)
-                      </button>
-                      <button 
-                        onClick={() => handlePayEmergency('overnight')}
-                        className="block w-full bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-center"
+                        Book Night Service
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={handlePayDeposit}
                       >
-                        Pay Overnight Deposit ($275)
-                      </button>
+                        Pay Deposit Only
+                      </Button>
                     </div>
                   </div>
                 </div>
               </div>
             )}
-          </div>
-          
-          <div className="mt-12 text-center">
-            <p className="text-lightgray mb-4">Need something not listed here? Contact us for a custom quote.</p>
-            <Link href="/contact">
-              <a className="inline-flex items-center bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold shadow-lg">
-                <i className="fas fa-clipboard-list mr-2"></i> Request Custom Quote
-              </a>
-            </Link>
           </div>
         </div>
       </section>
       
-      {/* Calgary Note */}
-      <section className="bg-darkgray py-10">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-dark p-6 rounded-lg border border-gray-700">
-              <h3 className="text-xl font-bold font-header mb-3 flex items-center">
-                <i className="fas fa-info-circle text-primary mr-2"></i>
-                Calgary Efficiency Standards
-              </h3>
-              <p className="text-lightgray mb-4">
-                Please note that due to Calgary's building and energy codes, we can no longer install low or mid-efficiency furnaces or 13-14 SEER AC units within city limits. All equipment we install meets or exceeds the current efficiency requirements. This helps ensure energy savings and environmental compliance.
-              </p>
-              <p className="text-sm text-lightgray">
-                We're committed to providing the most efficient and code-compliant systems for all our customers.
-              </p>
-            </div>
+      {/* Call to Action */}
+      <section className="bg-primary py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold font-header mb-4">Ready to Get Started?</h2>
+          <p className="text-xl mb-8 max-w-2xl mx-auto">
+            Contact us today for a free estimate on your HVAC needs. Our experienced team is ready to help you stay comfortable year-round.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/contact">
+              <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-gray-100">
+                Get Free Quote
+              </Button>
+            </Link>
+            <Link href="/pro-calculator">
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary">
+                Try Pro Calculator
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
