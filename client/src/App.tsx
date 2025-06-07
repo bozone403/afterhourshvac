@@ -32,6 +32,7 @@ import BlogCommercialVsResidential from "@/pages/blog/commercial-vs-residential-
 import Checkout from "@/pages/checkout";
 import AdminPhotos from "@/pages/admin-photos-enhanced";
 import PaymentConfirmation from "@/pages/payment-confirmation";
+import CalendarBooking from "@/pages/calendar-booking";
 import FurnacePage from "@/pages/products/furnace";
 import AuthPage from "@/pages/auth";
 import LoginPage from "@/pages/login";
@@ -79,6 +80,7 @@ function Router() {
         <Route path="/pro-calculator" component={ProCalculator} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/payment-confirmation" component={PaymentConfirmation} />
+        <Route path="/calendar-booking" component={CalendarBooking} />
         
         {/* Protected routes that require authentication */}
         <ProtectedRoute path="/forum" component={ForumPage} />

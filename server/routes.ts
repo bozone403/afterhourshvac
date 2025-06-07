@@ -542,6 +542,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create booking appointment
+  app.post('/api/bookings', async (req, res) => {
+    try {
+      const {
+        date,
+        time,
+        customerName,
+        customerPhone,
+        customerEmail,
+        serviceAddress,
+        notes,
+        service,
+        amount,
+        paymentIntentId,
+        status
+      } = req.body;
+
+      if (!date || !time || !customerName || !customerPhone || !serviceAddress) {
+        return res.status(400).json({ error: "Missing required booking information" });
+      }
+
+      const booking = {
+        date,
+        time,
+        customerName,
+        customerPhone,
+        customerEmail: customerEmail || null,
+        serviceAddress,
+        notes: notes || null,
+        service: service || 'HVAC Service',
+        amount: amount || 0,
+        paymentIntentId: paymentIntentId || null,
+        status: status || 'confirmed',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      console.log(`[Booking Created] ${customerName} - ${service} on ${date} at ${time}`);
+      
+      res.status(201).json({ 
+        message: "Booking created successfully",
+        booking 
+      });
+    } catch (error: any) {
+      console.error("Error creating booking:", error);
+      res.status(500).json({ 
+        error: "Error creating booking", 
+        message: error.message 
+      });
+    }
+  });
+
   // Handle Stripe webhook for payment confirmation
   app.post('/api/webhook', async (req, res) => {
     try {

@@ -46,7 +46,7 @@ const CheckoutForm = ({ paymentData }: { paymentData: PaymentData }) => {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/payment-confirmation`,
+        return_url: `${window.location.origin}/calendar-booking?service=${encodeURIComponent(paymentData.service)}&amount=${paymentData.amount}`,
       },
     });
 
@@ -149,22 +149,11 @@ const Checkout = () => {
 
   useEffect(() => {
     // Parse query parameters from URL
-    const urlParts = location.split('?');
-    if (urlParts.length < 2) {
-      toast({
-        title: "Payment Information Missing",
-        description: "The required payment information is missing or invalid. Please return to the service page and try again.",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-      return;
-    }
-    
-    const queryParams = new URLSearchParams(urlParts[1]);
-    const service = queryParams.get('service') || '';
-    const amount = parseFloat(queryParams.get('amount') || '0');
-    const time = queryParams.get('time') || undefined;
-    const plan = queryParams.get('plan') || undefined;
+    const urlParams = new URLSearchParams(window.location.search);
+    const service = urlParams.get('service') || '';
+    const amount = parseFloat(urlParams.get('amount') || '0');
+    const time = urlParams.get('time') || undefined;
+    const plan = urlParams.get('plan') || undefined;
     
     if (!service || amount <= 0) {
       toast({
@@ -176,7 +165,7 @@ const Checkout = () => {
       return;
     }
 
-    let description = queryParams.get('description') || '';
+    let description = urlParams.get('description') || '';
     if (!description) {
       switch (service) {
         case 'pro':
