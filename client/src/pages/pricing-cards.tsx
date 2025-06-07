@@ -6,542 +6,495 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Thermometer, Snowflake, Shield, Wrench, Clock, Phone, Check } from 'lucide-react';
 
-// Alggin catalog pricing data for minimum standards (92% AFUE, 16+ SEER)
+// Stage-based furnace pricing with professional installation
 const furnaceCards = [
   { 
-    btu: 40000, 
-    model: "Goodman GMH80403ANBA", 
+    stage: "1-Stage", 
+    model: "Goodman GMH80 Series", 
     efficiency: "92% AFUE", 
-    price: 2850, 
-    installPrice: 4990,
-    category: "economy",
-    features: ["2-stage heating", "Stainless steel heat exchanger", "10-year parts warranty"]
+    installPrice: 5999,
+    category: "low",
+    features: ["Single-stage heating", "Stainless steel heat exchanger", "10-year parts warranty", "Reliable operation"]
   },
   { 
-    btu: 60000, 
-    model: "Goodman GMH80603ANBA", 
-    efficiency: "92% AFUE", 
-    price: 3150, 
-    installPrice: 5490,
-    category: "economy",
-    features: ["2-stage heating", "Stainless steel heat exchanger", "10-year parts warranty"]
-  },
-  { 
-    btu: 80000, 
-    model: "Goodman GMH80803ANBA", 
-    efficiency: "92% AFUE", 
-    price: 3450, 
-    installPrice: 5990,
-    category: "economy",
-    features: ["2-stage heating", "Stainless steel heat exchanger", "10-year parts warranty"]
-  },
-  { 
-    btu: 100000, 
-    model: "Goodman GMH801003ANBA", 
-    efficiency: "92% AFUE", 
-    price: 3750, 
-    installPrice: 6490,
-    category: "economy",
-    features: ["2-stage heating", "Stainless steel heat exchanger", "10-year parts warranty"]
-  },
-  { 
-    btu: 60000, 
-    model: "Lennox EL296V-060", 
+    stage: "2-Stage", 
+    model: "Goodman GMVM97 Series", 
     efficiency: "96% AFUE", 
-    price: 4650, 
-    installPrice: 7990,
-    category: "premium",
+    installPrice: 6499,
+    category: "mid",
+    features: ["Two-stage heating", "Variable speed blower", "Enhanced comfort control", "15-year parts warranty"]
+  },
+  { 
+    stage: "Variable/Modulating", 
+    model: "Lennox SLP98V Series", 
+    efficiency: "98% AFUE", 
+    installPrice: 8999,
+    category: "high",
     popular: true,
-    features: ["Variable-speed blower", "Modulating gas valve", "Precise Comfort technology", "20-year heat exchanger warranty"]
-  },
-  { 
-    btu: 80000, 
-    model: "Lennox EL296V-080", 
-    efficiency: "96% AFUE", 
-    price: 5150, 
-    installPrice: 8790,
-    category: "premium",
     features: ["Variable-speed blower", "Modulating gas valve", "Precise Comfort technology", "20-year heat exchanger warranty"]
   },
 ];
 
+// Stage-based AC pricing with professional installation
 const acCards = [
   { 
-    tonnage: 2, 
-    model: "Goodman GSX160241", 
+    stage: "1-Stage", 
+    tonnage: "2-5 Ton", 
+    model: "Goodman GSX16 Series", 
     seer: "16 SEER", 
-    price: 2950, 
-    installPrice: 4990,
-    category: "standard",
-    features: ["Single-stage cooling", "R-410A refrigerant", "10-year parts warranty"]
+    installPrice: 5999,
+    category: "low",
+    features: ["Single-stage cooling", "R-410A refrigerant", "10-year parts warranty", "Reliable performance"]
   },
   { 
-    tonnage: 2.5, 
-    model: "Goodman GSX160301", 
-    seer: "16 SEER", 
-    price: 3250, 
-    installPrice: 5490,
-    category: "standard",
-    features: ["Single-stage cooling", "R-410A refrigerant", "10-year parts warranty"]
-  },
-  { 
-    tonnage: 3, 
-    model: "Goodman GSX160361", 
-    seer: "16 SEER", 
-    price: 3550, 
-    installPrice: 5990,
-    category: "standard",
-    features: ["Single-stage cooling", "R-410A refrigerant", "10-year parts warranty"]
-  },
-  { 
-    tonnage: 3.5, 
-    model: "Goodman GSX160421", 
-    seer: "16 SEER", 
-    price: 3850, 
-    installPrice: 6490,
-    category: "standard",
-    features: ["Single-stage cooling", "R-410A refrigerant", "10-year parts warranty"]
-  },
-  { 
-    tonnage: 3, 
-    model: "Lennox XC18-036", 
+    stage: "2-Stage", 
+    tonnage: "2-5 Ton", 
+    model: "Goodman GSXC18 Series", 
     seer: "18 SEER", 
-    price: 4450, 
-    installPrice: 7490,
-    category: "premium",
+    installPrice: 6499,
+    category: "mid",
+    features: ["Two-stage cooling", "Enhanced humidity control", "Quieter operation", "12-year parts warranty"]
+  },
+  { 
+    stage: "Variable Speed", 
+    tonnage: "2-5 Ton", 
+    model: "Lennox XC25 Series", 
+    seer: "26 SEER", 
+    installPrice: 8999,
+    category: "high",
     popular: true,
-    features: ["Two-stage cooling", "Variable-speed condenser fan", "Precise Comfort technology", "10-year complete unit warranty"]
-  },
-  { 
-    tonnage: 3.5, 
-    model: "Lennox XC18-042", 
-    seer: "18 SEER", 
-    price: 4850, 
-    installPrice: 7990,
-    category: "premium",
-    features: ["Two-stage cooling", "Variable-speed condenser fan", "Precise Comfort technology", "10-year complete unit warranty"]
+    features: ["Variable-speed compressor", "Precise temperature control", "Energy Star certified", "10-year complete unit warranty"]
   },
 ];
 
 const heatPumpCards = [
   { 
     tonnage: 2.5, 
-    model: "Goodman GSZ160301", 
-    seer: "16 SEER", 
-    hspf: "9.5 HSPF",
-    price: 4650, 
-    installPrice: 7490,
+    model: "Goodman GSZ140301", 
+    hspf: "8.5 HSPF", 
+    seer: "14 SEER", 
+    installPrice: 6990,
     category: "standard",
-    features: ["Year-round comfort", "R-410A refrigerant", "10-year parts warranty"]
+    features: ["Heat pump technology", "R-410A refrigerant", "10-year parts warranty", "Year-round comfort"]
   },
   { 
     tonnage: 3, 
-    model: "Goodman GSZ160361", 
+    model: "Lennox XP16-036", 
+    hspf: "9.0 HSPF", 
     seer: "16 SEER", 
-    hspf: "9.5 HSPF",
-    price: 5050, 
-    installPrice: 7990,
-    category: "standard",
-    features: ["Year-round comfort", "R-410A refrigerant", "10-year parts warranty"]
-  },
-  { 
-    tonnage: 3.5, 
-    model: "Goodman GSZ160421", 
-    seer: "16 SEER", 
-    hspf: "9.5 HSPF",
-    price: 5450, 
     installPrice: 8490,
-    category: "standard",
+    category: "premium",
     popular: true,
-    features: ["Year-round comfort", "R-410A refrigerant", "10-year parts warranty"]
+    features: ["Two-stage operation", "Enhanced efficiency", "Precise Comfort technology", "Enhanced sound reduction"]
   },
 ];
 
-const maintenancePlans = [
+const maintenanceCards = [
   {
-    name: "Basic Maintenance",
+    name: "Basic Plan",
     price: 199,
-    features: ["Annual furnace inspection", "Filter replacement", "Basic cleaning", "Safety check"],
-    popular: false
+    category: "basic",
+    features: ["Annual tune-up", "Basic cleaning", "Safety inspection", "Priority scheduling", "10% discount on repairs"]
   },
   {
-    name: "Premium Maintenance", 
+    name: "Premium Plan", 
     price: 349,
-    features: ["Bi-annual tune-ups", "Priority service", "15% discount on repairs", "Extended warranty", "Emergency service"],
-    popular: true
+    category: "premium",
+    popular: true,
+    features: ["Bi-annual tune-ups", "Comprehensive cleaning", "Detailed inspection", "Priority emergency service", "15% discount on repairs", "Free filter replacements"]
   },
   {
-    name: "Commercial Maintenance",
+    name: "Commercial Plan",
     price: 599,
-    features: ["Quarterly inspections", "24/7 emergency service", "20% discount on parts", "Preventive maintenance", "System monitoring"],
-    popular: false
+    category: "commercial", 
+    features: ["Quarterly maintenance", "Commercial-grade service", "24/7 emergency support", "Preventive maintenance", "20% discount on all services", "Customized service plan"]
   }
 ];
 
-const emergencyServices = [
+const serviceCards = [
   {
-    name: "Evening Service",
-    time: "5pm - 12am",
-    price: 150,
-    description: "After-hours service for urgent HVAC issues"
+    name: "Service Diagnostic",
+    price: 125,
+    description: "Professional diagnosis of HVAC issues",
+    features: ["Complete system inspection", "Detailed report", "Repair recommendations", "No obligation estimate"]
   },
   {
-    name: "Overnight Service", 
-    time: "12am - 8am",
-    price: 200,
-    description: "Emergency overnight service for critical repairs"
+    name: "Duct Cleaning",
+    price: 299,
+    description: "Comprehensive air duct cleaning service", 
+    features: ["Complete duct system cleaning", "Sanitization treatment", "Before/after photos", "Improved air quality"]
+  },
+  {
+    name: "Thermostat Installation",
+    price: 179,
+    description: "Smart thermostat installation and setup",
+    features: ["Professional installation", "WiFi setup", "Mobile app configuration", "Energy savings optimization"]
+  },
+  {
+    name: "Emergency Service",
+    price: 149,
+    description: "24/7 emergency HVAC service call",
+    urgent: true,
+    features: ["24/7 availability", "Same-day service", "Emergency repairs", "Priority response"]
   }
 ];
 
 export default function PricingCards() {
   const [, setLocation] = useLocation();
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-CA', {
-      style: 'currency',
-      currency: 'CAD',
-    }).format(amount);
-  };
-
-  const handlePurchase = (service: string, amount: number, description: string, plan?: string, time?: string) => {
-    const queryParams = new URLSearchParams({
+  const handleBuyNow = (service: string, amount: number, description: string) => {
+    const params = new URLSearchParams({
       service,
       amount: amount.toString(),
-      description,
-      ...(plan && { plan }),
-      ...(time && { time })
+      description: encodeURIComponent(description)
     });
-    setLocation(`/checkout?${queryParams.toString()}`);
+    setLocation(`/checkout?${params.toString()}`);
+  };
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'low':
+      case 'basic':
+      case 'standard':
+        return 'bg-blue-50 border-blue-200';
+      case 'mid':
+      case 'premium':
+        return 'bg-purple-50 border-purple-200';
+      case 'high':
+      case 'commercial':
+        return 'bg-orange-50 border-orange-200';
+      default:
+        return 'bg-gray-50 border-gray-200';
+    }
+  };
+
+  const getCategoryBadge = (category: string) => {
+    switch (category) {
+      case 'low':
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Economy</Badge>;
+      case 'mid':
+        return <Badge variant="secondary" className="bg-purple-100 text-purple-800">Popular</Badge>;
+      case 'high':
+        return <Badge variant="secondary" className="bg-orange-100 text-orange-800">Premium</Badge>;
+      case 'basic':
+        return <Badge variant="secondary" className="bg-green-100 text-green-800">Basic</Badge>;
+      case 'premium':
+        return <Badge variant="secondary" className="bg-purple-100 text-purple-800">Premium</Badge>;
+      case 'commercial':
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Commercial</Badge>;
+      default:
+        return null;
+    }
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       <Helmet>
-        <title>HVAC Equipment & Service Pricing | AfterHours HVAC</title>
-        <meta name="description" content="Professional HVAC equipment and service pricing. Quality furnaces starting at 92% AFUE and AC units at 16+ SEER. Get transparent pricing with professional installation included." />
+        <title>HVAC Equipment Pricing - AfterHours HVAC</title>
+        <meta name="description" content="Professional HVAC equipment pricing including furnaces, air conditioners, heat pumps, and maintenance plans. Starting at $5,999 with professional installation." />
       </Helmet>
 
-      <div className="min-h-screen bg-black text-white">
-        {/* Hero Section */}
-        <section className="relative py-20 bg-gradient-to-br from-dark via-black to-dark">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-6xl font-bold font-header mb-6">
-              Transparent HVAC Pricing
-            </h1>
-            <p className="text-xl text-lightgray mb-8 max-w-3xl mx-auto">
-              Quality equipment with professional installation. Minimum 92% AFUE furnaces and 16+ SEER AC units.
-              All pricing includes professional installation and warranty coverage.
-            </p>
-            <Badge className="bg-primary text-black font-semibold px-4 py-2 text-lg">
-              Professional Installation Included
-            </Badge>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Professional HVAC Equipment Pricing
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Complete HVAC solutions with professional installation, warranty coverage, and ongoing support
+          </p>
+        </div>
+
+        {/* Furnace Installation */}
+        <section className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
+              <Thermometer className="h-8 w-8 text-orange-600" />
+              Furnace Installation
+            </h2>
+            <p className="text-gray-600">High-efficiency furnaces by heating stage with professional installation</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {furnaceCards.map((furnace, index) => (
+              <Card key={index} className={`relative ${getCategoryColor(furnace.category)} ${furnace.popular ? 'ring-2 ring-orange-500' : ''}`}>
+                {furnace.popular && (
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 hover:bg-orange-600">
+                    Most Popular
+                  </Badge>
+                )}
+                <CardHeader className="text-center">
+                  <div className="flex justify-between items-start mb-2">
+                    <CardTitle className="text-xl font-bold">{furnace.stage}</CardTitle>
+                    {getCategoryBadge(furnace.category)}
+                  </div>
+                  <CardDescription className="text-sm text-gray-600">
+                    {furnace.model}
+                  </CardDescription>
+                  <div className="text-3xl font-bold text-gray-900">
+                    Starting at ${furnace.installPrice.toLocaleString()}
+                  </div>
+                  <p className="text-sm text-gray-500">{furnace.efficiency}</p>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 mb-6">
+                    {furnace.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button 
+                    className="w-full bg-orange-600 hover:bg-orange-700"
+                    onClick={() => handleBuyNow(
+                      'furnace-install',
+                      furnace.installPrice,
+                      `${furnace.stage} Furnace Installation - ${furnace.model}`
+                    )}
+                  >
+                    Buy Now
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
 
-        {/* Furnaces Section */}
-        <section className="py-16 bg-dark">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <Thermometer className="w-16 h-16 text-primary mx-auto mb-4" />
-              <h2 className="text-3xl font-bold font-header mb-4">Gas Furnaces</h2>
-              <p className="text-lightgray max-w-2xl mx-auto">
-                High-efficiency furnaces starting at 92% AFUE. Professional installation and warranty included.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {furnaceCards.map((furnace, index) => (
-                <Card key={index} className={`bg-black border-gray-700 relative ${furnace.popular ? 'ring-2 ring-primary' : ''}`}>
-                  {furnace.popular && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-primary text-black font-semibold px-4 py-1">
-                        Most Popular
-                      </Badge>
-                    </div>
-                  )}
-                  <CardHeader className="text-center">
-                    <CardTitle className="text-xl font-bold">
-                      {furnace.btu.toLocaleString()} BTU
-                    </CardTitle>
-                    <CardDescription className="text-primary font-semibold text-lg">
-                      {furnace.efficiency}
-                    </CardDescription>
-                    <p className="text-sm text-lightgray">{furnace.model}</p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-primary mb-2">
-                        {formatCurrency(furnace.installPrice)}
-                      </div>
-                      <p className="text-sm text-lightgray">
-                        Equipment: {formatCurrency(furnace.price)} + Installation
-                      </p>
-                    </div>
-
-                    <ul className="space-y-2">
-                      {furnace.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center text-sm">
-                          <Check className="w-4 h-4 text-primary mr-2 flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button 
-                      onClick={() => handlePurchase(
-                        'furnace-install',
-                        furnace.installPrice,
-                        `${furnace.btu.toLocaleString()} BTU ${furnace.efficiency} Furnace Installation - ${furnace.model}`
-                      )}
-                      className={`w-full font-semibold ${furnace.popular ? 'bg-primary hover:bg-primary/90 text-black' : 'bg-gray-700 hover:bg-gray-600 text-white'}`}
-                    >
-                      Buy Now - {formatCurrency(furnace.installPrice)}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+        {/* Air Conditioning Installation */}
+        <section className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
+              <Snowflake className="h-8 w-8 text-blue-600" />
+              Air Conditioning Installation
+            </h2>
+            <p className="text-gray-600">High-efficiency air conditioners by cooling stage with professional installation</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {acCards.map((ac, index) => (
+              <Card key={index} className={`relative ${getCategoryColor(ac.category)} ${ac.popular ? 'ring-2 ring-blue-500' : ''}`}>
+                {ac.popular && (
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 hover:bg-blue-600">
+                    Most Popular
+                  </Badge>
+                )}
+                <CardHeader className="text-center">
+                  <div className="flex justify-between items-start mb-2">
+                    <CardTitle className="text-xl font-bold">{ac.stage}</CardTitle>
+                    {getCategoryBadge(ac.category)}
+                  </div>
+                  <CardDescription className="text-sm text-gray-600">
+                    {ac.model} • {ac.tonnage}
+                  </CardDescription>
+                  <div className="text-3xl font-bold text-gray-900">
+                    Starting at ${ac.installPrice.toLocaleString()}
+                  </div>
+                  <p className="text-sm text-gray-500">{ac.seer}</p>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 mb-6">
+                    {ac.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    onClick={() => handleBuyNow(
+                      'ac-install',
+                      ac.installPrice,
+                      `${ac.stage} Air Conditioner Installation - ${ac.model}`
+                    )}
+                  >
+                    Buy Now
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
 
-        {/* Air Conditioning Section */}
-        <section className="py-16 bg-black">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <Snowflake className="w-16 h-16 text-primary mx-auto mb-4" />
-              <h2 className="text-3xl font-bold font-header mb-4">Central Air Conditioning</h2>
-              <p className="text-lightgray max-w-2xl mx-auto">
-                High-efficiency cooling systems starting at 16 SEER. Professional installation and warranty included.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {acCards.map((ac, index) => (
-                <Card key={index} className={`bg-dark border-gray-700 relative ${ac.popular ? 'ring-2 ring-primary' : ''}`}>
-                  {ac.popular && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-primary text-black font-semibold px-4 py-1">
-                        Most Popular
-                      </Badge>
-                    </div>
-                  )}
-                  <CardHeader className="text-center">
-                    <CardTitle className="text-xl font-bold">
-                      {ac.tonnage} Ton
-                    </CardTitle>
-                    <CardDescription className="text-primary font-semibold text-lg">
-                      {ac.seer}
-                    </CardDescription>
-                    <p className="text-sm text-lightgray">{ac.model}</p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-primary mb-2">
-                        {formatCurrency(ac.installPrice)}
-                      </div>
-                      <p className="text-sm text-lightgray">
-                        Equipment: {formatCurrency(ac.price)} + Installation
-                      </p>
-                    </div>
-
-                    <ul className="space-y-2">
-                      {ac.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center text-sm">
-                          <Check className="w-4 h-4 text-primary mr-2 flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button 
-                      onClick={() => handlePurchase(
-                        'ac-install',
-                        ac.installPrice,
-                        `${ac.tonnage} Ton ${ac.seer} AC Installation - ${ac.model}`
-                      )}
-                      className={`w-full font-semibold ${ac.popular ? 'bg-primary hover:bg-primary/90 text-black' : 'bg-gray-700 hover:bg-gray-600 text-white'}`}
-                    >
-                      Buy Now - {formatCurrency(ac.installPrice)}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+        {/* Heat Pump Installation */}
+        <section className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
+              <Shield className="h-8 w-8 text-green-600" />
+              Heat Pump Installation
+            </h2>
+            <p className="text-gray-600">Year-round comfort with efficient heat pump technology</p>
           </div>
-        </section>
-
-        {/* Heat Pump Section */}
-        <section className="py-16 bg-dark">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <Shield className="w-16 h-16 text-primary mx-auto mb-4" />
-              <h2 className="text-3xl font-bold font-header mb-4">Heat Pump Systems</h2>
-              <p className="text-lightgray max-w-2xl mx-auto">
-                Year-round comfort with efficient heat pump technology. Heating and cooling in one system.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {heatPumpCards.map((hp, index) => (
-                <Card key={index} className={`bg-black border-gray-700 relative ${hp.popular ? 'ring-2 ring-primary' : ''}`}>
-                  {hp.popular && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-primary text-black font-semibold px-4 py-1">
-                        Most Popular
-                      </Badge>
-                    </div>
-                  )}
-                  <CardHeader className="text-center">
-                    <CardTitle className="text-xl font-bold">
-                      {hp.tonnage} Ton Heat Pump
-                    </CardTitle>
-                    <CardDescription className="text-primary font-semibold text-lg">
-                      {hp.seer} / {hp.hspf}
-                    </CardDescription>
-                    <p className="text-sm text-lightgray">{hp.model}</p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-primary mb-2">
-                        {formatCurrency(hp.installPrice)}
-                      </div>
-                      <p className="text-sm text-lightgray">
-                        Equipment: {formatCurrency(hp.price)} + Installation
-                      </p>
-                    </div>
-
-                    <ul className="space-y-2">
-                      {hp.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center text-sm">
-                          <Check className="w-4 h-4 text-primary mr-2 flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button 
-                      onClick={() => handlePurchase(
-                        'heatpump-install',
-                        hp.installPrice,
-                        `${hp.tonnage} Ton Heat Pump Installation - ${hp.model}`
-                      )}
-                      className={`w-full font-semibold ${hp.popular ? 'bg-primary hover:bg-primary/90 text-black' : 'bg-gray-700 hover:bg-gray-600 text-white'}`}
-                    >
-                      Buy Now - {formatCurrency(hp.installPrice)}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+          
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {heatPumpCards.map((heatPump, index) => (
+              <Card key={index} className={`relative ${getCategoryColor(heatPump.category)} ${heatPump.popular ? 'ring-2 ring-green-500' : ''}`}>
+                {heatPump.popular && (
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-green-500 hover:bg-green-600">
+                    Most Popular
+                  </Badge>
+                )}
+                <CardHeader className="text-center">
+                  <div className="flex justify-between items-start mb-2">
+                    <CardTitle className="text-xl font-bold">{heatPump.tonnage} Ton Heat Pump</CardTitle>
+                    {getCategoryBadge(heatPump.category)}
+                  </div>
+                  <CardDescription className="text-sm text-gray-600">
+                    {heatPump.model}
+                  </CardDescription>
+                  <div className="text-3xl font-bold text-gray-900">
+                    Starting at ${heatPump.installPrice.toLocaleString()}
+                  </div>
+                  <p className="text-sm text-gray-500">{heatPump.seer} • {heatPump.hspf}</p>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 mb-6">
+                    {heatPump.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button 
+                    className="w-full bg-green-600 hover:bg-green-700"
+                    onClick={() => handleBuyNow(
+                      'heatpump-install',
+                      heatPump.installPrice,
+                      `${heatPump.tonnage} Ton Heat Pump Installation - ${heatPump.model}`
+                    )}
+                  >
+                    Buy Now
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
 
         {/* Maintenance Plans */}
-        <section className="py-16 bg-black">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <Wrench className="w-16 h-16 text-primary mx-auto mb-4" />
-              <h2 className="text-3xl font-bold font-header mb-4">Maintenance Plans</h2>
-              <p className="text-lightgray max-w-2xl mx-auto">
-                Keep your HVAC system running efficiently with our professional maintenance plans
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {maintenancePlans.map((plan, index) => (
-                <Card key={index} className={`bg-dark border-gray-700 relative ${plan.popular ? 'ring-2 ring-primary' : ''}`}>
-                  {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-primary text-black font-semibold px-4 py-1">
-                        Most Popular
-                      </Badge>
-                    </div>
-                  )}
-                  <CardHeader className="text-center">
-                    <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                    <CardDescription>
-                      <span className="text-3xl font-bold text-primary">{formatCurrency(plan.price)}</span>
-                      <span className="text-lightgray">/year</span>
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center">
-                          <Check className="w-5 h-5 text-primary mr-3 flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button 
-                      onClick={() => handlePurchase(
-                        'maintenance-plan',
-                        plan.price,
-                        `${plan.name} - Annual Plan`,
-                        plan.name.toLowerCase().replace(' ', '-')
-                      )}
-                      className={`w-full ${plan.popular ? 'bg-primary hover:bg-primary/90 text-black' : 'bg-gray-700 hover:bg-gray-600 text-white'} font-semibold`}
-                    >
-                      Buy Now - {formatCurrency(plan.price)}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+        <section className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
+              <Wrench className="h-8 w-8 text-purple-600" />
+              Maintenance Plans
+            </h2>
+            <p className="text-gray-600">Keep your HVAC system running efficiently year-round</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {maintenanceCards.map((plan, index) => (
+              <Card key={index} className={`relative ${getCategoryColor(plan.category)} ${plan.popular ? 'ring-2 ring-purple-500' : ''}`}>
+                {plan.popular && (
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-500 hover:bg-purple-600">
+                    Most Popular
+                  </Badge>
+                )}
+                <CardHeader className="text-center">
+                  <div className="flex justify-between items-start mb-2">
+                    <CardTitle className="text-xl font-bold">{plan.name}</CardTitle>
+                    {getCategoryBadge(plan.category)}
+                  </div>
+                  <div className="text-3xl font-bold text-gray-900">
+                    ${plan.price}
+                    <span className="text-lg font-normal text-gray-500">/year</span>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 mb-6">
+                    {plan.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button 
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                    onClick={() => handleBuyNow(
+                      `maintenance-${plan.category}`,
+                      plan.price,
+                      `${plan.name} - Annual Maintenance Plan`
+                    )}
+                  >
+                    Choose Plan
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
 
-        {/* Emergency Services */}
-        <section className="py-16 bg-dark">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <Clock className="w-16 h-16 text-primary mx-auto mb-4" />
-              <h2 className="text-3xl font-bold font-header mb-4">Emergency Services</h2>
-              <p className="text-lightgray max-w-2xl mx-auto">
-                24/7 emergency HVAC repair services when you need them most
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {emergencyServices.map((service, index) => (
-                <Card key={index} className="bg-black border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="text-xl font-bold text-primary">{service.name}</CardTitle>
-                    <CardDescription className="text-lg">{service.time}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-lightgray mb-4">{service.description}</p>
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-2xl font-bold text-primary">{formatCurrency(service.price)}</span>
-                      <span className="text-lightgray">Service call fee</span>
-                    </div>
-                    <Button 
-                      onClick={() => handlePurchase(
-                        'emergency-service',
-                        service.price,
-                        `${service.name} - ${service.time}`,
-                        undefined,
-                        service.time.includes('Evening') ? 'evening' : 'overnight'
-                      )}
-                      className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold"
-                    >
-                      Book Emergency Service
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            <div className="text-center mt-12">
-              <p className="text-lightgray mb-4">Need immediate assistance?</p>
-              <a href="tel:4036136014" className="inline-flex items-center bg-primary hover:bg-primary/90 text-black px-6 py-3 rounded-md font-semibold transition-all">
-                <Phone className="w-5 h-5 mr-2" />
-                Call (403) 613-6014
-              </a>
-            </div>
+        {/* Additional Services */}
+        <section className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
+              <Clock className="h-8 w-8 text-indigo-600" />
+              Additional Services
+            </h2>
+            <p className="text-gray-600">Professional HVAC services and emergency support</p>
           </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {serviceCards.map((service, index) => (
+              <Card key={index} className={`relative ${service.urgent ? 'bg-red-50 border-red-200 ring-2 ring-red-500' : 'bg-gray-50 border-gray-200'}`}>
+                {service.urgent && (
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-500 hover:bg-red-600">
+                    Emergency
+                  </Badge>
+                )}
+                <CardHeader className="text-center">
+                  <CardTitle className="text-lg font-bold">{service.name}</CardTitle>
+                  <div className="text-2xl font-bold text-gray-900">
+                    ${service.price}
+                  </div>
+                  <CardDescription className="text-sm text-gray-600">
+                    {service.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-1 mb-4">
+                    {service.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs">
+                        <Check className="h-3 w-3 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button 
+                    className={`w-full ${service.urgent ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+                    onClick={() => handleBuyNow(
+                      service.name.toLowerCase().replace(/\s+/g, '-'),
+                      service.price,
+                      service.name
+                    )}
+                  >
+                    {service.urgent ? 'Emergency Call' : 'Book Service'}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Emergency Contact */}
+        <section className="text-center bg-red-600 text-white rounded-xl p-8">
+          <h2 className="text-3xl font-bold mb-4 flex items-center justify-center gap-3">
+            <Phone className="h-8 w-8" />
+            24/7 Emergency Service
+          </h2>
+          <p className="text-xl mb-6">
+            HVAC emergency? We're here to help around the clock.
+          </p>
+          <Button 
+            size="lg" 
+            className="bg-white text-red-600 hover:bg-gray-100 font-bold"
+            onClick={() => window.location.href = 'tel:(403)613-6014'}
+          >
+            Call Now: (403) 613-6014
+          </Button>
         </section>
       </div>
-    </>
+    </div>
   );
 }
