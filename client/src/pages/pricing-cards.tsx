@@ -159,10 +159,10 @@ export default function PricingCards() {
         return 'bg-blue-50 border-blue-200';
       case 'mid':
       case 'premium':
-        return 'bg-purple-50 border-purple-200';
+        return 'bg-orange-50 border-orange-200';
       case 'high':
       case 'commercial':
-        return 'bg-orange-50 border-orange-200';
+        return 'bg-blue-100 border-blue-300';
       default:
         return 'bg-gray-50 border-gray-200';
     }
@@ -173,15 +173,15 @@ export default function PricingCards() {
       case 'low':
         return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Economy</Badge>;
       case 'mid':
-        return <Badge variant="secondary" className="bg-purple-100 text-purple-800">Popular</Badge>;
+        return <Badge variant="secondary" className="bg-orange-100 text-orange-800">Popular</Badge>;
       case 'high':
-        return <Badge variant="secondary" className="bg-orange-100 text-orange-800">Premium</Badge>;
+        return <Badge variant="secondary" className="bg-blue-200 text-blue-900">Premium</Badge>;
       case 'basic':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800">Basic</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Basic</Badge>;
       case 'premium':
-        return <Badge variant="secondary" className="bg-purple-100 text-purple-800">Premium</Badge>;
+        return <Badge variant="secondary" className="bg-orange-100 text-orange-800">Premium</Badge>;
       case 'commercial':
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Commercial</Badge>;
+        return <Badge variant="secondary" className="bg-blue-200 text-blue-900">Commercial</Badge>;
       default:
         return null;
     }
@@ -216,9 +216,9 @@ export default function PricingCards() {
           
           <div className="grid md:grid-cols-3 gap-6">
             {furnaceCards.map((furnace, index) => (
-              <Card key={index} className={`relative ${getCategoryColor(furnace.category)} ${furnace.popular ? 'ring-2 ring-orange-500' : ''}`}>
+              <Card key={index} className={`relative ${getCategoryColor(furnace.category)} ${furnace.popular ? 'ring-2 ring-primary' : ''}`}>
                 {furnace.popular && (
-                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 hover:bg-orange-600">
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary hover:bg-primary/90">
                     Most Popular
                   </Badge>
                 )}
@@ -245,7 +245,7 @@ export default function PricingCards() {
                     ))}
                   </ul>
                   <Button 
-                    className="w-full bg-orange-600 hover:bg-orange-700"
+                    className="w-full bg-primary hover:bg-primary/90"
                     onClick={() => handleBuyNow(
                       'furnace-install',
                       furnace.installPrice,
@@ -272,9 +272,9 @@ export default function PricingCards() {
           
           <div className="grid md:grid-cols-3 gap-6">
             {acCards.map((ac, index) => (
-              <Card key={index} className={`relative ${getCategoryColor(ac.category)} ${ac.popular ? 'ring-2 ring-blue-500' : ''}`}>
+              <Card key={index} className={`relative ${getCategoryColor(ac.category)} ${ac.popular ? 'ring-2 ring-secondary' : ''}`}>
                 {ac.popular && (
-                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 hover:bg-blue-600">
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-secondary hover:bg-secondary/90">
                     Most Popular
                   </Badge>
                 )}
@@ -301,7 +301,7 @@ export default function PricingCards() {
                     ))}
                   </ul>
                   <Button 
-                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    className="w-full bg-secondary hover:bg-secondary/90"
                     onClick={() => handleBuyNow(
                       'ac-install',
                       ac.installPrice,

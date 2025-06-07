@@ -6,23 +6,23 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
-    --muted: 60 4.8% 95.9%;
-    --muted-foreground: 25 5.3% 44.7%;
+    --muted: 205 15% 96%;
+    --muted-foreground: 205 5% 45%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
-    --border: 20 5.9% 90%;
-    --input: 20 5.9% 90%;
-    --primary: 14 100% 50%; /* #FF3D00 - fire orange */
+    --border: 205 20% 90%;
+    --input: 205 20% 90%;
+    --primary: 20 95% 55%; /* Warm orange */
     --primary-foreground: 0 0% 100%;
-    --secondary: 190 100% 42%; /* #00B8D4 - electric blue */
+    --secondary: 205 87% 50%; /* Professional blue */
     --secondary-foreground: 0 0% 100%;
-    --accent: 60 4.8% 95.9%;
-    --accent-foreground: 24 9.8% 10%;
+    --accent: 205 15% 96%;
+    --accent-foreground: 205 10% 15%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 60 9.1% 97.8%;
-    --ring: 20 14.3% 4.1%;
+    --ring: 205 87% 50%;
     --radius: 0.5rem;
   }
 
