@@ -79,11 +79,11 @@ const EmergencyForm = () => {
       </div>
       
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-lightgray mb-1">Phone Number</label>
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
         <input 
           type="tel" 
           id="phone"
-          className={`w-full bg-dark border ${errors.phone ? 'border-red-500' : 'border-gray-700'} rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary`}
+          className={`w-full bg-white border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500`}
           disabled={isSubmitting}
           {...register('phone')}
         />
@@ -91,10 +91,10 @@ const EmergencyForm = () => {
       </div>
       
       <div>
-        <label htmlFor="issue" className="block text-sm font-medium text-lightgray mb-1">Issue Type</label>
+        <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">Issue Type</label>
         <select 
           id="issue"
-          className={`w-full bg-dark border ${errors.issue ? 'border-red-500' : 'border-gray-700'} rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary`}
+          className={`w-full bg-white border ${errors.issue ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500`}
           disabled={isSubmitting}
           {...register('issue')}
         >
@@ -109,11 +109,11 @@ const EmergencyForm = () => {
       </div>
       
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-lightgray mb-1">Brief Description</label>
+        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Brief Description</label>
         <textarea 
           id="description"
           rows={3} 
-          className={`w-full bg-dark border ${errors.description ? 'border-red-500' : 'border-gray-700'} rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary`}
+          className={`w-full bg-white border ${errors.description ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500`}
           disabled={isSubmitting}
           {...register('description')}
         ></textarea>
@@ -123,7 +123,7 @@ const EmergencyForm = () => {
       <div>
         <button 
           type="submit" 
-          className="w-full bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold shadow-lg disabled:opacity-50"
+          className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-6 rounded-md transition-all font-semibold shadow-lg disabled:opacity-50"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
