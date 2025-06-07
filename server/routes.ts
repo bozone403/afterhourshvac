@@ -246,36 +246,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const { amount, productId, tier, category } = req.body;
+      const { amount, productId, tier, category, planType, service, serviceType } = req.body;
       
       // Validate the required fields
       if (!amount || amount <= 0) {
         return res.status(400).json({ error: "Invalid amount" });
       }
       
-      if (!productId) {
-        return res.status(400).json({ error: "Product ID is required" });
-      }
+      // Get the user ID from the session if authenticated
+      const userId = req.isAuthenticated() ? (req.user as any).id : null;
       
-      // Get the user ID from the session
-      const userId = (req.user as any).id;
+      // Determine amount in cents - handle both dollar amounts and cent amounts
+      let amountInCents = Math.round(amount);
+      
+      // If amount is less than 1000 (likely dollars), convert to cents
+      if (amount < 1000 && !planType) {
+        amountInCents = Math.round(amount * 100);
+      }
       
       // Create a payment intent with the amount
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount * 100), // Convert to cents
+        amount: amountInCents,
         currency: "usd",
         metadata: {
-          userId: userId.toString(),
-          productId: productId.toString(),
+          userId: userId ? userId.toString() : "guest",
+          productId: productId || "",
           tier: tier || "",
           category: category || "",
+          planType: planType || "",
+          service: service || "",
+          serviceType: serviceType || "",
         }
       });
       
       // Return the client secret to the client
       res.json({ 
         clientSecret: paymentIntent.client_secret,
-        paymentIntentId: paymentIntent.id
+        paymentIntentId: paymentIntent.id,
+        planType: planType,
+        service: service,
+        serviceType: serviceType
       });
     } catch (error: any) {
       console.error("Error creating payment intent:", error);

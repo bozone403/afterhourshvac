@@ -84,6 +84,15 @@ const Pricing = () => {
     setLocation(`/checkout?service=maintenance&plan=${plan}&amount=${amounts[plan as keyof typeof amounts]}`);
   };
 
+  // HVAC service payment handler
+  const handlePayForService = (serviceType: string, amount: number) => {
+    createPaymentMutation.mutate({
+      amount,
+      serviceType,
+      service: serviceType
+    } as any);
+  };
+
   return (
     <>
       <Helmet>
@@ -332,9 +341,10 @@ const Pricing = () => {
                     
                     <Button 
                       className="w-full bg-primary hover:bg-primary/80"
-                      onClick={() => setLocation('/contact')}
+                      onClick={() => handlePayForService('furnace', 7150)}
+                      disabled={createPaymentMutation.isPending}
                     >
-                      Get Quote
+                      {createPaymentMutation.isPending ? "Processing..." : "Schedule Installation"}
                     </Button>
                   </div>
                 </div>
@@ -372,9 +382,10 @@ const Pricing = () => {
                     
                     <Button 
                       className="w-full bg-primary hover:bg-primary/80"
-                      onClick={() => setLocation('/contact')}
+                      onClick={() => handlePayForService('ac-system', 6650)}
+                      disabled={createPaymentMutation.isPending}
                     >
-                      Get Quote
+                      {createPaymentMutation.isPending ? "Processing..." : "Schedule Installation"}
                     </Button>
                   </div>
                 </div>
