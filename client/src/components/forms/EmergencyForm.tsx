@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Loader2, Phone, AlertTriangle } from 'lucide-react';
 
-// Define the form schema with validation
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   phone: z.string().min(10, { message: 'Please enter a valid phone number.' }),
@@ -24,8 +23,6 @@ type FormData = z.infer<typeof formSchema>;
 const EmergencyForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formSuccess, setFormSuccess] = useState(false);
-  const [formError, setFormError] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -39,22 +36,18 @@ const EmergencyForm = () => {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    setFormSuccess(false);
-    setFormError(false);
     
     try {
       await apiRequest('POST', '/api/emergency-request', data);
       
-      setFormSuccess(true);
       toast({
         title: 'Emergency Request Sent',
         description: 'We\'ve received your emergency request and will contact you shortly.',
       });
       
-      reset();
+      form.reset();
     } catch (error) {
       console.error('Error submitting emergency form:', error);
-      setFormError(true);
       toast({
         title: 'Submission Error',
         description: 'There was a problem sending your request. Please try again or call us directly.',
@@ -66,91 +59,121 @@ const EmergencyForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-        <input 
-          type="text" 
-          id="name"
-          className={`w-full bg-white border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500`} 
-          disabled={isSubmitting}
-          {...register('name')}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700">Full Name</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Your full name"
+                  className="bg-white border-gray-300 text-gray-900 focus:ring-orange-500"
+                  disabled={isSubmitting}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
-      </div>
-      
-      <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-        <input 
-          type="tel" 
-          id="phone"
-          className={`w-full bg-white border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500`}
-          disabled={isSubmitting}
-          {...register('phone')}
+
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700">Phone Number</FormLabel>
+              <FormControl>
+                <Input
+                  type="tel"
+                  placeholder="(403) 123-4567"
+                  className="bg-white border-gray-300 text-gray-900 focus:ring-orange-500"
+                  disabled={isSubmitting}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>}
-      </div>
-      
-      <div>
-        <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">Issue Type</label>
-        <select 
-          id="issue"
-          className={`w-full bg-white border ${errors.issue ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500`}
-          disabled={isSubmitting}
-          {...register('issue')}
-        >
-          <option value="">Select an issue</option>
-          <option value="no-heat">No Heat</option>
-          <option value="no-ac">No AC</option>
-          <option value="water-leak">Water Leak</option>
-          <option value="strange-noise">Strange Noise</option>
-          <option value="other">Other Issue</option>
-        </select>
-        {errors.issue && <p className="mt-1 text-sm text-red-500">{errors.issue.message}</p>}
-      </div>
-      
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Brief Description</label>
-        <textarea 
-          id="description"
-          rows={3} 
-          className={`w-full bg-white border ${errors.description ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500`}
-          disabled={isSubmitting}
-          {...register('description')}
-        ></textarea>
-        {errors.description && <p className="mt-1 text-sm text-red-500">{errors.description.message}</p>}
-      </div>
-      
-      <div>
-        <button 
-          type="submit" 
-          className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-6 rounded-md transition-all font-semibold shadow-lg disabled:opacity-50"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? (
-            <span className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Processing...
-            </span>
-          ) : "Submit Emergency Request"}
-        </button>
-      </div>
-      
-      {formSuccess && (
-        <div className="bg-green-800 bg-opacity-50 border border-green-700 text-white p-3 rounded-md">
-          Thank you! We've received your emergency request and will contact you shortly.
+
+        <FormField
+          control={form.control}
+          name="issue"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700">Issue Type</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className="bg-white border-gray-300 text-gray-900">
+                    <SelectValue placeholder="Select issue type" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="no-heat">No Heat</SelectItem>
+                  <SelectItem value="no-cooling">No Cooling</SelectItem>
+                  <SelectItem value="gas-leak">Gas Leak</SelectItem>
+                  <SelectItem value="strange-noise">Strange Noise</SelectItem>
+                  <SelectItem value="high-bills">High Energy Bills</SelectItem>
+                  <SelectItem value="other">Other Emergency</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700">Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Please describe the issue in detail..."
+                  className="bg-white border-gray-300 text-gray-900 focus:ring-orange-500 min-h-[100px]"
+                  disabled={isSubmitting}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex items-center gap-4">
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <AlertTriangle className="w-4 h-4 mr-2" />
+                Send Emergency Request
+              </>
+            )}
+          </Button>
+
+          <a 
+            href="tel:4036136014" 
+            className="flex items-center justify-center bg-primary hover:bg-primary/80 text-white font-semibold py-3 px-6 rounded-md transition-colors"
+          >
+            <Phone className="w-4 h-4 mr-2" />
+            Call Now
+          </a>
         </div>
-      )}
-      
-      {formError && (
-        <div className="bg-red-800 bg-opacity-50 border border-red-700 text-white p-3 rounded-md">
-          There was an error submitting your request. Please try again or call us directly at (403) 613-6014.
-        </div>
-      )}
-    </form>
+      </form>
+    </Form>
   );
 };
 
