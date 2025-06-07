@@ -1,13 +1,15 @@
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/hooks/use-auth';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { 
   Calculator, 
   Crown, 
@@ -20,6 +22,16 @@ import {
   Clock,
   Infinity
 } from 'lucide-react';
+
+// Initialize Stripe
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+let stripePromise: Promise<any> | null = null;
+
+if (stripePublicKey) {
+  stripePromise = loadStripe(stripePublicKey);
+} else {
+  console.warn('Stripe public key not found. Payment functionality will be disabled.');
+}
 
 const membershipPlans = [
   {
@@ -107,10 +119,77 @@ const proFeatures = [
   }
 ];
 
+// Payment form component for subscription checkout
+const SubscriptionPaymentForm = ({ planId, onSuccess }: { planId: string; onSuccess: () => void }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const { toast } = useToast();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setIsProcessing(true);
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/customer-dashboard`,
+      },
+    });
+
+    if (error) {
+      toast({
+        title: "Payment Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Payment Successful",
+        description: "Your Pro membership has been activated!",
+      });
+      onSuccess();
+    }
+
+    setIsProcessing(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <PaymentElement />
+      <Button 
+        type="submit" 
+        disabled={!stripe || isProcessing}
+        className="w-full bg-orange-600 hover:bg-orange-700"
+      >
+        {isProcessing ? "Processing..." : "Complete Subscription"}
+      </Button>
+    </form>
+  );
+};
+
 const Membership = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [selectedPlan, setSelectedPlan] = useState<string>('yearly');
+  const [clientSecret, setClientSecret] = useState<string>('');
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+
+  // Check for pending subscription on mount
+  useEffect(() => {
+    const pendingSubscription = sessionStorage.getItem('pendingSubscription');
+    if (pendingSubscription && user) {
+      setSelectedPlan(pendingSubscription);
+      sessionStorage.removeItem('pendingSubscription');
+      handleSubscribe(pendingSubscription);
+    }
+  }, [user]);
 
   const subscribeMutation = useMutation({
     mutationFn: async (planId: string) => {
@@ -118,14 +197,15 @@ const Membership = () => {
       return response.json();
     },
     onSuccess: (data) => {
-      if (data.paymentUrl) {
-        window.location.href = data.paymentUrl;
+      if (data.clientSecret) {
+        setClientSecret(data.clientSecret);
+        setShowPaymentForm(true);
       }
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
         title: "Subscription Error",
-        description: "Failed to create subscription. Please try again.",
+        description: error.message || "Failed to create subscription. Please try again.",
         variant: "destructive"
       });
     }
@@ -136,11 +216,16 @@ const Membership = () => {
       // Store the intended plan in sessionStorage to redirect after auth
       sessionStorage.setItem('pendingSubscription', planId);
       // Redirect to registration/login with return URL
-      window.location.href = `/auth?returnUrl=${encodeURIComponent('/membership')}`;
+      setLocation('/auth');
       return;
     }
 
     subscribeMutation.mutate(planId);
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentForm(false);
+    setLocation('/customer-dashboard');
   };
 
   return (
@@ -187,15 +272,15 @@ const Membership = () => {
             {proFeatures.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
-                <Card key={index} className="bg-slate-800/50 border-slate-700 text-center">
+                <Card key={index} className="bg-white border-orange-200 text-center shadow-lg">
                   <CardHeader className="pb-4">
-                    <div className="mx-auto mb-4 p-3 bg-green-600/10 rounded-full w-fit">
-                      <IconComponent className="h-8 w-8 text-green-400" />
+                    <div className="mx-auto mb-4 p-3 bg-orange-100 rounded-full w-fit">
+                      <IconComponent className="h-8 w-8 text-orange-600" />
                     </div>
-                    <CardTitle className="text-white text-lg">{feature.title}</CardTitle>
+                    <CardTitle className="text-gray-900 text-lg">{feature.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-slate-300 text-sm">{feature.description}</p>
+                    <p className="text-gray-600 text-sm">{feature.description}</p>
                   </CardContent>
                 </Card>
               );
@@ -205,8 +290,8 @@ const Membership = () => {
           {/* Pricing Plans */}
           <div className="mb-16">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Choose Your Pro Plan</h2>
-              <p className="text-slate-300 text-lg">
+              <h2 className="text-3xl font-bold mb-4 text-gray-900">Choose Your Pro Plan</h2>
+              <p className="text-gray-600 text-lg">
                 Start with any plan and upgrade or cancel anytime
               </p>
             </div>
@@ -369,6 +454,40 @@ const Membership = () => {
               </div>
             </div>
           )}
+
+          {/* Payment Form Modal */}
+          {showPaymentForm && clientSecret && stripePromise && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg p-8 max-w-md w-full">
+                <h3 className="text-2xl font-bold mb-6 text-gray-900">Complete Your Subscription</h3>
+                <Elements 
+                  stripe={stripePromise} 
+                  options={{ 
+                    clientSecret,
+                    appearance: {
+                      theme: 'stripe',
+                      variables: {
+                        colorPrimary: '#ea580c',
+                      }
+                    }
+                  }}
+                >
+                  <SubscriptionPaymentForm 
+                    planId={selectedPlan} 
+                    onSuccess={handlePaymentSuccess} 
+                  />
+                </Elements>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowPaymentForm(false)}
+                  className="w-full mt-4"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
     </>

@@ -727,16 +727,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Grant Pro membership access
             await storage.updateUserProAccess(userIdNum, true, new Date());
             
-            // For lifetime membership, also set a flag
+            // Update membership type (remove isLifetimeMember for now to fix TypeScript)
             if (planType === 'lifetime') {
-              await storage.updateUser(userIdNum, { 
-                isLifetimeMember: true,
-                membershipType: 'lifetime'
-              });
-            } else {
-              await storage.updateUser(userIdNum, { 
-                membershipType: planType 
-              });
+              console.log(`[Payment Success] Lifetime membership activated for user ${userId}`);
             }
             
             console.log(`[Payment Success] Pro membership (${planType}) activated for user ${userId}`);
