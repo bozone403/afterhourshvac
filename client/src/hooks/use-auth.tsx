@@ -17,8 +17,10 @@ type User = {
   lastName: string | null;
   company: string | null;
   role: string;
-  hasProAccess: boolean;
-  hasPro: boolean;
+  hasProAccess?: boolean;
+  hasPro?: boolean;
+  has_pro_access?: boolean;
+  has_pro?: boolean;
   isAdmin: boolean;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;

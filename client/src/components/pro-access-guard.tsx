@@ -12,8 +12,11 @@ interface ProAccessGuardProps {
 export function ProAccessGuard({ children, feature }: ProAccessGuardProps) {
   const { user } = useAuth();
 
-  // Check if user has pro access
-  const hasProAccess = user?.hasProAccess || user?.hasPro;
+  // Debug: log user data to console for troubleshooting
+  console.log('ProAccessGuard - User data:', user);
+
+  // Check if user has pro access (checking all possible field variations)
+  const hasProAccess = user?.hasProAccess || user?.hasPro || user?.has_pro_access || user?.has_pro;
 
   if (!user) {
     return (

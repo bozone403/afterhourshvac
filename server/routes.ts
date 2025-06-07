@@ -195,14 +195,27 @@ function setupAuth(app: Express) {
     });
   });
 
-  app.get("/api/user", (req, res) => {
+  app.get("/api/user", async (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ error: "Not authenticated" });
     }
     
-    // Return the user data without the password
-    const { password, ...userWithoutPassword } = req.user as any;
-    res.json(userWithoutPassword);
+    try {
+      // Get fresh user data from database to include current Pro access status
+      const userId = (req.user as any).id;
+      const freshUser = await storage.getUser(userId);
+      
+      if (!freshUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      // Return the user data without the password
+      const { password, ...userWithoutPassword } = freshUser;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      console.error("Error fetching user data:", error);
+      res.status(500).json({ error: "Error fetching user data" });
+    }
   });
 
   // Update user email
