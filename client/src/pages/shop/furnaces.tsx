@@ -13,95 +13,75 @@ const FurnacesShop = () => {
   const furnaceModels = [
     {
       id: 1,
-      name: "Ducane 80M1SS Single Stage",
+      name: "Ducane 92G1UH Single Stage",
       category: "single-stage",
-      efficiency: "80% AFUE",
-      price: 3299,
-      originalPrice: 3599,
+      efficiency: "92% AFUE",
+      price: 5999,
+      originalPrice: null,
       image: "/api/placeholder/300/200",
       features: [
         "Single stage gas valve",
-        "Multi-speed ECM blower motor",
-        "Tubular heat exchanger",
-        "Pre-painted galvanized steel cabinet",
+        "Reliable on-demand heating",
+        "Standard digital thermostat included",
+        "Robust no-frills workhorse design",
         "10-year parts warranty"
       ],
       specs: {
         btuh: "40,000 - 120,000",
-        efficiency: "80% AFUE",
-        warranty: "10 years parts, 20 years heat exchanger"
+        efficiency: "92% AFUE",
+        warranty: "10 years parts warranty"
       },
-      badge: "Most Popular",
-      popular: true
+      badge: "Good Value",
+      popular: false,
+      description: "Perfect for budget-conscious clients or rental properties"
     },
     {
       id: 2,
-      name: "Ducane 95M2VS Two Stage",
+      name: "Lennox EL296V Two Stage",
       category: "two-stage",
-      efficiency: "95% AFUE",
-      price: 4599,
-      originalPrice: 4999,
-      image: "/api/placeholder/300/200",
-      features: [
-        "Two stage gas valve",
-        "Variable speed ECM blower",
-        "Stainless steel heat exchanger",
-        "Smart control compatibility",
-        "Quiet operation technology"
-      ],
-      specs: {
-        btuh: "40,000 - 120,000",
-        efficiency: "95% AFUE",
-        warranty: "10 years parts, 20 years heat exchanger"
-      },
-      badge: "High Efficiency",
-      popular: false
-    },
-    {
-      id: 3,
-      name: "Ducane 96M3VM Modulating",
-      category: "modulating",
       efficiency: "96% AFUE",
-      price: 5899,
-      originalPrice: 6399,
+      price: 7500,
+      originalPrice: null,
       image: "/api/placeholder/300/200",
       features: [
-        "Modulating gas valve",
-        "Variable speed ECM blower",
-        "Stainless steel heat exchanger",
-        "Advanced diagnostics",
-        "Whisper quiet operation"
+        "Two stage gas valve operation",
+        "Variable speed ECM blower motor",
+        "Quiet low-stage operation",
+        "Enhanced comfort and efficiency",
+        "20-year heat exchanger warranty"
       ],
       specs: {
         btuh: "40,000 - 120,000",
         efficiency: "96% AFUE",
         warranty: "10 years parts, 20 years heat exchanger"
       },
-      badge: "Premium",
-      popular: false
+      badge: "Most Popular",
+      popular: true,
+      description: "The new standard for modern homes with balanced temperatures"
     },
     {
-      id: 4,
-      name: "Ducane 97M4CM Communicating",
-      category: "communicating",
-      efficiency: "97% AFUE",
-      price: 7299,
-      originalPrice: 7899,
+      id: 3,
+      name: "Lennox SLP98V Modulating",
+      category: "modulating",
+      efficiency: "98% AFUE",
+      price: 11999,
+      originalPrice: null,
       image: "/api/placeholder/300/200",
       features: [
-        "Communicating control system",
-        "Variable speed ECM blower",
-        "Stainless steel heat exchanger",
-        "Smart home integration",
-        "Advanced fault diagnostics"
+        "Modulating gas valve (1% increments)",
+        "Communicating smart thermostat included",
+        "Quietest operation available",
+        "Precise temperature control",
+        "Lifetime heat exchanger warranty"
       ],
       specs: {
         btuh: "40,000 - 120,000",
-        efficiency: "97% AFUE",
-        warranty: "10 years parts, 20 years heat exchanger"
+        efficiency: "98% AFUE",
+        warranty: "10 years parts, lifetime heat exchanger"
       },
-      badge: "Top of Line",
-      popular: false
+      badge: "Premium",
+      popular: false,
+      description: "The pinnacle of heating technology for ultimate comfort"
     }
   ];
 
@@ -181,7 +161,7 @@ const FurnacesShop = () => {
                     <div className="flex items-center gap-2">
                       <span className="text-2xl font-bold text-blue-600">${furnace.price.toLocaleString()}</span>
                       {furnace.originalPrice && (
-                        <span className="text-lg text-gray-500 line-through">${furnace.originalPrice.toLocaleString()}</span>
+                        <span className="text-lg text-gray-500 line-through">${furnace.originalPrice}</span>
                       )}
                     </div>
                   </CardHeader>

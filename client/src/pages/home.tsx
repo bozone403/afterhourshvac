@@ -13,6 +13,7 @@ import {
   CheckCircle, 
   Star,
   Phone,
+  Droplets,
   MapPin,
   Calendar,
   ArrowRight,
@@ -69,8 +70,8 @@ const Home = () => {
     {
       icon: ThermometerSun,
       title: "High-Efficiency Furnaces",
-      description: "Shop premium Ducane furnaces with single stage, two stage, modulating, and communicating controls",
-      features: ["Starting at $3,299", "10-Year Warranty", "Energy Star Certified"],
+      description: "Shop premium Ducane and Lennox furnaces with single stage, two stage, and modulating controls",
+      features: ["Starting at $5,999", "10-Year Warranty", "Professional Installation"],
       link: "/shop/furnaces",
       badge: "Most Popular"
     },
@@ -78,23 +79,23 @@ const Home = () => {
       icon: Snowflake,
       title: "Central Air Conditioning",
       description: "Complete AC systems with variable speed technology and smart controls",
-      features: ["Starting at $2,899", "15 SEER+ Efficiency", "Smart Thermostat"],
+      features: ["Starting at $5,999", "Up to 28 SEER", "Professional Installation"],
       link: "/shop/air-conditioning",
-      badge: "Summer Special"
+      badge: "Summer Ready"
     },
     {
-      icon: Wind,
-      title: "Heat Pumps",
-      description: "All-season comfort with advanced heat pump technology for Calgary climate",
-      features: ["Starting at $4,199", "Cold Climate Rated", "Dual Fuel Ready"],
-      link: "/shop/heat-pumps",
-      badge: "New"
+      icon: Droplets,
+      title: "Gas Water Heaters",
+      description: "Power vented tank and tankless models for reliable hot water supply",
+      features: ["Starting at $2,300", "Tank & Tankless Options", "Professional Installation"],
+      link: "/shop/water-heaters",
+      badge: "Essential"
     },
     {
       icon: Settings,
       title: "Maintenance Plans",
       description: "Annual service plans to keep your equipment running at peak efficiency",
-      features: ["Starting at $199/year", "Priority Service", "Parts Discounts"],
+      features: ["Starting at $299/year", "Priority Service", "Parts Discounts"],
       link: "/shop/maintenance-plans",
       badge: "Save 20%"
     }
