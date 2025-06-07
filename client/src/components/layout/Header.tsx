@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import afterHoursLogo from "@assets/480470353_1163607998481068_1052733637415814615_n (1).jpg";
 import { 
   Menu, 
   X, 
@@ -111,8 +112,12 @@ const Header = () => {
           <Link href="/" className="flex items-center space-x-5 group">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-orange-500 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-all duration-500"></div>
-              <div className="relative hvac-gradient-primary p-5 rounded-3xl shadow-2xl group-hover:shadow-3xl transition-all duration-500 transform group-hover:scale-110 group-hover:-rotate-3">
-                <Wrench className="w-12 h-12 text-white drop-shadow-lg" />
+              <div className="relative bg-white p-2 rounded-3xl shadow-2xl group-hover:shadow-3xl transition-all duration-500 transform group-hover:scale-110">
+                <img 
+                  src={afterHoursLogo} 
+                  alt="AfterHours HVAC Logo" 
+                  className="w-16 h-16 object-contain"
+                />
               </div>
             </div>
             <div className="relative">

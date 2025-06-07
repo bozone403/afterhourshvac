@@ -34,6 +34,7 @@ interface ExtendedForumTopic extends ForumTopic {
   hasLiked?: boolean;
   postCount?: number;
   lastActivity?: string;
+  username?: string;
 }
 
 interface ExtendedForumPost extends ForumPost {
@@ -73,7 +74,7 @@ export default function ForumInteractive() {
       const topics = await response.json();
       
       // Enhance topics with like counts and user like status
-      const enhancedTopics = await Promise.all(topics.map(async (topic: ForumTopic) => {
+      const enhancedTopics = await Promise.all(topics.map(async (topic: any) => {
         try {
           // Get like count
           const likeResponse = await fetch(`/api/forum/likes/count?topicId=${topic.id}`);
@@ -94,7 +95,8 @@ export default function ForumInteractive() {
             likeCount: count,
             hasLiked,
             postCount: 0, // TODO: Get actual post count
-            lastActivity: topic.updatedAt
+            lastActivity: topic.updatedAt,
+            username: topic.username || 'Unknown User'
           };
         } catch {
           return {

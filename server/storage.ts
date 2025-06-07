@@ -467,22 +467,58 @@ export class DatabaseStorage implements IStorage {
       .where(eq(forumCategories.isActive, true));
   }
   
-  async getForumTopics(categoryId?: number): Promise<ForumTopic[]> {
+  async getForumTopics(categoryId?: number): Promise<(ForumTopic & { username: string })[]> {
     const query = categoryId ? 
       and(eq(forumTopics.categoryId, categoryId)) : 
       undefined;
     
-    return db
-      .select()
+    const results = await db
+      .select({
+        id: forumTopics.id,
+        categoryId: forumTopics.categoryId,
+        userId: forumTopics.userId,
+        title: forumTopics.title,
+        content: forumTopics.content,
+        slug: forumTopics.slug,
+        views: forumTopics.views,
+        isPinned: forumTopics.isPinned,
+        isLocked: forumTopics.isLocked,
+        createdAt: forumTopics.createdAt,
+        updatedAt: forumTopics.updatedAt,
+        username: users.username
+      })
       .from(forumTopics)
-      .where(query);
+      .leftJoin(users, eq(forumTopics.userId, users.id))
+      .where(query)
+      .orderBy(desc(forumTopics.isPinned), desc(forumTopics.createdAt));
+    
+    return results.map(result => ({
+      ...result,
+      username: result.username || 'Unknown User'
+    }));
   }
   
-  async getForumPosts(topicId: number): Promise<ForumPost[]> {
-    return db
-      .select()
+  async getForumPosts(topicId: number): Promise<(ForumPost & { username: string })[]> {
+    const results = await db
+      .select({
+        id: forumPosts.id,
+        topicId: forumPosts.topicId,
+        userId: forumPosts.userId,
+        content: forumPosts.content,
+        isEdited: forumPosts.isEdited,
+        createdAt: forumPosts.createdAt,
+        updatedAt: forumPosts.updatedAt,
+        username: users.username
+      })
       .from(forumPosts)
-      .where(eq(forumPosts.topicId, topicId));
+      .leftJoin(users, eq(forumPosts.userId, users.id))
+      .where(eq(forumPosts.topicId, topicId))
+      .orderBy(forumPosts.createdAt);
+    
+    return results.map(result => ({
+      ...result,
+      username: result.username || 'Unknown User'
+    }));
   }
   
   async createForumCategory(category: InsertForumCategory): Promise<ForumCategory> {
