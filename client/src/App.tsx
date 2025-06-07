@@ -45,7 +45,7 @@ import FurnacePage from "@/pages/products/furnace";
 import AuthPage from "@/pages/auth";
 import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
-import ForumPage from "@/pages/forum-functional";
+import ForumPage from "@/pages/forum-interactive";
 import AdminDashboard from "@/pages/admin-dashboard-enhanced";
 import UserSettings from "@/pages/user-settings";
 import CustomerDashboard from "@/pages/customer-dashboard";

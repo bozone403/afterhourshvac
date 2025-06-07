@@ -552,6 +552,73 @@ export class DatabaseStorage implements IStorage {
     await db.delete(forumPosts).where(eq(forumPosts.id, id));
     return true;
   }
+
+  // FORUM LIKES METHODS
+  async getForumLikes(topicId?: number, postId?: number): Promise<ForumLike[]> {
+    const conditions = [];
+    if (topicId) conditions.push(eq(forumLikes.topicId, topicId));
+    if (postId) conditions.push(eq(forumLikes.postId, postId));
+    
+    return db
+      .select()
+      .from(forumLikes)
+      .where(conditions.length > 0 ? and(...conditions) : undefined);
+  }
+
+  async createForumLike(like: InsertForumLike): Promise<ForumLike> {
+    const [newLike] = await db
+      .insert(forumLikes)
+      .values(like)
+      .returning();
+    return newLike;
+  }
+
+  async deleteForumLike(userId: number, topicId?: number, postId?: number): Promise<boolean> {
+    const conditions = [eq(forumLikes.userId, userId)];
+    if (topicId) conditions.push(eq(forumLikes.topicId, topicId));
+    if (postId) conditions.push(eq(forumLikes.postId, postId));
+    
+    await db.delete(forumLikes).where(and(...conditions));
+    return true;
+  }
+
+  async getTopicLikeCount(topicId: number): Promise<number> {
+    const [result] = await db
+      .select({ count: count() })
+      .from(forumLikes)
+      .where(eq(forumLikes.topicId, topicId));
+    return result?.count || 0;
+  }
+
+  async getPostLikeCount(postId: number): Promise<number> {
+    const [result] = await db
+      .select({ count: count() })
+      .from(forumLikes)
+      .where(eq(forumLikes.postId, postId));
+    return result?.count || 0;
+  }
+
+  async hasUserLikedTopic(userId: number, topicId: number): Promise<boolean> {
+    const [result] = await db
+      .select()
+      .from(forumLikes)
+      .where(and(
+        eq(forumLikes.userId, userId),
+        eq(forumLikes.topicId, topicId)
+      ));
+    return !!result;
+  }
+
+  async hasUserLikedPost(userId: number, postId: number): Promise<boolean> {
+    const [result] = await db
+      .select()
+      .from(forumLikes)
+      .where(and(
+        eq(forumLikes.userId, userId),
+        eq(forumLikes.postId, postId)
+      ));
+    return !!result;
+  }
   
   // REVIEWS METHODS
   async getReviews(approvedOnly: boolean = true): Promise<CustomerReview[]> {

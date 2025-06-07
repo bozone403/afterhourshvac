@@ -10,6 +10,7 @@ import {
   insertForumCategorySchema, 
   insertForumTopicSchema, 
   insertForumPostSchema, 
+  insertForumLikeSchema,
   insertGalleryImageSchema, 
   insertCustomerReviewSchema, 
   insertBlogPostSchema, 
@@ -1088,6 +1089,132 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error deleting forum post:", error);
       res.status(500).json({ 
         error: "Error deleting forum post", 
+        message: error.message 
+      });
+    }
+  });
+
+  // FORUM LIKES ROUTES
+  
+  // Get likes for a topic or post
+  app.get("/api/forum/likes", async (req, res) => {
+    try {
+      const topicId = req.query.topicId ? parseInt(req.query.topicId as string) : undefined;
+      const postId = req.query.postId ? parseInt(req.query.postId as string) : undefined;
+      
+      const likes = await storage.getForumLikes(topicId, postId);
+      res.json(likes);
+    } catch (error: any) {
+      console.error("Error getting forum likes:", error);
+      res.status(500).json({ 
+        error: "Error getting forum likes", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Like a topic or post
+  app.post("/api/forum/likes", requireAuth, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const { topicId, postId, likeType = 'like' } = req.body;
+      
+      if (!topicId && !postId) {
+        return res.status(400).json({ error: "Either topicId or postId is required" });
+      }
+      
+      const likeData = {
+        userId: user.id,
+        topicId: topicId || null,
+        postId: postId || null,
+        likeType,
+        createdAt: new Date()
+      };
+      
+      const result = insertForumLikeSchema.parse(likeData);
+      const like = await storage.createForumLike(result);
+      res.status(201).json(like);
+    } catch (error: any) {
+      console.error("Error creating forum like:", error);
+      res.status(500).json({ 
+        error: "Error creating forum like", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Unlike a topic or post
+  app.delete("/api/forum/likes", requireAuth, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const topicId = req.query.topicId ? parseInt(req.query.topicId as string) : undefined;
+      const postId = req.query.postId ? parseInt(req.query.postId as string) : undefined;
+      
+      if (!topicId && !postId) {
+        return res.status(400).json({ error: "Either topicId or postId is required" });
+      }
+      
+      await storage.deleteForumLike(user.id, topicId, postId);
+      res.json({ success: true, message: "Like removed successfully" });
+    } catch (error: any) {
+      console.error("Error removing forum like:", error);
+      res.status(500).json({ 
+        error: "Error removing forum like", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Get like counts for topics/posts
+  app.get("/api/forum/likes/count", async (req, res) => {
+    try {
+      const topicId = req.query.topicId ? parseInt(req.query.topicId as string) : undefined;
+      const postId = req.query.postId ? parseInt(req.query.postId as string) : undefined;
+      
+      if (!topicId && !postId) {
+        return res.status(400).json({ error: "Either topicId or postId is required" });
+      }
+      
+      let count = 0;
+      if (topicId) {
+        count = await storage.getTopicLikeCount(topicId);
+      } else if (postId) {
+        count = await storage.getPostLikeCount(postId);
+      }
+      
+      res.json({ count });
+    } catch (error: any) {
+      console.error("Error getting like count:", error);
+      res.status(500).json({ 
+        error: "Error getting like count", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Check if user has liked a topic/post
+  app.get("/api/forum/likes/check", requireAuth, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const topicId = req.query.topicId ? parseInt(req.query.topicId as string) : undefined;
+      const postId = req.query.postId ? parseInt(req.query.postId as string) : undefined;
+      
+      if (!topicId && !postId) {
+        return res.status(400).json({ error: "Either topicId or postId is required" });
+      }
+      
+      let hasLiked = false;
+      if (topicId) {
+        hasLiked = await storage.hasUserLikedTopic(user.id, topicId);
+      } else if (postId) {
+        hasLiked = await storage.hasUserLikedPost(user.id, postId);
+      }
+      
+      res.json({ hasLiked });
+    } catch (error: any) {
+      console.error("Error checking like status:", error);
+      res.status(500).json({ 
+        error: "Error checking like status", 
         message: error.message 
       });
     }
