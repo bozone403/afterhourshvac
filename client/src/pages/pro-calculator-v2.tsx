@@ -396,7 +396,7 @@ const ProCalculatorV2 = () => {
 
   if (showPaymentForm && stripePromise && clientSecret) {
     return (
-      <ProAccessGuard>
+      <ProAccessGuard feature="pro-calculator">
         <div className="min-h-screen bg-gray-900 py-20">
           <Helmet>
             <title>Complete Payment - AfterHours HVAC</title>
@@ -431,7 +431,7 @@ const ProCalculatorV2 = () => {
   }
 
   return (
-    <ProAccessGuard>
+    <ProAccessGuard feature="pro-calculator">
       <div className="min-h-screen bg-gray-900 py-20">
         <Helmet>
           <title>Professional Material Takeoff Calculator - AfterHours HVAC</title>
