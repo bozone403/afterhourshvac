@@ -15,32 +15,32 @@ const Contact = () => {
       <ServiceAreaBanner />
       
       {/* Page Header */}
-      <div className="relative pt-24 pb-10 bg-dark">
+      <div className="relative pt-24 pb-10 bg-gradient-to-br from-blue-50 to-orange-50">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold font-header mb-4">Get In <span className="text-primary">Touch</span></h1>
-            <p className="text-lightgray max-w-3xl mx-auto">Have questions or need service? Contact our team for prompt, professional assistance.</p>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Get In <span className="text-orange-600">Touch</span></h1>
+            <p className="text-gray-600 max-w-3xl mx-auto">Have questions or need service? Contact our team for prompt, professional assistance.</p>
           </div>
         </div>
       </div>
       
       {/* Contact Section */}
-      <section className="bg-dark py-16">
+      <section className="bg-gradient-to-br from-blue-50 to-orange-50 py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700">
+              <div className="bg-white rounded-lg overflow-hidden border border-blue-200 shadow-sm">
                 <div className="p-6">
-                  <h3 className="text-xl font-bold font-header mb-6">Send Us a Message</h3>
+                  <h3 className="text-xl font-bold mb-6 text-gray-900">Send Us a Message</h3>
                   <ContactForm />
                 </div>
               </div>
             </div>
             
             <div>
-              <div className="bg-darkgray rounded-lg overflow-hidden border border-gray-700 h-full">
+              <div className="bg-white rounded-lg overflow-hidden border border-orange-200 shadow-sm h-full">
                 <div className="p-6">
-                  <h3 className="text-xl font-bold font-header mb-6">Contact Information</h3>
+                  <h3 className="text-xl font-bold mb-6 text-gray-900">Contact Information</h3>
                   
                   <div className="space-y-6">
                     <div className="flex items-start">

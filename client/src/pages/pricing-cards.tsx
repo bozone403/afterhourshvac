@@ -188,7 +188,7 @@ export default function PricingCards() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
       <Helmet>
         <title>HVAC Equipment Pricing - AfterHours HVAC</title>
         <meta name="description" content="Professional HVAC equipment pricing including furnaces, air conditioners, heat pumps, and maintenance plans. Starting at $5,999 with professional installation." />

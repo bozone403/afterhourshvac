@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { ProAccessGuard } from '@/components/pro-access-guard';
-import MaterialEstimator from './calculators/material-estimator';
+import MaterialEstimator from './calculators/material-estimator-alggin';
 
 const ProCalculator = () => {
   return (
