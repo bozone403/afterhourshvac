@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation, useRoute, Link } from "wouter";
 import { Helmet } from "react-helmet-async";
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -176,6 +176,7 @@ const PaymentPage = () => {
   const { user } = useAuth();
   const [clientSecret, setClientSecret] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [paymentIntentCreated, setPaymentIntentCreated] = useState(false);
   
   const productId = params?.productId;
   const urlParams = new URLSearchParams(window.location.search);
@@ -190,8 +191,10 @@ const PaymentPage = () => {
       return;
     }
 
-    // Create payment intent
-    if (product) {
+    // Create payment intent only once
+    if (product && !paymentIntentCreated && user) {
+      setPaymentIntentCreated(true);
+      
       const addOnTotal = addOns.reduce((total, addOnId) => {
         const addOn = maintenanceAddOns.find(a => a.id === addOnId);
         return total + (addOn?.price || 0);
@@ -215,9 +218,10 @@ const PaymentPage = () => {
         .catch((error) => {
           console.error('Error creating payment intent:', error);
           setIsLoading(false);
+          setPaymentIntentCreated(false);
         });
     }
-  }, [user, product, productId, addOns]);
+  }, [user, product, productId, addOns, paymentIntentCreated]);
 
   const handlePaymentSuccess = () => {
     setLocation('/payment-confirmation');
@@ -323,24 +327,26 @@ const PaymentPage = () => {
                 </p>
               </CardHeader>
               <CardContent>
-                <Elements 
-                  stripe={stripePromise} 
-                  options={{ 
-                    clientSecret,
-                    appearance: {
-                      theme: 'stripe',
-                      variables: {
-                        colorPrimary: '#2563eb',
+                {clientSecret && (
+                  <Elements 
+                    stripe={stripePromise} 
+                    options={{ 
+                      clientSecret,
+                      appearance: {
+                        theme: 'stripe',
+                        variables: {
+                          colorPrimary: '#2563eb',
+                        }
                       }
-                    }
-                  }}
-                >
-                  <PaymentForm 
-                    productId={productId!} 
-                    addOns={addOns}
-                    onSuccess={handlePaymentSuccess}
-                  />
-                </Elements>
+                    }}
+                  >
+                    <PaymentForm 
+                      productId={productId!} 
+                      addOns={addOns}
+                      onSuccess={handlePaymentSuccess}
+                    />
+                  </Elements>
+                )}
               </CardContent>
             </Card>
           </div>

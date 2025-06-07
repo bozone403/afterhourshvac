@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/use-auth";
+import { apiRequest } from "@/lib/queryClient";
 import { 
   ShoppingCart, 
   ArrowLeft, 
@@ -128,13 +129,44 @@ const CheckoutPage = () => {
     return product.price + addOnTotal;
   };
 
-  const handleProceedToPayment = () => {
+  const handleProceedToPayment = async () => {
     if (!user) {
       // Redirect to login with return URL
       setLocation(`/auth?redirect=/checkout/${productId}`);
-    } else {
-      // Proceed to payment processing
-      setLocation(`/payment/${productId}?addons=${selectedAddOns.join(',')}`);
+      return;
+    }
+
+    // Create payment intent and proceed directly to Stripe
+    try {
+      const addOnTotal = selectedAddOns.reduce((total, addOnId) => {
+        const addOn = maintenanceAddOns.find(a => a.id === addOnId);
+        return total + (addOn?.price || 0);
+      }, 0);
+      const totalAmount = product!.price + addOnTotal;
+
+      const response = await apiRequest("POST", "/api/create-payment-intent", { 
+        amount: totalAmount,
+        description: `${product!.name}${selectedAddOns.length > 0 ? ' with maintenance services' : ''}`,
+        metadata: {
+          productId,
+          addOns: selectedAddOns.join(','),
+          userId: user.id
+        }
+      });
+
+      const data = await response.json();
+      
+      // Store payment details and redirect to Stripe checkout
+      sessionStorage.setItem('pendingPayment', JSON.stringify({
+        clientSecret: data.clientSecret,
+        productId,
+        addOns: selectedAddOns,
+        totalAmount
+      }));
+      
+      setLocation('/stripe-checkout');
+    } catch (error) {
+      console.error('Error creating payment intent:', error);
     }
   };
 
