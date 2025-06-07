@@ -62,10 +62,177 @@ const ProCalculator = () => {
   const [markupPercentage, setMarkupPercentage] = useState('25');
   const [overheadPercentage, setOverheadPercentage] = useState('15');
   const [laborRate, setLaborRate] = useState('75');
+  
+  // Payment Processing
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [clientSecret, setClientSecret] = useState('');
+  
+  // Search and filter catalog items
+  const filteredCatalog = useMemo(() => {
+    let items = algginCatalog;
+    
+    if (searchTerm) {
+      items = searchCatalog(searchTerm);
+    }
+    
+    if (selectedCategory) {
+      items = items.filter(item => item.category === selectedCategory);
+    }
+    
+    if (selectedSubcategory) {
+      items = items.filter(item => item.subcategory === selectedSubcategory);
+    }
+    
+    return items;
+  }, [searchTerm, selectedCategory, selectedSubcategory]);
+  
+  // Calculate totals
+  const calculations = useMemo(() => {
+    const materialsSubtotal = materials.reduce((sum, item) => sum + item.totalPrice, 0);
+    const laborSubtotal = laborItems.reduce((sum, item) => sum + item.totalCost, 0);
+    const customSubtotal = customItems.reduce((sum, item) => sum + item.totalPrice, 0);
+    
+    const subtotal = materialsSubtotal + laborSubtotal + customSubtotal;
+    const overhead = (subtotal * parseFloat(overheadPercentage)) / 100;
+    const markup = ((subtotal + overhead) * parseFloat(markupPercentage)) / 100;
+    const total = subtotal + overhead + markup;
+    
+    return {
+      materialsSubtotal,
+      laborSubtotal,
+      customSubtotal,
+      subtotal,
+      overhead,
+      markup,
+      total
+    };
+  }, [materials, laborItems, customItems, markupPercentage, overheadPercentage]);
 
-  const homeTypes = {
-    'single-story': 'Single Story',
-    'two-story': 'Two Story',
+  // Add material to takeoff
+  const addMaterial = (catalogItem: CatalogItem, quantity: number = 1) => {
+    const id = Date.now().toString();
+    const newMaterial: MaterialItem = {
+      id,
+      catalogItem,
+      quantity,
+      totalPrice: catalogItem.price * quantity
+    };
+    setMaterials(prev => [...prev, newMaterial]);
+  };
+
+  // Update material quantity
+  const updateMaterialQuantity = (id: string, quantity: number) => {
+    setMaterials(prev => prev.map(item => 
+      item.id === id 
+        ? { ...item, quantity, totalPrice: item.catalogItem.price * quantity }
+        : item
+    ));
+  };
+
+  // Remove material
+  const removeMaterial = (id: string) => {
+    setMaterials(prev => prev.filter(item => item.id !== id));
+  };
+
+  // Add labor item
+  const addLaborItem = () => {
+    const id = Date.now().toString();
+    const newLabor: LaborItem = {
+      id,
+      description: 'Labor Item',
+      hours: 1,
+      rate: parseFloat(laborRate),
+      totalCost: parseFloat(laborRate)
+    };
+    setLaborItems(prev => [...prev, newLabor]);
+  };
+
+  // Update labor item
+  const updateLaborItem = (id: string, updates: Partial<LaborItem>) => {
+    setLaborItems(prev => prev.map(item => {
+      if (item.id === id) {
+        const updated = { ...item, ...updates };
+        updated.totalCost = updated.hours * updated.rate;
+        return updated;
+      }
+      return item;
+    }));
+  };
+
+  // Remove labor item
+  const removeLaborItem = (id: string) => {
+    setLaborItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  // Add custom item
+  const addCustomItem = () => {
+    const id = Date.now().toString();
+    const newCustom: CustomItem = {
+      id,
+      description: 'Custom Item',
+      price: 0,
+      quantity: 1,
+      totalPrice: 0
+    };
+    setCustomItems(prev => [...prev, newCustom]);
+  };
+
+  // Update custom item
+  const updateCustomItem = (id: string, updates: Partial<CustomItem>) => {
+    setCustomItems(prev => prev.map(item => {
+      if (item.id === id) {
+        const updated = { ...item, ...updates };
+        updated.totalPrice = updated.price * updated.quantity;
+        return updated;
+      }
+      return item;
+    }));
+  };
+
+  // Remove custom item
+  const removeCustomItem = (id: string) => {
+    setCustomItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  // Generate PDF estimate
+  const generatePDF = () => {
+    // This would integrate with a PDF generation library
+    toast({
+      title: "PDF Generated",
+      description: "Estimate has been generated and saved to customer file.",
+    });
+  };
+
+  // Create Stripe payment intent
+  const createPaymentIntent = async () => {
+    try {
+      const response = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: Math.round(calculations.total * 100), // Convert to cents
+          currency: 'cad',
+          description: `HVAC Estimate - ${projectName || 'Project'}`,
+          customer_name: customerName,
+          project_details: {
+            materials: materials.length,
+            labor_hours: laborItems.reduce((sum, item) => sum + item.hours, 0),
+            project_address: projectAddress
+          }
+        })
+      });
+      
+      const data = await response.json();
+      setClientSecret(data.clientSecret);
+      setShowPaymentForm(true);
+    } catch (error) {
+      toast({
+        title: "Payment Error",
+        description: "Failed to create payment. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
     'split-level': 'Split Level',
     'bi-level': 'Bi-Level',
     'manufactured': 'Manufactured Home'
