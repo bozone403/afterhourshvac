@@ -88,14 +88,14 @@ const Pricing = () => {
   const hvacServiceMutation = useMutation({
     mutationFn: async (data: { serviceType: string; amount: number }) => {
       const response = await apiRequest("POST", "/api/create-payment-intent", {
-        amount: data.amount,
-        serviceType: data.serviceType,
-        service: data.serviceType
+        amount: data.amount * 100, // Convert to cents for Stripe
+        service: data.serviceType,
+        description: `${data.serviceType.replace('-', ' ')} service`
       });
       return response.json();
     },
     onSuccess: (data, variables) => {
-      setLocation(`/checkout?client_secret=${data.clientSecret}&service=${variables.serviceType}&amount=${variables.amount}`);
+      setLocation(`/checkout?service=${variables.serviceType}&amount=${variables.amount}`);
     },
     onError: (error: Error) => {
       toast({

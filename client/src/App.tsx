@@ -37,10 +37,7 @@ import AuthPage from "@/pages/auth";
 import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
 import ForumPage from "@/pages/forum-functional";
-import AdminData from "@/pages/admin-data";
 import AdminDashboard from "@/pages/admin-dashboard";
-import SupplierData from "@/pages/supplier-data";
-import AlgginData from "@/pages/alggin-data";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -88,9 +85,6 @@ function Router() {
         {/* Admin-only routes */}
         <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
         <ProtectedRoute path="/admin/photos" component={AdminPhotos} adminOnly={true} />
-        <ProtectedRoute path="/admin-data" component={AdminData} adminOnly={true} />
-        <ProtectedRoute path="/supplier-data" component={SupplierData} adminOnly={true} />
-        <ProtectedRoute path="/alggin-data" component={AlgginData} adminOnly={true} />
         
         {/* 404 fallback */}
         <Route component={NotFound} />
