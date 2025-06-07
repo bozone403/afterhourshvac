@@ -1140,7 +1140,7 @@ export class DatabaseStorage implements IStorage {
 
   async populateForumWithHvacContent(): Promise<void> {
     // Check if content already exists
-    const existingTopics = await this.getTopicsByCategory(1);
+    const existingTopics = await this.getForumTopics(1);
     if (existingTopics.length > 0) {
       return; // Content already exists
     }
@@ -1151,9 +1151,7 @@ export class DatabaseStorage implements IStorage {
       adminUser = await this.createUser({
         username: 'hvac_expert',
         email: 'expert@afterhourshvac.ca',
-        password: 'temp_password',
-        role: 'admin',
-        userType: 'professional'
+        password: 'temp_password'
       });
     }
 
@@ -1234,6 +1232,7 @@ export class DatabaseStorage implements IStorage {
           categoryId: category.categoryId,
           userId: adminUser.id,
           title: topicData.title,
+          slug: topicData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
           content: topicData.content,
           isPinned: true,
           isLocked: false

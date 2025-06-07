@@ -1252,6 +1252,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
+  // Populate forum with HVAC content (admin only)
+  app.post("/api/forum/populate", requireAdmin, async (req, res) => {
+    try {
+      await storage.populateForumWithHvacContent();
+      res.json({ success: true, message: "Forum populated with professional HVAC content" });
+    } catch (error: any) {
+      console.error("Error populating forum:", error);
+      res.status(500).json({ 
+        error: "Error populating forum", 
+        message: error.message 
+      });
+    }
+  });
   
   // PRODUCT ROUTES
   
