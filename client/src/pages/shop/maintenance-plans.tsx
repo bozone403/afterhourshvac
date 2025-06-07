@@ -250,10 +250,11 @@ const MaintenancePlansShop = () => {
                       </div>
                       
                       <Button 
+                        asChild
                         className={`w-full ${plan.popular ? 'bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
                         size="sm"
                       >
-                        Choose Plan
+                        <Link href="/membership">Choose Plan</Link>
                       </Button>
                     </CardContent>
                   </Card>
@@ -298,10 +299,11 @@ const MaintenancePlansShop = () => {
                       </div>
                       
                       <Button 
+                        asChild
                         className={`w-full ${plan.popular ? 'bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
                         size="lg"
                       >
-                        Get Quote
+                        <Link href="/membership">Get Quote</Link>
                       </Button>
                     </CardContent>
                   </Card>

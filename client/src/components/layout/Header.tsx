@@ -36,15 +36,14 @@ const Header = () => {
   const navigationItems = [
     { name: "Home", href: "/", icon: Home },
     {
-      name: "Services",
-      href: "/services",
+      name: "Shop Equipment", 
+      href: "/shop/furnaces",
       icon: Wrench,
       submenu: [
-        { name: "Furnace Installation", href: "/services/furnace-install" },
-        { name: "AC Repair & Installation", href: "/services/ac-repair" },
-        { name: "Duct Cleaning", href: "/services/duct-cleaning" },
-        { name: "HVAC Maintenance", href: "/services/maintenance" },
-        { name: "Emergency Service", href: "/emergency" }
+        { name: "High-Efficiency Furnaces", href: "/shop/furnaces" },
+        { name: "Central Air Conditioning", href: "/shop/air-conditioning" },
+        { name: "Gas Water Heaters", href: "/shop/water-heaters" },
+        { name: "Maintenance Plans", href: "/shop/maintenance-plans" }
       ]
     },
     {
