@@ -124,6 +124,7 @@ const SubscriptionPaymentForm = ({ planId, onSuccess }: { planId: string; onSucc
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -169,7 +170,7 @@ const SubscriptionPaymentForm = ({ planId, onSuccess }: { planId: string; onSucc
             object: {
               id: paymentIntent.id,
               metadata: {
-                userId: user.id.toString(),
+                userId: user?.id?.toString() || '',
                 planType: planId,
                 isProMembership: 'true'
               }
