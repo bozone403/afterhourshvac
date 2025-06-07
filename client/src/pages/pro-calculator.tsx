@@ -464,15 +464,15 @@ const ProCalculator = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="relative space-y-8">
-                  <div>
-                    <Label htmlFor="squareFootage" className="text-white">Square Footage</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="squareFootage" className="text-white text-lg font-semibold">Square Footage</Label>
                     <Input
                       id="squareFootage"
                       type="number"
                       placeholder="e.g., 1800"
                       value={squareFootage}
                       onChange={(e) => setSquareFootage(e.target.value)}
-                      className="mt-1 bg-gray-700 border-gray-600 text-white"
+                      className="mt-1 bg-gray-700/80 border-gray-500 text-white text-lg p-4 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
                     />
                   </div>
 
@@ -564,35 +564,44 @@ const ProCalculator = () => {
 
                   <Button 
                     onClick={calculateEstimate}
-                    className="w-full bg-primary hover:bg-primary/80 text-white"
+                    className="w-full relative bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-xl shadow-2xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 overflow-hidden"
                     disabled={!squareFootage || !homeType || !efficiency || !brand}
                   >
-                    <Calculator className="w-4 h-4 mr-2" />
-                    Calculate Estimate
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full hover:translate-x-full transition-transform duration-700"></div>
+                    <div className="relative flex items-center justify-center">
+                      <Calculator className="w-5 h-5 mr-3" />
+                      Generate Professional Estimate
+                    </div>
                   </Button>
                 </CardContent>
               </Card>
 
               {/* Results Section */}
-              <Card className="bg-gray-800 border-gray-700">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <DollarSign className="text-secondary" />
-                    Project Estimate
+              <Card className="relative bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-600 backdrop-blur-xl shadow-2xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-600/10 to-blue-500/10"></div>
+                <CardHeader className="relative">
+                  <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-r from-orange-500 to-blue-600 rounded-xl">
+                      <DollarSign className="w-6 h-6 text-white" />
+                    </div>
+                    Professional Estimate
                   </CardTitle>
-                  <CardDescription className="text-gray-300">
-                    Calgary market pricing - includes equipment, installation & warranty
+                  <CardDescription className="text-gray-300 text-lg">
+                    Calgary market pricing with professional-grade accuracy
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="relative">
                   {estimate ? (
                     <div className="space-y-6">
-                      <div className="text-center">
-                        <div className="text-3xl font-bold text-white mb-2">
+                      <div className="text-center p-6 bg-gradient-to-r from-blue-600/20 to-orange-500/20 rounded-2xl border border-gray-600">
+                        <div className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-3">
                           ${estimate.low.toLocaleString()} - ${estimate.high.toLocaleString()} CAD
                         </div>
-                        <div className="text-lg text-gray-300">
-                          Target: ${estimate.base.toLocaleString()} CAD
+                        <div className="text-xl text-gray-300 font-semibold">
+                          Target Estimate: ${estimate.base.toLocaleString()} CAD
+                        </div>
+                        <div className="text-sm text-gray-400 mt-2">
+                          Professional Calgary market pricing
                         </div>
                       </div>
 
