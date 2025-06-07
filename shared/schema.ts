@@ -354,6 +354,73 @@ export const systemMetrics = pgTable("system_metrics", {
   recordedAt: timestamp("recorded_at").defaultNow(),
 });
 
+// Service Journey Tracking
+export const serviceRequests = pgTable("service_requests", {
+  id: serial("id").primaryKey(),
+  requestNumber: text("request_number").notNull().unique(), // SR-2024-001
+  customerId: integer("customer_id").references(() => customers.id),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerPhone: text("customer_phone"),
+  serviceType: text("service_type").notNull(), // installation, repair, maintenance, emergency
+  priority: text("priority").default("normal"), // low, normal, high, urgent
+  status: text("status").default("received"), // received, scheduled, in_progress, completed, cancelled
+  currentStage: text("current_stage").default("contact"), // contact, quote, scheduled, dispatch, service, completion
+  address: text("address").notNull(),
+  description: text("description").notNull(),
+  equipmentType: text("equipment_type"), // furnace, ac, heat_pump
+  assignedTechnician: integer("assigned_technician").references(() => users.id),
+  scheduledDate: timestamp("scheduled_date"),
+  estimatedCompletion: timestamp("estimated_completion"),
+  actualStartTime: timestamp("actual_start_time"),
+  actualEndTime: timestamp("actual_end_time"),
+  totalCost: numeric("total_cost", { precision: 10, scale: 2 }),
+  paymentStatus: text("payment_status").default("pending"), // pending, paid, partial
+  customerSatisfaction: integer("customer_satisfaction"), // 1-5 rating
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const serviceJourneyStages = pgTable("service_journey_stages", {
+  id: serial("id").primaryKey(),
+  serviceRequestId: integer("service_request_id").references(() => serviceRequests.id),
+  stage: text("stage").notNull(), // contact, quote, scheduled, dispatch, service, completion
+  status: text("status").notNull(), // pending, in_progress, completed, skipped
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  estimatedDuration: integer("estimated_duration"), // minutes
+  actualDuration: integer("actual_duration"), // minutes
+  notes: text("notes"),
+  performedBy: integer("performed_by").references(() => users.id),
+  customerNotified: boolean("customer_notified").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const serviceUpdates = pgTable("service_updates", {
+  id: serial("id").primaryKey(),
+  serviceRequestId: integer("service_request_id").references(() => serviceRequests.id),
+  updateType: text("update_type").notNull(), // status_change, technician_update, customer_message
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  isVisibleToCustomer: boolean("is_visible_to_customer").default(true),
+  createdBy: integer("created_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const technicianLocations = pgTable("technician_locations", {
+  id: serial("id").primaryKey(),
+  technicianId: integer("technician_id").references(() => users.id),
+  serviceRequestId: integer("service_request_id").references(() => serviceRequests.id),
+  latitude: numeric("latitude", { precision: 10, scale: 8 }),
+  longitude: numeric("longitude", { precision: 11, scale: 8 }),
+  accuracy: numeric("accuracy", { precision: 8, scale: 2 }), // meters
+  heading: numeric("heading", { precision: 5, scale: 2 }), // degrees
+  speed: numeric("speed", { precision: 5, scale: 2 }), // km/h
+  estimatedArrival: timestamp("estimated_arrival"),
+  lastUpdated: timestamp("last_updated").defaultNow(),
+});
+
 // USER AND AUTH
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
