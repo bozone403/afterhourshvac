@@ -20,7 +20,7 @@ import About from "@/pages/about";
 import Pricing from "@/pages/pricing-btutonnage";
 import Contact from "@/pages/contact";
 import Calculators from "@/pages/calculators";
-import MaterialEstimator from "@/pages/calculators/material-estimator-new";
+import MaterialEstimator from "@/pages/calculators/material-estimator-alggin";
 import CommercialEstimator from "@/pages/calculators/commercial-estimator";
 import BTUCalculator from "@/pages/calculators/btu";
 import ProCalculator from "@/pages/pro-calculator";
