@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @layer base {
   :root {
@@ -54,10 +54,10 @@
     --popover-foreground: var(--hvac-gray-900);
     --primary: var(--hvac-blue-600);
     --primary-foreground: 255 255 255;
-    --secondary: var(--hvac-blue-50);
-    --secondary-foreground: var(--hvac-blue-900);
+    --secondary: var(--hvac-gray-100);
+    --secondary-foreground: var(--hvac-gray-900);
     --muted: var(--hvac-gray-100);
-    --muted-foreground: var(--hvac-gray-600);
+    --muted-foreground: var(--hvac-gray-700);
     --accent: var(--hvac-orange-500);
     --accent-foreground: 255 255 255;
     --destructive: 239 68 68;
@@ -177,11 +177,11 @@
   }
   
   .hvac-text-lg {
-    @apply text-lg text-gray-600 leading-relaxed;
+    @apply text-lg text-gray-700 leading-relaxed;
   }
   
   .hvac-text-base {
-    @apply text-gray-600 leading-relaxed;
+    @apply text-gray-700 leading-relaxed;
   }
   
   /* Service Card Styles */
@@ -199,11 +199,11 @@
   }
   
   .feature-item {
-    @apply flex items-center space-x-3 text-gray-700;
+    @apply flex items-center space-x-3 text-gray-800;
   }
   
   .feature-check {
-    @apply w-5 h-5 text-green-500 flex-shrink-0;
+    @apply w-5 h-5 text-green-600 flex-shrink-0;
   }
   
   /* Stat Counter Styles */
@@ -216,7 +216,7 @@
   }
   
   .stat-label {
-    @apply text-gray-600 font-medium;
+    @apply text-gray-700 font-medium;
   }
   
   /* Navigation Styles */
