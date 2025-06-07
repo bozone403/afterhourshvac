@@ -85,9 +85,7 @@ const Header = () => {
             <Link href="/about">
               <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/about') ? 'text-primary' : ''}`}>About</div>
             </Link>
-            <Link href="/gallery">
-              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/gallery') ? 'text-primary' : ''}`}>Gallery</div>
-            </Link>
+
             <Link href="/pricing">
               <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/pricing') ? 'text-primary' : ''}`}>Pricing</div>
             </Link>
@@ -190,14 +188,7 @@ const Header = () => {
                 About
               </div>
             </Link>
-            <Link href="/gallery">
-              <div 
-                className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/gallery') ? 'text-primary' : ''}`}
-                onClick={closeMobileMenu}
-              >
-                Gallery
-              </div>
-            </Link>
+
             <Link href="/pricing">
               <div 
                 className={`text-white hover:text-primary transition-colors font-medium py-2 px-4 cursor-pointer ${isActive('/pricing') ? 'text-primary' : ''}`}

@@ -5,9 +5,16 @@ import ServicesCarousel from '@/components/home/ServicesCarousel';
 import QuickContactWidget from '@/components/home/QuickContactWidget';
 import GoogleReviews from '@/components/home/GoogleReviews';
 import ForumPreview from '@/components/home/ForumPreview';
+import { Carousel } from '@/components/ui/carousel';
+import { useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
 
 const Home = () => {
+  const { data: carouselImages, isLoading } = useQuery({
+    queryKey: ['/api/carousel'],
+    retry: false,
+  });
+
   return (
     <>
       <Helmet>
@@ -17,6 +24,27 @@ const Home = () => {
       
       {/* Hero Section */}
       <HeroSection />
+      
+      {/* Photo Carousel Section */}
+      <section className="py-16 bg-slate-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Our Work</h2>
+            <p className="text-slate-300 max-w-2xl mx-auto">
+              See examples of our professional HVAC installations and services across Calgary
+            </p>
+          </div>
+          
+          {!isLoading && (
+            <Carousel 
+              images={carouselImages || []}
+              autoPlay={true}
+              interval={6000}
+              className="max-w-4xl mx-auto"
+            />
+          )}
+        </div>
+      </section>
       
       {/* Services Carousel */}
       <ServicesCarousel />

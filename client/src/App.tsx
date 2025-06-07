@@ -16,7 +16,7 @@ import EmergencyBanner from "@/components/layout/EmergencyBanner";
 // Pages
 import Home from "@/pages/home";
 import About from "@/pages/about";
-import Gallery from "@/pages/gallery";
+
 import Pricing from "@/pages/pricing-new";
 import Contact from "@/pages/contact";
 import Calculators from "@/pages/calculators";
@@ -57,7 +57,7 @@ function Router() {
         {/* Public routes */}
         <Route path="/" component={Home} />
         <Route path="/about" component={About} />
-        <Route path="/gallery" component={Gallery} />
+
         <Route path="/pricing" component={Pricing} />
         <Route path="/contact" component={Contact} />
         <Route path="/calculators" component={Calculators} />
