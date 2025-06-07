@@ -124,6 +124,9 @@ const Header = () => {
                     <Button variant="outline" size="sm" className="ml-2">
                       <User className="h-4 w-4 mr-1" />
                       {user.username}
+                      {user.hasPro && (
+                        <span className="ml-2 bg-orange-600 text-white px-2 py-1 text-xs rounded-full">PRO</span>
+                      )}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">

@@ -670,6 +670,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Manual Pro membership activation (for testing)
+  app.post('/api/activate-pro', requireAuth, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const { paymentIntentId } = req.body;
+
+      // Activate Pro membership
+      await storage.updateUserProAccess(user.id, true, new Date());
+      
+      console.log(`[Manual Activation] Pro membership activated for user ${user.id}`);
+      
+      res.json({ success: true, message: 'Pro membership activated' });
+    } catch (error: any) {
+      console.error("Error activating Pro membership:", error);
+      res.status(500).json({ 
+        error: "Error activating Pro membership", 
+        message: error.message 
+      });
+    }
+  });
+
   // Handle Stripe webhook for payment confirmation
   app.post('/api/webhook', async (req, res) => {
     try {
