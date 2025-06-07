@@ -1564,39 +1564,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Carousel endpoints for homepage
   app.get("/api/carousel", async (req, res) => {
     try {
-      const sampleCarouselImages = [
-        {
-          id: 1,
-          title: "Professional Furnace Installation",
-          description: "High-efficiency furnace installation in Calgary residential home",
-          imageUrl: "/api/placeholder/800/500",
-          isActive: true,
-          sortOrder: 1
-        },
-        {
-          id: 2,
-          title: "Expert AC Unit Service", 
-          description: "Professional air conditioning maintenance and repair services",
-          imageUrl: "/api/placeholder/800/500",
-          isActive: true,
-          sortOrder: 2
-        },
-        {
-          id: 3,
-          title: "Commercial HVAC Solutions",
-          description: "Large-scale commercial heating and cooling system installations",
-          imageUrl: "/api/placeholder/800/500",
-          isActive: true,
-          sortOrder: 3
-        }
-      ];
-      res.json(sampleCarouselImages);
+      const images = await storage.getCarouselImages();
+      if (images.length === 0) {
+        // Return sample data if no images exist
+        const sampleCarouselImages = [
+          {
+            id: 1,
+            title: "Professional Furnace Installation",
+            description: "High-efficiency furnace installation in Calgary residential home",
+            imageUrl: "/api/placeholder/800/500",
+            isActive: true,
+            sortOrder: 1
+          },
+          {
+            id: 2,
+            title: "Expert AC Unit Service", 
+            description: "Professional air conditioning maintenance and repair services",
+            imageUrl: "/api/placeholder/800/500",
+            isActive: true,
+            sortOrder: 2
+          },
+          {
+            id: 3,
+            title: "Commercial HVAC Solutions",
+            description: "Large-scale commercial heating and cooling system installations",
+            imageUrl: "/api/placeholder/800/500",
+            isActive: true,
+            sortOrder: 3
+          }
+        ];
+        return res.json(sampleCarouselImages);
+      }
+      res.json(images);
     } catch (error: any) {
       console.error("Error fetching carousel images:", error);
       res.status(500).json({ 
         error: "Error fetching carousel images", 
         message: error.message 
       });
+    }
+  });
+
+  app.post("/api/carousel", requireAdmin, async (req, res) => {
+    try {
+      const { title, description, imageUrl, imageData } = req.body;
+      
+      if (!title || (!imageUrl && !imageData)) {
+        return res.status(400).json({ error: "Title and image are required" });
+      }
+
+      let finalImageUrl = imageUrl;
+      
+      // If imageData is provided (base64), save it as a data URL
+      if (imageData && imageData.startsWith('data:image/')) {
+        finalImageUrl = imageData;
+      }
+
+      const image = await storage.createCarouselImage({
+        title,
+        description: description || '',
+        imageUrl: finalImageUrl,
+        isActive: true,
+        sortOrder: 0
+      });
+
+      res.status(201).json(image);
+    } catch (error: any) {
+      console.error("Error creating carousel image:", error);
+      res.status(500).json({ error: "Failed to create carousel image" });
+    }
+  });
+
+  app.put("/api/carousel/:id", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updateData = req.body;
+      
+      const updatedImage = await storage.updateCarouselImage(id, updateData);
+      
+      if (!updatedImage) {
+        return res.status(404).json({ error: "Carousel image not found" });
+      }
+      
+      res.json(updatedImage);
+    } catch (error: any) {
+      console.error("Error updating carousel image:", error);
+      res.status(500).json({ error: "Failed to update carousel image" });
+    }
+  });
+
+  app.delete("/api/carousel/:id", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteCarouselImage(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Carousel image not found" });
+      }
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error deleting carousel image:", error);
+      res.status(500).json({ error: "Failed to delete carousel image" });
     }
   });
 

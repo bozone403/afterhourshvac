@@ -148,17 +148,28 @@ const Checkout = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Parse query parameters
-    const queryParams = new URLSearchParams(location.split("?")[1]);
+    // Parse query parameters from URL
+    const urlParts = location.split('?');
+    if (urlParts.length < 2) {
+      toast({
+        title: "Payment Information Missing",
+        description: "The required payment information is missing or invalid. Please return to the service page and try again.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+    
+    const queryParams = new URLSearchParams(urlParts[1]);
     const service = queryParams.get('service') || '';
-    const amount = parseInt(queryParams.get('amount') || '0');
+    const amount = parseFloat(queryParams.get('amount') || '0');
     const time = queryParams.get('time') || undefined;
     const plan = queryParams.get('plan') || undefined;
     
-    if (!service || !amount) {
+    if (!service || amount <= 0) {
       toast({
-        title: "Invalid Request",
-        description: "Missing required payment information.",
+        title: "Payment Information Missing",
+        description: "The required payment information is missing or invalid. Please return to the service page and try again.",
         variant: "destructive",
       });
       setIsLoading(false);
