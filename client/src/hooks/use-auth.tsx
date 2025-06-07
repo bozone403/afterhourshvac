@@ -7,7 +7,7 @@ import {
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
-// Type definitions
+// Type definitions - including all required fields
 type User = {
   id: number;
   username: string;
@@ -18,7 +18,16 @@ type User = {
   company: string | null;
   role: string;
   hasProAccess: boolean;
+  hasPro: boolean;
+  isAdmin: boolean;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  membershipType: string | null;
+  membershipExpiresAt: string | null;
   proAccessGrantedAt: string | null;
+  profileImageUrl: string | null;
+  createdAt: string;
+  lastLogin: string | null;
 };
 
 type AuthContextType = {
