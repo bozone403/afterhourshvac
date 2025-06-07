@@ -442,7 +442,7 @@ export default function ForumInteractive() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-white">
       <Helmet>
         <title>Interactive Forum - AfterHours HVAC</title>
         <meta name="description" content="Join our interactive HVAC professional forum. Share knowledge, ask questions, and connect with industry experts." />
@@ -450,8 +450,8 @@ export default function ForumInteractive() {
 
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">HVAC Professional Forum</h1>
-          <p className="text-lg text-slate-600">Connect with industry professionals, share knowledge, and get expert advice</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">HVAC Professional Forum</h1>
+          <p className="text-lg text-gray-700">Connect with industry professionals, share knowledge, and get expert advice</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -488,7 +488,7 @@ export default function ForumInteractive() {
               /* Topics List */
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-2xl font-bold text-slate-900">
+                  <h2 className="text-2xl font-bold text-gray-900">
                     {categories.find(c => c.id === selectedCategory)?.name || "Topics"}
                   </h2>
                   <Dialog open={showNewTopicDialog} onOpenChange={setShowNewTopicDialog}>
@@ -557,12 +557,12 @@ export default function ForumInteractive() {
                               <div className="flex items-center gap-2 mb-2">
                                 {topic.isPinned && <Pin className="h-4 w-4 text-blue-600" />}
                                 {topic.isLocked && <Lock className="h-4 w-4 text-red-600" />}
-                                <h3 className="text-lg font-semibold text-slate-900 hover:text-blue-600">
+                                <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600">
                                   {topic.title}
                                 </h3>
                               </div>
-                              <p className="text-slate-600 mb-4 line-clamp-2">{topic.content}</p>
-                              <div className="flex items-center gap-4 text-sm text-slate-500">
+                              <p className="text-gray-700 mb-4 line-clamp-2">{topic.content}</p>
+                              <div className="flex items-center gap-4 text-sm text-gray-600">
                                 <div className="flex items-center gap-1">
                                   <User className="h-4 w-4" />
                                   User {topic.userId}
@@ -585,7 +585,7 @@ export default function ForumInteractive() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className={`flex items-center gap-1 ${topic.hasLiked ? 'text-red-600' : 'text-slate-500'}`}
+                                className={`flex items-center gap-1 ${topic.hasLiked ? 'text-red-600' : 'text-gray-600'}`}
                                 onClick={() => handleLikeTopic(topic.id, topic.hasLiked || false)}
                               >
                                 <Heart className={`h-4 w-4 ${topic.hasLiked ? 'fill-current' : ''}`} />
@@ -606,7 +606,7 @@ export default function ForumInteractive() {
                   <Button variant="outline" onClick={() => setSelectedTopic(null)}>
                     ← Back to Topics
                   </Button>
-                  <h2 className="text-2xl font-bold text-slate-900">
+                  <h2 className="text-2xl font-bold text-gray-900">
                     {topics.find(t => t.id === selectedTopic)?.title}
                   </h2>
                 </div>
@@ -637,8 +637,8 @@ export default function ForumInteractive() {
                             <div className="flex-1">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-2">
-                                  <span className="font-medium text-slate-900">{post.userName}</span>
-                                  <span className="text-sm text-slate-500">
+                                  <span className="font-medium text-gray-900">{post.userName}</span>
+                                  <span className="text-sm text-gray-600">
                                     {formatDate(post.createdAt)}
                                   </span>
                                   {post.isEdited && (
@@ -701,14 +701,14 @@ export default function ForumInteractive() {
                                   </div>
                                 </div>
                               ) : (
-                                <p className="text-slate-700 whitespace-pre-wrap mb-4">{post.content}</p>
+                                <p className="text-gray-800 whitespace-pre-wrap mb-4">{post.content}</p>
                               )}
                               
                               <div className="flex items-center gap-2">
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className={`flex items-center gap-1 ${post.hasLiked ? 'text-red-600' : 'text-slate-500'}`}
+                                  className={`flex items-center gap-1 ${post.hasLiked ? 'text-red-600' : 'text-gray-600'}`}
                                   onClick={() => handleLikePost(post.id, post.hasLiked || false)}
                                 >
                                   <Heart className={`h-4 w-4 ${post.hasLiked ? 'fill-current' : ''}`} />
