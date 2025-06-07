@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ProAccessGuard } from '@/components/pro-access-guard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,28 +7,61 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Calculator, Home, Wrench, DollarSign, FileText } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import { Calculator, Home, Wrench, DollarSign, FileText, Plus, Minus, Search, Download, Save } from 'lucide-react';
+import { algginCatalog, categories, subcategories, searchCatalog, type CatalogItem } from '@shared/alggin-catalog';
+
+interface MaterialItem {
+  id: string;
+  catalogItem: CatalogItem;
+  quantity: number;
+  totalPrice: number;
+  notes?: string;
+}
+
+interface LaborItem {
+  id: string;
+  description: string;
+  hours: number;
+  rate: number;
+  totalCost: number;
+}
+
+interface CustomItem {
+  id: string;
+  description: string;
+  price: number;
+  quantity: number;
+  totalPrice: number;
+}
 
 const ProCalculator = () => {
-  const [squareFootage, setSquareFootage] = useState('');
-  const [homeType, setHomeType] = useState('');
-  const [currentSystem, setCurrentSystem] = useState('');
-  const [systemAge, setSystemAge] = useState('');
-  const [efficiency, setEfficiency] = useState('');
-  const [brand, setBrand] = useState('');
-  const [additionalWork, setAdditionalWork] = useState<string[]>([]);
-  const [estimate, setEstimate] = useState<{
-    low: number;
-    high: number;
-    base: number;
-    breakdown: {
-      equipment: number;
-      installation: number;
-      permits: number;
-      additional: number;
-      warranty: number;
-    };
-  } | null>(null);
+  const { toast } = useToast();
+  
+  // Project Information
+  const [projectName, setProjectName] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [projectAddress, setProjectAddress] = useState('');
+  const [projectNotes, setProjectNotes] = useState('');
+  
+  // Material Search and Selection
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [materials, setMaterials] = useState<MaterialItem[]>([]);
+  
+  // Labor Items
+  const [laborItems, setLaborItems] = useState<LaborItem[]>([]);
+  
+  // Custom Items
+  const [customItems, setCustomItems] = useState<CustomItem[]>([]);
+  
+  // Pricing Settings
+  const [markupPercentage, setMarkupPercentage] = useState('25');
+  const [overheadPercentage, setOverheadPercentage] = useState('15');
+  const [laborRate, setLaborRate] = useState('75');
 
   const homeTypes = {
     'single-story': 'Single Story',
