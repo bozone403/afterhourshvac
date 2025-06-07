@@ -145,28 +145,10 @@ const Header = () => {
                             Admin Dashboard
                           </DropdownMenuItem>
                         </Link>
-                        <Link href="/admin-data">
-                          <DropdownMenuItem>
-                            <Settings className="h-4 w-4 mr-2" />
-                            Admin Data
-                          </DropdownMenuItem>
-                        </Link>
-                        <Link href="/admin/photos">
+                        <Link href="/admin-photos">
                           <DropdownMenuItem>
                             <Settings className="h-4 w-4 mr-2" />
                             Photo Management
-                          </DropdownMenuItem>
-                        </Link>
-                        <Link href="/supplier-data">
-                          <DropdownMenuItem>
-                            <Settings className="h-4 w-4 mr-2" />
-                            Manual Data Entry
-                          </DropdownMenuItem>
-                        </Link>
-                        <Link href="/alggin-data">
-                          <DropdownMenuItem>
-                            <Settings className="h-4 w-4 mr-2" />
-                            Alggin.com Import
                           </DropdownMenuItem>
                         </Link>
                       </>

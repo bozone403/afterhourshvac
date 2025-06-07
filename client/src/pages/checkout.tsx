@@ -165,22 +165,50 @@ const Checkout = () => {
       return;
     }
 
-    let description = '';
-    switch (service) {
-      case 'deposit':
-        description = 'Service Deposit';
-        break;
-      case 'emergency':
-        description = 'Emergency Service Deposit';
-        break;
-      case 'maintenance':
-        description = 'Maintenance Plan';
-        break;
-      case 'pro':
-        description = 'Pro Calculator Access';
-        break;
-      default:
-        description = 'HVAC Service';
+    let description = queryParams.get('description') || '';
+    if (!description) {
+      switch (service) {
+        case 'pro':
+          description = `Pro Calculator Access - ${plan ? plan.charAt(0).toUpperCase() + plan.slice(1) : 'Unknown'} Plan`;
+          break;
+        case 'furnace-install':
+          description = 'Furnace Installation Deposit';
+          break;
+        case 'ac-install':
+          description = 'Air Conditioning Installation Deposit';
+          break;
+        case 'repair-service':
+          description = 'Service Diagnostic Fee';
+          break;
+        case 'duct-cleaning':
+          description = 'Duct Cleaning Service';
+          break;
+        case 'water-heater':
+          description = 'Water Heater Installation Deposit';
+          break;
+        case 'thermostat':
+          description = 'Thermostat Installation';
+          break;
+        case 'light-commercial':
+          description = 'Light Commercial HVAC Consultation';
+          break;
+        case 'industrial':
+          description = 'Industrial HVAC Engineering Consultation';
+          break;
+        case 'maintenance-basic':
+          description = 'Basic Maintenance Plan';
+          break;
+        case 'maintenance-premium':
+          description = 'Premium Maintenance Plan';
+          break;
+        case 'maintenance-commercial':
+          description = 'Commercial Maintenance Plan';
+          break;
+        default:
+          description = 'HVAC Service';
+      }
+    } else {
+      description = decodeURIComponent(description);
     }
 
     const data = { 
