@@ -28,6 +28,7 @@ import EnergySavingsCalculator from "@/pages/calculators/energy-savings";
 import LoadCalculator from "@/pages/calculators/load-calculator";
 import ServiceTracking from "@/pages/service-tracking";
 import ProCalculator from "@/pages/pro-calculator";
+import ProPortal from "@/pages/pro-portal";
 import Membership from "@/pages/membership";
 import FurnaceInstall from "@/pages/services/furnace-install";
 import BlogIndex from "@/pages/blog/index";
@@ -87,6 +88,7 @@ function Router() {
         {/* Membership and Pro routes */}
         <Route path="/membership" component={Membership} />
         <Route path="/pro-calculator" component={ProCalculator} />
+        <Route path="/pro-portal" component={ProPortal} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/payment-confirmation" component={PaymentConfirmation} />
         <Route path="/calendar-booking" component={CalendarBooking} />

@@ -608,15 +608,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Plan ID is required" });
       }
 
-      // Define price IDs for different plans
-      const priceMapping: { [key: string]: string } = {
-        'monthly': 'price_monthly_pro', // Replace with actual Stripe price ID
-        'yearly': 'price_yearly_pro',   // Replace with actual Stripe price ID
-        'lifetime': 'price_lifetime_pro' // Replace with actual Stripe price ID
+      // Define plan amounts in CAD cents
+      const planAmounts: { [key: string]: number } = {
+        'monthly': 4900,   // $49 CAD
+        'yearly': 49900,   // $499 CAD  
+        'lifetime': 150000 // $1500 CAD
       };
 
-      const priceId = priceMapping[planId];
-      if (!priceId) {
+      const amount = planAmounts[planId];
+      if (!amount) {
         return res.status(400).json({ error: "Invalid plan ID" });
       }
 
@@ -636,60 +636,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.updateUser(user.id, { stripeCustomerId: customerId });
       }
 
-      // For lifetime plan, create a one-time payment
-      if (planId === 'lifetime') {
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount: 150000, // $1500 in cents
-          currency: 'cad',
-          customer: customerId,
-          metadata: {
-            userId: user.id.toString(),
-            planType: 'lifetime',
-            isProMembership: 'true'
-          },
-          automatic_payment_methods: {
-            enabled: true,
-          },
-        });
-
-        res.json({ 
-          clientSecret: paymentIntent.client_secret,
-          paymentIntentId: paymentIntent.id 
-        });
-        return;
-      }
-
-      // For subscription plans (monthly/yearly)
-      const subscription = await stripe.subscriptions.create({
+      // Create one-time payment for all plans (simpler approach)
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'cad',
         customer: customerId,
-        items: [{ price: priceId }],
-        payment_behavior: 'default_incomplete',
-        payment_settings: { save_default_payment_method: 'on_subscription' },
-        expand: ['latest_invoice.payment_intent'],
         metadata: {
           userId: user.id.toString(),
           planType: planId,
           isProMembership: 'true'
-        }
+        },
+        automatic_payment_methods: {
+          enabled: true,
+        },
       });
 
-      const invoice = subscription.latest_invoice as any;
-      const paymentIntent = invoice?.payment_intent;
-
-      if (!paymentIntent?.client_secret) {
-        throw new Error('Failed to create payment intent for subscription');
-      }
-
-      // Update user with subscription ID
+      // Update user with customer ID
       await storage.updateUser(user.id, { 
-        stripeSubscriptionId: subscription.id,
         stripeCustomerId: customerId 
       });
 
-      res.json({
-        subscriptionId: subscription.id,
+      res.json({ 
         clientSecret: paymentIntent.client_secret,
-        paymentIntentId: paymentIntent.id
+        paymentIntentId: paymentIntent.id 
       });
 
     } catch (error: any) {
