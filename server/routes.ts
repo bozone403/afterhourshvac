@@ -641,10 +641,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid topic ID" });
       }
       
-      // Check if user is admin or owns the topic
-      if (!user.isAdmin) {
-        return res.status(403).json({ error: "Only admins can delete forum topics" });
+      // Get the topic to check ownership
+      const topic = await storage.getForumTopicById(topicId);
+      if (!topic) {
+        return res.status(404).json({ error: "Topic not found" });
       }
+      
+      // Check if user is admin or owns the topic
+      const isAdmin = user.isAdmin || user.username === 'JordanBoz';
+      const isOwner = topic.userId === user.id;
+      
+      if (!isAdmin && !isOwner) {
+        return res.status(403).json({ error: "Not authorized to delete this topic" });
+      }
+      
+      // Actually delete the topic
+      await storage.deleteForumTopic(topicId);
       
       res.json({ success: true, message: "Topic deleted successfully" });
     } catch (error: any) {
