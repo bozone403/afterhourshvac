@@ -84,13 +84,30 @@ const Pricing = () => {
     setLocation(`/checkout?service=maintenance&plan=${plan}&amount=${amounts[plan as keyof typeof amounts]}`);
   };
 
-  // HVAC service payment handler
+  // HVAC service payment handler - separate from Pro membership
+  const hvacServiceMutation = useMutation({
+    mutationFn: async (data: { serviceType: string; amount: number }) => {
+      const response = await apiRequest("POST", "/api/create-payment-intent", {
+        amount: data.amount,
+        serviceType: data.serviceType,
+        service: data.serviceType
+      });
+      return response.json();
+    },
+    onSuccess: (data, variables) => {
+      setLocation(`/checkout?client_secret=${data.clientSecret}&service=${variables.serviceType}&amount=${variables.amount}`);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Payment Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handlePayForService = (serviceType: string, amount: number) => {
-    createPaymentMutation.mutate({
-      amount,
-      serviceType,
-      service: serviceType
-    } as any);
+    hvacServiceMutation.mutate({ serviceType, amount });
   };
 
   return (
@@ -342,9 +359,9 @@ const Pricing = () => {
                     <Button 
                       className="w-full bg-primary hover:bg-primary/80"
                       onClick={() => handlePayForService('furnace', 7150)}
-                      disabled={createPaymentMutation.isPending}
+                      disabled={hvacServiceMutation.isPending}
                     >
-                      {createPaymentMutation.isPending ? "Processing..." : "Schedule Installation"}
+                      {hvacServiceMutation.isPending ? "Processing..." : "Schedule Installation"}
                     </Button>
                   </div>
                 </div>
@@ -383,9 +400,9 @@ const Pricing = () => {
                     <Button 
                       className="w-full bg-primary hover:bg-primary/80"
                       onClick={() => handlePayForService('ac-system', 6650)}
-                      disabled={createPaymentMutation.isPending}
+                      disabled={hvacServiceMutation.isPending}
                     >
-                      {createPaymentMutation.isPending ? "Processing..." : "Schedule Installation"}
+                      {hvacServiceMutation.isPending ? "Processing..." : "Schedule Installation"}
                     </Button>
                   </div>
                 </div>
@@ -424,9 +441,9 @@ const Pricing = () => {
                     <Button 
                       className="w-full bg-primary hover:bg-primary/80"
                       onClick={() => handlePayForService('service-repair', 500)}
-                      disabled={createPaymentMutation.isPending}
+                      disabled={hvacServiceMutation.isPending}
                     >
-                      {createPaymentMutation.isPending ? "Processing..." : "Schedule Service"}
+                      {hvacServiceMutation.isPending ? "Processing..." : "Schedule Service"}
                     </Button>
                   </div>
                 </div>
@@ -466,9 +483,9 @@ const Pricing = () => {
                     <Button 
                       className="w-full bg-primary hover:bg-primary/80"
                       onClick={() => handlePayForService('light-commercial', 16750)}
-                      disabled={createPaymentMutation.isPending}
+                      disabled={hvacServiceMutation.isPending}
                     >
-                      {createPaymentMutation.isPending ? "Processing..." : "Request Proposal"}
+                      {hvacServiceMutation.isPending ? "Processing..." : "Request Proposal"}
                     </Button>
                   </div>
                 </div>
@@ -503,9 +520,9 @@ const Pricing = () => {
                     <Button 
                       className="w-full bg-primary hover:bg-primary/80"
                       onClick={() => handlePayForService('industrial', 75000)}
-                      disabled={createPaymentMutation.isPending}
+                      disabled={hvacServiceMutation.isPending}
                     >
-                      {createPaymentMutation.isPending ? "Processing..." : "Contact Engineer"}
+                      {hvacServiceMutation.isPending ? "Processing..." : "Contact Engineer"}
                     </Button>
                   </div>
                 </div>
