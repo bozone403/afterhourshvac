@@ -646,12 +646,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const planAmounts: { [key: string]: number } = {
         'monthly': 4900,   // $49 CAD
         'yearly': 49900,   // $499 CAD  
-        'lifetime': 150000 // $1500 CAD
+        'lifetime': 150000, // $1500 CAD
+        'pro-monthly': 4900,   // $49 CAD
+        'pro-yearly': 49900,   // $499 CAD  
+        'pro-lifetime': 150000, // $1500 CAD
+        'maintenance-basic': 19900,   // $199 CAD
+        'maintenance-premium': 34900  // $349 CAD
       };
 
       const amount = planAmounts[planId];
       if (!amount) {
-        return res.status(400).json({ error: "Invalid plan ID" });
+        return res.status(400).json({ error: `Invalid plan ID: ${planId}` });
       }
 
       // Create or get Stripe customer
