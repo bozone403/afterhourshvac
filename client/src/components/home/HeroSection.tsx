@@ -6,26 +6,21 @@ const HeroSection = () => {
   return (
     <section 
       id="home" 
-      className="pt-20 relative bg-dark min-h-screen flex items-center" 
-      style={{
-        backgroundImage: 'url("https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
+      className="pt-20 relative bg-gradient-to-br from-blue-50 to-orange-50 min-h-screen flex items-center" 
     >
-      <div className="absolute inset-0 bg-dark bg-opacity-75"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-orange-600/20"></div>
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 font-header text-white leading-tight">
-              When Everyone Else Closes, <span className="text-primary">We Keep The Heat On.</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 text-gray-900 leading-tight">
+              When Everyone Else Closes, <span className="text-orange-600">We Keep The Heat On.</span>
             </h1>
-            <p className="text-lg text-lightgray mb-8">
+            <p className="text-lg text-gray-700 mb-8">
               24/7 emergency HVAC services for residential and commercial properties in Calgary and surrounding areas.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link href="/pricing">
-                <div className="bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-lg shadow-lg cursor-pointer">
+              <Link href="/contact">
+                <div className="bg-orange-600 hover:bg-orange-700 text-white py-3 px-6 rounded-md transition-all font-semibold text-lg shadow-lg cursor-pointer">
                   Get a Quote
                 </div>
               </Link>
@@ -33,7 +28,7 @@ const HeroSection = () => {
                 href="https://calendar.app.google/NXZB4v1PP57HhARL7" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="bg-secondary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold text-lg shadow-lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md transition-all font-semibold text-lg shadow-lg"
               >
                 Book a Service
               </a>
@@ -41,9 +36,9 @@ const HeroSection = () => {
           </div>
           
           {/* Emergency Service Form */}
-          <div className="bg-darkgray p-6 rounded-lg shadow-xl border border-gray-700">
-            <h3 className="text-2xl font-bold mb-4 font-header text-primary">24/7 Emergency Service</h3>
-            <p className="mb-4 text-lightgray">Fill out this form for immediate assistance</p>
+          <div className="bg-white p-6 rounded-lg shadow-xl border border-orange-200">
+            <h3 className="text-2xl font-bold mb-4 text-orange-600">24/7 Emergency Service</h3>
+            <p className="mb-4 text-gray-600">Fill out this form for immediate assistance</p>
             <EmergencyForm />
           </div>
         </div>

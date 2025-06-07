@@ -67,11 +67,11 @@ const EmergencyForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-lightgray mb-1">Full Name</label>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
         <input 
           type="text" 
           id="name"
-          className={`w-full bg-dark border ${errors.name ? 'border-red-500' : 'border-gray-700'} rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary`} 
+          className={`w-full bg-white border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500`} 
           disabled={isSubmitting}
           {...register('name')}
         />
