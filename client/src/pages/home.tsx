@@ -26,6 +26,7 @@ import {
   TrendingUp
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import CertificationLogos from "@/components/CertificationLogos";
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -136,7 +137,7 @@ const Home = () => {
                   <Badge className="bg-orange-500 text-white px-4 py-2 text-sm font-semibold">
                     Calgary's #1 HVAC Experts
                   </Badge>
-                  <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+                  <h1 className="hvac-heading-xl">
                     Professional HVAC Solutions for Your Home
                   </h1>
                   <p className="text-xl text-blue-100 leading-relaxed">
@@ -375,17 +376,20 @@ const Home = () => {
           </div>
         </section>
 
+        {/* Certifications Section */}
+        <CertificationLogos />
+
         {/* Service Areas Section */}
-        <section className="hvac-section bg-white">
+        <section className="hvac-section bg-gray-50">
           <div className="hvac-container text-center">
             <h2 className="hvac-heading-lg mb-8">Proudly Serving Calgary & Area</h2>
             <div className="flex items-center justify-center mb-8">
               <MapPin className="w-6 h-6 text-blue-600 mr-2" />
-              <span className="text-lg text-gray-600">Professional HVAC Services Across the Region</span>
+              <span className="text-lg text-gray-700">Professional HVAC Services Across the Region</span>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 max-w-4xl mx-auto">
               {["Calgary", "Airdrie", "Okotoks", "Cochrane", "Canmore", "Strathmore", "High River", "Chestermere", "Red Deer", "Medicine Hat", "Lethbridge", "Camrose"].map((city) => (
-                <div key={city} className="bg-gray-50 rounded-lg px-4 py-2 text-gray-700 font-medium">
+                <div key={city} className="bg-white rounded-2xl px-6 py-4 text-gray-800 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
                   {city}
                 </div>
               ))}

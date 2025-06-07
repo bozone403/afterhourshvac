@@ -104,13 +104,13 @@ const Header = () => {
       <nav className="hvac-container py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="hvac-gradient-primary p-3 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300">
-              <Wrench className="w-8 h-8 text-white" />
+          <Link href="/" className="flex items-center space-x-4 group">
+            <div className="hvac-gradient-primary p-4 rounded-2xl shadow-2xl group-hover:shadow-3xl transition-all duration-500 transform group-hover:scale-105">
+              <Wrench className="w-10 h-10 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">AfterHours</h1>
-              <p className="text-sm text-blue-600 font-medium">HVAC Solutions</p>
+              <h1 className="text-3xl font-black text-gray-900 tracking-tight" style={{fontFamily: 'DM Sans, Poppins, sans-serif'}}>AfterHours</h1>
+              <p className="text-sm text-blue-600 font-bold tracking-wide">HVAC SOLUTIONS</p>
             </div>
           </Link>
 

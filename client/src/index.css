@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -105,10 +105,11 @@
   
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
   }
   
   /* Custom Scrollbar */
@@ -165,15 +166,18 @@
   }
   
   .hvac-heading-xl {
-    @apply text-4xl lg:text-5xl font-bold text-gray-900 leading-tight;
+    @apply text-4xl lg:text-6xl font-black text-gray-900 leading-tight tracking-tight;
+    font-family: 'DM Sans', 'Poppins', sans-serif;
   }
   
   .hvac-heading-lg {
-    @apply text-3xl lg:text-4xl font-bold text-gray-900 leading-tight;
+    @apply text-3xl lg:text-5xl font-bold text-gray-900 leading-tight tracking-tight;
+    font-family: 'DM Sans', 'Poppins', sans-serif;
   }
   
   .hvac-heading-md {
-    @apply text-2xl lg:text-3xl font-semibold text-gray-900;
+    @apply text-2xl lg:text-4xl font-bold text-gray-900 tracking-tight;
+    font-family: 'DM Sans', 'Poppins', sans-serif;
   }
   
   .hvac-text-lg {
@@ -282,14 +286,42 @@
   
   /* Professional Card Variations */
   .pro-card {
-    @apply bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-6 shadow-lg;
+    @apply bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-3xl p-8 shadow-2xl backdrop-blur-sm;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.5);
   }
   
   .emergency-card {
-    @apply bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200 rounded-2xl p-6 shadow-lg;
+    @apply bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200 rounded-3xl p-8 shadow-2xl backdrop-blur-sm;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.5);
   }
   
   .success-card {
-    @apply bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 shadow-lg;
+    @apply bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-3xl p-8 shadow-2xl backdrop-blur-sm;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.5);
+  }
+  
+  /* Premium Card Enhancements */
+  .hvac-card {
+    @apply bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 transition-all duration-500 hover:border-blue-200 backdrop-blur-sm;
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8);
+    transform: translateY(0);
+  }
+  
+  .hvac-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.3);
+  }
+  
+  /* Luxury Button Styles */
+  .hvac-button-primary {
+    @apply bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 rounded-2xl font-bold transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105;
+    letter-spacing: 0.025em;
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+  }
+  
+  .hvac-button-secondary {
+    @apply bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-2xl font-bold transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105;
+    letter-spacing: 0.025em;
+    box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
   }
 }
