@@ -908,8 +908,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Get all forum topics (using database)
-  app.get("/api/forum/topics", requireAuth, async (req, res) => {
+  // Get all forum topics (public access for reading)
+  app.get("/api/forum/topics", async (req, res) => {
     try {
       const topics = await storage.getForumTopics();
       res.json(topics);

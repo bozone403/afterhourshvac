@@ -32,7 +32,14 @@ const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Fetch carousel images
-  const { data: carouselImages = [] } = useQuery<any[]>({
+  interface CarouselImage {
+    id: number;
+    title: string;
+    imageUrl: string;
+    description?: string;
+  }
+  
+  const { data: carouselImages = [] } = useQuery<CarouselImage[]>({
     queryKey: ["/api/carousel"],
   });
 
