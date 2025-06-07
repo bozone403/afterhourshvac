@@ -65,34 +65,38 @@ const Home = () => {
     { number: "100%", label: "Satisfaction Rate", icon: Heart }
   ];
 
-  const primaryServices = [
+  const equipmentCategories = [
     {
       icon: ThermometerSun,
-      title: "Furnace Installation",
-      description: "High-efficiency furnace installation and replacement with expert precision",
-      features: ["Energy Efficient", "Professional Installation", "Warranty Included"],
-      link: "/services/furnace-install"
+      title: "High-Efficiency Furnaces",
+      description: "Shop premium Ducane furnaces with single stage, two stage, modulating, and communicating controls",
+      features: ["Starting at $3,299", "10-Year Warranty", "Energy Star Certified"],
+      link: "/shop/furnaces",
+      badge: "Most Popular"
     },
     {
       icon: Snowflake,
-      title: "Air Conditioning",
-      description: "Complete AC installation, repair, and maintenance services",
-      features: ["Cool Comfort", "Energy Savings", "Quick Service"],
-      link: "/services/ac-repair"
+      title: "Central Air Conditioning",
+      description: "Complete AC systems with variable speed technology and smart controls",
+      features: ["Starting at $2,899", "15 SEER+ Efficiency", "Smart Thermostat"],
+      link: "/shop/air-conditioning",
+      badge: "Summer Special"
     },
     {
       icon: Wind,
-      title: "Duct Cleaning",
-      description: "Professional ductwork cleaning and ventilation services",
-      features: ["Better Air Quality", "Improved Efficiency", "Health Benefits"],
-      link: "/services/duct-cleaning"
+      title: "Heat Pumps",
+      description: "All-season comfort with advanced heat pump technology for Calgary climate",
+      features: ["Starting at $4,199", "Cold Climate Rated", "Dual Fuel Ready"],
+      link: "/shop/heat-pumps",
+      badge: "New"
     },
     {
       icon: Settings,
-      title: "HVAC Maintenance",
-      description: "Preventive maintenance to keep your system running efficiently",
-      features: ["Regular Inspections", "Cost Savings", "Extended Lifespan"],
-      link: "/services/maintenance"
+      title: "Maintenance Plans",
+      description: "Annual service plans to keep your equipment running at peak efficiency",
+      features: ["Starting at $199/year", "Priority Service", "Parts Discounts"],
+      link: "/shop/maintenance-plans",
+      badge: "Save 20%"
     }
   ];
 
@@ -248,30 +252,35 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Services Section */}
+        {/* Equipment Shopping Section */}
         <section className="hvac-section">
           <div className="hvac-container">
             <div className="text-center mb-16">
-              <h2 className="hvac-heading-lg mb-4">Our Professional Services</h2>
+              <h2 className="hvac-heading-lg mb-4">Shop Premium HVAC Equipment</h2>
               <p className="hvac-text-lg max-w-3xl mx-auto">
-                Comprehensive HVAC solutions for residential and commercial properties. 
-                Expert installation, repair, and maintenance services you can trust.
+                Browse our selection of high-efficiency Ducane equipment with professional installation included. 
+                Choose from single stage, two stage, modulating, and communicating systems.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {primaryServices.map((service, index) => (
-                <Card key={index} className="service-card border-0 bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+              {equipmentCategories.map((category, index) => (
+                <Card key={index} className="service-card border-0 bg-white shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                  {category.badge && (
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-10">
+                      {category.badge}
+                    </div>
+                  )}
                   <CardHeader className="text-center pb-4">
-                    <service.icon className="service-card-icon mx-auto" />
-                    <CardTitle className="text-xl font-bold text-gray-900">{service.title}</CardTitle>
+                    <category.icon className="service-card-icon mx-auto" />
+                    <CardTitle className="text-xl font-bold text-gray-900">{category.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <CardDescription className="text-gray-600 mb-4 leading-relaxed">
-                      {service.description}
+                      {category.description}
                     </CardDescription>
                     <ul className="space-y-2 mb-6">
-                      {service.features.map((feature, idx) => (
+                      {category.features.map((feature, idx) => (
                         <li key={idx} className="flex items-center text-sm text-gray-700">
                           <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
                           {feature}
@@ -279,8 +288,8 @@ const Home = () => {
                       ))}
                     </ul>
                     <Button asChild className="w-full hvac-button-primary">
-                      <Link href={service.link}>
-                        Learn More
+                      <Link href={category.link}>
+                        Shop Now
                         <ArrowRight className="w-4 h-4 ml-2" />
                       </Link>
                     </Button>
