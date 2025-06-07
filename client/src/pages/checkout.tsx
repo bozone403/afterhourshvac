@@ -183,10 +183,13 @@ const Checkout = () => {
           description = `Pro Calculator Access - ${plan ? plan.charAt(0).toUpperCase() + plan.slice(1) : 'Unknown'} Plan`;
           break;
         case 'furnace-install':
-          description = 'Furnace Installation Deposit';
+          description = 'Furnace Installation';
           break;
         case 'ac-install':
-          description = 'Air Conditioning Installation Deposit';
+          description = 'Air Conditioning Installation';
+          break;
+        case 'heatpump-install':
+          description = 'Heat Pump Installation';
           break;
         case 'repair-service':
           description = 'Service Diagnostic Fee';

@@ -17,7 +17,7 @@ import EmergencyBanner from "@/components/layout/EmergencyBanner";
 import Home from "@/pages/home";
 import About from "@/pages/about";
 
-import Pricing from "@/pages/pricing-btutonnage";
+import Pricing from "@/pages/pricing-cards";
 import Contact from "@/pages/contact";
 import Calculators from "@/pages/calculators";
 import MaterialEstimator from "@/pages/calculators/material-estimator-alggin";

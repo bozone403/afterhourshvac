@@ -41,7 +41,7 @@ const Home = () => {
                 id: img.id,
                 url: img.imageUrl,
                 title: img.title,
-                description: img.description
+                description: img.description || ''
               }))}
               autoPlay={true}
               interval={6000}
