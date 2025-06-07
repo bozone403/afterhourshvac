@@ -428,32 +428,42 @@ const ProCalculator = () => {
         <meta name="description" content="Professional HVAC system estimation calculator with Calgary market pricing for accurate project quotes." />
       </Helmet>
       
-      <div className="min-h-screen bg-dark py-20">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 py-20">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-white mb-4 flex items-center justify-center gap-3">
-                <Calculator className="text-primary" />
-                Professional HVAC Calculator
-              </h1>
-              <p className="text-xl text-gray-300">
-                Generate accurate Calgary market estimates for complete HVAC installations
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-orange-500 rounded-3xl blur-3xl opacity-30 animate-pulse"></div>
+                <h1 className="relative text-5xl lg:text-6xl font-black text-white mb-6 flex items-center justify-center gap-4">
+                  <div className="p-4 bg-gradient-to-r from-blue-600 to-orange-500 rounded-2xl shadow-2xl transform hover:scale-110 transition-all duration-500">
+                    <Calculator className="w-12 h-12 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                    Professional HVAC Calculator
+                  </span>
+                </h1>
+              </div>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                Generate precise Calgary market estimates for complete HVAC installations with real-time pricing and professional-grade accuracy
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8">
               {/* Input Section */}
-              <Card className="bg-gray-800 border-gray-700">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <Home className="text-primary" />
+              <Card className="relative bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-600 backdrop-blur-xl shadow-2xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-orange-500/10"></div>
+                <CardHeader className="relative">
+                  <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-r from-blue-600 to-orange-500 rounded-xl">
+                      <Home className="w-6 h-6 text-white" />
+                    </div>
                     Project Details
                   </CardTitle>
-                  <CardDescription className="text-gray-300">
-                    Enter your project specifications for accurate pricing
+                  <CardDescription className="text-gray-300 text-lg">
+                    Enter your project specifications for accurate Calgary market pricing
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="relative space-y-8">
                   <div>
                     <Label htmlFor="squareFootage" className="text-white">Square Footage</Label>
                     <Input
