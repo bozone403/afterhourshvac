@@ -260,8 +260,8 @@ const Membership = () => {
                       <ul className="space-y-3">
                         {plan.features.map((feature, idx) => (
                           <li key={idx} className="flex items-start text-sm">
-                            <Check className="h-4 w-4 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
-                            <span className="text-slate-300">{feature}</span>
+                            <Check className="h-4 w-4 text-orange-600 mr-3 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-600">{feature}</span>
                           </li>
                         ))}
                       </ul>
@@ -270,8 +270,8 @@ const Membership = () => {
                         onClick={() => handleSubscribe(plan.id)}
                         className={`w-full mt-6 ${
                           plan.popular 
-                            ? 'bg-green-600 hover:bg-green-700' 
-                            : 'bg-slate-700 hover:bg-slate-600'
+                            ? 'bg-orange-600 hover:bg-orange-700' 
+                            : 'bg-blue-600 hover:bg-blue-700'
                         }`}
                         disabled={subscribeMutation.isPending || user?.hasPro}
                       >
