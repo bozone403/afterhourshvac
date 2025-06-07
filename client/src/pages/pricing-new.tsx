@@ -390,9 +390,9 @@ const Pricing = () => {
                   </div>
                   <Button 
                     className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => handleServicePayment('water-heater', 150, 'Water Heater Installation Deposit')}
+                    onClick={() => handleServicePayment('water-heater', 1800, 'Water Heater Installation - Complete Service')}
                   >
-                    Get Quote - $150 Deposit
+                    Pay $1,800 - Tank Water Heater Install
                   </Button>
                 </CardContent>
               </Card>
@@ -416,9 +416,9 @@ const Pricing = () => {
                   </div>
                   <Button 
                     className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => handleServicePayment('thermostat', 350, 'Thermostat Installation')}
+                    onClick={() => handleServicePayment('thermostat', 550, 'Smart Thermostat Installation - Complete Service')}
                   >
-                    Install Smart Thermostat
+                    Pay $550 - Smart WiFi Thermostat Install
                   </Button>
                 </CardContent>
               </Card>

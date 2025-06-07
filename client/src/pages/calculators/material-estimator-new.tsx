@@ -624,10 +624,25 @@ const MaterialEstimator = () => {
                   </div>
                 </div>
 
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                  <ShoppingCart className="h-4 w-4 mr-2" />
-                  Generate Quote PDF
-                </Button>
+                <div className="space-y-3">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                    <ShoppingCart className="h-4 w-4 mr-2" />
+                    Generate Quote PDF
+                  </Button>
+                  
+                  {estimate.total > 0 && (
+                    <Button 
+                      className="w-full bg-green-600 hover:bg-green-700"
+                      onClick={() => {
+                        const amount = Math.round(estimate.total);
+                        const description = `HVAC Material Quote - ${estimate.materials.length} items`;
+                        window.location.href = `/checkout?service=material-quote&amount=${amount}&description=${encodeURIComponent(description)}`;
+                      }}
+                    >
+                      💳 Charge Customer ${estimate.total.toFixed(2)}
+                    </Button>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>
