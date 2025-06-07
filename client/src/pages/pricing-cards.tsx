@@ -6,13 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Thermometer, Snowflake, Shield, Wrench, Clock, Phone, Check } from 'lucide-react';
 
-// Stage-based furnace pricing with professional installation
+// Stage-based furnace pricing with professional installation - Calgary market rates
 const furnaceCards = [
   { 
     stage: "1-Stage", 
     model: "Ducane 92G1UH Series", 
     efficiency: "92% AFUE", 
-    installPrice: 7999,
+    installPrice: 6999,
     category: "low",
     features: ["Single-stage heating", "Stainless steel heat exchanger", "10-year parts warranty", "Reliable operation"]
   },
@@ -20,7 +20,7 @@ const furnaceCards = [
     stage: "2-Stage", 
     model: "Daikin DM96VC Series", 
     efficiency: "96% AFUE", 
-    installPrice: 9499,
+    installPrice: 8499,
     category: "mid",
     features: ["Two-stage heating", "Variable speed blower", "Enhanced comfort control", "15-year parts warranty"]
   },
@@ -28,21 +28,21 @@ const furnaceCards = [
     stage: "Variable/Modulating", 
     model: "Lennox SLP98V Series", 
     efficiency: "98% AFUE", 
-    installPrice: 12999,
+    installPrice: 11999,
     category: "high",
     popular: true,
     features: ["Variable-speed blower", "Modulating gas valve", "Precise Comfort technology", "20-year heat exchanger warranty"]
   },
 ];
 
-// Stage-based AC pricing with professional installation
+// Stage-based AC pricing with professional installation - Calgary market rates
 const acCards = [
   { 
     stage: "1-Stage", 
     tonnage: "2-5 Ton", 
     model: "Ducane 13ACD Series", 
     seer: "16 SEER", 
-    installPrice: 7999,
+    installPrice: 6499,
     category: "low",
     features: ["Single-stage cooling", "R-410A refrigerant", "10-year parts warranty", "Reliable performance"]
   },
@@ -51,7 +51,7 @@ const acCards = [
     tonnage: "2-5 Ton", 
     model: "Daikin DX18TC Series", 
     seer: "18 SEER", 
-    installPrice: 9499,
+    installPrice: 7999,
     category: "mid",
     features: ["Two-stage cooling", "Enhanced humidity control", "Quieter operation", "12-year parts warranty"]
   },
@@ -60,7 +60,7 @@ const acCards = [
     tonnage: "2-5 Ton", 
     model: "Lennox XC25 Series", 
     seer: "26 SEER", 
-    installPrice: 13999,
+    installPrice: 11499,
     category: "high",
     popular: true,
     features: ["Variable-speed compressor", "Precise temperature control", "Energy Star certified", "10-year complete unit warranty"]

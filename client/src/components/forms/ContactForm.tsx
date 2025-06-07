@@ -70,11 +70,11 @@ const ContactForm = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="contact-name" className="block text-sm font-medium text-lightgray mb-1">Full Name</label>
+          <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
           <input 
             type="text" 
             id="contact-name"
-            className={`w-full bg-dark border ${errors.name ? 'border-red-500' : 'border-gray-700'} rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary`}
+            className={`w-full bg-white border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
             disabled={isSubmitting}
             {...register('name')}
           />
@@ -82,11 +82,11 @@ const ContactForm = () => {
         </div>
         
         <div>
-          <label htmlFor="contact-phone" className="block text-sm font-medium text-lightgray mb-1">Phone Number</label>
+          <label htmlFor="contact-phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
           <input 
             type="tel" 
             id="contact-phone"
-            className={`w-full bg-dark border ${errors.phone ? 'border-red-500' : 'border-gray-700'} rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary`}
+            className={`w-full bg-white border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
             disabled={isSubmitting}
             {...register('phone')}
           />
@@ -95,11 +95,11 @@ const ContactForm = () => {
       </div>
       
       <div>
-        <label htmlFor="contact-email" className="block text-sm font-medium text-lightgray mb-1">Email Address</label>
+        <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
         <input 
           type="email" 
           id="contact-email"
-          className={`w-full bg-dark border ${errors.email ? 'border-red-500' : 'border-gray-700'} rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary`}
+          className={`w-full bg-white border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
           disabled={isSubmitting}
           {...register('email')}
         />
@@ -107,10 +107,10 @@ const ContactForm = () => {
       </div>
       
       <div>
-        <label htmlFor="contact-subject" className="block text-sm font-medium text-lightgray mb-1">Subject</label>
+        <label htmlFor="contact-subject" className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
         <select 
           id="contact-subject"
-          className={`w-full bg-dark border ${errors.subject ? 'border-red-500' : 'border-gray-700'} rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary`}
+          className={`w-full bg-white border ${errors.subject ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
           disabled={isSubmitting}
           {...register('subject')}
         >
@@ -125,11 +125,11 @@ const ContactForm = () => {
       </div>
       
       <div>
-        <label htmlFor="contact-message" className="block text-sm font-medium text-lightgray mb-1">Message</label>
+        <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700 mb-1">Message</label>
         <textarea 
           id="contact-message"
           rows={5} 
-          className={`w-full bg-dark border ${errors.message ? 'border-red-500' : 'border-gray-700'} rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary`}
+          className={`w-full bg-white border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
           disabled={isSubmitting}
           {...register('message')}
         ></textarea>
@@ -139,7 +139,7 @@ const ContactForm = () => {
       <div>
         <button 
           type="submit" 
-          className="w-full bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold shadow-lg disabled:opacity-50"
+          className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-6 rounded-md transition-all font-semibold shadow-lg disabled:opacity-50"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
@@ -155,13 +155,13 @@ const ContactForm = () => {
       </div>
       
       {formSuccess && (
-        <div className="bg-green-800 bg-opacity-50 border border-green-700 text-white p-3 rounded-md">
+        <div className="bg-green-50 border border-green-200 text-green-800 p-3 rounded-md">
           Thank you! Your message has been sent successfully. We'll get back to you shortly.
         </div>
       )}
       
       {formError && (
-        <div className="bg-red-800 bg-opacity-50 border border-red-700 text-white p-3 rounded-md">
+        <div className="bg-red-50 border border-red-200 text-red-800 p-3 rounded-md">
           There was an error sending your message. Please try again or call us directly at (403) 613-6014.
         </div>
       )}
