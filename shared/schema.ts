@@ -86,6 +86,20 @@ export const forumPosts = pgTable("forum_posts", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Forum likes/reactions system
+export const forumLikes = pgTable("forum_likes", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  topicId: integer("topic_id").references(() => forumTopics.id),
+  postId: integer("post_id").references(() => forumPosts.id),
+  likeType: text("like_type").default("like"), // like, dislike, helpful, etc.
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  // Ensure user can only like a topic/post once
+  uniqueUserTopicLike: primaryKey(table.userId, table.topicId, table.likeType),
+  uniqueUserPostLike: primaryKey(table.userId, table.postId, table.likeType),
+}));
+
 // Gallery for photos
 export const galleryImages = pgTable("gallery_images", {
   id: serial("id").primaryKey(),
@@ -444,6 +458,7 @@ export const insertProductAccessSchema = createInsertSchema(productAccess);
 export const insertForumCategorySchema = createInsertSchema(forumCategories);
 export const insertForumTopicSchema = createInsertSchema(forumTopics);
 export const insertForumPostSchema = createInsertSchema(forumPosts);
+export const insertForumLikeSchema = createInsertSchema(forumLikes);
 
 // GALLERY
 export const insertGalleryImageSchema = createInsertSchema(galleryImages);
@@ -491,6 +506,9 @@ export type ForumTopic = typeof forumTopics.$inferSelect;
 
 export type InsertForumPost = z.infer<typeof insertForumPostSchema>;
 export type ForumPost = typeof forumPosts.$inferSelect;
+
+export type InsertForumLike = z.infer<typeof insertForumLikeSchema>;
+export type ForumLike = typeof forumLikes.$inferSelect;
 
 export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
 export type GalleryImage = typeof galleryImages.$inferSelect;

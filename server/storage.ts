@@ -1,4 +1,4 @@
-import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, userSessions, pageViews, calculatorUsage, systemMetrics, serviceRequests, serviceJourneyStages, serviceUpdates, technicianLocations, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric, type ServiceRequest, type InsertServiceRequest, type ServiceJourneyStage, type InsertServiceJourneyStage, type ServiceUpdate, type InsertServiceUpdate, type TechnicianLocation, type InsertTechnicianLocation } from "@shared/schema";
+import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, forumLikes, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, userSessions, pageViews, calculatorUsage, systemMetrics, serviceRequests, serviceJourneyStages, serviceUpdates, technicianLocations, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type ForumLike, type InsertForumLike, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric, type ServiceRequest, type InsertServiceRequest, type ServiceJourneyStage, type InsertServiceJourneyStage, type ServiceUpdate, type InsertServiceUpdate, type TechnicianLocation, type InsertTechnicianLocation } from "@shared/schema";
 import { eq, and, gte, desc, count } from "drizzle-orm";
 import { db, pool } from "./db";
 import session from "express-session";
@@ -74,6 +74,15 @@ export interface IStorage {
   updateForumPost(id: number, data: Partial<ForumPost>): Promise<ForumPost | undefined>;
   deleteForumTopic(id: number): Promise<boolean>;
   deleteForumPost(id: number): Promise<boolean>;
+  
+  // Forum likes methods
+  getForumLikes(topicId?: number, postId?: number): Promise<ForumLike[]>;
+  createForumLike(like: InsertForumLike): Promise<ForumLike>;
+  deleteForumLike(userId: number, topicId?: number, postId?: number): Promise<boolean>;
+  getTopicLikeCount(topicId: number): Promise<number>;
+  getPostLikeCount(postId: number): Promise<number>;
+  hasUserLikedTopic(userId: number, topicId: number): Promise<boolean>;
+  hasUserLikedPost(userId: number, postId: number): Promise<boolean>;
   
   // Reviews methods
   getReviews(approvedOnly?: boolean): Promise<CustomerReview[]>;
