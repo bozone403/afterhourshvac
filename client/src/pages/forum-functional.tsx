@@ -16,7 +16,8 @@ import {
   TrendingUp, 
   Clock,
   Eye,
-  Reply
+  Reply,
+  Trash2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -350,6 +351,17 @@ export default function ForumPage() {
                             <Reply className="h-3 w-3 mr-1" />
                             Reply
                           </Button>
+                          {(user && (user.isAdmin || topic.author === user.username)) && (
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => deleteTopicMutation.mutate(topic.id)}
+                              disabled={deleteTopicMutation.isPending}
+                            >
+                              <Trash2 className="h-3 w-3 mr-1" />
+                              {deleteTopicMutation.isPending ? "Deleting..." : "Delete"}
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </CardContent>

@@ -18,17 +18,22 @@ const Pricing = () => {
 
   // Pro membership payment mutation
   const createPaymentMutation = useMutation({
-    mutationFn: async (data: { plan: string; amount: number }) => {
+    mutationFn: async (plan: 'monthly' | 'yearly' | 'lifetime') => {
+      const amounts = {
+        monthly: 4900, // $49.00 in cents
+        yearly: 49900, // $499.00 in cents
+        lifetime: 150000 // $1500.00 in cents
+      };
+      
       const response = await apiRequest("POST", "/api/create-payment-intent", {
-        amount: data.amount,
-        productId: `pro-${data.plan}`,
-        tier: data.plan,
-        category: "pro_membership"
+        amount: amounts[plan],
+        planType: plan
       });
       return response.json();
     },
-    onSuccess: (data, variables) => {
-      setLocation(`/checkout?clientSecret=${data.clientSecret}&plan=${variables.plan}&amount=${variables.amount}`);
+    onSuccess: (data) => {
+      // Redirect to checkout page with client secret
+      setLocation(`/checkout?client_secret=${data.clientSecret}&plan=${data.planType}`);
     },
     onError: (error: Error) => {
       toast({
@@ -39,22 +44,26 @@ const Pricing = () => {
     },
   });
 
-  const handleSelectProPlan = (plan: string) => {
+  const handleSelectProPlan = (plan: 'monthly' | 'yearly' | 'lifetime') => {
     if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to access Pro features.",
+        variant: "destructive",
+      });
       setLocation('/auth');
       return;
     }
-
-    const amounts = {
-      monthly: 49,
-      yearly: 499,
-      lifetime: 1500
-    };
     
-    createPaymentMutation.mutate({
-      plan,
-      amount: amounts[plan as keyof typeof amounts]
-    });
+    if (user.hasPro) {
+      toast({
+        title: "Already a Pro Member",
+        description: "You already have Pro access!",
+      });
+      return;
+    }
+    
+    createPaymentMutation.mutate(plan);
   };
   
   const handlePayDeposit = () => {
@@ -99,6 +108,12 @@ const Pricing = () => {
           <div className="mb-8">
             <div className="flex flex-wrap justify-center space-x-2 mb-8">
               <button 
+                onClick={() => setActiveTab('pro-membership')} 
+                className={`${activeTab === 'pro-membership' ? 'bg-primary text-white' : 'bg-dark text-white border border-gray-700'} py-2 px-6 rounded-md font-medium mb-2`}
+              >
+                Pro Membership
+              </button>
+              <button 
                 onClick={() => setActiveTab('residential')} 
                 className={`${activeTab === 'residential' ? 'bg-primary text-white' : 'bg-dark text-white border border-gray-700'} py-2 px-6 rounded-md font-medium mb-2`}
               >
@@ -123,6 +138,161 @@ const Pricing = () => {
                 Emergency
               </button>
             </div>
+            
+            {/* Pro Membership Tab Content */}
+            {activeTab === 'pro-membership' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {/* Monthly Plan */}
+                <Card className="bg-darkgray border-gray-700 relative">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center justify-between">
+                      Monthly Plan
+                      <Zap className="h-6 w-6 text-primary" />
+                    </CardTitle>
+                    <CardDescription className="text-lightgray">
+                      Perfect for trying out Pro features
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center mb-6">
+                      <div className="text-4xl font-bold text-white mb-2">$49</div>
+                      <div className="text-lightgray">per month</div>
+                    </div>
+                    <ul className="space-y-3 mb-6">
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Advanced material calculators
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Real-time Alggin.com pricing
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Custom multiplier rates
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Export quotes to PDF
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Priority support
+                      </li>
+                    </ul>
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/80"
+                      onClick={() => handleSelectProPlan('monthly')}
+                      disabled={createPaymentMutation.isPending}
+                    >
+                      {createPaymentMutation.isPending ? "Processing..." : "Choose Monthly"}
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Yearly Plan - Most Popular */}
+                <Card className="bg-darkgray border-primary relative transform scale-105">
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-white">
+                    <Star className="h-3 w-3 mr-1" />
+                    Most Popular
+                  </Badge>
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center justify-between">
+                      Yearly Plan
+                      <Shield className="h-6 w-6 text-primary" />
+                    </CardTitle>
+                    <CardDescription className="text-lightgray">
+                      Save $89 compared to monthly
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center mb-6">
+                      <div className="text-4xl font-bold text-white mb-2">$499</div>
+                      <div className="text-lightgray">per year</div>
+                      <div className="text-sm text-primary mt-1">$41.58/month</div>
+                    </div>
+                    <ul className="space-y-3 mb-6">
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        All Monthly features
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Advanced analytics dashboard
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Bulk quote generation
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Custom branding options
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        API access for integrations
+                      </li>
+                    </ul>
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/80"
+                      onClick={() => handleSelectProPlan('yearly')}
+                      disabled={createPaymentMutation.isPending}
+                    >
+                      {createPaymentMutation.isPending ? "Processing..." : "Choose Yearly"}
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Lifetime Plan */}
+                <Card className="bg-darkgray border-gray-700 relative">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center justify-between">
+                      Lifetime Plan
+                      <Clock className="h-6 w-6 text-primary" />
+                    </CardTitle>
+                    <CardDescription className="text-lightgray">
+                      One-time payment, lifetime access
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center mb-6">
+                      <div className="text-4xl font-bold text-white mb-2">$1,500</div>
+                      <div className="text-lightgray">one-time</div>
+                      <div className="text-sm text-primary mt-1">Best long-term value</div>
+                    </div>
+                    <ul className="space-y-3 mb-6">
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        All Yearly features
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Lifetime updates included
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Priority feature requests
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Direct access to developers
+                      </li>
+                      <li className="flex items-center text-white">
+                        <Check className="h-4 w-4 text-primary mr-2" />
+                        Exclusive beta features
+                      </li>
+                    </ul>
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/80"
+                      onClick={() => handleSelectProPlan('lifetime')}
+                      disabled={createPaymentMutation.isPending}
+                    >
+                      {createPaymentMutation.isPending ? "Processing..." : "Choose Lifetime"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
             
             {/* Residential Tab Content */}
             {activeTab === 'residential' && (
