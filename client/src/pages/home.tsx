@@ -4,6 +4,7 @@ import HeroSection from '@/components/home/HeroSection';
 import ServicesCarousel from '@/components/home/ServicesCarousel';
 import QuickContactWidget from '@/components/home/QuickContactWidget';
 import GoogleReviews from '@/components/home/GoogleReviews';
+import ForumPreview from '@/components/home/ForumPreview';
 import { Link } from 'wouter';
 
 const Home = () => {
@@ -25,6 +26,9 @@ const Home = () => {
       
       {/* Google Reviews Section */}
       <GoogleReviews />
+      
+      {/* Forum Preview Section */}
+      <ForumPreview />
       
       {/* Simple CTA Section */}
       <section className="bg-darkgray py-16">

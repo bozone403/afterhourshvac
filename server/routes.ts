@@ -1756,7 +1756,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...contactSubmissions.map(s => ({ ...s, type: 'contact' })),
         ...emergencyRequests.map(s => ({ ...s, type: 'emergency' })),
         ...quoteRequests.map(s => ({ ...s, type: 'quote' }))
-      ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      ].sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt as string | Date).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt as string | Date).getTime() : 0;
+        return dateB - dateA;
+      });
       
       res.json(allSubmissions);
     } catch (error: any) {

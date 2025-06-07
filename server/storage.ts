@@ -58,9 +58,15 @@ export interface IStorage {
   getForumCategories(): Promise<ForumCategory[]>;
   getForumTopics(categoryId?: number): Promise<ForumTopic[]>;
   getForumPosts(topicId: number): Promise<ForumPost[]>;
+  getForumTopicById(id: number): Promise<ForumTopic | undefined>;
+  getForumPostById(id: number): Promise<ForumPost | undefined>;
   createForumCategory(category: InsertForumCategory): Promise<ForumCategory>;
   createForumTopic(topic: InsertForumTopic): Promise<ForumTopic>;
   createForumPost(post: InsertForumPost): Promise<ForumPost>;
+  updateForumTopic(id: number, data: Partial<ForumTopic>): Promise<ForumTopic | undefined>;
+  updateForumPost(id: number, data: Partial<ForumPost>): Promise<ForumPost | undefined>;
+  deleteForumTopic(id: number): Promise<boolean>;
+  deleteForumPost(id: number): Promise<boolean>;
   
   // Reviews methods
   getReviews(approvedOnly?: boolean): Promise<CustomerReview[]>;
@@ -423,6 +429,51 @@ export class DatabaseStorage implements IStorage {
       .values(post)
       .returning();
     return newPost;
+  }
+
+  async getForumTopicById(id: number): Promise<ForumTopic | undefined> {
+    const [topic] = await db
+      .select()
+      .from(forumTopics)
+      .where(eq(forumTopics.id, id));
+    return topic;
+  }
+
+  async updateForumTopic(id: number, data: Partial<ForumTopic>): Promise<ForumTopic | undefined> {
+    const [updatedTopic] = await db
+      .update(forumTopics)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(forumTopics.id, id))
+      .returning();
+    return updatedTopic;
+  }
+
+  async deleteForumTopic(id: number): Promise<boolean> {
+    await db.delete(forumTopics).where(eq(forumTopics.id, id));
+    await db.delete(forumPosts).where(eq(forumPosts.topicId, id));
+    return true;
+  }
+
+  async getForumPostById(id: number): Promise<ForumPost | undefined> {
+    const [post] = await db
+      .select()
+      .from(forumPosts)
+      .where(eq(forumPosts.id, id));
+    return post;
+  }
+
+  async updateForumPost(id: number, data: Partial<ForumPost>): Promise<ForumPost | undefined> {
+    const [updatedPost] = await db
+      .update(forumPosts)
+      .set({ ...data, updatedAt: new Date(), isEdited: true })
+      .where(eq(forumPosts.id, id))
+      .returning();
+    return updatedPost;
+  }
+
+  async deleteForumPost(id: number): Promise<boolean> {
+    await db.delete(forumPosts).where(eq(forumPosts.id, id));
+    return true;
   }
   
   // REVIEWS METHODS
