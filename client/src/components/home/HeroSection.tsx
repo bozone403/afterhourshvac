@@ -36,9 +36,9 @@ const HeroSection = () => {
           </div>
           
           {/* Emergency Service Form */}
-          <div className="bg-white p-6 rounded-lg shadow-xl border border-orange-200">
-            <h3 className="text-2xl font-bold mb-4 text-orange-600">24/7 Emergency Service</h3>
-            <p className="mb-4 text-gray-600">Fill out this form for immediate assistance</p>
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-xl border border-orange-200 max-w-md mx-auto lg:mx-0">
+            <h3 className="text-xl sm:text-2xl font-bold mb-4 text-orange-600">24/7 Emergency Service</h3>
+            <p className="mb-4 text-gray-600 text-sm sm:text-base">Fill out this form for immediate assistance</p>
             <EmergencyForm />
           </div>
         </div>
