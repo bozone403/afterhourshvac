@@ -81,19 +81,24 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
-      {/* Emergency Banner */}
-      <div className="hvac-gradient-secondary text-white py-2">
-        <div className="hvac-container">
+    <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/95 border-b border-gray-200/50 shadow-2xl">
+      {/* Premium Emergency Banner */}
+      <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-red-600 text-white py-3 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
+        <div className="hvac-container relative">
           <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-2">
-              <Clock className="w-4 h-4" />
-              <span className="font-medium">24/7 Emergency HVAC Service Available</span>
+            <div className="flex items-center space-x-3">
+              <div className="p-1.5 bg-white/20 rounded-full backdrop-blur-sm">
+                <Clock className="w-4 h-4 animate-pulse" />
+              </div>
+              <span className="font-bold tracking-wide">24/7 EMERGENCY HVAC SERVICE AVAILABLE</span>
             </div>
             <div className="hidden sm:flex items-center space-x-4">
-              <a href="tel:4035550123" className="flex items-center space-x-1 hover:text-orange-100 transition-colors">
-                <Phone className="w-4 h-4" />
-                <span className="font-semibold">(403) 555-0123</span>
+              <a href="tel:4036136014" className="flex items-center space-x-2 hover:text-orange-100 transition-all duration-300 hover:scale-105">
+                <div className="p-1.5 bg-white/20 rounded-full backdrop-blur-sm">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <span className="font-black tracking-wider">(403) 613-6014</span>
               </a>
             </div>
           </div>
@@ -103,14 +108,20 @@ const Header = () => {
       {/* Main Navigation */}
       <nav className="hvac-container py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-4 group">
-            <div className="hvac-gradient-primary p-4 rounded-2xl shadow-2xl group-hover:shadow-3xl transition-all duration-500 transform group-hover:scale-105">
-              <Wrench className="w-10 h-10 text-white" />
+          {/* Premium Logo */}
+          <Link href="/" className="flex items-center space-x-5 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-orange-500 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-all duration-500"></div>
+              <div className="relative hvac-gradient-primary p-5 rounded-3xl shadow-2xl group-hover:shadow-3xl transition-all duration-500 transform group-hover:scale-110 group-hover:-rotate-3">
+                <Wrench className="w-12 h-12 text-white drop-shadow-lg" />
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-black text-gray-900 tracking-tight" style={{fontFamily: 'DM Sans, Poppins, sans-serif'}}>AfterHours</h1>
-              <p className="text-sm text-blue-600 font-bold tracking-wide">HVAC SOLUTIONS</p>
+            <div className="relative">
+              <h1 className="text-4xl font-black text-gray-900 tracking-tight bg-gradient-to-r from-gray-900 to-blue-800 bg-clip-text text-transparent" style={{fontFamily: 'DM Sans, Poppins, sans-serif'}}>
+                AfterHours
+              </h1>
+              <p className="text-sm font-black tracking-[0.2em] text-orange-600 uppercase drop-shadow-sm">HVAC SOLUTIONS</p>
+              <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-blue-600 to-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
             </div>
           </Link>
 
@@ -244,7 +255,7 @@ const Header = () => {
             )}
 
             <Button asChild className="hvac-button-secondary">
-              <a href="tel:4035550123" className="flex items-center space-x-2">
+              <a href="tel:4036136014" className="flex items-center space-x-2">
                 <Phone className="w-4 h-4" />
                 <span className="hidden xl:inline">Call Now</span>
               </a>
@@ -378,9 +389,9 @@ const Header = () => {
                 )}
                 
                 <Button asChild className="w-full hvac-button-secondary mx-4 mt-2">
-                  <a href="tel:4035550123">
+                  <a href="tel:4036136014">
                     <Phone className="w-4 h-4 mr-2" />
-                    Call (403) 555-0123
+                    Call (403) 613-6014
                   </a>
                 </Button>
               </div>

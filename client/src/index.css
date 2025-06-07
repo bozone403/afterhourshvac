@@ -181,11 +181,11 @@
   }
   
   .hvac-text-lg {
-    @apply text-lg text-gray-700 leading-relaxed;
+    @apply text-lg text-gray-800 leading-relaxed font-medium;
   }
   
   .hvac-text-base {
-    @apply text-gray-700 leading-relaxed;
+    @apply text-gray-800 leading-relaxed font-medium;
   }
   
   /* Service Card Styles */
@@ -220,7 +220,7 @@
   }
   
   .stat-label {
-    @apply text-gray-700 font-medium;
+    @apply text-gray-800 font-semibold;
   }
   
   /* Navigation Styles */
