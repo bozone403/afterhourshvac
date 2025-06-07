@@ -99,15 +99,15 @@ const AdminDataPage = () => {
   });
 
   // Fetch data
-  const { data: equipment = [] } = useQuery({
+  const { data: equipment = [] } = useQuery<HvacEquipment[]>({
     queryKey: ['/api/admin/hvac-equipment'],
   });
 
-  const { data: materials = [] } = useQuery({
+  const { data: materials = [] } = useQuery<HvacMaterial[]>({
     queryKey: ['/api/admin/hvac-materials'],
   });
 
-  const { data: accessories = [] } = useQuery({
+  const { data: accessories = [] } = useQuery<HvacAccessory[]>({
     queryKey: ['/api/admin/hvac-accessories'],
   });
 
@@ -372,7 +372,7 @@ const AdminDataPage = () => {
 
             {/* Equipment List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {equipment.map((item: any) => (
+              {equipment.map((item: HvacEquipment) => (
                 <Card key={item.id} className="bg-dark border-gray-700">
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -524,7 +524,7 @@ const AdminDataPage = () => {
 
             {/* Materials List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {materials.map((item: any) => (
+              {materials.map((item: HvacMaterial) => (
                 <Card key={item.id} className="bg-dark border-gray-700">
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -638,7 +638,7 @@ const AdminDataPage = () => {
 
             {/* Accessories List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {accessories.map((item: any) => (
+              {accessories.map((item: HvacAccessory) => (
                 <Card key={item.id} className="bg-dark border-gray-700">
                   <CardHeader>
                     <div className="flex items-start justify-between">
