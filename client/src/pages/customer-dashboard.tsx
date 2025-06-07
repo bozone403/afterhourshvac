@@ -198,22 +198,24 @@ const CustomerDashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {serviceHistory?.slice(0, 5).map((service: any, index: number) => (
-                      <div key={index} className="flex items-center justify-between border-b border-gray-100 pb-2">
-                        <div className="flex items-center">
-                          <Wrench className="h-4 w-4 text-orange-600 mr-3" />
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">{service.description}</p>
-                            <p className="text-xs text-gray-500">
-                              {new Date(service.date).toLocaleDateString()}
-                            </p>
+                    {Array.isArray(serviceHistory) && serviceHistory.length > 0 ? (
+                      serviceHistory.slice(0, 5).map((service: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <div className="flex items-center">
+                            <Wrench className="h-4 w-4 text-orange-600 mr-3" />
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">{service.description}</p>
+                              <p className="text-xs text-gray-500">
+                                {new Date(service.date).toLocaleDateString()}
+                              </p>
+                            </div>
                           </div>
+                          <Badge variant={service.status === 'completed' ? 'default' : 'secondary'}>
+                            {service.status}
+                          </Badge>
                         </div>
-                        <Badge variant={service.status === 'completed' ? 'default' : 'secondary'}>
-                          {service.status}
-                        </Badge>
-                      </div>
-                    )) || (
+                      ))
+                    ) : (
                       <p className="text-gray-500 text-center py-4">No recent activity</p>
                     )}
                   </div>
@@ -233,7 +235,7 @@ const CustomerDashboard = () => {
               </div>
               
               <div className="grid gap-6">
-                {quotes?.map((quote: any, index: number) => (
+                {Array.isArray(quotes) && quotes.length > 0 ? quotes.map((quote: any, index: number) => (
                   <Card key={index}>
                     <CardHeader>
                       <div className="flex items-center justify-between">
@@ -261,7 +263,7 @@ const CustomerDashboard = () => {
                       </div>
                     </CardContent>
                   </Card>
-                )) || (
+                )) : (
                   <Card>
                     <CardContent className="text-center py-8">
                       <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -282,7 +284,7 @@ const CustomerDashboard = () => {
               <h2 className="text-2xl font-bold text-gray-900">Payment History</h2>
               
               <div className="grid gap-4">
-                {payments?.map((payment: any, index: number) => (
+                {Array.isArray(payments) && payments.length > 0 ? payments.map((payment: any, index: number) => (
                   <Card key={index}>
                     <CardContent className="flex items-center justify-between p-6">
                       <div className="flex items-center">
@@ -303,7 +305,7 @@ const CustomerDashboard = () => {
                       </div>
                     </CardContent>
                   </Card>
-                )) || (
+                )) : (
                   <Card>
                     <CardContent className="text-center py-8">
                       <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -326,7 +328,7 @@ const CustomerDashboard = () => {
               </div>
               
               <div className="grid gap-6">
-                {maintenancePlans?.map((plan: any, index: number) => (
+                {Array.isArray(maintenancePlans) && maintenancePlans.length > 0 ? maintenancePlans.map((plan: any, index: number) => (
                   <Card key={index}>
                     <CardHeader>
                       <div className="flex items-center justify-between">
@@ -353,7 +355,7 @@ const CustomerDashboard = () => {
                       </div>
                     </CardContent>
                   </Card>
-                )) || (
+                )) : (
                   <Card>
                     <CardContent className="text-center py-8">
                       <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
