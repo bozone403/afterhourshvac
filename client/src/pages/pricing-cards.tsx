@@ -328,9 +328,9 @@ export default function PricingCards() {
           
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {heatPumpCards.map((heatPump, index) => (
-              <Card key={index} className={`relative ${getCategoryColor(heatPump.category)} ${heatPump.popular ? 'ring-2 ring-green-500' : ''}`}>
+              <Card key={index} className={`relative ${getCategoryColor(heatPump.category)} ${heatPump.popular ? 'ring-2 ring-primary' : ''}`}>
                 {heatPump.popular && (
-                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-green-500 hover:bg-green-600">
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary hover:bg-primary/90">
                     Most Popular
                   </Badge>
                 )}
@@ -357,7 +357,7 @@ export default function PricingCards() {
                     ))}
                   </ul>
                   <Button 
-                    className="w-full bg-green-600 hover:bg-green-700"
+                    className="w-full bg-primary hover:bg-primary/90"
                     onClick={() => handleBuyNow(
                       'heatpump-install',
                       heatPump.installPrice,
@@ -384,9 +384,9 @@ export default function PricingCards() {
           
           <div className="grid md:grid-cols-3 gap-6">
             {maintenanceCards.map((plan, index) => (
-              <Card key={index} className={`relative ${getCategoryColor(plan.category)} ${plan.popular ? 'ring-2 ring-purple-500' : ''}`}>
+              <Card key={index} className={`relative ${getCategoryColor(plan.category)} ${plan.popular ? 'ring-2 ring-primary' : ''}`}>
                 {plan.popular && (
-                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-500 hover:bg-purple-600">
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary hover:bg-primary/90">
                     Most Popular
                   </Badge>
                 )}
@@ -410,7 +410,7 @@ export default function PricingCards() {
                     ))}
                   </ul>
                   <Button 
-                    className="w-full bg-purple-600 hover:bg-purple-700"
+                    className="w-full bg-secondary hover:bg-secondary/90"
                     onClick={() => handleBuyNow(
                       `maintenance-${plan.category}`,
                       plan.price,
@@ -437,9 +437,9 @@ export default function PricingCards() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {serviceCards.map((service, index) => (
-              <Card key={index} className={`relative ${service.urgent ? 'bg-red-50 border-red-200 ring-2 ring-red-500' : 'bg-gray-50 border-gray-200'}`}>
+              <Card key={index} className={`relative ${service.urgent ? 'bg-orange-50 border-orange-200 ring-2 ring-primary' : 'bg-gray-50 border-gray-200'}`}>
                 {service.urgent && (
-                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-500 hover:bg-red-600">
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary hover:bg-primary/90">
                     Emergency
                   </Badge>
                 )}
@@ -462,7 +462,7 @@ export default function PricingCards() {
                     ))}
                   </ul>
                   <Button 
-                    className={`w-full ${service.urgent ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+                    className={`w-full ${service.urgent ? 'bg-primary hover:bg-primary/90' : 'bg-secondary hover:bg-secondary/90'}`}
                     onClick={() => handleBuyNow(
                       service.name.toLowerCase().replace(/\s+/g, '-'),
                       service.price,
@@ -478,7 +478,7 @@ export default function PricingCards() {
         </section>
 
         {/* Emergency Contact */}
-        <section className="text-center bg-red-600 text-white rounded-xl p-8">
+        <section className="text-center bg-primary text-white rounded-xl p-8">
           <h2 className="text-3xl font-bold mb-4 flex items-center justify-center gap-3">
             <Phone className="h-8 w-8" />
             24/7 Emergency Service
@@ -488,7 +488,7 @@ export default function PricingCards() {
           </p>
           <Button 
             size="lg" 
-            className="bg-white text-red-600 hover:bg-gray-100 font-bold"
+            className="bg-white text-primary hover:bg-gray-100 font-bold"
             onClick={() => window.location.href = 'tel:(403)613-6014'}
           >
             Call Now: (403) 613-6014

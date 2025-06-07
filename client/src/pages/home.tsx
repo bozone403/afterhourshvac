@@ -72,14 +72,14 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/contact">
-              <div className="bg-primary hover:bg-primarydark text-dark font-bold py-3 px-8 rounded-lg transition-colors cursor-pointer">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white font-bold">
                 Get Quote
-              </div>
+              </Button>
             </Link>
             <Link href="/calculators">
-              <div className="bg-dark hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg border border-gray-600 transition-colors cursor-pointer">
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900 font-bold">
                 Cost Calculator
-              </div>
+              </Button>
             </Link>
           </div>
         </div>
