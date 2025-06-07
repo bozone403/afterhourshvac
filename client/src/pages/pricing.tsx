@@ -423,9 +423,10 @@ const Pricing = () => {
                     
                     <Button 
                       className="w-full bg-primary hover:bg-primary/80"
-                      onClick={() => setLocation('/contact')}
+                      onClick={() => handlePayForService('service-repair', 500)}
+                      disabled={createPaymentMutation.isPending}
                     >
-                      Schedule Service
+                      {createPaymentMutation.isPending ? "Processing..." : "Schedule Service"}
                     </Button>
                   </div>
                 </div>
@@ -464,9 +465,10 @@ const Pricing = () => {
                     
                     <Button 
                       className="w-full bg-primary hover:bg-primary/80"
-                      onClick={() => setLocation('/contact')}
+                      onClick={() => handlePayForService('light-commercial', 16750)}
+                      disabled={createPaymentMutation.isPending}
                     >
-                      Request Proposal
+                      {createPaymentMutation.isPending ? "Processing..." : "Request Proposal"}
                     </Button>
                   </div>
                 </div>
@@ -500,9 +502,10 @@ const Pricing = () => {
                     
                     <Button 
                       className="w-full bg-primary hover:bg-primary/80"
-                      onClick={() => setLocation('/contact')}
+                      onClick={() => handlePayForService('industrial', 75000)}
+                      disabled={createPaymentMutation.isPending}
                     >
-                      Contact Engineer
+                      {createPaymentMutation.isPending ? "Processing..." : "Contact Engineer"}
                     </Button>
                   </div>
                 </div>

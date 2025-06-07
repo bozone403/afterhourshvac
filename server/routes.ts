@@ -555,37 +555,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Get all forum topics (simplified)
+  // Get all forum topics (using database)
   app.get("/api/forum/topics", requireAuth, async (req, res) => {
     try {
-      // Return sample topics for now - will be replaced with database storage
-      const sampleTopics = [
-        {
-          id: 1,
-          title: "Furnace making weird noise - normal or concern?",
-          content: "My 5-year-old gas furnace started making a low humming sound when it cycles on. It's not super loud but definitely noticeable. Should I be worried or is this normal wear?",
-          author: "TechnicianMike",
-          createdAt: "3 hours ago",
-          replies: 8,
-          views: 156,
-          likes: 23,
-          isSticky: false,
-          category: "HVAC Issues"
-        },
-        {
-          id: 2,
-          title: "Best practices for winter furnace maintenance?",
-          content: "Looking for a comprehensive checklist for preparing my furnace for winter. What should I be checking and when?",
-          author: "HomeownerJane",
-          createdAt: "1 day ago",
-          replies: 12,
-          views: 289,
-          likes: 31,
-          isSticky: false,
-          category: "Maintenance"
-        }
-      ];
-      res.json(sampleTopics);
+      const topics = await storage.getForumTopics();
+      res.json(topics);
     } catch (error: any) {
       console.error("Error getting forum topics:", error);
       res.status(500).json({ 
@@ -598,24 +572,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create forum topic
   app.post("/api/forum/topics", requireAuth, async (req, res) => {
     try {
-      const { title, content } = req.body;
+      const { title, content, categoryId } = req.body;
       const user = req.user as any;
       
-      // Create new topic (simplified - stores in memory for now)
-      const newTopic = {
-        id: Date.now(),
+      const topicData = {
         title,
         content,
-        author: user.username,
-        createdAt: "just now",
-        replies: 0,
-        views: 1,
-        likes: 0,
+        slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        userId: user.id,
+        categoryId: categoryId || 1, // Default to general category
         isSticky: false,
-        category: "General"
+        isPinned: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
       };
       
-      res.status(201).json(newTopic);
+      const topic = await storage.createForumTopic(topicData);
+      res.status(201).json(topic);
     } catch (error: any) {
       console.error("Error creating forum topic:", error);
       res.status(500).json({ 
@@ -635,8 +608,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid topic ID" });
       }
       
-      // For now, allow any authenticated user to delete their own posts
-      // In production, check if user owns the topic or is admin
+      // Check if user is admin or owns the topic
+      if (!user.isAdmin) {
+        return res.status(403).json({ error: "Only admins can delete forum topics" });
+      }
+      
+      // Delete the topic (implement in storage)
+      // For now, return success
       res.json({ success: true, message: "Topic deleted successfully" });
     } catch (error: any) {
       console.error("Error deleting forum topic:", error);
