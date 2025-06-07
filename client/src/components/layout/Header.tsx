@@ -53,7 +53,7 @@ const Header = () => {
   };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-dark bg-opacity-95 shadow-md' : 'bg-dark bg-opacity-80'}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900 bg-opacity-95 shadow-md' : 'bg-gray-900 bg-opacity-80'}`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
@@ -86,8 +86,8 @@ const Header = () => {
               <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/about') ? 'text-primary' : ''}`}>About</div>
             </Link>
 
-            <Link href="/pricing">
-              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/pricing') ? 'text-primary' : ''}`}>Pricing</div>
+            <Link href="/membership">
+              <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/membership') ? 'text-primary' : ''}`}>Membership</div>
             </Link>
             <Link href="/contact">
               <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/contact') ? 'text-primary' : ''}`}>Contact</div>

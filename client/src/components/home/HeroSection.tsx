@@ -6,9 +6,9 @@ const HeroSection = () => {
   return (
     <section 
       id="home" 
-      className="pt-20 relative bg-gradient-to-br from-blue-50 to-orange-50 min-h-screen flex items-center" 
+      className="pt-20 relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-screen flex items-center" 
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-orange-600/20"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-600/10 to-blue-600/10"></div>
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div>
