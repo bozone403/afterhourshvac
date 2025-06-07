@@ -504,7 +504,7 @@ export default function ForumInteractive() {
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium mb-2">Title</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
                           <Input
                             value={newTopicTitle}
                             onChange={(e) => setNewTopicTitle(e.target.value)}
@@ -512,7 +512,7 @@ export default function ForumInteractive() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium mb-2">Content</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
                           <Textarea
                             value={newTopicContent}
                             onChange={(e) => setNewTopicContent(e.target.value)}
@@ -541,8 +541,8 @@ export default function ForumInteractive() {
                     {[1, 2, 3].map((i) => (
                       <Card key={i} className="animate-pulse">
                         <CardContent className="p-6">
-                          <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
-                          <div className="h-3 bg-slate-200 rounded w-1/2"></div>
+                          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
                         </CardContent>
                       </Card>
                     ))}
@@ -616,9 +616,9 @@ export default function ForumInteractive() {
                     {[1, 2, 3].map((i) => (
                       <Card key={i} className="animate-pulse">
                         <CardContent className="p-6">
-                          <div className="h-4 bg-slate-200 rounded w-1/4 mb-2"></div>
-                          <div className="h-3 bg-slate-200 rounded w-full mb-1"></div>
-                          <div className="h-3 bg-slate-200 rounded w-3/4"></div>
+                          <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
+                          <div className="h-3 bg-gray-200 rounded w-full mb-1"></div>
+                          <div className="h-3 bg-gray-200 rounded w-3/4"></div>
                         </CardContent>
                       </Card>
                     ))}
