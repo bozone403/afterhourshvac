@@ -280,3 +280,11 @@ function DuctSizingCalculatorContent() {
     </div>
   );
 }
+
+export default function DuctSizingCalculator() {
+  return (
+    <ProAccessGuard>
+      <DuctSizingCalculatorContent />
+    </ProAccessGuard>
+  );
+}

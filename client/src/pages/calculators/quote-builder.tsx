@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { FileCheck, DollarSign, Calculator, Download, Plus, Trash2 } from "lucide-react";
+import { ProAccessGuard } from "@/components/ProAccessGuard";
 
 interface QuoteItem {
   id: string;
@@ -76,7 +77,7 @@ const algginPricing = {
   }
 };
 
-export default function QuoteBuilder() {
+function QuoteBuilderContent() {
   const [quote, setQuote] = useState<Quote>({
     items: [],
     subtotal: 0,
@@ -424,5 +425,13 @@ Calgary, Alberta
         </Card>
       )}
     </div>
+  );
+}
+
+export default function QuoteBuilder() {
+  return (
+    <ProAccessGuard>
+      <QuoteBuilderContent />
+    </ProAccessGuard>
   );
 }
