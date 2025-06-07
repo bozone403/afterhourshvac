@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Calculator, Thermometer, Home, Snowflake } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ProAccessGuard } from "@/components/ProAccessGuard";
 
 interface LoadCalculation {
   heatingLoad: number;
@@ -17,7 +18,7 @@ interface LoadCalculation {
   efficiency: string;
 }
 
-export default function ProBTUCalculator() {
+function ProBTUCalculatorContent() {
   const [squareFootage, setSquareFootage] = useState<string>("");
   const [ceilingHeight, setCeilingHeight] = useState<string>("8");
   const [insulationLevel, setInsulationLevel] = useState<string>("");
@@ -279,5 +280,13 @@ export default function ProBTUCalculator() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ProBTUCalculator() {
+  return (
+    <ProAccessGuard>
+      <ProBTUCalculatorContent />
+    </ProAccessGuard>
   );
 }

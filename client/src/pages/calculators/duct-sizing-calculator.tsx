@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { AlertCircle, Settings, Wind, Calculator } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ProAccessGuard } from "@/components/ProAccessGuard";
 
 interface DuctSizing {
   supply: { [key: string]: { diameter: number; velocity: number; friction: number } };
@@ -15,7 +16,7 @@ interface DuctSizing {
   mainTrunk: { diameter: number; velocity: number };
 }
 
-export default function DuctSizingCalculator() {
+function DuctSizingCalculatorContent() {
   const [cfm, setCfm] = useState<string>("");
   const [ductType, setDuctType] = useState<string>("");
   const [rooms, setRooms] = useState<Array<{ name: string; cfm: string }>>([

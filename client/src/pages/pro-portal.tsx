@@ -163,7 +163,7 @@ const ProPortal = () => {
   const [, setLocation] = useLocation();
 
   // Redirect if not pro user
-  if (!user?.hasPro) {
+  if (!user?.hasProAccess && !user?.hasPro) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 flex items-center justify-center">
         <Card className="max-w-md">
@@ -392,7 +392,7 @@ For complete terms, consult full legal document.`;
                     <CardDescription>Manual J load calculations for residential systems</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Link href="/pro-calculator">
+                    <Link href="/calculators/pro-btu">
                       <Button className="w-full bg-orange-600 hover:bg-orange-700">
                         Open Calculator
                       </Button>
