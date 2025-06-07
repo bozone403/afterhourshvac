@@ -1036,16 +1036,24 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getActiveServiceRequests(technicianId?: number): Promise<ServiceRequest[]> {
-    let query = db
-      .select()
-      .from(serviceRequests)
-      .where(eq(serviceRequests.status, "in_progress"));
-    
     if (technicianId) {
-      query = query.where(eq(serviceRequests.assignedTechnician, technicianId));
+      const results = await db
+        .select()
+        .from(serviceRequests)
+        .where(and(
+          eq(serviceRequests.status, "in_progress"),
+          eq(serviceRequests.assignedTechnician, technicianId)
+        ))
+        .orderBy(desc(serviceRequests.createdAt));
+      return results;
     }
     
-    return await query.orderBy(desc(serviceRequests.createdAt));
+    const results = await db
+      .select()
+      .from(serviceRequests)
+      .where(eq(serviceRequests.status, "in_progress"))
+      .orderBy(desc(serviceRequests.createdAt));
+    return results;
   }
 }
 
