@@ -103,6 +103,7 @@ function Router() {
         <Route path="/pro-calculator" component={ProCalculatorV2} />
         <Route path="/pro-portal" component={ProPortal} />
         <Route path="/checkout/:productId" component={Checkout} />
+        <Route path="/payment/:productId" component={Payment} />
         <Route path="/payment-confirmation" component={PaymentConfirmation} />
         <Route path="/calendar-booking" component={CalendarBooking} />
         

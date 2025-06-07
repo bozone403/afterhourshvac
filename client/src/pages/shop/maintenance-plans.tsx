@@ -254,7 +254,7 @@ const MaintenancePlansShop = () => {
                         className={`w-full ${plan.popular ? 'bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
                         size="sm"
                       >
-                        <Link href={`/checkout/${plan.id === 'quickshot' ? 'maintenance-quickshot' : 'maintenance-dominion'}`}>Choose Plan</Link>
+                        <Link href={`/checkout/${plan.name === 'QuickShot Diagnostic' ? 'maintenance-quickshot' : 'maintenance-dominion'}`}>Choose Plan</Link>
                       </Button>
                     </CardContent>
                   </Card>
