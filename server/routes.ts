@@ -594,6 +594,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create subscription for Pro membership
+  app.post('/api/create-subscription', requireAuth, async (req, res) => {
+    try {
+      if (!stripe) {
+        return res.status(500).json({ error: "Stripe is not configured" });
+      }
+
+      const { planId } = req.body;
+      const user = req.user as any;
+
+      if (!planId) {
+        return res.status(400).json({ error: "Plan ID is required" });
+      }
+
+      // Define price IDs for different plans
+      const priceMapping: { [key: string]: string } = {
+        'monthly': 'price_monthly_pro', // Replace with actual Stripe price ID
+        'yearly': 'price_yearly_pro',   // Replace with actual Stripe price ID
+        'lifetime': 'price_lifetime_pro' // Replace with actual Stripe price ID
+      };
+
+      const priceId = priceMapping[planId];
+      if (!priceId) {
+        return res.status(400).json({ error: "Invalid plan ID" });
+      }
+
+      // Create or get Stripe customer
+      let customerId = user.stripeCustomerId;
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email: user.email,
+          name: user.username,
+          metadata: {
+            userId: user.id.toString()
+          }
+        });
+        customerId = customer.id;
+        
+        // Update user with Stripe customer ID
+        await storage.updateUser(user.id, { stripeCustomerId: customerId });
+      }
+
+      // For lifetime plan, create a one-time payment
+      if (planId === 'lifetime') {
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: 150000, // $1500 in cents
+          currency: 'cad',
+          customer: customerId,
+          metadata: {
+            userId: user.id.toString(),
+            planType: 'lifetime',
+            isProMembership: 'true'
+          },
+          automatic_payment_methods: {
+            enabled: true,
+          },
+        });
+
+        res.json({ 
+          clientSecret: paymentIntent.client_secret,
+          paymentIntentId: paymentIntent.id 
+        });
+        return;
+      }
+
+      // For subscription plans (monthly/yearly)
+      const subscription = await stripe.subscriptions.create({
+        customer: customerId,
+        items: [{ price: priceId }],
+        payment_behavior: 'default_incomplete',
+        payment_settings: { save_default_payment_method: 'on_subscription' },
+        expand: ['latest_invoice.payment_intent'],
+        metadata: {
+          userId: user.id.toString(),
+          planType: planId,
+          isProMembership: 'true'
+        }
+      });
+
+      const invoice = subscription.latest_invoice as any;
+      const paymentIntent = invoice?.payment_intent;
+
+      if (!paymentIntent?.client_secret) {
+        throw new Error('Failed to create payment intent for subscription');
+      }
+
+      // Update user with subscription ID
+      await storage.updateUser(user.id, { 
+        stripeSubscriptionId: subscription.id,
+        stripeCustomerId: customerId 
+      });
+
+      res.json({
+        subscriptionId: subscription.id,
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id
+      });
+
+    } catch (error: any) {
+      console.error("Error creating subscription:", error);
+      res.status(500).json({ 
+        error: "Error creating subscription", 
+        message: error.message 
+      });
+    }
+  });
+
   // Handle Stripe webhook for payment confirmation
   app.post('/api/webhook', async (req, res) => {
     try {
@@ -612,7 +719,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       switch (event.type) {
         case 'payment_intent.succeeded':
           const paymentIntent = event.data.object;
-          const { userId, productId } = paymentIntent.metadata;
+          const { userId, productId, isProMembership, planType } = paymentIntent.metadata;
+          
+          if (userId && isProMembership === 'true') {
+            const userIdNum = parseInt(userId);
+            
+            // Grant Pro membership access
+            await storage.updateUserProAccess(userIdNum, true, new Date());
+            
+            // For lifetime membership, also set a flag
+            if (planType === 'lifetime') {
+              await storage.updateUser(userIdNum, { 
+                isLifetimeMember: true,
+                membershipType: 'lifetime'
+              });
+            } else {
+              await storage.updateUser(userIdNum, { 
+                membershipType: planType 
+              });
+            }
+            
+            console.log(`[Payment Success] Pro membership (${planType}) activated for user ${userId}`);
+          }
           
           if (userId && productId) {
             // Grant product access
@@ -637,6 +765,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log(`[Payment Success] Pro Calculator access for user ${userId}`);
           }
           
+          break;
+        case 'invoice.payment_succeeded':
+          // Handle subscription payment success
+          const invoice = event.data.object;
+          const subscription = invoice.subscription;
+          
+          if (subscription) {
+            // Get subscription details
+            const subscriptionObj = await stripe.subscriptions.retrieve(subscription);
+            const customerId = typeof subscriptionObj.customer === 'string' 
+              ? subscriptionObj.customer 
+              : subscriptionObj.customer.id;
+            
+            // Find user by Stripe customer ID
+            const customer = await stripe.customers.retrieve(customerId);
+            if (customer && !customer.deleted && customer.metadata?.userId) {
+              const userIdNum = parseInt(customer.metadata.userId);
+              
+              // Activate Pro membership
+              await storage.updateUserProAccess(userIdNum, true, new Date());
+              
+              console.log(`[Subscription Success] Pro membership activated for user ${customer.metadata.userId}`);
+            }
+          }
           break;
         case 'payment_intent.payment_failed':
           console.log(`[Payment Failed] Payment ${event.data.object.id} failed`);

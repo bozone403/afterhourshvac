@@ -21,6 +21,7 @@ export const users = pgTable("users", {
   proAccessGrantedAt: timestamp("pro_access_granted_at"),
   membershipType: text("membership_type"), // 'monthly', 'yearly', 'lifetime'
   membershipExpiresAt: timestamp("membership_expires_at"),
+  isLifetimeMember: boolean("is_lifetime_member").default(false),
   profileImageUrl: text("profile_image_url"),
   createdAt: timestamp("created_at").defaultNow(),
   lastLogin: timestamp("last_login"),
