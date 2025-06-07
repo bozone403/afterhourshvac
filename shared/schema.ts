@@ -459,6 +459,18 @@ export const insertHvacMaterialsSchema = createInsertSchema(hvacMaterials);
 export const insertHvacAccessoriesSchema = createInsertSchema(hvacAccessories);
 export const insertProCalculatorQuoteSchema = createInsertSchema(proCalculatorQuotes);
 
+// SERVICE JOURNEY TRACKING
+export const insertServiceRequestSchema = createInsertSchema(serviceRequests);
+export const insertServiceJourneyStageSchema = createInsertSchema(serviceJourneyStages);
+export const insertServiceUpdateSchema = createInsertSchema(serviceUpdates);
+export const insertTechnicianLocationSchema = createInsertSchema(technicianLocations);
+
+// CUSTOMER DATA
+export const insertCustomerSchema = createInsertSchema(customers);
+export const insertContactSubmissionSchema = createInsertSchema(contactSubmissions);
+export const insertEmergencyRequestSchema = createInsertSchema(emergencyRequests);
+export const insertQuoteRequestSchema = createInsertSchema(quoteRequests);
+
 // TYPES
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -530,3 +542,16 @@ export type CalculatorUsage = typeof calculatorUsage.$inferSelect;
 
 export type InsertSystemMetric = typeof systemMetrics.$inferInsert;
 export type SystemMetric = typeof systemMetrics.$inferSelect;
+
+// Service Journey Tracking Types
+export type InsertServiceRequest = z.infer<typeof insertServiceRequestSchema>;
+export type ServiceRequest = typeof serviceRequests.$inferSelect;
+
+export type InsertServiceJourneyStage = z.infer<typeof insertServiceJourneyStageSchema>;
+export type ServiceJourneyStage = typeof serviceJourneyStages.$inferSelect;
+
+export type InsertServiceUpdate = z.infer<typeof insertServiceUpdateSchema>;
+export type ServiceUpdate = typeof serviceUpdates.$inferSelect;
+
+export type InsertTechnicianLocation = z.infer<typeof insertTechnicianLocationSchema>;
+export type TechnicianLocation = typeof technicianLocations.$inferSelect;

@@ -1,4 +1,4 @@
-import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, userSessions, pageViews, calculatorUsage, systemMetrics, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric } from "@shared/schema";
+import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, userSessions, pageViews, calculatorUsage, systemMetrics, serviceRequests, serviceJourneyStages, serviceUpdates, technicianLocations, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric, type ServiceRequest, type InsertServiceRequest, type ServiceJourneyStage, type InsertServiceJourneyStage, type ServiceUpdate, type InsertServiceUpdate, type TechnicianLocation, type InsertTechnicianLocation } from "@shared/schema";
 import { eq, and, gte, desc, count } from "drizzle-orm";
 import { db } from "./db";
 import session from "express-session";
@@ -121,6 +121,26 @@ export interface IStorage {
   // User session tracking
   createUserSession(data: InsertUserSession): Promise<UserSession>;
   endUserSession(sessionId: string): Promise<void>;
+  
+  // Service Journey Tracking methods
+  getServiceRequests(status?: string): Promise<ServiceRequest[]>;
+  getServiceRequestById(id: number): Promise<ServiceRequest | undefined>;
+  getServiceRequestByNumber(requestNumber: string): Promise<ServiceRequest | undefined>;
+  createServiceRequest(request: InsertServiceRequest): Promise<ServiceRequest>;
+  updateServiceRequest(id: number, data: Partial<ServiceRequest>): Promise<ServiceRequest | undefined>;
+  updateServiceRequestStage(id: number, stage: string): Promise<ServiceRequest | undefined>;
+  
+  getServiceJourneyStages(serviceRequestId: number): Promise<ServiceJourneyStage[]>;
+  createServiceJourneyStage(stage: InsertServiceJourneyStage): Promise<ServiceJourneyStage>;
+  updateServiceJourneyStage(id: number, data: Partial<ServiceJourneyStage>): Promise<ServiceJourneyStage | undefined>;
+  completeServiceJourneyStage(serviceRequestId: number, stage: string): Promise<ServiceJourneyStage | undefined>;
+  
+  getServiceUpdates(serviceRequestId: number): Promise<ServiceUpdate[]>;
+  createServiceUpdate(update: InsertServiceUpdate): Promise<ServiceUpdate>;
+  
+  getTechnicianLocation(technicianId: number, serviceRequestId?: number): Promise<TechnicianLocation | undefined>;
+  updateTechnicianLocation(location: InsertTechnicianLocation): Promise<TechnicianLocation>;
+  getActiveServiceRequests(technicianId?: number): Promise<ServiceRequest[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -861,6 +881,162 @@ export class DatabaseStorage implements IStorage {
       .update(userSessions)
       .set({ logoutAt: new Date(), isActive: false })
       .where(eq(userSessions.sessionId, sessionId));
+  }
+
+  // Service Journey Tracking Implementation
+  async getServiceRequests(status?: string): Promise<ServiceRequest[]> {
+    let query = db.select().from(serviceRequests).orderBy(desc(serviceRequests.createdAt));
+    
+    if (status) {
+      query = query.where(eq(serviceRequests.status, status));
+    }
+    
+    return await query;
+  }
+
+  async getServiceRequestById(id: number): Promise<ServiceRequest | undefined> {
+    const [request] = await db.select().from(serviceRequests).where(eq(serviceRequests.id, id));
+    return request;
+  }
+
+  async getServiceRequestByNumber(requestNumber: string): Promise<ServiceRequest | undefined> {
+    const [request] = await db.select().from(serviceRequests).where(eq(serviceRequests.requestNumber, requestNumber));
+    return request;
+  }
+
+  async createServiceRequest(request: InsertServiceRequest): Promise<ServiceRequest> {
+    const [newRequest] = await db
+      .insert(serviceRequests)
+      .values({
+        ...request,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    return newRequest;
+  }
+
+  async updateServiceRequest(id: number, data: Partial<ServiceRequest>): Promise<ServiceRequest | undefined> {
+    const [updatedRequest] = await db
+      .update(serviceRequests)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(serviceRequests.id, id))
+      .returning();
+    return updatedRequest;
+  }
+
+  async updateServiceRequestStage(id: number, stage: string): Promise<ServiceRequest | undefined> {
+    const [updatedRequest] = await db
+      .update(serviceRequests)
+      .set({ currentStage: stage, updatedAt: new Date() })
+      .where(eq(serviceRequests.id, id))
+      .returning();
+    return updatedRequest;
+  }
+
+  async getServiceJourneyStages(serviceRequestId: number): Promise<ServiceJourneyStage[]> {
+    return await db
+      .select()
+      .from(serviceJourneyStages)
+      .where(eq(serviceJourneyStages.serviceRequestId, serviceRequestId))
+      .orderBy(serviceJourneyStages.createdAt);
+  }
+
+  async createServiceJourneyStage(stage: InsertServiceJourneyStage): Promise<ServiceJourneyStage> {
+    const [newStage] = await db
+      .insert(serviceJourneyStages)
+      .values({
+        ...stage,
+        createdAt: new Date(),
+      })
+      .returning();
+    return newStage;
+  }
+
+  async updateServiceJourneyStage(id: number, data: Partial<ServiceJourneyStage>): Promise<ServiceJourneyStage | undefined> {
+    const [updatedStage] = await db
+      .update(serviceJourneyStages)
+      .set(data)
+      .where(eq(serviceJourneyStages.id, id))
+      .returning();
+    return updatedStage;
+  }
+
+  async completeServiceJourneyStage(serviceRequestId: number, stage: string): Promise<ServiceJourneyStage | undefined> {
+    const [updatedStage] = await db
+      .update(serviceJourneyStages)
+      .set({ 
+        status: "completed", 
+        completedAt: new Date(),
+        actualDuration: Math.floor((Date.now() - new Date().getTime()) / 60000) // rough calculation
+      })
+      .where(and(
+        eq(serviceJourneyStages.serviceRequestId, serviceRequestId),
+        eq(serviceJourneyStages.stage, stage)
+      ))
+      .returning();
+    return updatedStage;
+  }
+
+  async getServiceUpdates(serviceRequestId: number): Promise<ServiceUpdate[]> {
+    return await db
+      .select()
+      .from(serviceUpdates)
+      .where(eq(serviceUpdates.serviceRequestId, serviceRequestId))
+      .orderBy(desc(serviceUpdates.createdAt));
+  }
+
+  async createServiceUpdate(update: InsertServiceUpdate): Promise<ServiceUpdate> {
+    const [newUpdate] = await db
+      .insert(serviceUpdates)
+      .values({
+        ...update,
+        createdAt: new Date(),
+      })
+      .returning();
+    return newUpdate;
+  }
+
+  async getTechnicianLocation(technicianId: number, serviceRequestId?: number): Promise<TechnicianLocation | undefined> {
+    let query = db.select().from(technicianLocations).where(eq(technicianLocations.technicianId, technicianId));
+    
+    if (serviceRequestId) {
+      query = query.where(eq(technicianLocations.serviceRequestId, serviceRequestId));
+    }
+    
+    const [location] = await query.orderBy(desc(technicianLocations.lastUpdated)).limit(1);
+    return location;
+  }
+
+  async updateTechnicianLocation(location: InsertTechnicianLocation): Promise<TechnicianLocation> {
+    const [updatedLocation] = await db
+      .insert(technicianLocations)
+      .values({
+        ...location,
+        lastUpdated: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: [technicianLocations.technicianId, technicianLocations.serviceRequestId],
+        set: {
+          ...location,
+          lastUpdated: new Date(),
+        },
+      })
+      .returning();
+    return updatedLocation;
+  }
+
+  async getActiveServiceRequests(technicianId?: number): Promise<ServiceRequest[]> {
+    let query = db
+      .select()
+      .from(serviceRequests)
+      .where(eq(serviceRequests.status, "in_progress"));
+    
+    if (technicianId) {
+      query = query.where(eq(serviceRequests.assignedTechnician, technicianId));
+    }
+    
+    return await query.orderBy(desc(serviceRequests.createdAt));
   }
 }
 
