@@ -84,7 +84,14 @@ export default function AuthPage() {
   // Use useEffect for navigation to avoid rendering during render
   React.useEffect(() => {
     if (user && !isLoading) {
-      navigate("/");
+      // Check for return URL in query params
+      const params = new URLSearchParams(window.location.search);
+      const returnUrl = params.get('returnUrl');
+      if (returnUrl) {
+        navigate(decodeURIComponent(returnUrl));
+      } else {
+        navigate("/");
+      }
     }
   }, [user, isLoading, navigate]);
 

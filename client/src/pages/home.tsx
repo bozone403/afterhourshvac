@@ -36,7 +36,7 @@ const Home = () => {
             </p>
           </div>
           
-          {!isLoading && carouselImages && Array.isArray(carouselImages) && carouselImages.length > 0 && (
+          {!isLoading && carouselImages && Array.isArray(carouselImages) && carouselImages.length > 0 ? (
             <div className="max-w-4xl mx-auto">
               <Carousel 
                 images={carouselImages.map((img: any) => ({
@@ -50,7 +50,7 @@ const Home = () => {
                 className="w-full"
               />
             </div>
-          )}
+          ) : null}
         </div>
       </section>
       
