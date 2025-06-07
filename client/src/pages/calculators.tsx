@@ -22,7 +22,7 @@ const proCalculators = [
     title: 'Advanced Material Calculator',
     description: 'Real-time Alggin.com pricing with custom multipliers',
     icon: Calculator,
-    link: '/membership',
+    link: '/calculators/material-estimator',
     badge: 'Pro Only'
   },
   {
@@ -30,7 +30,7 @@ const proCalculators = [
     title: 'Commercial Load Calculator',
     description: 'Complex load calculations for commercial HVAC systems',
     icon: Building,
-    link: '/membership',
+    link: '/calculators/commercial-estimator',
     badge: 'Pro Only'
   },
   {
@@ -38,7 +38,7 @@ const proCalculators = [
     title: 'Project Templates',
     description: 'Pre-built templates for common HVAC installations',
     icon: File,
-    link: '/membership',
+    link: '/pro-calculator',
     badge: 'Pro Only'
   }
 ];

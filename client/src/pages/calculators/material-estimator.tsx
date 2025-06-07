@@ -9,7 +9,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { Calculator, Plus, Minus, DollarSign, Percent, ShoppingCart, Trash2 } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { Link } from 'wouter';
+import { Calculator, Plus, Minus, DollarSign, Percent, ShoppingCart, Trash2, Lock, Crown } from 'lucide-react';
 
 interface MaterialItem {
   id: string;
