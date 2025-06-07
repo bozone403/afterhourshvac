@@ -67,6 +67,16 @@ const ProCalculator = () => {
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [clientSecret, setClientSecret] = useState('');
   
+  // Quick Estimate States
+  const [squareFootage, setSquareFootage] = useState('');
+  const [homeType, setHomeType] = useState('');
+  const [currentSystem, setCurrentSystem] = useState('');
+  const [systemAge, setSystemAge] = useState('');
+  const [efficiency, setEfficiency] = useState('');
+  const [brand, setBrand] = useState('');
+  const [estimate, setEstimate] = useState<any>(null);
+  const [additionalWork, setAdditionalWork] = useState<any[]>([]);
+  
   // Search and filter catalog items
   const filteredCatalog = useMemo(() => {
     let items = algginCatalog;
@@ -233,6 +243,10 @@ const ProCalculator = () => {
       });
     }
   };
+
+  const homeTypes = {
+    'single-story': 'Single Story',
+    'two-story': 'Two Story',
     'split-level': 'Split Level',
     'bi-level': 'Bi-Level',
     'manufactured': 'Manufactured Home'

@@ -134,8 +134,10 @@ const Header = () => {
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
-                        className={`nav-link flex items-center space-x-1 px-4 py-2 rounded-xl transition-all duration-200 ${
-                          isActivePage(item.href) ? "nav-link-active bg-blue-50" : "hover:bg-gray-50"
+                        className={`relative nav-link flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 overflow-hidden group ${
+                          isActivePage(item.href) 
+                            ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-xl transform scale-105" 
+                            : "text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-orange-50 hover:shadow-lg hover:transform hover:scale-105"
                         }`}
                       >
                         {item.icon && <item.icon className="w-4 h-4" />}
