@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Loader2, AirVent } from "lucide-react";
+import { Loader2, AirVent, Home, Wrench } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Helmet } from 'react-helmet-async';
 
 const registerSchema = z.object({
@@ -19,6 +20,7 @@ const registerSchema = z.object({
   firstName: z.string().optional().or(z.literal("")),
   lastName: z.string().optional().or(z.literal("")),
   company: z.string().optional().or(z.literal("")),
+  userType: z.enum(["customer", "technician"]).default("customer"),
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -26,6 +28,10 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const [location, navigate] = useLocation();
   const { user, registerMutation } = useAuth();
+
+  // Get user type from URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const userTypeFromUrl = urlParams.get('type') as 'customer' | 'technician' || 'customer';
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -37,6 +43,7 @@ export default function RegisterPage() {
       firstName: "",
       lastName: "",
       company: "",
+      userType: userTypeFromUrl,
     },
   });
 
@@ -163,6 +170,37 @@ export default function RegisterPage() {
                           {...field}
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="userType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">Account Type</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="bg-dark border-gray-600 text-white">
+                            <SelectValue placeholder="Select your account type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="customer">
+                            <div className="flex items-center gap-2">
+                              <Home className="h-4 w-4 text-primary" />
+                              <span>Customer (Homeowner)</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="technician">
+                            <div className="flex items-center gap-2">
+                              <Wrench className="h-4 w-4 text-secondary" />
+                              <span>Technician (HVAC Professional)</span>
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}

@@ -13,6 +13,7 @@ export const users = pgTable("users", {
   lastName: text("last_name"),
   company: text("company"),
   role: text("role").default("user"), // user, admin, moderator
+  userType: text("user_type").default("customer"), // customer, technician
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
   hasProAccess: boolean("has_pro_access").default(false),
