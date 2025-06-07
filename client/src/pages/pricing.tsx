@@ -20,20 +20,22 @@ const Pricing = () => {
   const createPaymentMutation = useMutation({
     mutationFn: async (plan: 'monthly' | 'yearly' | 'lifetime') => {
       const amounts = {
-        monthly: 4900, // $49.00 in cents
-        yearly: 49900, // $499.00 in cents
-        lifetime: 150000 // $1500.00 in cents
+        monthly: 49, // $49.00
+        yearly: 499, // $499.00
+        lifetime: 1500 // $1500.00
       };
       
       const response = await apiRequest("POST", "/api/create-payment-intent", {
         amount: amounts[plan],
-        planType: plan
+        service: 'pro',
+        plan: plan,
+        description: `Pro ${plan} membership`
       });
       return response.json();
     },
-    onSuccess: (data) => {
-      // Redirect to checkout page with client secret
-      setLocation(`/checkout?client_secret=${data.clientSecret}&plan=${data.planType}`);
+    onSuccess: (data, variables) => {
+      // Redirect to checkout page
+      setLocation(`/checkout?service=pro&plan=${variables}&amount=${data.amount / 100}`);
     },
     onError: (error: Error) => {
       toast({

@@ -48,6 +48,35 @@ interface ServiceImage {
 const AdminPhotos = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Check if user is admin
+  if (!user || user.role !== 'admin' || user.username !== 'JordanBoz') {
+    return (
+      <>
+        <Helmet>
+          <title>Access Denied - AfterHours HVAC</title>
+        </Helmet>
+        <div className="container mx-auto py-24 px-4 min-h-screen">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-3xl font-bold mb-6">Access Denied</h1>
+            <Card>
+              <CardHeader>
+                <CardTitle>Admin Access Required</CardTitle>
+                <CardDescription>
+                  You need administrator privileges to access the photo gallery editor
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  This area is restricted to authorized administrators only.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </>
+    );
+  }
   
   const [activeTab, setActiveTab] = useState('gallery');
   const [editingImage, setEditingImage] = useState<GalleryImage | ServiceImage | null>(null);

@@ -61,7 +61,7 @@ export default function AdminDashboard() {
   const [editingItem, setEditingItem] = useState(null);
 
   // Check if user is admin
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== 'admin' || user.username !== 'JordanBoz') {
     return (
       <>
         <Helmet>
