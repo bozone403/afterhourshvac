@@ -1492,6 +1492,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Carousel endpoints for homepage
+  app.get("/api/carousel", async (req, res) => {
+    try {
+      const sampleCarouselImages = [
+        {
+          id: 1,
+          title: "Professional Furnace Installation",
+          description: "High-efficiency furnace installation in Calgary residential home",
+          imageUrl: "/api/placeholder/800/500",
+          isActive: true,
+          sortOrder: 1
+        },
+        {
+          id: 2,
+          title: "Expert AC Unit Service", 
+          description: "Professional air conditioning maintenance and repair services",
+          imageUrl: "/api/placeholder/800/500",
+          isActive: true,
+          sortOrder: 2
+        },
+        {
+          id: 3,
+          title: "Commercial HVAC Solutions",
+          description: "Large-scale commercial heating and cooling system installations",
+          imageUrl: "/api/placeholder/800/500",
+          isActive: true,
+          sortOrder: 3
+        }
+      ];
+      res.json(sampleCarouselImages);
+    } catch (error: any) {
+      console.error("Error fetching carousel images:", error);
+      res.status(500).json({ 
+        error: "Error fetching carousel images", 
+        message: error.message 
+      });
+    }
+  });
+
   // Gallery Project Management for Carousel
   app.post("/api/admin/gallery-projects", requireAdmin, async (req, res) => {
     try {

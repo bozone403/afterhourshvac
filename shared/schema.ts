@@ -98,6 +98,19 @@ export const galleryImages = pgTable("gallery_images", {
   createdBy: integer("created_by").references(() => users.id),
 });
 
+// Carousel Images for Homepage
+export const carouselImages = pgTable("carousel_images", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  imageUrl: text("image_url").notNull(),
+  isActive: boolean("is_active").default(true),
+  sortOrder: integer("sort_order").default(0),
+  uploadedBy: integer("uploaded_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Reviews
 export const customerReviews = pgTable("customer_reviews", {
   id: serial("id").primaryKey(),
@@ -400,6 +413,10 @@ export type ForumPost = typeof forumPosts.$inferSelect;
 
 export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
 export type GalleryImage = typeof galleryImages.$inferSelect;
+
+export const insertCarouselImageSchema = createInsertSchema(carouselImages);
+export type InsertCarouselImage = z.infer<typeof insertCarouselImageSchema>;
+export type CarouselImage = typeof carouselImages.$inferSelect;
 
 export type InsertCustomerReview = z.infer<typeof insertCustomerReviewSchema>;
 export type CustomerReview = typeof customerReviews.$inferSelect;

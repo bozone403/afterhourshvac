@@ -35,9 +35,14 @@ const Home = () => {
             </p>
           </div>
           
-          {!isLoading && (
+          {!isLoading && carouselImages && (
             <Carousel 
-              images={carouselImages || []}
+              images={carouselImages.map((img: any) => ({
+                id: img.id,
+                url: img.imageUrl,
+                title: img.title,
+                description: img.description
+              }))}
               autoPlay={true}
               interval={6000}
               className="max-w-4xl mx-auto"
