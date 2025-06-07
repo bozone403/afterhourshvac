@@ -35,7 +35,7 @@ const Home = () => {
             </p>
           </div>
           
-          {!isLoading && carouselImages && (
+          {!isLoading && carouselImages && Array.isArray(carouselImages) && carouselImages.length > 0 && (
             <Carousel 
               images={carouselImages.map((img: any) => ({
                 id: img.id,

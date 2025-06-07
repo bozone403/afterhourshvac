@@ -129,6 +129,12 @@ const Header = () => {
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    <Link href="/settings">
+                      <DropdownMenuItem>
+                        <User className="h-4 w-4 mr-2" />
+                        Account Settings
+                      </DropdownMenuItem>
+                    </Link>
                     <Link href="/pro-calculator">
                       <DropdownMenuItem>
                         <Calculator className="h-4 w-4 mr-2" />

@@ -38,6 +38,7 @@ import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
 import ForumPage from "@/pages/forum-functional";
 import AdminDashboard from "@/pages/admin-dashboard-enhanced";
+import UserSettings from "@/pages/user-settings";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -81,6 +82,7 @@ function Router() {
         
         {/* Protected routes that require authentication */}
         <ProtectedRoute path="/forum" component={ForumPage} />
+        <ProtectedRoute path="/settings" component={UserSettings} />
         
         {/* Admin-only routes */}
         <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
