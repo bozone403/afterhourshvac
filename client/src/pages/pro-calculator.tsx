@@ -473,6 +473,82 @@ const ProCalculator = () => {
               </p>
             </div>
 
+            {/* Simple Material Search & Add */}
+            <Card className="mb-8 bg-gradient-to-r from-gray-800 to-gray-900 border-gray-600">
+              <CardHeader>
+                <CardTitle className="text-white text-xl flex items-center gap-2">
+                  <Search className="w-5 h-5 text-blue-400" />
+                  Add Materials from Alggin Catalog
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex gap-3">
+                  <Input
+                    placeholder="Search materials (furnace, ductwork, thermostat, etc.)"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="flex-1 bg-gray-700 border-gray-600 text-white"
+                  />
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger className="w-40 bg-gray-700 border-gray-600 text-white">
+                      <SelectValue placeholder="Filter" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All</SelectItem>
+                      {categories.map(cat => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Quick Material Results */}
+                {(searchTerm || selectedCategory) && (
+                  <div className="max-h-48 overflow-y-auto bg-gray-900 rounded-lg p-3 space-y-2">
+                    {filteredCatalog.slice(0, 10).map((item) => (
+                      <div key={item.id} className="flex items-center justify-between p-2 bg-gray-800 rounded hover:bg-gray-700">
+                        <div>
+                          <div className="font-medium text-white text-sm">{item.name}</div>
+                          <div className="text-green-400 font-bold">${item.price.toFixed(2)}</div>
+                        </div>
+                        <Button
+                          onClick={() => addMaterial(item)}
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          Add
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Selected Materials */}
+                {materials.length > 0 && (
+                  <div className="bg-gray-900 rounded-lg p-4">
+                    <h4 className="text-white font-semibold mb-3">Added Materials ({materials.length})</h4>
+                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                      {materials.map((material) => (
+                        <div key={material.id} className="flex items-center justify-between text-sm">
+                          <span className="text-white">{material.catalogItem.name}</span>
+                          <div className="flex items-center gap-2">
+                            <Button onClick={() => updateMaterialQuantity(material.id, material.quantity - 1)} size="sm" variant="outline" className="w-6 h-6 p-0">-</Button>
+                            <span className="text-white w-8 text-center">{material.quantity}</span>
+                            <Button onClick={() => updateMaterialQuantity(material.id, material.quantity + 1)} size="sm" variant="outline" className="w-6 h-6 p-0">+</Button>
+                            <span className="text-green-400 font-bold w-16 text-right">${material.totalPrice.toFixed(2)}</span>
+                            <Button onClick={() => removeMaterial(material.id)} size="sm" variant="destructive" className="w-6 h-6 p-0">×</Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-right mt-3 pt-3 border-t border-gray-700">
+                      <span className="text-white font-bold">Materials Total: ${calculations.materialsSubtotal.toFixed(2)}</span>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             <div className="grid md:grid-cols-2 gap-8">
               {/* Input Section */}
               <Card className="relative bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-600 backdrop-blur-xl shadow-2xl overflow-hidden">
@@ -675,10 +751,29 @@ const ProCalculator = () => {
                         </ul>
                       </div>
 
-                      <div className="text-center">
-                        <Button className="bg-secondary hover:bg-secondary/80 text-white">
-                          <Wrench className="w-4 h-4 mr-2" />
-                          Request Detailed Quote
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Button 
+                          onClick={generatePDFQuote}
+                          className="relative bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Export PDF
+                        </Button>
+                        
+                        <Button 
+                          onClick={emailQuote}
+                          className="relative bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                        >
+                          <Mail className="w-4 h-4 mr-2" />
+                          Email Quote
+                        </Button>
+                        
+                        <Button 
+                          onClick={saveProject}
+                          className="relative bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                        >
+                          <Save className="w-4 h-4 mr-2" />
+                          Save Project
                         </Button>
                       </div>
                     </div>

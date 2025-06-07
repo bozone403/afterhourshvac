@@ -216,6 +216,12 @@
     background: rgba(255, 255, 255, 0.95);
   }
   
+  @media (max-width: 768px) {
+    .service-card:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+  }
+  
   .service-card::before {
     content: '';
     @apply absolute inset-0 bg-gradient-to-br from-blue-50/50 to-orange-50/50 opacity-0;
