@@ -140,20 +140,21 @@ const Header = () => {
                             : "text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-orange-50 hover:shadow-lg hover:transform hover:scale-105"
                         }`}
                       >
-                        {item.icon && <item.icon className="w-4 h-4" />}
-                        <span>{item.name}</span>
-                        <ChevronDown className="w-4 h-4" />
+                        {item.icon && <item.icon className="w-5 h-5" />}
+                        <span className="relative z-10">{item.name}</span>
+                        <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 bg-white border border-gray-200 shadow-xl rounded-xl">
-                      <DropdownMenuLabel className="text-gray-900 font-semibold">{item.name}</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
+                    <DropdownMenuContent className="w-64 bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-2xl p-2">
+                      <DropdownMenuLabel className="text-gray-900 font-bold text-lg px-4 py-2">{item.name}</DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-gradient-to-r from-blue-200 to-orange-200" />
                       {item.submenu.map((subItem) => (
                         <DropdownMenuItem key={subItem.name} asChild>
-                          <Link href={subItem.href} className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                            {subItem.isPro && <Crown className="w-4 h-4 text-orange-500" />}
-                            <span>{subItem.name}</span>
-                            {subItem.isPro && <Badge className="bg-orange-100 text-orange-600 text-xs">Pro</Badge>}
+                          <Link href={subItem.href} className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-orange-50 rounded-xl transition-all duration-300 hover:transform hover:scale-105 group">
+                            {subItem.isPro && <Crown className="w-5 h-5 text-orange-500 group-hover:scale-110 transition-transform" />}
+                            <span className="font-medium">{subItem.name}</span>
+                            {subItem.isPro && <Badge className="bg-gradient-to-r from-orange-100 to-orange-200 text-orange-700 text-xs font-bold">Pro</Badge>}
                           </Link>
                         </DropdownMenuItem>
                       ))}

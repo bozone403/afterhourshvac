@@ -32,7 +32,7 @@ const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Fetch carousel images
-  const { data: carouselImages = [] } = useQuery({
+  const { data: carouselImages = [] } = useQuery<any[]>({
     queryKey: ["/api/carousel"],
   });
 
@@ -43,13 +43,13 @@ const Home = () => {
 
   // Auto-rotate carousel
   useEffect(() => {
-    if (carouselImages.length > 1) {
+    if (carouselImages && carouselImages.length > 1) {
       const timer = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
       }, 5000);
       return () => clearInterval(timer);
     }
-  }, [carouselImages.length]);
+  }, [carouselImages]);
 
   const stats = [
     { number: "2000+", label: "Happy Customers", icon: Users },
@@ -111,7 +111,7 @@ const Home = () => {
           <div className="absolute inset-0 bg-black/20"></div>
           
           {/* Carousel Background */}
-          {carouselImages.length > 0 && (
+          {carouselImages && carouselImages.length > 0 && (
             <div className="absolute inset-0">
               {carouselImages.map((image: any, index: number) => (
                 <div
