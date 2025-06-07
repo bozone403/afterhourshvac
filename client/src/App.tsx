@@ -29,7 +29,7 @@ import LoadCalculator from "@/pages/calculators/load-calculator";
 import ServiceTracking from "@/pages/service-tracking";
 import ProCalculator from "@/pages/pro-calculator";
 import ProPortal from "@/pages/pro-portal";
-import Membership from "@/pages/membership";
+import MembershipSimple from "@/pages/membership-simple";
 import FurnaceInstall from "@/pages/services/furnace-install";
 import BlogIndex from "@/pages/blog/index";
 import BlogFurnaceWinter from "@/pages/blog/prepare-furnace-winter";
@@ -86,7 +86,7 @@ function Router() {
         <Route path="/register" component={RegisterPage} />
         
         {/* Membership and Pro routes */}
-        <Route path="/membership" component={Membership} />
+        <Route path="/membership" component={MembershipSimple} />
         <Route path="/pro-calculator" component={ProCalculator} />
         <Route path="/pro-portal" component={ProPortal} />
         <Route path="/checkout" component={Checkout} />
