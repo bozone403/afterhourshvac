@@ -35,7 +35,7 @@ export function ProtectedRoute({
   }
 
   // If route requires admin and user is not admin, redirect to home
-  if (adminOnly && user.role !== "admin") {
+  if (adminOnly && !user.isAdmin) {
     return (
       <Route path={path}>
         <Redirect to="/" />
