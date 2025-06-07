@@ -16,7 +16,14 @@ import {
   DollarSign,
   Clock,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Home,
+  Phone,
+  MapPin,
+  Star,
+  TrendingUp,
+  Shield,
+  Thermometer
 } from 'lucide-react';
 import { Link } from 'wouter';
 

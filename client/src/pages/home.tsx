@@ -1,20 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import HeroSection from '@/components/home/HeroSection';
 import ServicesCarousel from '@/components/home/ServicesCarousel';
 import QuickContactWidget from '@/components/home/QuickContactWidget';
 import GoogleReviews from '@/components/home/GoogleReviews';
 import ForumPreview from '@/components/home/ForumPreview';
+import { UserTypeModal } from '@/components/user-type-modal';
 import { Carousel } from '@/components/ui/carousel';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/hooks/use-auth';
 import { Link } from 'wouter';
 
 const Home = () => {
+  const { user } = useAuth();
+  const [showUserTypeModal, setShowUserTypeModal] = useState(false);
   const { data: carouselImages, isLoading } = useQuery({
     queryKey: ['/api/carousel'],
     retry: false,
   });
+
+  // Show user type modal for first-time visitors
+  useEffect(() => {
+    const hasSeenModal = localStorage.getItem('hasSeenUserTypeModal');
+    const urlParams = new URLSearchParams(window.location.search);
+    const showModal = urlParams.get('register') === 'true';
+    
+    if (!user && (!hasSeenModal || showModal)) {
+      setShowUserTypeModal(true);
+      localStorage.setItem('hasSeenUserTypeModal', 'true');
+    }
+  }, [user]);
 
   return (
     <>
@@ -87,6 +103,12 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* User Type Selection Modal */}
+      <UserTypeModal 
+        isOpen={showUserTypeModal} 
+        onClose={() => setShowUserTypeModal(false)} 
+      />
     </>
   );
 };
