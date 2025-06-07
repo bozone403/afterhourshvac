@@ -1,10 +1,61 @@
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Check, Star, Zap, Shield, Clock } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 const Pricing = () => {
   const [location, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState('residential');
+  const [activeTab, setActiveTab] = useState('pro-membership');
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  // Pro membership payment mutation
+  const createPaymentMutation = useMutation({
+    mutationFn: async (data: { plan: string; amount: number }) => {
+      const response = await apiRequest("POST", "/api/create-payment-intent", {
+        amount: data.amount,
+        productId: `pro-${data.plan}`,
+        tier: data.plan,
+        category: "pro_membership"
+      });
+      return response.json();
+    },
+    onSuccess: (data, variables) => {
+      setLocation(`/checkout?clientSecret=${data.clientSecret}&plan=${variables.plan}&amount=${variables.amount}`);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Payment Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSelectProPlan = (plan: string) => {
+    if (!user) {
+      setLocation('/auth');
+      return;
+    }
+
+    const amounts = {
+      monthly: 49,
+      yearly: 499,
+      lifetime: 1500
+    };
+    
+    createPaymentMutation.mutate({
+      plan,
+      amount: amounts[plan as keyof typeof amounts]
+    });
+  };
   
   const handlePayDeposit = () => {
     setLocation('/checkout?service=deposit&amount=175');

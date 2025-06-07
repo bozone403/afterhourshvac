@@ -102,9 +102,14 @@ const Header = () => {
             </Link>
             
             {!user && (
-              <Link href="/login">
-                <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/login') ? 'text-primary' : ''}`}>Login</div>
-              </Link>
+              <>
+                <Link href="/login">
+                  <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/login') ? 'text-primary' : ''}`}>Login</div>
+                </Link>
+                <Link href="/register">
+                  <div className={`text-white hover:text-primary transition-colors font-medium cursor-pointer ${isActive('/register') ? 'text-primary' : ''}`}>Register</div>
+                </Link>
+              </>
             )}
             
             <div className="ml-2 flex items-center space-x-2">
@@ -130,11 +135,19 @@ const Header = () => {
                       <Calculator className="h-4 w-4 mr-2" />
                       Pro Calculator
                     </DropdownMenuItem>
-                    {user.isAdmin && (
+                    {user && user.isAdmin && (
                       <>
+                        <DropdownMenuItem onClick={() => navigate('/admin-dashboard')}>
+                          <Settings className="h-4 w-4 mr-2" />
+                          Admin Dashboard
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate('/admin-data')}>
                           <Settings className="h-4 w-4 mr-2" />
                           Admin Data
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate('/admin-photos')}>
+                          <Settings className="h-4 w-4 mr-2" />
+                          Photo Management
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate('/supplier-data')}>
                           <Settings className="h-4 w-4 mr-2" />

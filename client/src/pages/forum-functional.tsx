@@ -79,6 +79,28 @@ export default function ForumPage() {
     },
   });
 
+  // Delete topic mutation
+  const deleteTopicMutation = useMutation({
+    mutationFn: async (topicId: number) => {
+      const response = await apiRequest("DELETE", `/api/forum/topics/${topicId}`);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/forum/topics"] });
+      toast({
+        title: "Topic Deleted",
+        description: "The discussion has been removed.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error Deleting Topic",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   if (!user) {
     return (
       <>
