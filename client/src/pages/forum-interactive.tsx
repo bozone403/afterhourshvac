@@ -493,14 +493,14 @@ export default function ForumInteractive() {
                   </h2>
                   <Dialog open={showNewTopicDialog} onOpenChange={setShowNewTopicDialog}>
                     <DialogTrigger asChild>
-                      <Button className="flex items-center gap-2">
+                      <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg">
                         <Plus className="h-4 w-4" />
                         New Topic
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>Create New Topic</DialogTitle>
+                    <DialogContent className="max-w-2xl bg-white border-2 border-blue-200 shadow-xl">
+                      <DialogHeader className="bg-blue-50 -m-6 mb-6 p-6 rounded-t-lg">
+                        <DialogTitle className="text-xl font-bold text-blue-900">Create New Topic</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
@@ -630,8 +630,8 @@ export default function ForumInteractive() {
                         <CardContent className="p-6">
                           <div className="flex items-start gap-4">
                             <Avatar>
-                              <AvatarFallback>
-                                <User className="h-4 w-4" />
+                              <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold">
+                                {post.userName ? post.userName.charAt(0).toUpperCase() : 'U'}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1">

@@ -83,6 +83,7 @@ export interface IStorage {
   getPostLikeCount(postId: number): Promise<number>;
   hasUserLikedTopic(userId: number, topicId: number): Promise<boolean>;
   hasUserLikedPost(userId: number, postId: number): Promise<boolean>;
+  populateForumWithHvacContent(): Promise<void>;
   
   // Reviews methods
   getReviews(approvedOnly?: boolean): Promise<CustomerReview[]>;
@@ -1135,6 +1136,119 @@ export class DatabaseStorage implements IStorage {
       .where(eq(serviceRequests.status, "in_progress"))
       .orderBy(desc(serviceRequests.createdAt));
     return results;
+  }
+
+  async populateForumWithHvacContent(): Promise<void> {
+    // Check if content already exists
+    const existingTopics = await this.getTopicsByCategory(1);
+    if (existingTopics.length > 0) {
+      return; // Content already exists
+    }
+
+    // Create admin user for content creation if not exists
+    let adminUser = await this.getUserByUsername('hvac_expert');
+    if (!adminUser) {
+      adminUser = await this.createUser({
+        username: 'hvac_expert',
+        email: 'expert@afterhourshvac.ca',
+        password: 'temp_password',
+        role: 'admin',
+        userType: 'professional'
+      });
+    }
+
+    // Professional HVAC content for each category
+    const hvacContent = [
+      {
+        categoryId: 1, // General Discussion
+        topics: [
+          {
+            title: "Welcome to AfterHours HVAC Professional Forum",
+            content: "Welcome to the premier destination for HVAC professionals in Calgary and surrounding areas. This forum is designed for technicians, contractors, and industry professionals to share knowledge, discuss best practices, and stay updated on the latest industry developments.\n\nForum Guidelines:\n• Share professional experiences and technical solutions\n• Respect all members and maintain professional discourse\n• Use proper safety protocols in all discussions\n• Follow Alberta and Canadian HVAC codes and regulations\n\nLet's build a strong community of HVAC excellence together!"
+          },
+          {
+            title: "Calgary HVAC Market Trends - Winter 2024/2025",
+            content: "The Calgary HVAC market is experiencing significant changes this winter season:\n\n**Equipment Demand:**\n• High-efficiency furnaces (95%+ AFUE) are becoming the standard\n• Heat pumps gaining popularity despite our climate challenges\n• Smart thermostats now requested in 80% of installations\n\n**Supply Chain Updates:**\n• Lead times for premium equipment: 4-6 weeks\n• Local suppliers (Alggin, WESCO) maintaining good inventory\n• Price increases expected Q1 2025 (8-12% average)\n\n**Regulatory Changes:**\n• New refrigerant regulations coming into effect\n• Updated building codes for multi-family dwellings\n• Enhanced energy efficiency requirements\n\nWhat trends are you seeing in your service area?"
+          }
+        ]
+      },
+      {
+        categoryId: 2, // Troubleshooting & Repairs
+        topics: [
+          {
+            title: "Common Furnace Issues in Extreme Cold (-30°C and Below)",
+            content: "Calgary's extreme winter conditions present unique challenges for residential furnaces. Here's a comprehensive guide for the most common issues:\n\n**1. Frozen Condensate Lines**\n• Symptoms: Water backing up, furnace shutting down\n• Solution: Insulate exterior portions, check drainage slope\n• Prevention: Regular maintenance, proper installation\n\n**2. Heat Exchanger Stress Cracks**\n• More common in extreme cold due to rapid expansion/contraction\n• Look for corrosion patterns, flame rollout\n• Safety first - immediate shutdown if suspected\n\n**3. Intake/Exhaust Icing**\n• High-efficiency units most susceptible\n• Clear snow/ice buildup immediately\n• Install wind guards where appropriate\n\n**4. Thermostat Drift in Cold**\n• Digital stats can read incorrectly in extreme cold\n• Check sensor placement and calibration\n• Consider upgrading to commercial-grade units\n\n**Emergency Protocol:**\n1. Safety check first\n2. Restore heat quickly (space heaters if safe)\n3. Document findings for warranty claims\n\nShare your cold-weather troubleshooting experiences below!"
+          },
+          {
+            title: "Heat Pump Performance in Calgary Climate",
+            content: "Heat pumps are becoming more viable in Calgary, but require careful consideration:\n\n**Performance Thresholds:**\n• Most units maintain efficiency down to -15°C\n• Auxiliary heat kicks in below -20°C\n• Emergency heat mode below -25°C\n\n**Installation Considerations:**\n• Oversizing by 15-20% for our climate\n• Quality defrost controls essential\n• Proper refrigerant charge critical\n\n**Maintenance Schedule:**\n• Pre-winter inspection (September)\n• Mid-winter check (January)\n• Post-winter service (April)\n\n**Common Issues:**\n• Defrost cycle problems\n• Ice buildup on outdoor unit\n• Refrigerant leaks in extreme cold\n• Backup heating system failures\n\n**Recommended Brands for Calgary:**\n• Mitsubishi Hyper-Heat series\n• Carrier Greenspeed\n• Lennox Elite series\n\nWhat's your experience with heat pump installations in our climate?"
+          }
+        ]
+      },
+      {
+        categoryId: 3, // Installation Tips
+        topics: [
+          {
+            title: "Proper Furnace Installation in Calgary Basements",
+            content: "Calgary's unique basement conditions require specific installation considerations:\n\n**Foundation Requirements:**\n• Concrete pad minimum 4\" thick\n• Vibration isolation for noise reduction\n• Proper clearances per manufacturer specs\n• Access for future maintenance\n\n**Ventilation Systems:**\n• High-efficiency: PVC intake/exhaust\n• Standard efficiency: B-vent through roof\n• Combustion air requirements (newer homes)\n• Proper slope for condensate drainage\n\n**Electrical Considerations:**\n• Dedicated 15A circuit minimum\n• GFCI protection where required\n• Emergency shut-off switch location\n• Proper grounding per CEC\n\n**Gas Line Sizing:**\n• Calculate BTU demand properly\n• Account for pipe length and fittings\n• Pressure test before connection\n• Use approved pipe dope/tape\n\n**Calgary-Specific Challenges:**\n• Clay soil movement affecting gas lines\n• Basement flooding concerns\n• Older home retrofits\n• Permit and inspection requirements\n\n**Code Compliance:**\n• Alberta Building Code requirements\n• TSSA gas fitting regulations\n• City of Calgary permits\n• Manufacturer warranty conditions\n\nShare your installation tips and photos!"
+          },
+          {
+            title: "Ductwork Design for Calgary Homes",
+            content: "Proper ductwork is crucial for system efficiency and comfort in Calgary's climate:\n\n**Design Principles:**\n• Manual D calculations essential\n• Account for extreme temperature differentials\n• Proper return air sizing (often undersized)\n• Zoning considerations for large homes\n\n**Material Selection:**\n• Galvanized steel for main trunks\n• Flexible duct for final connections\n• Insulation R-6 minimum in unconditioned spaces\n• Vapor barriers in cold climate applications\n\n**Installation Best Practices:**\n• Seal all joints with mastic (not tape)\n• Support every 4 feet maximum\n• Maintain proper slopes for drainage\n• Avoid sharp bends and restrictions\n\n**Calgary Housing Considerations:**\n• Older homes: knob-and-tube electrical conflicts\n• Bi-level homes: proper return air strategy\n• Cathedral ceilings: insulation and air sealing\n• Basement development: code compliance\n\n**Common Mistakes:**\n• Undersized return ducts\n• Poor sealing at equipment connections\n• Inadequate insulation in crawl spaces\n• Improper damper installation\n\n**Testing and Commissioning:**\n• Duct blaster testing recommended\n• Airflow measurements at each register\n• System balancing for comfort\n• Documentation for homeowner\n\nWhat ductwork challenges do you face most often?"
+          }
+        ]
+      },
+      {
+        categoryId: 4, // Equipment Reviews
+        topics: [
+          {
+            title: "2024 Furnace Brand Comparison - Calgary Market Focus",
+            content: "Comprehensive comparison of furnace brands performing well in Calgary's market:\n\n**Premium Tier:**\n\n**Carrier Infinity Series**\n• Modulating gas valve technology\n• Variable speed ECM motor\n• Excellent cold weather performance\n• Price: $3,500-5,500 (equipment only)\n• Warranty: 20 years heat exchanger\n\n**Lennox Elite EL296V**\n• 96% AFUE efficiency\n• SilentComfort technology\n• Dual-fuel capability\n• Price: $3,200-4,800\n• Warranty: 20 years heat exchanger\n\n**Mid-Range Leaders:**\n\n**Goodman GMVC96 Series**\n• Reliable workhorse\n• Good parts availability\n• Competitive pricing\n• Price: $2,200-3,200\n• Warranty: 20 years heat exchanger\n\n**Rheem Classic Plus**\n• Multi-position installation\n• Stainless steel heat exchanger\n• Good cold climate performance\n• Price: $2,400-3,400\n\n**Budget Reliable:**\n\n**Amana AMVC96**\n• Same manufacturer as Goodman\n• Solid performance\n• Excellent warranty\n• Price: $1,900-2,800\n\n**Local Supplier Notes:**\n• Alggin carries Carrier, Goodman, Amana\n• WESCO stocks Lennox, Rheem\n• Lead times vary by brand (2-6 weeks)\n\n**Installation Considerations:**\n• All brands require proper sizing\n• Variable speed motors need compatible thermostats\n• Warranty registration essential\n\nShare your brand experiences and recommendations!"
+          },
+          {
+            title: "Smart Thermostat Integration - Professional Perspective",
+            content: "Smart thermostats have become standard in Calgary installations. Here's what you need to know:\n\n**Top Professional Choices:**\n\n**Ecobee SmartThermostat Premium**\n• Built-in air quality monitoring\n• Remote sensors included\n• Professional installer portal\n• Excellent cold climate algorithms\n• Price: $329 retail, $220 contractor\n\n**Honeywell T10 Pro**\n• RedLink wireless technology\n• Contractor-friendly programming\n• Robust construction\n• Good with older systems\n• Price: $279 retail, $189 contractor\n\n**Nest Learning (4th Gen)**\n• Auto-scheduling features\n• Easy homeowner interface\n• Google integration\n• Some compatibility issues with older systems\n• Price: $329 retail, $199 contractor\n\n**Installation Tips:**\n• Check C-wire availability first\n• Use proper wire nuts for connections\n• Take photo of old wiring before removal\n• Test all functions before leaving\n\n**Common Issues:**\n• Insufficient power from older transformers\n• Compatibility with zone systems\n• WiFi connectivity problems\n• Homeowner confusion with setup\n\n**Professional Features:**\n• Remote monitoring capabilities\n• Maintenance reminders\n• Service history tracking\n• Customer notification systems\n\n**Markup and Pricing:**\n• Standard markup: 40-60% above cost\n• Installation time: 45-90 minutes\n• Include basic programming in price\n• Charge separately for advanced setup\n\nWhat smart thermostats do you recommend and why?"
+          }
+        ]
+      },
+      {
+        categoryId: 5, // Industry News
+        topics: [
+          {
+            title: "Alberta HVAC Code Changes 2024 - What You Need to Know",
+            content: "Significant regulatory changes affecting HVAC professionals in Alberta:\n\n**Refrigerant Regulations:**\n• R-410A phase-down accelerated\n• R-454B and R-32 adoption increasing\n• Enhanced recovery requirements\n• New technician certification levels\n\n**Energy Efficiency Updates:**\n• Minimum AFUE increased to 95% for most applications\n• Heat pump incentives expanded\n• Net-zero ready home standards\n• Enhanced building envelope requirements\n\n**Safety and Installation:**\n• Carbon monoxide detector requirements updated\n• Gas appliance venting changes\n• Combustion air calculation revisions\n• Emergency shut-off requirements\n\n**Licensing and Certification:**\n• Continuing education requirements increased\n• Specialized certifications for heat pumps\n• Digital permit submissions mandatory\n• Insurance requirement updates\n\n**Environmental Compliance:**\n• Stricter refrigerant leak reporting\n• Enhanced disposal requirements\n• Greenhouse gas reduction targets\n• Rebate program changes\n\n**Timeline for Implementation:**\n• January 2024: New efficiency standards\n• March 2024: Refrigerant regulations\n• June 2024: Permit system updates\n• September 2024: Training requirements\n\n**Action Items for Contractors:**\n• Update training certifications\n• Review equipment specifications\n• Update estimation software\n• Inform customers of changes\n\nStay informed and compliant!"
+          },
+          {
+            title: "Calgary Utility Rebate Programs - 2024 Update",
+            content: "Current rebate and incentive programs available in Calgary:\n\n**ENMAX Energy Efficiency Programs:**\n\n**High-Efficiency Furnace Rebate**\n• 95%+ AFUE: $500\n• 96%+ AFUE: $750\n• Modulating units: Additional $200\n• Must be ENERGY STAR certified\n\n**Heat Pump Incentives**\n• Air-source heat pump: $1,000\n• Cold-climate units: $1,500\n• Dual-fuel systems: $2,000\n• Ground-source: $5,000\n\n**Smart Thermostat Program**\n• ENERGY STAR certified: $75\n• Professional installation required\n• Limit 2 per household\n\n**Federal Programs:**\n\n**Canada Greener Homes Grant**\n• Pre/post energy audits required\n• Heat pumps: Up to $5,000\n• Insulation upgrades: Up to $5,000\n• Combined with provincial programs\n\n**Application Process:**\n• Online applications preferred\n• Professional installation required\n• Receipts and photos needed\n• 8-12 week processing time\n\n**Contractor Requirements:**\n• Registered with program\n• Proper licensing verification\n• Installation certification\n• Customer education required\n\n**Tips for Contractors:**\n• Help customers with applications\n• Factor rebates into pricing\n• Keep program documentation\n• Follow up on approvals\n\nMaximize value for your customers!"
+          }
+        ]
+      }
+    ];
+
+    // Insert topics and posts for each category
+    for (const category of hvacContent) {
+      for (const topicData of category.topics) {
+        // Create the topic
+        const topic = await this.createForumTopic({
+          categoryId: category.categoryId,
+          userId: adminUser.id,
+          title: topicData.title,
+          content: topicData.content,
+          isPinned: true,
+          isLocked: false
+        });
+
+        // Add a welcome reply to some topics
+        if (topicData.title.includes('Welcome') || topicData.title.includes('Market Trends')) {
+          await this.createForumPost({
+            topicId: topic.id,
+            userId: adminUser.id,
+            content: "Feel free to share your experiences and ask questions. This is a professional community focused on advancing HVAC excellence in Calgary and Alberta."
+          });
+        }
+      }
+    }
   }
 }
 
