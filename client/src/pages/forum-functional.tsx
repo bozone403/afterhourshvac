@@ -134,9 +134,10 @@ export default function ForumPage() {
           <title>HVAC Community Forum - AfterHours HVAC</title>
           <meta name="description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners." />
         </Helmet>
-        <div className="container mx-auto py-24 px-4 min-h-screen">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl font-bold mb-6">HVAC Forum</h1>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
+          <div className="container mx-auto py-24 px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <h1 className="text-3xl font-bold mb-6 text-gray-900">HVAC Forum</h1>
             <Card>
               <CardHeader>
                 <CardTitle>Login Required</CardTitle>
@@ -152,10 +153,11 @@ export default function ForumPage() {
               </CardContent>
               <div className="flex justify-center p-6">
                 <Link href="/auth">
-                  <Button>Login or Register</Button>
+                  <Button className="bg-orange-600 hover:bg-orange-700">Login or Register</Button>
                 </Link>
               </div>
             </Card>
+            </div>
           </div>
         </div>
       </>
@@ -163,7 +165,7 @@ export default function ForumPage() {
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
       <Helmet>
         <title>HVAC Community Forum - AfterHours HVAC</title>
         <meta name="description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners." />
@@ -172,15 +174,16 @@ export default function ForumPage() {
         <meta property="og:type" content="website" />
         <meta name="keywords" content="HVAC forum, heating cooling discussion, HVAC community, HVAC questions, HVAC advice" />
       </Helmet>
-      <div className="container mx-auto py-24 px-4 min-h-screen">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold">HVAC Discussion Forum</h1>
-            <Button>
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Contact Support
-            </Button>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
+        <div className="container mx-auto py-24 px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex justify-between items-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-900">HVAC Discussion Forum</h1>
+              <Button className="bg-orange-600 hover:bg-orange-700">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Contact Support
+              </Button>
+            </div>
         
           <p className="text-muted-foreground mb-8">
             Welcome to the AfterHours HVAC forum! This is where community members can discuss HVAC topics,
@@ -196,7 +199,7 @@ export default function ForumPage() {
               <Shield className="h-4 w-4 text-yellow-500" />
             </div>
             
-            <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/30">
+            <Card className="bg-gradient-to-r from-orange-50 to-blue-50 border-orange-200">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -397,6 +400,5 @@ export default function ForumPage() {
           </div>
         </div>
       </div>
-    </>
-  );
+    );
 }

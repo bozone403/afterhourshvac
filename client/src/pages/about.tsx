@@ -10,41 +10,41 @@ const About = () => {
       </Helmet>
       
       {/* Page Header */}
-      <div className="relative pt-24 pb-10 bg-dark">
+      <div className="relative pt-24 pb-10 bg-gradient-to-br from-blue-50 to-orange-50">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold font-header mb-4">About <span className="text-primary">Us</span></h1>
-            <p className="text-lightgray max-w-3xl mx-auto">Founded on a commitment to exceptional service and technical expertise, AfterHours HVAC has built a reputation for reliability and quality workmanship in Alberta.</p>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">About <span className="text-orange-600">Us</span></h1>
+            <p className="text-gray-600 max-w-3xl mx-auto">Founded on a commitment to exceptional service and technical expertise, AfterHours HVAC has built a reputation for reliability and quality workmanship in Alberta.</p>
           </div>
         </div>
       </div>
       
       {/* About Section */}
-      <section className="bg-dark py-20">
+      <section className="bg-white py-20">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold font-header mb-6">The AfterHours <span className="text-primary">Difference</span></h2>
-              <p className="text-lightgray mb-6">When everyone else is closed for the day, we're still working hard to keep your heating and cooling systems functioning at peak performance. Our mission is to provide unparalleled HVAC services with a focus on reliability, quality workmanship, and customer satisfaction.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">The AfterHours <span className="text-orange-600">Difference</span></h2>
+              <p className="text-gray-600 mb-6">When everyone else is closed for the day, we're still working hard to keep your heating and cooling systems functioning at peak performance. Our mission is to provide unparalleled HVAC services with a focus on reliability, quality workmanship, and customer satisfaction.</p>
               
               <div className="space-y-4 mb-8">
                 <div className="flex items-start">
-                  <div className="bg-primary rounded-full p-2 mr-4 mt-1">
+                  <div className="bg-orange-600 rounded-full p-2 mr-4 mt-1">
                     <i className="fas fa-clock text-white"></i>
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold font-header mb-1">24/7 Emergency Service</h3>
-                    <p className="text-lightgray">We're available around the clock because HVAC emergencies don't follow business hours.</p>
+                    <h3 className="text-xl font-semibold mb-1 text-gray-900">24/7 Emergency Service</h3>
+                    <p className="text-gray-600">We're available around the clock because HVAC emergencies don't follow business hours.</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="bg-primary rounded-full p-2 mr-4 mt-1">
+                  <div className="bg-blue-600 rounded-full p-2 mr-4 mt-1">
                     <i className="fas fa-certificate text-white"></i>
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold font-header mb-1">Licensed & Certified</h3>
-                    <p className="text-lightgray">Our technicians are fully licensed, insured, and certified to handle all HVAC systems.</p>
+                    <h3 className="text-xl font-semibold mb-1 text-gray-900">Licensed & Certified</h3>
+                    <p className="text-gray-600">Our technicians are fully licensed, insured, and certified to handle all HVAC systems.</p>
                   </div>
                 </div>
                 
