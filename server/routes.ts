@@ -1663,6 +1663,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ADMIN DASHBOARD API ENDPOINTS
   
+  // Unified submissions endpoint (combines all submission types)
+  app.get("/api/admin/submissions", requireAdmin, async (req, res) => {
+    try {
+      const [contactSubmissions, emergencyRequests, quoteRequests] = await Promise.all([
+        storage.getContactSubmissions(),
+        storage.getEmergencyRequests(),
+        storage.getQuoteRequests()
+      ]);
+      
+      const allSubmissions = [
+        ...contactSubmissions.map(s => ({ ...s, type: 'contact' })),
+        ...emergencyRequests.map(s => ({ ...s, type: 'emergency' })),
+        ...quoteRequests.map(s => ({ ...s, type: 'quote' }))
+      ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      
+      res.json(allSubmissions);
+    } catch (error: any) {
+      console.error("Error getting submissions:", error);
+      res.status(500).json({ 
+        error: "Error getting submissions", 
+        message: error.message 
+      });
+    }
+  });
+  
   // Dashboard statistics
   app.get("/api/admin/dashboard-stats", requireAdmin, async (req, res) => {
     try {
