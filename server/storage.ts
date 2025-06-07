@@ -1139,10 +1139,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async populateForumWithHvacContent(): Promise<void> {
-    // Check if content already exists
-    const existingTopics = await this.getForumTopics(1);
-    if (existingTopics.length > 0) {
-      return; // Content already exists
+    // Check if professional content already exists
+    const existingProfessionalTopics = await db.select()
+      .from(forumTopics)
+      .where(eq(forumTopics.title, "Calgary HVAC Market Trends - Winter 2024/2025"));
+    
+    if (existingProfessionalTopics.length > 0) {
+      return; // Professional content already exists
     }
 
     // Create admin user for content creation if not exists
