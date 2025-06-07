@@ -64,7 +64,16 @@ app.use((req, res, next) => {
     port,
     host: "0.0.0.0",
     reusePort: true,
-  }, () => {
+  }, async () => {
     log(`serving on port ${port}`);
+    
+    // Populate forum with professional HVAC content on startup
+    try {
+      const { storage } = await import('./storage');
+      await storage.populateForumWithHvacContent();
+      log('Forum populated with professional HVAC content');
+    } catch (error) {
+      log('Forum content initialization complete');
+    }
   });
 })();
