@@ -283,6 +283,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // SERVICE BOOKING ROUTES
   
+  // Emergency service request API
+  app.post("/api/emergency-request", async (req, res) => {
+    try {
+      const { name, phone, issue, description } = req.body;
+      
+      // Log emergency request for immediate attention
+      console.log("EMERGENCY REQUEST RECEIVED:", {
+        name,
+        phone,
+        issue,
+        description,
+        timestamp: new Date().toISOString()
+      });
+      
+      // In production, this would trigger SMS/email alerts to on-call technicians
+      const requestId = `EMG-${Date.now()}`;
+      
+      res.json({ 
+        success: true, 
+        requestId,
+        message: "Emergency request received. A technician will contact you within 15 minutes."
+      });
+    } catch (error: any) {
+      console.error("Error processing emergency request:", error);
+      res.status(500).json({ error: "Failed to process emergency request" });
+    }
+  });
+  
   // Service booking API for furnace installation, AC installation, maintenance
   app.post("/api/service-booking", async (req, res) => {
     try {

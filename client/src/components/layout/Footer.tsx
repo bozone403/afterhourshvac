@@ -2,12 +2,16 @@ import { Link } from 'wouter';
 
 const Footer = () => {
   return (
-    <footer className="bg-darkgray pt-16 pb-8">
+    <footer className="bg-gray-900 pt-16 pb-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
           <div>
-            <h3 className="text-xl font-bold font-header mb-4">AfterHours HVAC</h3>
-            <p className="text-lightgray mb-4">Professional heating, cooling, and ventilation services for residential and commercial clients throughout Alberta.</p>
+            <h3 className="text-xl font-bold font-header mb-4 text-white">
+              <span className="text-orange-500">After</span>
+              <span className="text-blue-400">Hours</span> 
+              <span className="text-white">HVAC</span>
+            </h3>
+            <p className="text-gray-300 mb-4">Professional heating, cooling, and ventilation services for residential and commercial clients throughout Alberta.</p>
             <div className="flex items-center space-x-2">
               <a href="tel:4036136014" className="bg-primary hover:bg-opacity-80 text-white py-2 px-4 rounded-md transition-all font-medium text-sm">
                 <i className="fas fa-phone-alt mr-2"></i> (403) 613-6014
@@ -21,7 +25,7 @@ const Footer = () => {
               <li><Link href="/"><div className="text-lightgray hover:text-white transition-colors cursor-pointer">Home</div></Link></li>
               <li><Link href="/about"><div className="text-lightgray hover:text-white transition-colors cursor-pointer">About Us</div></Link></li>
               <li><Link href="/gallery"><div className="text-lightgray hover:text-white transition-colors cursor-pointer">Gallery</div></Link></li>
-              <li><Link href="/pricing"><div className="text-lightgray hover:text-white transition-colors cursor-pointer">Pricing</div></Link></li>
+              <li><Link href="/membership"><div className="text-gray-300 hover:text-white transition-colors cursor-pointer">Membership</div></Link></li>
               <li><Link href="/calculators"><div className="text-lightgray hover:text-white transition-colors cursor-pointer">Calculators</div></Link></li>
               <li><Link href="/contact"><div className="text-lightgray hover:text-white transition-colors cursor-pointer">Contact</div></Link></li>
             </ul>

@@ -61,7 +61,10 @@ const ProCalculator = () => {
     'lennox': 'Lennox',
     'carrier': 'Carrier',
     'trane': 'Trane',
-    'goodman': 'Goodman'
+    'goodman': 'Goodman',
+    'rheem': 'Rheem',
+    'ruud': 'Ruud',
+    'american-standard': 'American Standard'
   };
 
   const additionalServices = {
