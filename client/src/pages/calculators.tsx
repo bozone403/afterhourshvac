@@ -7,12 +7,36 @@ import { Calculator, Building, Flame, Snowflake, Wrench, DollarSign, Zap, File, 
 
 const freeCalculators = [
   {
-    id: 'btu',
+    id: 'btu-calculator',
     title: 'BTU Calculator',
-    description: 'Calculate heating and cooling requirements for any space',
+    description: 'Calculate heating and cooling requirements with Ducane, Daikin & Lennox equipment recommendations',
     icon: Zap,
-    link: '/calculators/btu',
+    link: '/calculators/btu-calculator',
     badge: 'Free Tool'
+  },
+  {
+    id: 'energy-savings',
+    title: 'Energy Savings Calculator',
+    description: 'Calculate potential savings and environmental impact of HVAC upgrades',
+    icon: DollarSign,
+    link: '/calculators/energy-savings',
+    badge: 'Free Tool'
+  },
+  {
+    id: 'load-calculator',
+    title: 'HVAC Load Calculator',
+    description: 'Professional load calculations using Manual J principles with equipment sizing',
+    icon: Calculator,
+    link: '/calculators/load-calculator',
+    badge: 'Free Tool'
+  },
+  {
+    id: 'btu-legacy',
+    title: 'Simple BTU Calculator',
+    description: 'Basic BTU calculation for quick estimates',
+    icon: Flame,
+    link: '/calculators/btu',
+    badge: 'Basic Tool'
   }
 ];
 

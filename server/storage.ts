@@ -885,13 +885,14 @@ export class DatabaseStorage implements IStorage {
 
   // Service Journey Tracking Implementation
   async getServiceRequests(status?: string): Promise<ServiceRequest[]> {
-    let query = db.select().from(serviceRequests).orderBy(desc(serviceRequests.createdAt));
-    
     if (status) {
-      query = query.where(eq(serviceRequests.status, status));
+      return await db.select().from(serviceRequests)
+        .where(eq(serviceRequests.status, status))
+        .orderBy(desc(serviceRequests.createdAt));
     }
     
-    return await query;
+    return await db.select().from(serviceRequests)
+      .orderBy(desc(serviceRequests.createdAt));
   }
 
   async getServiceRequestById(id: number): Promise<ServiceRequest | undefined> {
@@ -998,13 +999,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTechnicianLocation(technicianId: number, serviceRequestId?: number): Promise<TechnicianLocation | undefined> {
-    let query = db.select().from(technicianLocations).where(eq(technicianLocations.technicianId, technicianId));
-    
     if (serviceRequestId) {
-      query = query.where(eq(technicianLocations.serviceRequestId, serviceRequestId));
+      const [location] = await db.select().from(technicianLocations)
+        .where(and(
+          eq(technicianLocations.technicianId, technicianId),
+          eq(technicianLocations.serviceRequestId, serviceRequestId)
+        ))
+        .orderBy(desc(technicianLocations.lastUpdated))
+        .limit(1);
+      return location;
     }
     
-    const [location] = await query.orderBy(desc(technicianLocations.lastUpdated)).limit(1);
+    const [location] = await db.select().from(technicianLocations)
+      .where(eq(technicianLocations.technicianId, technicianId))
+      .orderBy(desc(technicianLocations.lastUpdated))
+      .limit(1);
     return location;
   }
 

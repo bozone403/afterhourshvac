@@ -23,6 +23,10 @@ import Calculators from "@/pages/calculators";
 import MaterialEstimator from "@/pages/calculators/material-estimator-alggin";
 import CommercialEstimator from "@/pages/calculators/commercial-estimator";
 import BTUCalculator from "@/pages/calculators/btu";
+import BTUCalc from "@/pages/calculators/btu-calculator";
+import EnergySavingsCalculator from "@/pages/calculators/energy-savings";
+import LoadCalculator from "@/pages/calculators/load-calculator";
+import ServiceTracking from "@/pages/service-tracking";
 import ProCalculator from "@/pages/pro-calculator";
 import Membership from "@/pages/membership";
 import FurnaceInstall from "@/pages/services/furnace-install";
@@ -66,6 +70,10 @@ function Router() {
         <Route path="/calculators/material-estimator" component={MaterialEstimator} />
         <Route path="/calculators/commercial-estimator" component={CommercialEstimator} />
         <Route path="/calculators/btu" component={BTUCalculator} />
+        <Route path="/calculators/btu-calculator" component={BTUCalc} />
+        <Route path="/calculators/energy-savings" component={EnergySavingsCalculator} />
+        <Route path="/calculators/load-calculator" component={LoadCalculator} />
+        <Route path="/service-tracking" component={ServiceTracking} />
         <Route path="/services/furnace-install" component={FurnaceInstall} />
         <Route path="/products/furnace" component={FurnacePage} />
         <Route path="/blog" component={BlogIndex} />
