@@ -36,6 +36,7 @@ import BlogIndex from "@/pages/blog/index";
 import BlogFurnaceWinter from "@/pages/blog/prepare-furnace-winter";
 import BlogCommercialVsResidential from "@/pages/blog/commercial-vs-residential-hvac";
 import Checkout from "@/pages/checkout";
+import Payment from "@/pages/payment";
 import AdminPhotos from "@/pages/admin-photos-enhanced";
 import PaymentConfirmation from "@/pages/payment-confirmation";
 import CalendarBooking from "@/pages/calendar-booking";
@@ -101,7 +102,7 @@ function Router() {
         <Route path="/membership" component={MembershipSimple} />
         <Route path="/pro-calculator" component={ProCalculatorV2} />
         <Route path="/pro-portal" component={ProPortal} />
-        <Route path="/checkout" component={Checkout} />
+        <Route path="/checkout/:productId" component={Checkout} />
         <Route path="/payment-confirmation" component={PaymentConfirmation} />
         <Route path="/calendar-booking" component={CalendarBooking} />
         

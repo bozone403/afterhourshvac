@@ -285,7 +285,7 @@ const WaterHeatersShop = () => {
                   Call (403) 613-6014
                 </Button>
                 <Button asChild size="lg" variant="outline" className="text-lg px-8 bg-white text-blue-600 hover:bg-gray-100">
-                  <Link href="/membership">
+                  <Link href="/checkout/water-heater-premium">
                     Buy Water Heater
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>

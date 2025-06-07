@@ -192,7 +192,7 @@ const AirConditioningShop = () => {
                         Learn More
                       </Button>
                       <Button asChild className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white">
-                        <Link href="/membership">
+                        <Link href="/checkout/ac-premium">
                           <ShoppingCart className="w-4 h-4 mr-2" />
                           Buy Now
                         </Link>

@@ -194,7 +194,7 @@ const FurnacesShop = () => {
                         Learn More
                       </Button>
                       <Button asChild className="w-full bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 text-white">
-                        <Link href="/membership">
+                        <Link href="/checkout/furnace-premium">
                           <ShoppingCart className="w-4 h-4 mr-2" />
                           Buy Now
                         </Link>

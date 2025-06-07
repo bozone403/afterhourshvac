@@ -1,338 +1,399 @@
-import { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { useLocation, useRoute, useLocation as useNavigation } from 'wouter';
-import { useStripe, useElements, Elements, PaymentElement } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import { apiRequest } from '@/lib/queryClient';
-import { useToast } from '@/hooks/use-toast';
-import { formatCurrency } from '@/lib/utils';
+import { useState, useEffect } from "react";
+import { useLocation, useRoute, Link } from "wouter";
+import { Helmet } from "react-helmet-async";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/use-auth";
+import { 
+  ShoppingCart, 
+  ArrowLeft, 
+  CheckCircle, 
+  CreditCard,
+  Shield,
+  Truck,
+  Phone,
+  User,
+  Lock
+} from "lucide-react";
 
-// Make sure to call `loadStripe` outside of a component's render to avoid
-// recreating the `Stripe` object on every render.
-const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
-let stripePromise: Promise<any> | null = null;
-
-if (stripePublicKey) {
-  stripePromise = loadStripe(stripePublicKey);
-} else {
-  console.warn('Stripe public key not found. Payment functionality will be disabled.');
-}
-
-type PaymentData = {
-  service: string;
-  amount: number;
-  time?: string;
-  plan?: string;
-  description: string;
+// Product configurations
+const productConfigs = {
+  'furnace-premium': {
+    name: 'Premium High-Efficiency Furnace',
+    price: 7999,
+    description: '96% AFUE efficiency rating with advanced features',
+    image: '/api/placeholder/300/200',
+    features: [
+      'Variable-speed blower motor',
+      '10-year parts warranty',
+      'Smart thermostat compatibility',
+      'Professional installation included'
+    ],
+    category: 'Furnaces'
+  },
+  'ac-premium': {
+    name: 'Premium Central Air Conditioning',
+    price: 7499,
+    description: '18+ SEER high-efficiency cooling system',
+    image: '/api/placeholder/300/200',
+    features: [
+      'Two-stage compressor',
+      '10-year warranty coverage',
+      'Wi-Fi enabled thermostat',
+      'Professional installation included'
+    ],
+    category: 'Air Conditioning'
+  },
+  'water-heater-premium': {
+    name: 'Premium Gas Water Heater',
+    price: 3200,
+    description: 'High-efficiency 50-gallon capacity',
+    image: '/api/placeholder/300/200',
+    features: [
+      'Energy Star certified',
+      '12-year warranty',
+      'Self-diagnostic system',
+      'Professional installation included'
+    ],
+    category: 'Water Heaters'
+  },
+  'maintenance-quickshot': {
+    name: 'QuickShot Diagnostic',
+    price: 199,
+    description: '20-point comprehensive HVAC system inspection',
+    image: '/api/placeholder/300/200',
+    features: [
+      'Complete system evaluation',
+      'Performance optimization',
+      'Detailed report provided',
+      'Same-day service available'
+    ],
+    category: 'Maintenance'
+  },
+  'maintenance-dominion': {
+    name: 'Dominion Annual Plan',
+    price: 659,
+    description: 'Comprehensive yearly maintenance coverage',
+    image: '/api/placeholder/300/200',
+    features: [
+      'Spring and fall tune-ups',
+      '15% discount on repairs',
+      'Priority scheduling',
+      'Filter replacement included'
+    ],
+    category: 'Maintenance'
+  }
 };
 
-// Component for the checkout form after Stripe has been initialized
-const CheckoutForm = ({ paymentData }: { paymentData: PaymentData }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const { toast } = useToast();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [, setLocation] = useNavigation();
+const CheckoutPage = () => {
+  const [, params] = useRoute("/checkout/:productId");
+  const [location, setLocation] = useLocation();
+  const { user, isLoading } = useAuth();
+  const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
+  
+  const productId = params?.productId;
+  const product = productId ? productConfigs[productId as keyof typeof productConfigs] : null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!stripe || !elements) {
-      return;
+  const maintenanceAddOns = [
+    {
+      id: 'quickshot',
+      name: 'QuickShot Diagnostic',
+      price: 199,
+      description: 'Post-installation system verification'
+    },
+    {
+      id: 'dominion',
+      name: 'Annual Maintenance Plan',
+      price: 659,
+      description: 'Year-round protection and service'
     }
+  ];
 
-    setIsProcessing(true);
-
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/calendar-booking?service=${encodeURIComponent(paymentData.service)}&amount=${paymentData.amount}`,
-      },
-    });
-
-    if (error) {
-      toast({
-        title: "Payment Failed",
-        description: error.message || "There was an issue with your payment. Please try again.",
-        variant: "destructive",
-      });
-    } else {
-      // Successful payment should redirect to return_url, but we'll handle it just in case
-      toast({
-        title: "Payment Processing",
-        description: "Your payment is being processed. You'll be redirected shortly.",
-      });
-      
-      // Redirect to confirmation page if the return_url doesn't work for some reason
-      setTimeout(() => {
-        setLocation('/payment-confirmation');
-      }, 2000);
-    }
-
-    setIsProcessing(false);
+  const handleAddOnToggle = (addOnId: string) => {
+    setSelectedAddOns(prev => 
+      prev.includes(addOnId) 
+        ? prev.filter(id => id !== addOnId)
+        : [...prev, addOnId]
+    );
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="bg-dark p-6 rounded-lg border border-gray-700 mb-6">
-        <h3 className="text-xl font-bold font-header mb-4">Payment Summary</h3>
-        <div className="space-y-3">
-          <div className="flex justify-between pb-2 border-b border-gray-700">
-            <span className="text-lightgray">Service:</span>
-            <span className="font-medium">{paymentData.description}</span>
-          </div>
-          {paymentData.time && (
-            <div className="flex justify-between pb-2 border-b border-gray-700">
-              <span className="text-lightgray">Time:</span>
-              <span className="font-medium">{paymentData.time === 'evening' ? 'Evening (5pm-12am)' : 'Overnight (12am-8am)'}</span>
-            </div>
-          )}
-          {paymentData.plan && (
-            <div className="flex justify-between pb-2 border-b border-gray-700">
-              <span className="text-lightgray">Plan:</span>
-              <span className="font-medium">
-                {paymentData.plan === 'basic' ? 'Basic Maintenance Plan' : 
-                 paymentData.plan === 'premium' ? 'Premium Maintenance Plan' : 
-                 'Commercial Maintenance Plan'}
-              </span>
-            </div>
-          )}
-          <div className="flex justify-between pt-2">
-            <span className="text-lg font-semibold">Total:</span>
-            <span className="text-lg font-bold text-primary">{formatCurrency(paymentData.amount)}</span>
-          </div>
-        </div>
-      </div>
+  const calculateTotal = () => {
+    if (!product) return 0;
+    const addOnTotal = selectedAddOns.reduce((total, addOnId) => {
+      const addOn = maintenanceAddOns.find(a => a.id === addOnId);
+      return total + (addOn?.price || 0);
+    }, 0);
+    return product.price + addOnTotal;
+  };
 
-      <div className="bg-dark p-6 rounded-lg border border-gray-700">
-        <h3 className="text-xl font-bold font-header mb-4">Payment Information</h3>
-        <PaymentElement />
-      </div>
-
-      <div className="flex justify-between items-center mt-6">
-        <button 
-          type="button" 
-          onClick={() => window.history.back()}
-          className="bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-md transition-all font-medium"
-          disabled={isProcessing}
-        >
-          Back
-        </button>
-        <button 
-          type="submit" 
-          className="bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold disabled:opacity-50"
-          disabled={!stripe || !elements || isProcessing}
-        >
-          {isProcessing ? (
-            <span className="flex items-center">
-              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Processing...
-            </span>
-          ) : `Pay ${formatCurrency(paymentData.amount)}`}
-        </button>
-      </div>
-    </form>
-  );
-};
-
-// Main Checkout component
-const Checkout = () => {
-  const [location] = useLocation();
-  const [, params] = useRoute("/checkout");
-  const [clientSecret, setClientSecret] = useState("");
-  const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    // Parse query parameters from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const service = urlParams.get('service') || '';
-    const amount = parseFloat(urlParams.get('amount') || '0');
-    const time = urlParams.get('time') || undefined;
-    const plan = urlParams.get('plan') || undefined;
-    
-    if (!service || amount <= 0) {
-      toast({
-        title: "Payment Information Missing",
-        description: "The required payment information is missing or invalid. Please return to the service page and try again.",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    let description = urlParams.get('description') || '';
-    if (!description) {
-      switch (service) {
-        case 'pro':
-          description = `Pro Calculator Access - ${plan ? plan.charAt(0).toUpperCase() + plan.slice(1) : 'Unknown'} Plan`;
-          break;
-        case 'furnace-install':
-          description = 'Furnace Installation';
-          break;
-        case 'ac-install':
-          description = 'Air Conditioning Installation';
-          break;
-        case 'heatpump-install':
-          description = 'Heat Pump Installation';
-          break;
-        case 'repair-service':
-          description = 'Service Diagnostic Fee';
-          break;
-        case 'duct-cleaning':
-          description = 'Duct Cleaning Service';
-          break;
-        case 'water-heater':
-          description = 'Water Heater Installation Deposit';
-          break;
-        case 'thermostat':
-          description = 'Thermostat Installation';
-          break;
-        case 'light-commercial':
-          description = 'Light Commercial HVAC Consultation';
-          break;
-        case 'industrial':
-          description = 'Industrial HVAC Engineering Consultation';
-          break;
-        case 'maintenance-basic':
-          description = 'Basic Maintenance Plan';
-          break;
-        case 'maintenance-premium':
-          description = 'Premium Maintenance Plan';
-          break;
-        case 'maintenance-commercial':
-          description = 'Commercial Maintenance Plan';
-          break;
-        default:
-          description = 'HVAC Service';
-      }
+  const handleProceedToPayment = () => {
+    if (!user) {
+      // Redirect to login with return URL
+      setLocation(`/auth?redirect=/checkout/${productId}`);
     } else {
-      description = decodeURIComponent(description);
+      // Proceed to payment processing
+      setLocation(`/payment/${productId}?addons=${selectedAddOns.join(',')}`);
     }
+  };
 
-    const data = { 
-      service,
-      amount,
-      time,
-      plan,
-      description 
-    };
-    
-    setPaymentData(data);
-
-    // Create a PaymentIntent as soon as the page loads
-    apiRequest("POST", "/api/create-payment-intent", data)
-      .then((res) => res.json())
-      .then((data) => {
-        setClientSecret(data.clientSecret);
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error("Error creating payment intent:", error);
-        toast({
-          title: "Payment Setup Failed",
-          description: "There was an issue setting up your payment. Please try again.",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-      });
-  }, [location, toast]);
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="max-w-md">
+          <CardContent className="text-center p-8">
+            <h2 className="text-2xl font-bold mb-4">Product Not Found</h2>
+            <p className="text-gray-600 mb-6">The requested product could not be found.</p>
+            <Button asChild>
+              <Link href="/">Return Home</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <>
       <Helmet>
-        <title>Checkout - AfterHours HVAC</title>
-        <meta name="description" content="Secure payment processing for AfterHours HVAC services. Pay for service deposits, maintenance plans, and more." />
+        <title>Checkout - {product.name} | AfterHours HVAC</title>
+        <meta name="description" content={`Purchase ${product.name} - ${product.description}`} />
       </Helmet>
-      
-      {/* Page Header */}
-      <div className="relative pt-24 pb-10 bg-dark">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold font-header mb-4">Secure <span className="text-primary">Checkout</span></h1>
-            <p className="text-lightgray max-w-3xl mx-auto">Complete your payment securely through our Stripe payment processing system.</p>
+
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="bg-white shadow-sm border-b">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Shop
+                  </Link>
+                </Button>
+                <h1 className="text-2xl font-bold text-gray-900">Checkout</h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5 text-green-600" />
+                <span className="text-sm text-gray-600">Secure Checkout</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-3 gap-8">
+              
+              {/* Product Details */}
+              <div className="lg:col-span-2 space-y-6">
+                
+                {/* Selected Product */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <ShoppingCart className="w-5 h-5" />
+                      Your Selection
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex gap-4">
+                      <img 
+                        src={product.image} 
+                        alt={product.name}
+                        className="w-24 h-24 object-cover rounded-lg"
+                      />
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold">{product.name}</h3>
+                        <p className="text-gray-600 text-sm mb-2">{product.description}</p>
+                        <Badge variant="outline">{product.category}</Badge>
+                        <div className="text-2xl font-bold text-blue-600 mt-2">
+                          ${product.price.toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Separator className="my-4" />
+                    
+                    <div className="space-y-2">
+                      <h4 className="font-semibold">Included Features:</h4>
+                      {product.features.map((feature, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-sm">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          {feature}
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Add-On Services (only for equipment, not maintenance) */}
+                {product.category !== 'Maintenance' && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Add Maintenance Services</CardTitle>
+                      <p className="text-sm text-gray-600">
+                        Protect your investment with our professional maintenance services
+                      </p>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {maintenanceAddOns.map((addOn) => (
+                        <div 
+                          key={addOn.id}
+                          className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                            selectedAddOns.includes(addOn.id) 
+                              ? 'border-blue-500 bg-blue-50' 
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                          onClick={() => handleAddOnToggle(addOn.id)}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-semibold">{addOn.name}</h4>
+                              <p className="text-sm text-gray-600">{addOn.description}</p>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-bold text-blue-600">
+                                +${addOn.price}
+                              </div>
+                              <div className={`w-5 h-5 rounded border-2 ${
+                                selectedAddOns.includes(addOn.id)
+                                  ? 'bg-blue-600 border-blue-600'
+                                  : 'border-gray-300'
+                              }`}>
+                                {selectedAddOns.includes(addOn.id) && (
+                                  <CheckCircle className="w-4 h-4 text-white" />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Service Features */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Why Choose AfterHours HVAC?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="flex items-start gap-3">
+                        <Truck className="w-5 h-5 text-blue-600 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold">Professional Installation</h4>
+                          <p className="text-sm text-gray-600">Licensed technicians with full warranty coverage</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Phone className="w-5 h-5 text-blue-600 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold">24/7 Support</h4>
+                          <p className="text-sm text-gray-600">Emergency service available year-round</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold">Warranty Protection</h4>
+                          <p className="text-sm text-gray-600">Comprehensive coverage on all installations</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold">Quality Guarantee</h4>
+                          <p className="text-sm text-gray-600">100% satisfaction guaranteed</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Order Summary */}
+              <div className="lg:col-span-1">
+                <Card className="sticky top-4">
+                  <CardHeader>
+                    <CardTitle>Order Summary</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    
+                    {/* Main Product */}
+                    <div className="flex justify-between">
+                      <span>{product.name}</span>
+                      <span className="font-semibold">${product.price.toLocaleString()}</span>
+                    </div>
+
+                    {/* Selected Add-ons */}
+                    {selectedAddOns.map(addOnId => {
+                      const addOn = maintenanceAddOns.find(a => a.id === addOnId);
+                      return addOn ? (
+                        <div key={addOn.id} className="flex justify-between text-sm">
+                          <span>{addOn.name}</span>
+                          <span>+${addOn.price}</span>
+                        </div>
+                      ) : null;
+                    })}
+
+                    <Separator />
+                    
+                    {/* Total */}
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Total</span>
+                      <span className="text-blue-600">${calculateTotal().toLocaleString()}</span>
+                    </div>
+
+                    {/* Authentication Status */}
+                    {isLoading ? (
+                      <div className="bg-gray-100 p-4 rounded-lg text-center">
+                        <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-2"></div>
+                        <p className="text-sm">Checking login status...</p>
+                      </div>
+                    ) : user ? (
+                      <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <User className="w-4 h-4 text-green-600" />
+                          <span className="text-sm font-semibold text-green-800">Logged in as {user.username}</span>
+                        </div>
+                        <p className="text-xs text-green-700">Ready to complete your purchase</p>
+                      </div>
+                    ) : (
+                      <div className="bg-orange-50 border border-orange-200 p-4 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Lock className="w-4 h-4 text-orange-600" />
+                          <span className="text-sm font-semibold text-orange-800">Login Required</span>
+                        </div>
+                        <p className="text-xs text-orange-700">You'll need to log in to complete your purchase</p>
+                      </div>
+                    )}
+
+                    {/* Checkout Button */}
+                    <Button 
+                      onClick={handleProceedToPayment}
+                      className="w-full bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 text-white"
+                      size="lg"
+                    >
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      {user ? 'Proceed to Payment' : 'Login & Complete Purchase'}
+                    </Button>
+
+                    <p className="text-xs text-gray-500 text-center">
+                      Secure checkout powered by Stripe. Your payment information is encrypted and protected.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      
-      {/* Checkout Section */}
-      <section className="bg-dark py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            {isLoading ? (
-              <div className="flex flex-col items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mb-4"></div>
-                <p className="text-lightgray">Setting up secure payment...</p>
-              </div>
-            ) : !paymentData ? (
-              <div className="bg-darkgray rounded-lg p-8 text-center">
-                <h2 className="text-2xl font-bold font-header mb-4">Payment Information Missing</h2>
-                <p className="text-lightgray mb-6">The required payment information is missing or invalid. Please return to the service page and try again.</p>
-                <button 
-                  onClick={() => window.history.back()}
-                  className="bg-primary hover:bg-opacity-80 text-white py-2 px-4 rounded-md transition-all font-medium"
-                >
-                  Go Back
-                </button>
-              </div>
-            ) : !clientSecret ? (
-              <div className="bg-darkgray rounded-lg p-8 text-center">
-                <h2 className="text-2xl font-bold font-header mb-4">Payment Setup Failed</h2>
-                <p className="text-lightgray mb-6">There was an issue setting up the payment. Please try again or contact customer support.</p>
-                <button 
-                  onClick={() => window.history.back()}
-                  className="bg-primary hover:bg-opacity-80 text-white py-2 px-4 rounded-md transition-all font-medium"
-                >
-                  Go Back
-                </button>
-              </div>
-            ) : (
-              <div className="bg-darkgray rounded-lg p-8">
-                <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night' } }}>
-                  <CheckoutForm paymentData={paymentData} />
-                </Elements>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-      
-      {/* Security Info */}
-      <section className="bg-darkgray py-10">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex items-center justify-center mb-6">
-              <div className="flex items-center space-x-4">
-                <i className="fas fa-lock text-2xl text-primary"></i>
-                <h3 className="text-xl font-bold font-header">Secure Payment Processing</h3>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-              <div>
-                <i className="fas fa-shield-alt text-3xl text-primary mb-3"></i>
-                <h4 className="font-semibold mb-2">SSL Encryption</h4>
-                <p className="text-sm text-lightgray">Your payment information is encrypted using secure socket layer technology</p>
-              </div>
-              <div>
-                <i className="fab fa-cc-stripe text-3xl text-primary mb-3"></i>
-                <h4 className="font-semibold mb-2">Stripe Payments</h4>
-                <p className="text-sm text-lightgray">We use Stripe for secure payment processing, trusted by millions</p>
-              </div>
-              <div>
-                <i className="fas fa-credit-card text-3xl text-primary mb-3"></i>
-                <h4 className="font-semibold mb-2">Never Stored</h4>
-                <p className="text-sm text-lightgray">Your credit card details are never stored on our servers</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </>
   );
 };
 
-export default Checkout;
+export default CheckoutPage;
