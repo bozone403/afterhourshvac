@@ -131,32 +131,44 @@ const Header = () => {
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate('/pro-calculator')}>
-                      <Calculator className="h-4 w-4 mr-2" />
-                      Pro Calculator
-                    </DropdownMenuItem>
+                    <Link href="/pro-calculator">
+                      <DropdownMenuItem>
+                        <Calculator className="h-4 w-4 mr-2" />
+                        Pro Calculator
+                      </DropdownMenuItem>
+                    </Link>
                     {user && user.isAdmin && (
                       <>
-                        <DropdownMenuItem onClick={() => navigate('/admin-dashboard')}>
-                          <Settings className="h-4 w-4 mr-2" />
-                          Admin Dashboard
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/admin-data')}>
-                          <Settings className="h-4 w-4 mr-2" />
-                          Admin Data
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/admin-photos')}>
-                          <Settings className="h-4 w-4 mr-2" />
-                          Photo Management
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/supplier-data')}>
-                          <Settings className="h-4 w-4 mr-2" />
-                          Manual Data Entry
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/alggin-data')}>
-                          <Settings className="h-4 w-4 mr-2" />
-                          Alggin.com Import
-                        </DropdownMenuItem>
+                        <Link href="/admin">
+                          <DropdownMenuItem>
+                            <Settings className="h-4 w-4 mr-2" />
+                            Admin Dashboard
+                          </DropdownMenuItem>
+                        </Link>
+                        <Link href="/admin-data">
+                          <DropdownMenuItem>
+                            <Settings className="h-4 w-4 mr-2" />
+                            Admin Data
+                          </DropdownMenuItem>
+                        </Link>
+                        <Link href="/admin/photos">
+                          <DropdownMenuItem>
+                            <Settings className="h-4 w-4 mr-2" />
+                            Photo Management
+                          </DropdownMenuItem>
+                        </Link>
+                        <Link href="/supplier-data">
+                          <DropdownMenuItem>
+                            <Settings className="h-4 w-4 mr-2" />
+                            Manual Data Entry
+                          </DropdownMenuItem>
+                        </Link>
+                        <Link href="/alggin-data">
+                          <DropdownMenuItem>
+                            <Settings className="h-4 w-4 mr-2" />
+                            Alggin.com Import
+                          </DropdownMenuItem>
+                        </Link>
                       </>
                     )}
                     <DropdownMenuSeparator />
