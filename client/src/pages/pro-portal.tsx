@@ -506,9 +506,9 @@ const ProPortal = () => {
                     <CardContent>
                       <Button 
                         className="w-full bg-red-600 hover:bg-red-700"
-                        onClick={() => window.open('https://www.alberta.ca/building-code', '_blank')}
+                        onClick={() => window.open('https://www.google.com/search?q=buy+alberta+building+code', '_blank')}
                       >
-                        View Official ABC
+                        Buy Alberta Building Code
                       </Button>
                     </CardContent>
                   </Card>
@@ -522,9 +522,9 @@ const ProPortal = () => {
                     <CardContent>
                       <Button 
                         className="w-full bg-orange-600 hover:bg-orange-700"
-                        onClick={() => window.open('https://www.csagroup.org/store/product/CSA%20B149.1-20/', '_blank')}
+                        onClick={() => window.open('https://www.google.com/search?q=buy+canadian+gas+code+CSA+B149.1', '_blank')}
                       >
-                        View CSA B149.1
+                        Buy Canadian Gas Code
                       </Button>
                     </CardContent>
                   </Card>
@@ -538,9 +538,9 @@ const ProPortal = () => {
                     <CardContent>
                       <Button 
                         className="w-full bg-yellow-600 hover:bg-yellow-700"
-                        onClick={() => window.open('https://www.calgary.ca/pda/pd/permits/residential-permits.html', '_blank')}
+                        onClick={() => window.open('https://www.google.com/search?q=calgary+hvac+permit+requirements', '_blank')}
                       >
-                        View City Requirements
+                        Calgary Permit Info
                       </Button>
                     </CardContent>
                   </Card>
@@ -554,9 +554,9 @@ const ProPortal = () => {
                     <CardContent>
                       <Button 
                         className="w-full bg-green-600 hover:bg-green-700"
-                        onClick={() => window.open('https://www.tssa.org/', '_blank')}
+                        onClick={() => window.open('https://www.google.com/search?q=buy+TSSA+guidelines+technical+standards', '_blank')}
                       >
-                        View TSSA Resources
+                        Buy TSSA Guidelines
                       </Button>
                     </CardContent>
                   </Card>
@@ -570,9 +570,9 @@ const ProPortal = () => {
                     <CardContent>
                       <Button 
                         className="w-full bg-blue-600 hover:bg-blue-700"
-                        onClick={() => window.open('https://www.csagroup.org/store/product/2403604/', '_blank')}
+                        onClick={() => window.open('https://www.google.com/search?q=buy+canadian+electrical+code+CEC', '_blank')}
                       >
-                        View CEC Standards
+                        Buy Canadian Electrical Code
                       </Button>
                     </CardContent>
                   </Card>
@@ -586,9 +586,9 @@ const ProPortal = () => {
                     <CardContent>
                       <Button 
                         className="w-full bg-purple-600 hover:bg-purple-700"
-                        onClick={() => window.open('https://www.hrai.ca/', '_blank')}
+                        onClick={() => window.open('https://www.google.com/search?q=buy+HRAI+resources+industry+standards', '_blank')}
                       >
-                        View Industry Standards
+                        Buy HRAI Resources
                       </Button>
                     </CardContent>
                   </Card>
