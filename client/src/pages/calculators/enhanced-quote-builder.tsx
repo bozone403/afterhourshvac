@@ -582,8 +582,7 @@ function EnhancedQuoteBuilderContent() {
   // Calculate totals whenever items change
   useEffect(() => {
     const subtotal = quote.items.reduce((sum, item) => sum + item.total, 0);
-    const totalLaborHours = quote.items.reduce((sum, item) => sum + item.laborHours, 0);
-    const labor = totalLaborHours * laborRate;
+    const labor = laborHours * laborRate; // Use manual labor hours entry
     const markup = (subtotal + labor) * (markupPercentage / 100);
     const beforeTax = subtotal + labor + markup;
     const tax = beforeTax * (taxRate / 100);
@@ -597,11 +596,10 @@ function EnhancedQuoteBuilderContent() {
       tax,
       total
     }));
-  }, [quote.items, laborRate, markupPercentage, taxRate]);
+  }, [quote.items, laborHours, laborRate, markupPercentage, taxRate]);
 
   const generateQuoteText = () => {
     const date = new Date().toLocaleDateString();
-    const totalHours = quote.items.reduce((sum, item) => sum + item.laborHours, 0);
     
     return `AFTERHOURS HVAC - PROFESSIONAL ESTIMATE
 Quote #: AH-${Date.now().toString().slice(-6)}
@@ -627,7 +625,7 @@ ${quote.items.map((item, index) =>
 
 QUOTE SUMMARY:
 Materials Subtotal: $${quote.subtotal.toFixed(2)}
-Labor (${totalHours.toFixed(1)} hrs @ $${laborRate}/hr): $${quote.labor.toFixed(2)}
+Labor (${laborHours.toFixed(1)} hrs @ $${laborRate}/hr): $${quote.labor.toFixed(2)}
 Contractor Markup (${markupPercentage}%): $${quote.markup.toFixed(2)}
 Subtotal: $${(quote.subtotal + quote.labor + quote.markup).toFixed(2)}
 GST (${taxRate}%): $${quote.tax.toFixed(2)}
@@ -754,6 +752,21 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                   />
                   <div className="text-xs text-gray-600 mt-1">1.0 = full price, 0.343 = 34.3% of retail</div>
                 </div>
+              </div>
+              
+              {/* Labor Hours Input */}
+              <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                <Label htmlFor="laborHours" className="text-gray-800 font-semibold">Total Labor Hours</Label>
+                <Input
+                  id="laborHours"
+                  type="number"
+                  step="0.5"
+                  value={laborHours}
+                  onChange={(e) => setLaborHours(parseFloat(e.target.value) || 0)}
+                  placeholder="8.0"
+                  className="mt-1 text-gray-900"
+                />
+                <div className="text-xs text-gray-600 mt-1">Enter estimated labor hours for the entire job</div>
               </div>
             </CardContent>
           </Card>
