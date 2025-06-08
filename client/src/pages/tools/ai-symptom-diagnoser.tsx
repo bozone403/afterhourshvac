@@ -6,6 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Bot, MessageSquare, AlertTriangle, CheckCircle, Wrench, Phone, ArrowRight, Lightbulb, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import StepByStepGuide from "@/components/StepByStepGuide";
+import SafetyAlertSystem, { createGasLeakAlert, createElectricalAlert, createFilterAlert } from "@/components/SafetyAlertSystem";
+import ToolMascot from "@/components/ToolMascot";
+import ReminderWidget from "@/components/ReminderWidget";
 
 interface ChatMessage {
   id: string;
@@ -52,6 +56,10 @@ export default function AISymptomDiagnoser() {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [safetyAlerts, setSafetyAlerts] = useState<any[]>([]);
+  const [currentContext, setCurrentContext] = useState('general');
+  const [showStepGuide, setShowStepGuide] = useState(false);
+  const [stepGuideSteps, setStepGuideSteps] = useState<any[]>([]);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const { toast } = useToast();
@@ -150,9 +158,106 @@ export default function AISymptomDiagnoser() {
     }
   };
 
+  // Safety alert and step guide helpers
+  const triggerSafetyAlert = (alertType: string) => {
+    let alert;
+    switch (alertType) {
+      case 'gas':
+        alert = createGasLeakAlert();
+        break;
+      case 'electrical':
+        alert = createElectricalAlert();
+        break;
+      case 'filter':
+        alert = createFilterAlert();
+        break;
+      default:
+        return;
+    }
+    setSafetyAlerts(prev => [...prev, alert]);
+  };
+
+  const createStepGuide = (type: string) => {
+    const guides = {
+      'no-heat': [
+        {
+          id: 1,
+          title: "Check Thermostat",
+          description: "Verify thermostat is set to HEAT and temperature is above room temperature",
+          safety: 'safe',
+          estimatedTime: "2 minutes",
+          tips: ["Replace batteries if display is dim", "Try raising temperature 5 degrees above current room temp"],
+        },
+        {
+          id: 2,
+          title: "Check Electrical Panel",
+          description: "Look for tripped breakers and reset if needed",
+          safety: 'caution',
+          estimatedTime: "3 minutes",
+          warnings: ["Turn breaker fully OFF then ON", "If breaker trips again, call for help"],
+          tools: ["Flashlight"]
+        },
+        {
+          id: 3,
+          title: "Check Emergency Switch",
+          description: "Find the emergency switch near your furnace and ensure it's ON",
+          safety: 'caution',
+          estimatedTime: "2 minutes",
+          warnings: ["Do not proceed if you smell gas"]
+        }
+      ],
+      'filter-change': [
+        {
+          id: 1,
+          title: "Turn Off System",
+          description: "Set thermostat to OFF to stop air circulation",
+          safety: 'safe',
+          estimatedTime: "1 minute"
+        },
+        {
+          id: 2,
+          title: "Locate Filter",
+          description: "Find filter in return air duct or near furnace",
+          safety: 'safe',
+          estimatedTime: "3 minutes",
+          tips: ["Look for a removable grille or access panel"]
+        },
+        {
+          id: 3,
+          title: "Remove Old Filter",
+          description: "Note the arrow direction before removing",
+          safety: 'safe',
+          estimatedTime: "2 minutes",
+          tools: ["New filter", "Vacuum cleaner"]
+        },
+        {
+          id: 4,
+          title: "Install New Filter",
+          description: "Insert new filter with arrow pointing toward furnace",
+          safety: 'safe',
+          estimatedTime: "2 minutes",
+          tips: ["Arrow shows airflow direction", "Filter should fit snugly"]
+        }
+      ]
+    };
+    
+    return guides[type as keyof typeof guides] || [];
+  };
+
   // AI logic for basic homeowner troubleshooting
   const analyzeSymptoms = (userInput: string): { response: ChatMessage, diagnoses: Diagnosis[] } => {
     const input = userInput.toLowerCase();
+    
+    // Update context for mascot
+    if (input.includes('no heat') || input.includes('furnace')) {
+      setCurrentContext('no-heat');
+    } else if (input.includes('high bill') || input.includes('expensive')) {
+      setCurrentContext('high-bills');
+    } else if (input.includes('noise') || input.includes('sound')) {
+      setCurrentContext('strange-noises');
+    } else {
+      setCurrentContext('general');
+    }
     
     // AC not cooling issues
     if (input.includes('ac') && (input.includes('not cool') || input.includes('warm air') || input.includes('not cold'))) {
@@ -330,18 +435,32 @@ export default function AISymptomDiagnoser() {
 
     // No heat emergency
     if (input.includes('no heat') || (input.includes('furnace') && input.includes('not working'))) {
+      // Trigger step-by-step guide
+      const steps = createStepGuide('no-heat');
+      setStepGuideSteps(steps);
+      
+      // Check for gas smell mention and trigger alert
+      if (input.includes('gas') || input.includes('smell')) {
+        triggerSafetyAlert('gas');
+      }
+      
       return {
         response: {
           id: Date.now().toString(),
           type: 'earl',
-          content: "No heat can be an emergency in winter. Let's check the most common causes first - many are simple fixes:",
+          content: "No heat can be an emergency in winter. I'll guide you through checking the most common causes. Many are simple fixes you can do yourself safely.",
           timestamp: new Date(),
           nextQuestions: [
-            "Check your thermostat - is it set to HEAT and above current temperature?",
-            "Check your electrical panel - are any breakers tripped?",
-            "Check your furnace area - is the emergency switch ON?",
-            "Do you smell gas? If YES, leave the house and call us immediately!"
-          ]
+            "Do you smell gas anywhere in your home?",
+            "Is your thermostat display working normally?",
+            "Have you checked your electrical panel for tripped breakers?",
+            "Would you like step-by-step guidance to troubleshoot this?"
+          ],
+          callToAction: {
+            text: "Start Step-by-Step Guide",
+            action: "start_guide",
+            urgent: false
+          }
         },
         diagnoses: [
           {
@@ -432,7 +551,28 @@ export default function AISymptomDiagnoser() {
         description: "Redirecting to our booking system...",
       });
       window.location.href = '/emergency-service';
+    } else if (action === 'start_guide') {
+      setShowStepGuide(true);
+      toast({
+        title: "Step-by-Step Guide",
+        description: "Starting guided troubleshooting process...",
+      });
     }
+  };
+
+  const handleReminderComplete = (id: string) => {
+    toast({
+      title: "Reminder Completed",
+      description: "Great job staying on top of your HVAC maintenance!",
+    });
+  };
+
+  const handleReminderDismiss = (id: string) => {
+    // Reminder dismissed
+  };
+
+  const handleAlertDismiss = (id: string) => {
+    setSafetyAlerts(prev => prev.filter(alert => alert.id !== id));
   };
 
   const getSeverityColor = (severity: 'low' | 'medium' | 'high') => {
