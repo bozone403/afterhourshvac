@@ -29,7 +29,7 @@ interface Quote {
   total: number;
 }
 
-// Complete Alggin pricing data from Calgary catalog with enhanced structure
+// Complete Alggin pricing data from Calgary catalog - ALL components included
 const algginPricing = {
   plenums: {
     "Plenum 16.5x20.25x59\" with End Cap": { price: 155.82, laborHours: 2 },
@@ -37,7 +37,9 @@ const algginPricing = {
     "Plenum 23.5x20.25x59\" with End Cap": { price: 183.93, laborHours: 2 },
     "Plenum 13.5x20.25x71\" with End Cap": { price: 142.00, laborHours: 2 },
     "Plenum 16.5x20.25x71\" with End Cap": { price: 140.00, laborHours: 2 },
-    "Plenum 20x20.25x71\" with End Cap": { price: 144.00, laborHours: 2 }
+    "Plenum 20x20.25x71\" with End Cap": { price: 144.00, laborHours: 2 },
+    "Plenum Strip 23\" Wide x 96\" Long": { price: 64.43, laborHours: 0.3 },
+    "Plenum Panel 24\" Wide x 35\" Long": { price: 25.67, laborHours: 0.2 }
   },
   filterFrames: {
     "Filter Frame 20x16x6.5\"": { price: 53.15, laborHours: 0.5 },
@@ -47,6 +49,21 @@ const algginPricing = {
     "Filter Frame 25x20x3\"": { price: 44.95, laborHours: 0.5 },
     "Filter Frame 25x16x1\"": { price: 21.95, laborHours: 0.5 }
   },
+  plenumTakeOffs: {
+    "Plenum Take Off 8x8 - 5\" Rise": { price: 31.95, laborHours: 0.5 },
+    "Plenum Take Off 10x8 - 5\" Rise": { price: 32.68, laborHours: 0.5 },
+    "Plenum Take Off 10x10 - 5\" Rise": { price: 33.85, laborHours: 0.5 },
+    "Plenum Take Off 12x8 - 5\" Rise": { price: 32.89, laborHours: 0.5 },
+    "Plenum Take Off 12x10 - 5\" Rise": { price: 36.07, laborHours: 0.5 },
+    "Plenum Take Off 14x8 - 5\" Rise": { price: 33.75, laborHours: 0.5 },
+    "Plenum Take Off 14x10 - 5\" Rise": { price: 37.64, laborHours: 0.5 },
+    "Plenum Take Off 16x8 - 5\" Rise": { price: 35.20, laborHours: 0.5 },
+    "Plenum Take Off 16x10 - 5\" Rise": { price: 38.95, laborHours: 0.5 },
+    "Plenum Take Off 18x8 - 5\" Rise": { price: 37.61, laborHours: 0.5 },
+    "Plenum Take Off 18x10 - 5\" Rise": { price: 40.46, laborHours: 0.5 },
+    "Plenum Take Off 20x8 - 5\" Rise": { price: 38.74, laborHours: 0.5 },
+    "Plenum Take Off 20x10 - 5\" Rise": { price: 42.36, laborHours: 0.5 }
+  },
   ductwork: {
     "Duct 8x8x5' 30ga Button Lock": { price: 38.70, laborHours: 0.3 },
     "Duct 10x8x5' 30ga Button Lock": { price: 43.20, laborHours: 0.3 },
@@ -55,14 +72,58 @@ const algginPricing = {
     "Duct 16x8x5' 28ga Button Lock": { price: 58.95, laborHours: 0.3 },
     "Duct 18x8x5' 28ga Button Lock": { price: 66.00, laborHours: 0.3 },
     "Duct 20x8x5' 28ga Button Lock": { price: 71.90, laborHours: 0.3 },
+    "Duct 22x8x5' 28ga Button Lock": { price: 76.65, laborHours: 0.3 },
+    "Duct 24x8x5' 28ga Button Lock": { price: 80.15, laborHours: 0.3 },
     "Duct 10x10x5' 30ga Button Lock": { price: 50.70, laborHours: 0.3 },
     "Duct 12x10x5' 30ga Button Lock": { price: 54.00, laborHours: 0.3 },
     "Duct 14x10x5' 30ga Button Lock": { price: 57.30, laborHours: 0.3 },
     "Duct 16x10x5' 28ga Button Lock": { price: 68.10, laborHours: 0.3 },
     "Duct 18x10x5' 28ga Button Lock": { price: 73.65, laborHours: 0.3 },
-    "Duct 20x10x5' 28ga Button Lock": { price: 79.55, laborHours: 0.3 }
+    "Duct 20x10x5' 28ga Button Lock": { price: 79.55, laborHours: 0.3 },
+    "Duct 22x10x5' 28ga Button Lock": { price: 82.90, laborHours: 0.3 },
+    "Duct 24x10x5' 28ga Button Lock": { price: 88.20, laborHours: 0.3 },
+    "Duct 25x9.5x4' 26ga Button Lock": { price: 83.48, laborHours: 0.3 },
+    "Duct 3.125x10x5' 30ga Button Lock": { price: 35.00, laborHours: 0.3 },
+    "Duct 3.125x10x8' 30ga Button Lock": { price: 36.50, laborHours: 0.3 },
+    "Duct 3.125x10x9' 30ga Button Lock": { price: 36.75, laborHours: 0.3 }
   },
-  elbows: {
+  endCaps: {
+    "End Cap 8x8": { price: 5.24, laborHours: 0.1 },
+    "End Cap 10x8": { price: 5.42, laborHours: 0.1 },
+    "End Cap 10x10": { price: 6.88, laborHours: 0.1 },
+    "End Cap 12x8": { price: 5.70, laborHours: 0.1 },
+    "End Cap 12x10": { price: 7.27, laborHours: 0.1 },
+    "End Cap 14x8": { price: 6.45, laborHours: 0.1 },
+    "End Cap 14x10": { price: 8.01, laborHours: 0.1 },
+    "End Cap 16x8": { price: 7.03, laborHours: 0.1 },
+    "End Cap 16x10": { price: 9.12, laborHours: 0.1 },
+    "End Cap 18x8": { price: 8.09, laborHours: 0.1 },
+    "End Cap 18x10": { price: 10.41, laborHours: 0.1 },
+    "End Cap 20x8": { price: 8.63, laborHours: 0.1 },
+    "End Cap 20x10": { price: 11.14, laborHours: 0.1 },
+    "End Cap 22x8": { price: 9.58, laborHours: 0.1 },
+    "End Cap 22x10": { price: 12.36, laborHours: 0.1 },
+    "End Cap 24x8": { price: 10.45, laborHours: 0.1 },
+    "End Cap 24x10": { price: 13.14, laborHours: 0.1 },
+    "End Cap 3x10": { price: 3.30, laborHours: 0.1 },
+    "End Cap 25x9.5": { price: 13.73, laborHours: 0.1 }
+  },
+  ductReducers: {
+    "Duct Reducer 10x8 to 8x8": { price: 24.23, laborHours: 0.3 },
+    "Duct Reducer 12x8 to 8x8": { price: 24.29, laborHours: 0.3 },
+    "Duct Reducer 12x8 to 10x8": { price: 24.01, laborHours: 0.3 },
+    "Duct Reducer 14x8 to 10x8": { price: 26.00, laborHours: 0.3 },
+    "Duct Reducer 14x8 to 12x8": { price: 25.88, laborHours: 0.3 },
+    "Duct Reducer 16x8 to 10x8": { price: 27.94, laborHours: 0.3 },
+    "Duct Reducer 16x8 to 12x8": { price: 27.05, laborHours: 0.3 },
+    "Duct Reducer 16x8 to 14x8": { price: 27.43, laborHours: 0.3 },
+    "Duct Reducer 18x8 to 12x8": { price: 30.66, laborHours: 0.3 },
+    "Duct Reducer 18x8 to 14x8": { price: 31.29, laborHours: 0.3 },
+    "Duct Reducer 18x8 to 16x8": { price: 30.64, laborHours: 0.3 },
+    "Reducing Panel for 8\" Duct": { price: 17.83, laborHours: 0.2 },
+    "Reducing Panel for 10\" Duct": { price: 18.67, laborHours: 0.2 }
+  },
+  elbowsRectangular: {
     "90° Long Way Elbow 8x8": { price: 30.35, laborHours: 0.2 },
     "90° Long Way Elbow 10x8": { price: 36.59, laborHours: 0.2 },
     "45° Long Way Elbow 10x8": { price: 25.81, laborHours: 0.2 },
@@ -74,6 +135,11 @@ const algginPricing = {
     "45° Long Way Elbow 16x8": { price: 37.70, laborHours: 0.2 },
     "90° Long Way Elbow 18x8": { price: 67.13, laborHours: 0.2 },
     "45° Long Way Elbow 18x8": { price: 42.38, laborHours: 0.2 },
+    "90° Long Way Elbow 10x10": { price: 40.75, laborHours: 0.2 },
+    "90° Long Way Elbow 12x10": { price: 43.06, laborHours: 0.2 },
+    "90° Long Way Elbow 14x10": { price: 52.34, laborHours: 0.2 },
+    "90° Long Way Elbow 16x10": { price: 59.58, laborHours: 0.2 },
+    "90° Short Way Elbow 3.25x10": { price: 19.10, laborHours: 0.2 },
     "90° Short Way Elbow 10x8": { price: 34.86, laborHours: 0.2 },
     "45° Short Way Elbow 10x8": { price: 23.97, laborHours: 0.2 },
     "90° Short Way Elbow 12x8": { price: 38.34, laborHours: 0.2 },
@@ -82,6 +148,67 @@ const algginPricing = {
     "45° Short Way Elbow 14x8": { price: 26.77, laborHours: 0.2 },
     "90° Short Way Elbow 16x8": { price: 51.22, laborHours: 0.2 },
     "45° Short Way Elbow 16x8": { price: 36.33, laborHours: 0.2 }
+  },
+  elbowsRound: {
+    "Round 90° Elbow 3\" 28ga": { price: 8.93, laborHours: 0.2 },
+    "Round 90° Elbow 4\" Residential": { price: 3.13, laborHours: 0.2 },
+    "Round 90° Elbow 4\" 28ga": { price: 5.74, laborHours: 0.2 },
+    "Round 90° Elbow 5\" Residential": { price: 3.55, laborHours: 0.2 },
+    "Round 90° Elbow 5\" 28ga": { price: 6.37, laborHours: 0.2 },
+    "Round 90° Elbow 6\" Residential": { price: 4.50, laborHours: 0.2 },
+    "Round 90° Elbow 6\" 28ga": { price: 8.15, laborHours: 0.2 },
+    "Round 90° Elbow 7\" Residential": { price: 8.81, laborHours: 0.2 },
+    "Round 90° Elbow 7\" 28ga": { price: 11.85, laborHours: 0.2 },
+    "Round 90° Elbow 8\" Residential": { price: 9.14, laborHours: 0.2 },
+    "Round 90° Elbow 8\" 28ga": { price: 15.15, laborHours: 0.2 },
+    "Round 90° Elbow 9\" Residential": { price: 14.66, laborHours: 0.2 },
+    "Round 90° Elbow 10\" 28ga": { price: 19.94, laborHours: 0.2 },
+    "Round 90° Elbow 4\" Commercial 26ga": { price: 8.46, laborHours: 0.2 },
+    "Round 90° Elbow 5\" Commercial 26ga": { price: 9.18, laborHours: 0.2 },
+    "Round 90° Elbow 6\" Commercial 26ga": { price: 10.03, laborHours: 0.2 },
+    "Round 90° Elbow 6\" Commercial 24ga": { price: 21.23, laborHours: 0.2 },
+    "Round 90° Elbow 7\" Commercial 26ga": { price: 14.08, laborHours: 0.2 },
+    "Round 90° Elbow 8\" Commercial 26ga": { price: 14.29, laborHours: 0.2 },
+    "Round 90° Elbow 8\" Commercial 24ga": { price: 26.65, laborHours: 0.2 },
+    "Round 90° Elbow 9\" Commercial 26ga": { price: 22.49, laborHours: 0.2 },
+    "Round 90° Elbow 10\" Commercial 26ga": { price: 17.79, laborHours: 0.2 },
+    "Round 90° Elbow 10\" Commercial 24ga": { price: 31.94, laborHours: 0.2 },
+    "Round 90° Elbow 12\" Commercial 26ga": { price: 24.79, laborHours: 0.2 },
+    "Round 90° Elbow 12\" Commercial 24ga": { price: 39.94, laborHours: 0.2 },
+    "Round 90° Elbow 14\" Commercial 26ga": { price: 37.97, laborHours: 0.2 },
+    "Round 90° Elbow 16\" Commercial 24ga": { price: 62.84, laborHours: 0.2 },
+    "Round 90° Elbow 18\" Commercial 24ga": { price: 102.18, laborHours: 0.2 },
+    "Round 90° Elbow 20\" Commercial 22ga": { price: 132.90, laborHours: 0.2 }
+  },
+  drainPans: {
+    "Drain Pan 24x24x2\" with Drain": { price: 78.83, laborHours: 1 }
+  },
+  freshAirIntakes: {
+    "Fresh Air Intake Hood 4\"": { price: 22.44, laborHours: 0.5 },
+    "Fresh Air Intake Hood 5\"": { price: 23.22, laborHours: 0.5 },
+    "Fresh Air Intake Hood 6\"": { price: 28.62, laborHours: 0.5 },
+    "Fresh Air Intake Hood 7\"": { price: 35.70, laborHours: 0.5 },
+    "Fresh Air Intake Hood 8\"": { price: 46.80, laborHours: 0.5 },
+    "Fresh Air Intake Hood 10\"": { price: 77.28, laborHours: 0.5 },
+    "Fresh Air Intake Hood 12\"": { price: 114.60, laborHours: 0.5 }
+  },
+  combustionAirDiffusers: {
+    "Combustion Air Diffuser 4\"": { price: 43.08, laborHours: 0.5 },
+    "Combustion Air Diffuser 5\"": { price: 46.26, laborHours: 0.5 },
+    "Combustion Air Diffuser 6\"": { price: 51.03, laborHours: 0.5 },
+    "Combustion Air Diffuser 7\"": { price: 66.96, laborHours: 0.5 },
+    "Combustion Air Diffuser 8\"": { price: 76.53, laborHours: 0.5 },
+    "Combustion Air Diffuser 10\"": { price: 100.09, laborHours: 0.5 },
+    "Combustion Air Diffuser 12\"": { price: 175.05, laborHours: 0.5 }
+  },
+  dampers: {
+    "Galvanized Damper 4\"": { price: 2.80, laborHours: 0.2 },
+    "Galvanized Damper 5\"": { price: 3.04, laborHours: 0.2 },
+    "Galvanized Damper 6\"": { price: 3.55, laborHours: 0.2 },
+    "Inline Damper 4\"": { price: 20.55, laborHours: 0.3 },
+    "Inline Damper 5\"": { price: 24.66, laborHours: 0.3 },
+    "Inline Damper 6\"": { price: 27.41, laborHours: 0.3 },
+    "Inline Damper 8\"": { price: 34.25, laborHours: 0.3 }
   },
   takeOffs: {
     "Side Take Off 4\"": { price: 6.28, laborHours: 0.2 },
@@ -103,6 +230,17 @@ const algginPricing = {
     "Saddle Take Off 5\"": { price: 5.04, laborHours: 0.2 },
     "Saddle Take Off 6\"": { price: 7.05, laborHours: 0.2 }
   },
+  tapInCollars: {
+    "Tap-In Collar Round 4\" 28ga": { price: 5.65, laborHours: 0.1 },
+    "Tap-In Collar Round 5\" 28ga": { price: 5.87, laborHours: 0.1 },
+    "Tap-In Collar Round 6\" 28ga": { price: 6.10, laborHours: 0.1 },
+    "Tap-In Collar Round 7\" 28ga": { price: 6.30, laborHours: 0.1 },
+    "Tap-In Collar Round 8\" 28ga": { price: 9.06, laborHours: 0.1 },
+    "Tap-In Collar Round 10\" 26ga": { price: 10.62, laborHours: 0.1 },
+    "Tap-In Collar Round 12\" 26ga": { price: 11.82, laborHours: 0.1 },
+    "Tap-In Collar Duct 24x10x10": { price: 43.28, laborHours: 0.2 },
+    "Tap-In Collar Duct 25x9x10": { price: 42.83, laborHours: 0.2 }
+  },
   boots: {
     "Right Angle Boot 4\" 3x10": { price: 7.36, laborHours: 0.3 },
     "Universal Boot 4\" 3x10": { price: 7.36, laborHours: 0.3 },
@@ -118,16 +256,40 @@ const algginPricing = {
     "End Boot 5\" 3x10": { price: 7.04, laborHours: 0.3 },
     "Right Angle Boot 6\" 3x10": { price: 8.13, laborHours: 0.3 },
     "Universal Boot 6\" 3x10": { price: 8.13, laborHours: 0.3 },
-    "End Boot 6\" 3x10": { price: 8.13, laborHours: 0.3 }
+    "End Boot 6\" 3x10": { price: 8.13, laborHours: 0.3 },
+    "Right Angle Boot 6\" 4x10": { price: 8.88, laborHours: 0.3 },
+    "Universal Boot 6\" 4x10": { price: 8.88, laborHours: 0.3 },
+    "End Boot 6\" 4x10": { price: 8.88, laborHours: 0.3 },
+    "Right Angle Boot 6\" 4x12": { price: 18.91, laborHours: 0.3 },
+    "Universal Boot 6\" 4x12": { price: 18.91, laborHours: 0.3 },
+    "End Boot 6\" 4x12": { price: 18.91, laborHours: 0.3 },
+    "Universal Boot 7\" 3x10": { price: 41.06, laborHours: 0.3 },
+    "Right Angle Boot 7\" 4x10": { price: 43.47, laborHours: 0.3 },
+    "Universal Boot 7\" 4x10": { price: 43.47, laborHours: 0.3 },
+    "End Boot 7\" 4x10": { price: 43.47, laborHours: 0.3 },
+    "Universal Boot 7\" 4x12": { price: 44.02, laborHours: 0.3 },
+    "Universal Boot 8\" 3x10": { price: 54.86, laborHours: 0.3 },
+    "Right Angle Boot 8\" 4x10": { price: 54.86, laborHours: 0.3 },
+    "Universal Boot 8\" 4x10": { price: 54.86, laborHours: 0.3 },
+    "Right Angle Boot 8\" 4x12": { price: 54.86, laborHours: 0.3 },
+    "Universal Boot 8\" 4x12": { price: 54.86, laborHours: 0.3 },
+    "End Boot 8\" 4x12": { price: 54.86, laborHours: 0.3 },
+    "Right Angle Boot 8\" 4x14": { price: 54.86, laborHours: 0.3 },
+    "Universal Boot 8\" 4x14": { price: 54.86, laborHours: 0.3 },
+    "Basement Boot 5\" 3x10": { price: 14.89, laborHours: 0.3 },
+    "Range Hood Transition 5\" 3.25x10": { price: 8.70, laborHours: 0.3 },
+    "Range Hood Transition 6\" 3.25x10": { price: 8.88, laborHours: 0.3 }
   },
-  dampers: {
-    "Galvanized Damper 4\"": { price: 2.80, laborHours: 0.2 },
-    "Galvanized Damper 5\"": { price: 3.04, laborHours: 0.2 },
-    "Galvanized Damper 6\"": { price: 3.55, laborHours: 0.2 },
-    "Inline Damper 4\"": { price: 20.55, laborHours: 0.3 },
-    "Inline Damper 5\"": { price: 24.66, laborHours: 0.3 },
-    "Inline Damper 6\"": { price: 27.41, laborHours: 0.3 },
-    "Inline Damper 8\"": { price: 34.25, laborHours: 0.3 }
+  ovalBoots: {
+    "Oval Right Angle Boot 5\" 3x6": { price: 10.64, laborHours: 0.3 },
+    "Oval Universal Boot 5\" 3x6": { price: 10.85, laborHours: 0.3 },
+    "Oval End Boot 5\" 3x6": { price: 10.82, laborHours: 0.3 },
+    "Oval Right Angle Boot 5\" 3x8": { price: 11.02, laborHours: 0.3 },
+    "Oval Universal Boot 5\" 3x8": { price: 10.82, laborHours: 0.3 },
+    "Oval End Boot 5\" 3x8": { price: 10.82, laborHours: 0.3 },
+    "Oval Right Angle Boot 6\" 3x8": { price: 11.35, laborHours: 0.3 },
+    "Oval Universal Boot 6\" 3x8": { price: 12.11, laborHours: 0.3 },
+    "Oval End Boot 6\" 3x8": { price: 12.11, laborHours: 0.3 }
   },
   pipe: {
     "Galvanized Pipe 3\" x60\" 30ga": { price: 3.19, laborHours: 0.05 },
@@ -139,7 +301,150 @@ const algginPricing = {
     "Galvanized Pipe 5\" x60\" 28ga": { price: 5.45, laborHours: 0.05 },
     "Galvanized Pipe 6\" x60\" Light": { price: 2.40, laborHours: 0.05 },
     "Galvanized Pipe 6\" x60\" 30ga": { price: 3.52, laborHours: 0.05 },
-    "Galvanized Pipe 6\" x60\" 28ga": { price: 6.07, laborHours: 0.05 }
+    "Galvanized Pipe 6\" x60\" 28ga": { price: 6.07, laborHours: 0.05 },
+    "Galvanized Pipe 7\" x60\" 30ga": { price: 4.28, laborHours: 0.05 },
+    "Galvanized Pipe 7\" x60\" 28ga": { price: 7.19, laborHours: 0.05 },
+    "Galvanized Pipe 8\" x60\" 30ga": { price: 4.78, laborHours: 0.05 },
+    "Galvanized Pipe 8\" x60\" 28ga": { price: 8.30, laborHours: 0.05 },
+    "Galvanized Pipe 9\" x60\" 30ga": { price: 8.22, laborHours: 0.05 },
+    "Galvanized Pipe 10\" x60\" 28ga": { price: 10.03, laborHours: 0.05 },
+    "Galvanized Pipe 12\" x60\" 28ga": { price: 11.96, laborHours: 0.05 },
+    "Galvanized Pipe 3\" x36\" 28ga": { price: 4.31, laborHours: 0.05 },
+    "Galvanized Pipe 4\" x36\" 28ga": { price: 5.21, laborHours: 0.05 },
+    "Galvanized Pipe 4\" x48\" 26ga": { price: 6.36, laborHours: 0.05 },
+    "Galvanized Pipe 5\" x48\" 26ga": { price: 7.20, laborHours: 0.05 },
+    "Galvanized Pipe 5\" x36\" 24ga": { price: 10.16, laborHours: 0.05 },
+    "Galvanized Pipe 6\" x48\" 26ga": { price: 7.88, laborHours: 0.05 },
+    "Galvanized Pipe 6\" x36\" 24ga": { price: 10.92, laborHours: 0.05 },
+    "Galvanized Pipe 7\" x48\" 26ga": { price: 9.09, laborHours: 0.05 },
+    "Galvanized Pipe 7\" x36\" 24ga": { price: 12.51, laborHours: 0.05 },
+    "Galvanized Pipe 8\" x48\" 26ga": { price: 10.31, laborHours: 0.05 },
+    "Galvanized Pipe 8\" x36\" 24ga": { price: 15.30, laborHours: 0.05 },
+    "Galvanized Pipe 9\" x48\" 26ga": { price: 11.82, laborHours: 0.05 },
+    "Galvanized Pipe 9\" x36\" 24ga": { price: 18.51, laborHours: 0.05 },
+    "Galvanized Pipe 10\" x48\" 26ga": { price: 12.63, laborHours: 0.05 },
+    "Galvanized Pipe 10\" x36\" 24ga": { price: 20.46, laborHours: 0.05 },
+    "Galvanized Pipe 12\" x48\" 26ga": { price: 16.00, laborHours: 0.05 },
+    "Galvanized Pipe 12\" x36\" 24ga": { price: 24.05, laborHours: 0.05 },
+    "Galvanized Pipe 14\" x48\" 26ga": { price: 18.27, laborHours: 0.05 },
+    "Galvanized Pipe 14\" x36\" 24ga": { price: 33.98, laborHours: 0.05 },
+    "Galvanized Pipe 16\" x36\" 24ga": { price: 36.90, laborHours: 0.05 },
+    "Galvanized Pipe 18\" x36\" 24ga": { price: 36.90, laborHours: 0.05 }
+  },
+  ovalPipe: {
+    "Oval Pipe 3x6 (5\") x60\" 30ga": { price: 3.90, laborHours: 0.05 },
+    "Oval Pipe 3x8 (6\") x60\" 30ga": { price: 4.43, laborHours: 0.05 }
+  },
+  teesAndWyes: {
+    "Tee 4x4x4 28ga": { price: 19.76, laborHours: 0.3 },
+    "Wye 4x4x4 28ga": { price: 22.08, laborHours: 0.3 },
+    "Tee 5x5x4 26ga": { price: 22.52, laborHours: 0.3 },
+    "Wye 5x5x4 26ga": { price: 26.07, laborHours: 0.3 },
+    "Tee 5x5x5 26ga": { price: 22.67, laborHours: 0.3 },
+    "Wye 5x5x5 26ga": { price: 26.43, laborHours: 0.3 },
+    "Tee 6x6x4 26ga": { price: 29.45, laborHours: 0.3 },
+    "Wye 6x6x4 26ga": { price: 28.94, laborHours: 0.3 },
+    "Tee 6x6x5 26ga": { price: 29.49, laborHours: 0.3 },
+    "Tee 6x6x6 26ga": { price: 29.42, laborHours: 0.3 },
+    "Wye 6x6x6 26ga": { price: 29.24, laborHours: 0.3 },
+    "Tee 7x7x7 26ga": { price: 35.81, laborHours: 0.3 },
+    "Wye 7x7x7 26ga": { price: 40.17, laborHours: 0.3 },
+    "Tee 8x8x5 26ga": { price: 40.46, laborHours: 0.3 },
+    "Tee 8x8x6 26ga": { price: 40.53, laborHours: 0.3 },
+    "Tee 8x8x8 26ga": { price: 41.63, laborHours: 0.3 },
+    "Wye 8x8x8 26ga": { price: 47.69, laborHours: 0.3 },
+    "Tee 10x10x6 24ga": { price: 52.96, laborHours: 0.3 },
+    "Tee 10x10x8 24ga": { price: 53.33, laborHours: 0.3 },
+    "Tee 10x10x10 24ga": { price: 54.53, laborHours: 0.3 },
+    "Tee 12x12x12 24ga": { price: 72.84, laborHours: 0.3 },
+    "Saddle Wye 4\" Y 45° to fit 6\" Pipe": { price: 27.88, laborHours: 0.3 },
+    "Saddle Wye 6\" Y 45° to fit 6\" Pipe": { price: 33.00, laborHours: 0.3 }
+  },
+  reducersIncreasers: {
+    "Round Reducer 4-3 28ga": { price: 16.80, laborHours: 0.2 },
+    "Round Increaser 3-4 28ga": { price: 16.80, laborHours: 0.2 },
+    "Round Reducer 5-3 26ga": { price: 16.80, laborHours: 0.2 },
+    "Round Increaser 3-5 26ga": { price: 16.80, laborHours: 0.2 },
+    "Round Reducer 5-4 26ga": { price: 16.80, laborHours: 0.2 },
+    "Round Increaser 4-5 26ga": { price: 16.80, laborHours: 0.2 },
+    "Round Reducer 6-3 26ga": { price: 19.07, laborHours: 0.2 },
+    "Round Increaser 3-6 26ga": { price: 19.07, laborHours: 0.2 },
+    "Round Reducer 6-4 26ga": { price: 19.07, laborHours: 0.2 },
+    "Round Increaser 4-6 26ga": { price: 19.07, laborHours: 0.2 },
+    "Round Reducer 6-5 26ga": { price: 19.44, laborHours: 0.2 },
+    "Round Increaser 5-6 26ga": { price: 19.44, laborHours: 0.2 },
+    "Round Reducer 7-4 26ga": { price: 21.20, laborHours: 0.2 },
+    "Round Increaser 4-7 26ga": { price: 21.20, laborHours: 0.2 },
+    "Round Reducer 7-5 26ga": { price: 21.20, laborHours: 0.2 },
+    "Round Increaser 5-7 26ga": { price: 21.20, laborHours: 0.2 },
+    "Round Reducer 7-6 26ga": { price: 22.08, laborHours: 0.2 },
+    "Round Increaser 6-7 26ga": { price: 22.08, laborHours: 0.2 },
+    "Round Reducer 8-4 26ga": { price: 24.73, laborHours: 0.2 },
+    "Round Increaser 4-8 26ga": { price: 24.73, laborHours: 0.2 },
+    "Round Reducer 8-5 26ga": { price: 25.63, laborHours: 0.2 },
+    "Round Increaser 5-8 26ga": { price: 25.63, laborHours: 0.2 },
+    "Round Reducer 8-6 26ga": { price: 25.79, laborHours: 0.2 },
+    "Round Increaser 6-8 26ga": { price: 25.79, laborHours: 0.2 },
+    "Round Reducer 8-7 26ga": { price: 26.49, laborHours: 0.2 },
+    "Round Increaser 7-8 26ga": { price: 26.49, laborHours: 0.2 },
+    "Round Reducer 10-8 24ga": { price: 31.56, laborHours: 0.2 },
+    "Round Increaser 8-10 24ga": { price: 31.95, laborHours: 0.2 }
+  },
+  capsAndPlugs: {
+    "Cap 3\" Galvanized": { price: 15.42, laborHours: 0.1 },
+    "Plug 4\" Galvanized": { price: 6.10, laborHours: 0.1 },
+    "Cap 4\" Galvanized": { price: 11.22, laborHours: 0.1 },
+    "Cap 4\" with Birdscreen": { price: 21.55, laborHours: 0.1 },
+    "Plug 5\" Galvanized": { price: 6.46, laborHours: 0.1 },
+    "Cap 5\" Galvanized": { price: 13.80, laborHours: 0.1 },
+    "Cap 5\" with Birdscreen": { price: 25.88, laborHours: 0.1 },
+    "Plug 6\" Galvanized": { price: 8.22, laborHours: 0.1 },
+    "Cap 6\" Galvanized": { price: 14.52, laborHours: 0.1 },
+    "Cap 6\" with Birdscreen": { price: 27.28, laborHours: 0.1 },
+    "Plug 7\" Galvanized": { price: 8.82, laborHours: 0.1 },
+    "Cap 7\" Galvanized": { price: 15.66, laborHours: 0.1 },
+    "Cap 7\" with Birdscreen": { price: 31.52, laborHours: 0.1 },
+    "Plug 8\" Galvanized": { price: 10.15, laborHours: 0.1 },
+    "Cap 8\" Galvanized": { price: 17.76, laborHours: 0.1 },
+    "Cap 8\" with Birdscreen": { price: 34.29, laborHours: 0.1 },
+    "Plug 9\" Galvanized": { price: 10.50, laborHours: 0.1 },
+    "Cap 9\" Galvanized": { price: 21.12, laborHours: 0.1 },
+    "Plug 10\" Galvanized": { price: 13.08, laborHours: 0.1 },
+    "Cap 10\" Galvanized": { price: 23.28, laborHours: 0.1 },
+    "Cap 10\" with Birdscreen": { price: 43.28, laborHours: 0.1 },
+    "Plug 12\" Galvanized": { price: 19.62, laborHours: 0.1 },
+    "Cap 12\" Galvanized": { price: 25.80, laborHours: 0.1 },
+    "Cap 12\" with Birdscreen": { price: 47.68, laborHours: 0.1 },
+    "Plug 14\" Galvanized": { price: 22.62, laborHours: 0.1 },
+    "Cap 14\" Galvanized": { price: 28.56, laborHours: 0.1 },
+    "Plug 16\" Galvanized": { price: 26.04, laborHours: 0.1 },
+    "Cap 16\" Galvanized": { price: 36.29, laborHours: 0.1 },
+    "Plug 18\" Galvanized": { price: 29.70, laborHours: 0.1 },
+    "Plug 20\" Galvanized": { price: 36.90, laborHours: 0.1 },
+    "Plug 22\" Galvanized": { price: 40.92, laborHours: 0.1 },
+    "Plug 24\" Galvanized": { price: 45.60, laborHours: 0.1 }
+  },
+  joistLiners: {
+    "Joist Liner 16\"x34\" Galvanized": { price: 8.04, laborHours: 0.2 },
+    "Joist Liner 19.5\"x34\" Galvanized": { price: 9.42, laborHours: 0.2 },
+    "Joist Liner 24\"x34\" Galvanized": { price: 11.56, laborHours: 0.2 }
+  },
+  supports: {
+    "Pipe Support 16\"": { price: 1.28, laborHours: 0.1 },
+    "Pipe Support 21\"": { price: 2.02, laborHours: 0.1 },
+    "Pipe Support 24\"": { price: 2.26, laborHours: 0.1 },
+    "Hanger Strap 1\"x96\" Light Gauge": { price: 3.15, laborHours: 0.1 },
+    "Slip Cleat 60\" Light Gauge": { price: 5.32, laborHours: 0.1 },
+    "Slip Cleat 96\" Light Gauge": { price: 9.27, laborHours: 0.1 },
+    "Drive Cleat 60\" Light Gauge": { price: 3.24, laborHours: 0.1 },
+    "Drive Cleat 96\" Light Gauge": { price: 5.97, laborHours: 0.1 },
+    "Angle 1.5\"x1.5\"x120\" 28ga": { price: 12.68, laborHours: 0.1 }
+  },
+  miscellaneous: {
+    "Kitchen Kick Board Box 2.25x12x15\"": { price: 22.00, laborHours: 0.5 },
+    "Kitchen Kick Board Box 3x10x15\"": { price: 22.00, laborHours: 0.5 },
+    "Return Air Frame 9.75\" Long 25x9.5\"": { price: 9.02, laborHours: 0.3 },
+    "Brochure Holder": { price: 7.75, laborHours: 0.1 }
   }
 };
 
@@ -401,14 +706,30 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                     <SelectValue placeholder="Select material category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="plenums">Plenums</SelectItem>
+                    <SelectItem value="plenums">Plenums & Plenum Components</SelectItem>
                     <SelectItem value="filterFrames">Filter Frames</SelectItem>
-                    <SelectItem value="ductwork">Ductwork</SelectItem>
-                    <SelectItem value="elbows">Elbows</SelectItem>
-                    <SelectItem value="takeOffs">Take Offs</SelectItem>
-                    <SelectItem value="boots">Boots</SelectItem>
-                    <SelectItem value="dampers">Dampers</SelectItem>
-                    <SelectItem value="pipe">Galvanized Pipe</SelectItem>
+                    <SelectItem value="plenumTakeOffs">Plenum Take Offs</SelectItem>
+                    <SelectItem value="ductwork">Rectangular Ductwork</SelectItem>
+                    <SelectItem value="endCaps">End Caps</SelectItem>
+                    <SelectItem value="ductReducers">Duct Reducers</SelectItem>
+                    <SelectItem value="elbowsRectangular">Rectangular Elbows</SelectItem>
+                    <SelectItem value="elbowsRound">Round Elbows (4\", 5\", 6\", 7\", 8\", 9\", 10\"+)</SelectItem>
+                    <SelectItem value="drainPans">Drain Pans</SelectItem>
+                    <SelectItem value="freshAirIntakes">Fresh Air Intake Hoods</SelectItem>
+                    <SelectItem value="combustionAirDiffusers">Combustion Air Diffusers</SelectItem>
+                    <SelectItem value="dampers">Dampers & Inline Dampers</SelectItem>
+                    <SelectItem value="takeOffs">Take Offs (Side, Top, Universal)</SelectItem>
+                    <SelectItem value="tapInCollars">Tap-In Collars</SelectItem>
+                    <SelectItem value="boots">Boots (Right Angle, Universal, End)</SelectItem>
+                    <SelectItem value="ovalBoots">Oval Boots</SelectItem>
+                    <SelectItem value="pipe">Galvanized Round Pipe (All Sizes)</SelectItem>
+                    <SelectItem value="ovalPipe">Oval Pipe</SelectItem>
+                    <SelectItem value="teesAndWyes">Tees & Wye Branches</SelectItem>
+                    <SelectItem value="reducersIncreasers">Round Reducers & Increasers</SelectItem>
+                    <SelectItem value="capsAndPlugs">Caps & Plugs (All Sizes)</SelectItem>
+                    <SelectItem value="joistLiners">Joist Liners</SelectItem>
+                    <SelectItem value="supports">Supports & Hardware</SelectItem>
+                    <SelectItem value="miscellaneous">Miscellaneous Components</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
