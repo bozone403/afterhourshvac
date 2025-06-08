@@ -1,419 +1,604 @@
-import { Helmet } from "react-helmet-async";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { 
-  Phone, 
-  Mail, 
-  Users,
-  MapPin,
-  Clock,
+  Briefcase, 
+  MapPin, 
+  Clock, 
   DollarSign,
-  Star,
-  CheckCircle,
+  Upload,
+  FileText,
+  Users,
   Wrench,
   Truck,
-  Award,
-  Heart,
+  GraduationCap,
   Shield,
-  Calendar
+  Heart,
+  Star
 } from "lucide-react";
-import { Link } from "wouter";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
-export default function Careers() {
-  const openPositions = [
-    {
-      title: "HVAC Service Technician",
-      type: "Full-Time",
-      location: "Calgary, AB",
-      salary: "$70,000 - $95,000",
-      experience: "3+ Years",
-      description: "Join our team as an experienced HVAC service technician. You'll diagnose, repair, and maintain residential and commercial HVAC systems.",
-      requirements: [
-        "Red Seal HVAC certification or equivalent",
-        "3+ years residential/commercial HVAC experience",
-        "Valid driver's license and clean driving record",
-        "Strong diagnostic and problem-solving skills",
-        "Excellent customer service skills",
-        "Physical ability to work in various conditions"
-      ],
-      benefits: [
-        "Competitive salary + performance bonuses",
-        "Company vehicle and gas card",
-        "Health and dental benefits",
-        "Tool allowance",
-        "Ongoing training and certification",
-        "Flexible scheduling options"
-      ]
+const applicationSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Valid email is required"),
+  phone: z.string().min(10, "Valid phone number is required"),
+  position: z.string().min(1, "Please select a position"),
+  experience: z.string().min(1, "Please describe your experience"),
+  coverLetter: z.string().optional(),
+  resume: z.any().optional(),
+});
+
+type ApplicationForm = z.infer<typeof applicationSchema>;
+
+interface JobPosition {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: 'Full-time' | 'Part-time' | 'Contract';
+  salary: string;
+  description: string;
+  requirements: string[];
+  benefits: string[];
+  posted: string;
+}
+
+const Careers = () => {
+  const { toast } = useToast();
+  const [selectedPosition, setSelectedPosition] = useState<string>("");
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [showApplication, setShowApplication] = useState(false);
+
+  const form = useForm<ApplicationForm>({
+    resolver: zodResolver(applicationSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      position: "",
+      experience: "",
+      coverLetter: "",
     },
+  });
+
+  const submitApplication = useMutation({
+    mutationFn: async (data: ApplicationForm & { resumeFile?: File }) => {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key !== 'resumeFile' && value !== undefined) {
+          formData.append(key, value.toString());
+        }
+      });
+      
+      if (data.resumeFile) {
+        formData.append('resume', data.resumeFile);
+      }
+
+      return await apiRequest("POST", "/api/job-applications", formData);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Application Submitted",
+        description: "Thank you for your interest! We'll review your application and contact you soon.",
+      });
+      form.reset();
+      setResumeFile(null);
+      setShowApplication(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Submission Error",
+        description: error.message || "Failed to submit application. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (data: ApplicationForm) => {
+    submitApplication.mutate({ ...data, resumeFile });
+  };
+
+  const handleResumeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: "File Too Large",
+          description: "Resume file must be under 5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!allowedTypes.includes(file.type)) {
+        toast({
+          title: "Invalid File Type",
+          description: "Resume must be a PDF or Word document.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      setResumeFile(file);
+    }
+  };
+
+  const jobPositions: JobPosition[] = [
     {
-      title: "HVAC Installation Specialist",
-      type: "Full-Time",
+      id: "hvac-technician-sr",
+      title: "Senior HVAC Technician",
+      department: "Field Services",
       location: "Calgary, AB",
+      type: "Full-time",
       salary: "$65,000 - $85,000",
-      experience: "2+ Years",
-      description: "Seeking skilled installation specialist for residential and light commercial HVAC system installations.",
+      description: "We're seeking an experienced HVAC technician to join our growing team. You'll be responsible for installation, maintenance, and repair of residential and commercial HVAC systems throughout Calgary.",
       requirements: [
-        "HVAC installation experience",
-        "Knowledge of ductwork and electrical connections",
-        "Ability to read blueprints and technical drawings",
-        "Strong attention to detail",
-        "Team player with good communication skills",
-        "Physical stamina for installation work"
+        "5+ years of HVAC experience",
+        "Alberta Refrigeration & A/C Mechanic License",
+        "Gas Technician Class A or B license",
+        "Valid driver's license and reliable vehicle",
+        "Strong troubleshooting and problem-solving skills",
+        "Excellent customer service abilities"
       ],
       benefits: [
-        "Competitive hourly rate",
-        "Performance-based bonuses",
-        "Company tools and equipment",
-        "Health benefits after probation",
-        "Training opportunities",
-        "Advancement potential"
-      ]
+        "Competitive salary with performance bonuses",
+        "Company vehicle and fuel allowance",
+        "Health and dental benefits",
+        "Retirement savings plan",
+        "Ongoing training and certification support",
+        "Tool allowance program"
+      ],
+      posted: "2024-12-20"
     },
     {
+      id: "hvac-apprentice",
       title: "HVAC Apprentice",
-      type: "Full-Time",
+      department: "Field Services",
       location: "Calgary, AB",
+      type: "Full-time",
       salary: "$45,000 - $55,000",
-      experience: "Entry Level",
-      description: "Perfect opportunity for someone starting their HVAC career. We provide comprehensive training and mentorship.",
+      description: "Start your career in the HVAC industry with AfterHours HVAC. We provide comprehensive training and mentorship to help you become a skilled technician.",
       requirements: [
         "High school diploma or equivalent",
-        "Interest in HVAC trade",
-        "Strong work ethic and reliability",
-        "Willingness to learn and take direction",
-        "Basic hand tool knowledge helpful",
-        "Physically fit for demanding work"
+        "Interest in mechanical systems and trades",
+        "Willingness to learn and follow safety protocols",
+        "Physical ability to work in various conditions",
+        "Valid driver's license",
+        "Basic hand tool knowledge preferred"
       ],
       benefits: [
         "Paid apprenticeship program",
+        "Tuition assistance for trade school",
         "Mentorship from experienced technicians",
-        "Education assistance",
-        "Career progression pathway",
-        "Health benefits",
-        "Job security in growing field"
-      ]
+        "Health benefits after probation",
+        "Career advancement opportunities",
+        "Safety equipment provided"
+      ],
+      posted: "2024-12-18"
+    },
+    {
+      id: "service-coordinator",
+      title: "Service Coordinator",
+      department: "Customer Service",
+      location: "Calgary, AB",
+      type: "Full-time",
+      salary: "$40,000 - $50,000",
+      description: "Join our customer service team as a Service Coordinator. You'll schedule appointments, coordinate with technicians, and ensure excellent customer experiences.",
+      requirements: [
+        "2+ years of customer service experience",
+        "Strong communication and organizational skills",
+        "Experience with scheduling software preferred",
+        "Ability to multitask in fast-paced environment",
+        "Basic knowledge of HVAC systems an asset",
+        "Professional phone manner"
+      ],
+      benefits: [
+        "Regular business hours (no evenings/weekends)",
+        "Comprehensive benefits package",
+        "Professional development opportunities",
+        "Friendly team environment",
+        "Performance incentives",
+        "Paid vacation and sick leave"
+      ],
+      posted: "2024-12-15"
+    },
+    {
+      id: "sales-representative",
+      title: "HVAC Sales Representative",
+      department: "Sales",
+      location: "Calgary, AB",
+      type: "Full-time",
+      salary: "$50,000 - $75,000 + Commission",
+      description: "Drive sales growth by building relationships with residential and commercial customers. Present HVAC solutions and provide expert consultation on system upgrades and replacements.",
+      requirements: [
+        "3+ years of sales experience",
+        "Knowledge of HVAC systems and technology",
+        "Strong presentation and negotiation skills",
+        "Self-motivated with proven track record",
+        "Valid driver's license and clean record",
+        "CRM software experience preferred"
+      ],
+      benefits: [
+        "Base salary plus uncapped commission",
+        "Company vehicle or vehicle allowance",
+        "Health and dental coverage",
+        "Sales training and support",
+        "Flexible schedule",
+        "Annual sales incentive trips"
+      ],
+      posted: "2024-12-12"
     }
   ];
 
-  const benefits = [
+  const companyBenefits = [
     {
-      icon: DollarSign,
-      title: "Competitive Compensation",
-      description: "Industry-leading wages plus performance bonuses and profit sharing"
-    },
-    {
-      icon: Shield,
+      icon: <Shield className="h-6 w-6" />,
       title: "Comprehensive Benefits",
-      description: "Health, dental, vision insurance, and retirement savings plan"
+      description: "Health, dental, and vision coverage for you and your family"
     },
     {
-      icon: Truck,
-      title: "Company Vehicle",
-      description: "Take-home service vehicle with gas card for technician positions"
+      icon: <GraduationCap className="h-6 w-6" />,
+      title: "Professional Development",
+      description: "Ongoing training, certifications, and career advancement opportunities"
     },
     {
-      icon: Award,
-      title: "Training & Development",
-      description: "Ongoing education, certification support, and career advancement"
+      icon: <DollarSign className="h-6 w-6" />,
+      title: "Competitive Compensation",
+      description: "Fair wages, performance bonuses, and profit-sharing programs"
     },
     {
-      icon: Calendar,
+      icon: <Heart className="h-6 w-6" />,
       title: "Work-Life Balance",
-      description: "Flexible scheduling, paid time off, and family-friendly policies"
+      description: "Flexible schedules, paid time off, and family-friendly policies"
     },
     {
-      icon: Heart,
-      title: "Team Culture",
-      description: "Supportive work environment with team events and recognition"
+      icon: <Truck className="h-6 w-6" />,
+      title: "Company Vehicle",
+      description: "Fully equipped service vehicles with fuel and maintenance covered"
+    },
+    {
+      icon: <Star className="h-6 w-6" />,
+      title: "Recognition Programs",
+      description: "Employee of the month, service awards, and team celebrations"
     }
-  ];
-
-  const whyJoinUs = [
-    "Family-owned business with 15+ years of stability",
-    "Growing company with advancement opportunities",
-    "Supportive team environment and mentorship",
-    "Latest tools and technology",
-    "Diverse project types and challenges",
-    "Strong reputation in Calgary market",
-    "Commitment to safety and quality",
-    "Employee recognition programs"
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Helmet>
-        <title>Careers at AfterHours HVAC - Join Calgary's Premier HVAC Team</title>
-        <meta name="description" content="Join the AfterHours HVAC team in Calgary. We're hiring experienced HVAC technicians, installers, and apprentices. Competitive pay, benefits, and growth opportunities." />
-      </Helmet>
-
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-orange-600 text-white py-20">
-        <div className="hvac-container">
-          <div className="text-center">
-            <Badge className="bg-orange-500 text-white mb-4">
-              We're Hiring!
-            </Badge>
-            <h1 className="text-4xl lg:text-5xl font-bold mb-6">
-              Join the AfterHours HVAC Team
-            </h1>
-            <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-              Build your career with Calgary's premier HVAC company. We offer competitive compensation, 
-              comprehensive benefits, and opportunities for professional growth in a supportive team environment.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-orange-500 hover:bg-orange-600">
-                <Phone className="w-5 h-5 mr-2" />
-                Call (403) 613-6014
-              </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-900">
-                <Mail className="w-5 h-5 mr-2" />
-                Email Jordan@Afterhourshvac.ca
-              </Button>
-            </div>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4 max-w-7xl">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center bg-blue-100 border border-blue-200 rounded-full px-6 py-3 mb-6">
+            <Briefcase className="h-5 w-5 text-blue-700 mr-3" />
+            <span className="text-blue-800 text-lg font-bold">Careers</span>
           </div>
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">Join Our Growing Team</h1>
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
+            Build your career with Calgary's leading HVAC company. We offer competitive compensation, 
+            comprehensive benefits, and opportunities for professional growth in a supportive environment.
+          </p>
         </div>
-      </section>
 
-      {/* Open Positions */}
-      <section className="py-16">
-        <div className="hvac-container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Current Openings
-            </h2>
-            <p className="text-lg text-gray-600">
-              Explore our available positions and find your next career opportunity.
-            </p>
-          </div>
-
-          <div className="space-y-8">
-            {openPositions.map((position, index) => (
-              <Card key={index} className="shadow-lg border-0">
-                <CardHeader className="border-b border-gray-100">
-                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    <div>
-                      <CardTitle className="text-2xl text-gray-900 mb-2">{position.title}</CardTitle>
-                      <div className="flex flex-wrap gap-3">
-                        <Badge className="bg-blue-100 text-blue-600">{position.type}</Badge>
-                        <Badge className="bg-green-100 text-green-600">{position.location}</Badge>
-                        <Badge className="bg-orange-100 text-orange-600">{position.salary}</Badge>
-                        <Badge className="bg-purple-100 text-purple-600">{position.experience}</Badge>
-                      </div>
-                    </div>
-                    <Button className="bg-orange-500 hover:bg-orange-600 shrink-0">
-                      Apply Now
-                    </Button>
-                  </div>
-                </CardHeader>
+        {/* Company Benefits */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8">Why Work With Us?</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {companyBenefits.map((benefit, index) => (
+              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
-                  <p className="text-gray-700 mb-6 leading-relaxed">{position.description}</p>
-                  
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
-                        <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                        Requirements
-                      </h4>
-                      <ul className="space-y-2">
-                        {position.requirements.map((req, reqIndex) => (
-                          <li key={reqIndex} className="text-sm text-gray-600 flex items-start">
-                            <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                            {req}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
-                        <Star className="w-5 h-5 text-orange-500 mr-2" />
-                        Benefits
-                      </h4>
-                      <ul className="space-y-2">
-                        {position.benefits.map((benefit, benefitIndex) => (
-                          <li key={benefitIndex} className="text-sm text-gray-600 flex items-start">
-                            <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                            {benefit}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                  <div className="flex justify-center mb-4 text-blue-600">
+                    {benefit.icon}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Overview */}
-      <section className="py-16 bg-blue-50">
-        <div className="hvac-container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Why Work at AfterHours HVAC?
-            </h2>
-            <p className="text-lg text-gray-600">
-              We believe in taking care of our team so they can take care of our customers.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {benefits.map((benefit, index) => (
-              <Card key={index} className="text-center border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <benefit.icon className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-                  <h3 className="text-lg font-bold mb-2">{benefit.title}</h3>
+                  <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
                   <p className="text-gray-600 text-sm">{benefit.description}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
         </div>
-      </section>
 
-      {/* Why Join Us */}
-      <section className="py-16">
-        <div className="hvac-container">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                Why Choose AfterHours HVAC?
-              </h2>
-              <p className="text-lg text-gray-700 mb-6">
-                Join a company that values its employees and invests in their success. 
-                We're more than just a workplace – we're a family.
-              </p>
-              
-              <div className="grid grid-cols-1 gap-3">
-                {whyJoinUs.map((reason, index) => (
-                  <div key={index} className="flex items-center">
-                    <CheckCircle className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                    <span className="text-gray-700">{reason}</span>
+        {/* Open Positions */}
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-center mb-8">Current Openings</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {jobPositions.map((position) => (
+              <Card key={position.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-xl font-bold text-gray-900">
+                        {position.title}
+                      </CardTitle>
+                      <CardDescription className="text-lg">
+                        {position.department}
+                      </CardDescription>
+                    </div>
+                    <Badge variant="outline" className="bg-green-50 text-green-700">
+                      {position.type}
+                    </Badge>
                   </div>
-                ))}
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-1">
+                      <MapPin className="h-4 w-4" />
+                      {position.location}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <DollarSign className="h-4 w-4" />
+                      {position.salary}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      Posted {position.posted}
+                    </div>
+                  </div>
+
+                  <p className="text-gray-700">{position.description}</p>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">Key Requirements:</h4>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      {position.requirements.slice(0, 3).map((req, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="text-blue-600 mt-1">•</span>
+                          {req}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button 
+                      className="flex-1"
+                      onClick={() => {
+                        setSelectedPosition(position.title);
+                        form.setValue('position', position.title);
+                        setShowApplication(true);
+                      }}
+                    >
+                      Apply Now
+                    </Button>
+                    <Button variant="outline">
+                      View Details
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Application Form */}
+        {showApplication && (
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Job Application
+              </CardTitle>
+              <CardDescription>
+                {selectedPosition ? `Applying for: ${selectedPosition}` : "Complete the form below to apply"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="firstName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>First Name *</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="lastName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Last Name *</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email Address *</FormLabel>
+                          <FormControl>
+                            <Input type="email" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number *</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="position"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Position *</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a position" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {jobPositions.map((position) => (
+                              <SelectItem key={position.id} value={position.title}>
+                                {position.title}
+                              </SelectItem>
+                            ))}
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="experience"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Relevant Experience *</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            {...field} 
+                            rows={4}
+                            placeholder="Describe your relevant work experience, certifications, and skills..."
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="coverLetter"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Cover Letter (Optional)</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            {...field} 
+                            rows={4}
+                            placeholder="Tell us why you're interested in this position and what you can bring to our team..."
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Resume Upload */}
+                  <div className="space-y-2">
+                    <Label>Resume Upload</Label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleResumeUpload}
+                        className="hidden"
+                        id="resume-upload"
+                      />
+                      <label htmlFor="resume-upload" className="cursor-pointer">
+                        <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                        <p className="text-sm text-gray-600">
+                          {resumeFile ? resumeFile.name : "Click to upload your resume (PDF or Word, max 5MB)"}
+                        </p>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setShowApplication(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      disabled={submitApplication.isPending}
+                      className="flex-1"
+                    >
+                      {submitApplication.isPending ? "Submitting..." : "Submit Application"}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Company Culture */}
+        <div className="text-center mt-16">
+          <h2 className="text-3xl font-bold mb-6">Our Culture</h2>
+          <div className="max-w-4xl mx-auto">
+            <p className="text-lg text-gray-700 mb-8">
+              At AfterHours HVAC, we believe in fostering a workplace where every team member can thrive. 
+              We're committed to safety, continuous learning, and delivering exceptional service to our customers 
+              throughout Calgary and surrounding areas.
+            </p>
+            <div className="bg-blue-50 rounded-lg p-8">
+              <h3 className="text-xl font-semibold mb-4">Ready to Start Your Career?</h3>
+              <p className="text-gray-700 mb-6">
+                Join a team that values your growth, supports your success, and provides the tools you need to excel in the HVAC industry.
+              </p>
+              <div className="space-y-2 text-sm text-gray-600">
+                <p><strong>Phone:</strong> (403) 613-6014</p>
+                <p><strong>Email:</strong> Jordan@Afterhourshvac.ca</p>
+                <p><strong>Address:</strong> Calgary, Alberta</p>
               </div>
             </div>
-            
-            <div className="space-y-6">
-              <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-0">
-                <Users className="w-8 h-8 text-blue-600 mb-3" />
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Team Environment</h3>
-                <p className="text-gray-700 text-sm">
-                  Work alongside experienced professionals who are committed to excellence 
-                  and supporting each other's growth.
-                </p>
-              </Card>
-              
-              <Card className="p-6 bg-gradient-to-br from-green-50 to-green-100 border-0">
-                <Award className="w-8 h-8 text-green-600 mb-3" />
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Professional Growth</h3>
-                <p className="text-gray-700 text-sm">
-                  Advance your skills with ongoing training, certifications, and 
-                  opportunities to take on new challenges.
-                </p>
-              </Card>
-              
-              <Card className="p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-0">
-                <Heart className="w-8 h-8 text-orange-600 mb-3" />
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Work-Life Balance</h3>
-                <p className="text-gray-700 text-sm">
-                  Enjoy flexible scheduling, competitive time off, and a company 
-                  culture that values your personal time.
-                </p>
-              </Card>
-            </div>
           </div>
         </div>
-      </section>
-
-      {/* Application Process */}
-      <section className="py-16 bg-gray-100">
-        <div className="hvac-container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              How to Apply
-            </h2>
-            <p className="text-lg text-gray-600">
-              Ready to join our team? Here's how to get started.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-6">
-            <Card className="text-center border-0 shadow-lg">
-              <CardContent className="p-6">
-                <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-lg">
-                  1
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Contact Us</h3>
-                <p className="text-sm text-gray-600">
-                  Call or email us about the position you're interested in
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-0 shadow-lg">
-              <CardContent className="p-6">
-                <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-lg">
-                  2
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Submit Resume</h3>
-                <p className="text-sm text-gray-600">
-                  Send your resume and cover letter highlighting your experience
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-0 shadow-lg">
-              <CardContent className="p-6">
-                <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-lg">
-                  3
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Interview</h3>
-                <p className="text-sm text-gray-600">
-                  Meet with our team to discuss the role and your qualifications
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-0 shadow-lg">
-              <CardContent className="p-6">
-                <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-lg">
-                  4
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Join the Team</h3>
-                <p className="text-sm text-gray-600">
-                  Start your new career with comprehensive onboarding and training
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gray-900 text-white">
-        <div className="hvac-container text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to Start Your Career with Us?
-          </h2>
-          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Don't see the perfect position? We're always looking for talented individuals. 
-            Contact us to discuss opportunities.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-orange-500 hover:bg-orange-600">
-              <Phone className="w-5 h-5 mr-2" />
-              Call (403) 613-6014
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
-              <Mail className="w-5 h-5 mr-2" />
-              Email Jordan@Afterhourshvac.ca
-            </Button>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
   );
-}
+};
+
+export default Careers;
