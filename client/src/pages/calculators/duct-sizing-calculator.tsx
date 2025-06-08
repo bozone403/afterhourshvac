@@ -6,9 +6,25 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, Settings, Wind, Calculator } from "lucide-react";
+import { AlertCircle, Settings, Wind, Calculator, Plus, Trash2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ProAccessGuard } from "@/components/ProAccessGuard";
+import { Helmet } from "react-helmet-async";
+
+// Friction loss calculation function
+function calculateFrictionLoss(cfm: number, diameter: number, ductType: string): number {
+  const frictionFactors = {
+    'flexible': 0.025,
+    'rigid-galvanized': 0.015,
+    'rigid-spiral': 0.012,
+    'pvc': 0.010
+  };
+  
+  const factor = frictionFactors[ductType as keyof typeof frictionFactors] || 0.020;
+  const velocity = cfm / (Math.PI * Math.pow(diameter / 24, 2));
+  
+  return Number((factor * Math.pow(velocity / 1000, 1.85) * 100).toFixed(3));
+}
 
 interface DuctSizing {
   supply: { [key: string]: { diameter: number; velocity: number; friction: number } };
@@ -44,240 +60,283 @@ function DuctSizingCalculatorContent() {
     if (!cfm || !ductType) return;
 
     const totalCFM = parseFloat(cfm);
-    
-    // Calculate individual room duct sizes
     const supply: { [key: string]: { diameter: number; velocity: number; friction: number } } = {};
+    
+    // Enhanced velocity recommendations based on duct type
+    const velocityLimits = {
+      'flexible': { max: 900, recommended: 700 },
+      'rigid-galvanized': { max: 1200, recommended: 900 },
+      'rigid-spiral': { max: 1500, recommended: 1100 },
+      'pvc': { max: 800, recommended: 600 }
+    };
     
     rooms.forEach(room => {
       if (room.name && room.cfm) {
         const roomCFM = parseFloat(room.cfm);
+        const targetVelocity = velocityLimits[ductType as keyof typeof velocityLimits]?.recommended || 800;
         
-        // Calculate duct diameter using velocity method
-        // Target velocity: 600-900 FPM for supply, 500-700 FPM for return
-        const targetVelocity = 750; // FPM
-        const area = roomCFM / targetVelocity; // sq ft
-        const diameter = Math.sqrt(area * 4 / Math.PI) * 12; // inches
+        // Calculate duct diameter: CFM = Velocity × Area
+        const area = roomCFM / targetVelocity;
+        const diameter = Math.sqrt(area / Math.PI) * 2 * 12;
         
-        // Round to standard duct sizes
-        const standardSizes = [4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20];
-        const roundedDiameter = standardSizes.find(size => size >= diameter) || standardSizes[standardSizes.length - 1];
+        // Round to nearest standard duct size
+        const standardSizes = [4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22, 24];
+        const roundedDiameter = standardSizes.reduce((prev, curr) => 
+          Math.abs(curr - diameter) < Math.abs(prev - diameter) ? curr : prev
+        );
         
-        // Recalculate actual velocity
-        const actualArea = Math.PI * Math.pow(roundedDiameter / 12, 2) / 4;
+        // Calculate actual velocity with rounded diameter
+        const actualArea = Math.PI * Math.pow(roundedDiameter / 24, 2);
         const actualVelocity = roomCFM / actualArea;
         
-        // Calculate friction loss (simplified)
-        const friction = 0.1 * Math.pow(actualVelocity / 1000, 1.85); // inches of water per 100 ft
+        // Calculate friction loss
+        const frictionLoss = calculateFrictionLoss(roomCFM, roundedDiameter, ductType);
         
         supply[room.name] = {
           diameter: roundedDiameter,
           velocity: Math.round(actualVelocity),
-          friction: Math.round(friction * 100) / 100
+          friction: frictionLoss
         };
       }
     });
 
     // Calculate return duct sizing (typically 20% larger than supply)
-    const returnCFM = totalCFM * 0.9; // Account for some supply air leakage
-    const returnTargetVelocity = 600; // Lower velocity for return
-    const returnArea = returnCFM / returnTargetVelocity;
+    const returnCFM = totalCFM * 1.2;
+    const returnVelocity = 650;
+    const returnArea = returnCFM / returnVelocity;
     const returnDiameter = Math.sqrt(returnArea * 4 / Math.PI) * 12;
     
-    // For rectangular return, convert to equivalent round
-    const standardReturnSizes = [14, 16, 18, 20, 24, 28, 30];
-    const roundedReturnDiameter = standardReturnSizes.find(size => size >= returnDiameter) || standardReturnSizes[standardReturnSizes.length - 1];
+    const returnStandardSizes = [10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
+    const returnRoundedDiameter = returnStandardSizes.find(size => size >= returnDiameter) || returnStandardSizes[returnStandardSizes.length - 1];
     
-    const actualReturnArea = Math.PI * Math.pow(roundedReturnDiameter / 12, 2) / 4;
-    const actualReturnVelocity = returnCFM / actualReturnArea;
-    const returnFriction = 0.1 * Math.pow(actualReturnVelocity / 1000, 1.85);
+    const returnActualArea = Math.PI * Math.pow(returnRoundedDiameter / 12, 2) / 4;
+    const returnActualVelocity = returnCFM / returnActualArea;
+    const returnFriction = calculateFrictionLoss(returnCFM, returnRoundedDiameter, ductType);
 
     // Calculate main trunk sizing
-    const trunkVelocity = 1200; // Higher velocity acceptable for main trunk
-    const trunkArea = totalCFM / trunkVelocity;
-    const trunkDiameter = Math.sqrt(trunkArea * 4 / Math.PI) * 12;
-    const standardTrunkSizes = [16, 18, 20, 24, 28, 30, 36];
-    const roundedTrunkDiameter = standardTrunkSizes.find(size => size >= trunkDiameter) || standardTrunkSizes[standardTrunkSizes.length - 1];
+    const mainTrunkVelocity = 1000;
+    const mainTrunkArea = totalCFM / mainTrunkVelocity;
+    const mainTrunkDiameter = Math.sqrt(mainTrunkArea * 4 / Math.PI) * 12;
+    const mainTrunkStandardSizes = [12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36];
+    const mainTrunkRoundedDiameter = mainTrunkStandardSizes.find(size => size >= mainTrunkDiameter) || mainTrunkStandardSizes[mainTrunkStandardSizes.length - 1];
     
-    const actualTrunkArea = Math.PI * Math.pow(roundedTrunkDiameter / 12, 2) / 4;
-    const actualTrunkVelocity = totalCFM / actualTrunkArea;
+    const mainTrunkActualArea = Math.PI * Math.pow(mainTrunkRoundedDiameter / 12, 2) / 4;
+    const mainTrunkActualVelocity = totalCFM / mainTrunkActualArea;
 
     setResult({
       supply,
       return: {
-        diameter: roundedReturnDiameter,
-        velocity: Math.round(actualReturnVelocity),
-        friction: Math.round(returnFriction * 100) / 100
+        diameter: returnRoundedDiameter,
+        velocity: Math.round(returnActualVelocity),
+        friction: returnFriction
       },
       mainTrunk: {
-        diameter: roundedTrunkDiameter,
-        velocity: Math.round(actualTrunkVelocity)
+        diameter: mainTrunkRoundedDiameter,
+        velocity: Math.round(mainTrunkActualVelocity)
       }
     });
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center bg-blue-100 border border-blue-200 rounded-full px-4 py-2 mb-4">
-          <Settings className="h-4 w-4 text-blue-600 mr-2" />
-          <span className="text-blue-600 text-sm font-medium">Pro Tool</span>
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Manual D Duct Sizing Calculator</h1>
-        <p className="text-gray-600">Professional ductwork design and sizing for optimal airflow</p>
-      </div>
+    <>
+      <Helmet>
+        <title>Professional Duct Sizing Calculator | AfterHours HVAC</title>
+        <meta name="description" content="Calculate proper duct sizes for HVAC systems with our professional calculator. Includes friction loss calculations and velocity optimization for all duct types." />
+      </Helmet>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* System Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Wind className="h-5 w-5 text-blue-600" />
-              System Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="totalCFM">Total System CFM</Label>
-              <Input
-                id="totalCFM"
-                type="number"
-                placeholder="e.g., 1200"
-                value={cfm}
-                onChange={(e) => setCfm(e.target.value)}
-              />
-            </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-8">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Professional Duct Sizing Calculator
+            </h1>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Calculate optimal duct sizes with professional-grade algorithms including friction loss, 
+              velocity optimization, and material-specific recommendations.
+            </p>
+          </div>
 
-            <div>
-              <Label htmlFor="ductType">Duct Material</Label>
-              <Select value={ductType} onValueChange={setDuctType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select duct type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="galvanized">Galvanized Steel</SelectItem>
-                  <SelectItem value="flexible">Flexible Duct</SelectItem>
-                  <SelectItem value="ductboard">Duct Board</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Input Section */}
+            <Card className="border-orange-200">
+              <CardHeader>
+                <CardTitle className="flex items-center text-gray-900">
+                  <Settings className="h-5 w-5 mr-2 text-orange-600" />
+                  System Parameters
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="cfm" className="text-gray-700">Total System CFM</Label>
+                    <Input
+                      id="cfm"
+                      type="number"
+                      value={cfm}
+                      onChange={(e) => setCfm(e.target.value)}
+                      placeholder="e.g., 1200"
+                      className="border-gray-300"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="ductType" className="text-gray-700">Duct Material</Label>
+                    <Select value={ductType} onValueChange={setDuctType}>
+                      <SelectTrigger className="border-gray-300">
+                        <SelectValue placeholder="Select duct type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="flexible">Flexible Duct</SelectItem>
+                        <SelectItem value="rigid-galvanized">Rigid Galvanized</SelectItem>
+                        <SelectItem value="rigid-spiral">Rigid Spiral</SelectItem>
+                        <SelectItem value="pvc">PVC</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-        {/* Room CFM Requirements */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Room CFM Requirements</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {rooms.map((room, index) => (
-              <div key={index} className="grid grid-cols-3 gap-2">
-                <Input
-                  placeholder="Room name"
-                  value={room.name}
-                  onChange={(e) => updateRoom(index, "name", e.target.value)}
-                />
-                <Input
-                  type="number"
-                  placeholder="CFM"
-                  value={room.cfm}
-                  onChange={(e) => updateRoom(index, "cfm", e.target.value)}
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => removeRoom(index)}
-                  disabled={rooms.length <= 1}
+                <Separator />
+
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <Label className="text-gray-700 text-lg font-medium">Room Requirements</Label>
+                    <Button 
+                      onClick={addRoom} 
+                      variant="outline" 
+                      size="sm"
+                      className="border-orange-300 text-orange-600 hover:bg-orange-50"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Room
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {rooms.map((room, index) => (
+                      <div key={index} className="flex gap-2 items-center">
+                        <Input
+                          value={room.name}
+                          onChange={(e) => updateRoom(index, 'name', e.target.value)}
+                          placeholder="Room name"
+                          className="flex-1 border-gray-300"
+                        />
+                        <Input
+                          type="number"
+                          value={room.cfm}
+                          onChange={(e) => updateRoom(index, 'cfm', e.target.value)}
+                          placeholder="CFM"
+                          className="w-24 border-gray-300"
+                        />
+                        <Button
+                          onClick={() => removeRoom(index)}
+                          variant="outline"
+                          size="sm"
+                          className="border-red-300 text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={calculateDuctSizing} 
+                  className="w-full bg-orange-600 hover:bg-orange-700"
+                  disabled={!cfm || !ductType}
                 >
-                  Remove
+                  <Calculator className="h-4 w-4 mr-2" />
+                  Calculate Duct Sizing
                 </Button>
-              </div>
-            ))}
-            <Button variant="outline" onClick={addRoom} className="w-full">
-              Add Room
-            </Button>
-            
-            <Button 
-              onClick={calculateDuctSizing} 
-              className="w-full bg-blue-600 hover:bg-blue-700"
-              disabled={!cfm || !ductType}
-            >
-              <Calculator className="h-4 w-4 mr-2" />
-              Calculate Duct Sizes
-            </Button>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Results */}
-        {result && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Duct Sizing Results</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Main Trunk */}
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <h4 className="font-semibold text-blue-900 mb-2">Main Trunk</h4>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <span>Diameter:</span>
-                  <Badge variant="outline">{result.mainTrunk.diameter}"</Badge>
-                  <span>Velocity:</span>
-                  <Badge variant="outline">{result.mainTrunk.velocity} FPM</Badge>
-                </div>
-              </div>
+            {/* Results Section */}
+            <Card className="border-blue-200">
+              <CardHeader>
+                <CardTitle className="flex items-center text-gray-900">
+                  <Wind className="h-5 w-5 mr-2 text-blue-600" />
+                  Sizing Results
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {result ? (
+                  <div className="space-y-6">
+                    {/* Supply Ducts */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Supply Ducts</h3>
+                      <div className="space-y-3">
+                        {Object.entries(result.supply).map(([room, sizing]) => (
+                          <div key={room} className="bg-blue-50 p-4 rounded-lg">
+                            <div className="flex justify-between items-start">
+                              <h4 className="font-medium text-gray-900">{room}</h4>
+                              <Badge className="bg-blue-600">{sizing.diameter}"</Badge>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 mt-2 text-sm text-gray-600">
+                              <span>Velocity: {sizing.velocity} FPM</span>
+                              <span>Friction: {sizing.friction}" w.c./100ft</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-              {/* Return Duct */}
-              <div className="p-4 bg-green-50 rounded-lg">
-                <h4 className="font-semibold text-green-900 mb-2">Return Duct</h4>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <span>Diameter:</span>
-                  <Badge variant="outline">{result.return.diameter}"</Badge>
-                  <span>Velocity:</span>
-                  <Badge variant="outline">{result.return.velocity} FPM</Badge>
-                  <span>Friction:</span>
-                  <Badge variant="outline">{result.return.friction}" WC</Badge>
-                </div>
-              </div>
+                    <Separator />
 
-              <Separator />
-
-              {/* Supply Ducts */}
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-3">Supply Ducts</h4>
-                <div className="space-y-2">
-                  {Object.entries(result.supply).map(([roomName, ductInfo]) => (
-                    <div key={roomName} className="p-3 bg-orange-50 rounded-lg">
-                      <div className="font-medium text-orange-900 mb-1">{roomName}</div>
-                      <div className="grid grid-cols-3 gap-2 text-xs">
-                        <div>
-                          <span className="text-gray-600">Diameter:</span>
-                          <div className="font-medium">{ductInfo.diameter}"</div>
+                    {/* Return Duct */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Return Duct</h3>
+                      <div className="bg-green-50 p-4 rounded-lg">
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-medium text-gray-900">Main Return</h4>
+                          <Badge className="bg-green-600">{result.return.diameter}"</Badge>
                         </div>
-                        <div>
-                          <span className="text-gray-600">Velocity:</span>
-                          <div className="font-medium">{ductInfo.velocity} FPM</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Friction:</span>
-                          <div className="font-medium">{ductInfo.friction}" WC</div>
+                        <div className="grid grid-cols-2 gap-4 mt-2 text-sm text-gray-600">
+                          <span>Velocity: {result.return.velocity} FPM</span>
+                          <span>Friction: {result.return.friction}" w.c./100ft</span>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription className="text-sm">
-                  Calculations based on Manual D principles. Actual installation may require 
-                  adjustments for fittings, length, and local codes.
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-          </Card>
-        )}
+                    <Separator />
+
+                    {/* Main Trunk */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Main Supply Trunk</h3>
+                      <div className="bg-orange-50 p-4 rounded-lg">
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-medium text-gray-900">Supply Trunk</h4>
+                          <Badge className="bg-orange-600">{result.mainTrunk.diameter}"</Badge>
+                        </div>
+                        <div className="mt-2 text-sm text-gray-600">
+                          <span>Velocity: {result.mainTrunk.velocity} FPM</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Professional Notes */}
+                    <Alert>
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        <strong>Professional Notes:</strong> These calculations are based on standard ACCA Manual D guidelines. 
+                        Consider additional factors like duct length, fittings, and static pressure requirements for final design.
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Wind className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Ready to Calculate</h3>
+                    <p className="text-gray-600">
+                      Enter your system parameters and room requirements to get professional duct sizing recommendations.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
