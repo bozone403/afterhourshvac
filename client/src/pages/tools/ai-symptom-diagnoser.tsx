@@ -595,6 +595,43 @@ export default function AISymptomDiagnoser() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 p-4">
+      {/* Safety Alert System */}
+      <SafetyAlertSystem 
+        alerts={safetyAlerts}
+        onDismiss={handleAlertDismiss}
+      />
+
+      {/* Tool Mascot */}
+      <ToolMascot 
+        currentContext={currentContext}
+        onSpeak={speakResponse}
+      />
+
+      {/* Reminder Widget */}
+      <ReminderWidget 
+        onComplete={handleReminderComplete}
+        onDismiss={handleReminderDismiss}
+      />
+
+      {/* Step-by-Step Guide */}
+      {showStepGuide && stepGuideSteps.length > 0 && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <StepByStepGuide
+              steps={stepGuideSteps}
+              title="HVAC Troubleshooting Guide"
+              onComplete={() => {
+                setShowStepGuide(false);
+                toast({
+                  title: "Guide Completed!",
+                  description: "Great job! If the problem persists, don't hesitate to call us.",
+                });
+              }}
+              onExit={() => setShowStepGuide(false)}
+            />
+          </div>
+        </div>
+      )}
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center mb-8">
