@@ -402,20 +402,7 @@ const ProPortal = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-orange-50 to-orange-100">
-                    <CardHeader className="pb-3">
-                      <Bot className="h-8 w-8 text-orange-600 mb-2" />
-                      <CardTitle className="text-lg">Pro Diagnostic Assistant</CardTitle>
-                      <CardDescription className="text-sm">Advanced AI technical diagnostics</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Link href="/tools/pro-diagnostic-assistant">
-                        <Button className="w-full bg-orange-600 hover:bg-orange-700">
-                          Launch Diagnostics
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
+
 
                   <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-blue-50 to-blue-100">
                     <CardHeader className="pb-3">
