@@ -92,20 +92,20 @@ const heatPumpCards = [
 const maintenanceCards = [
   {
     name: "Basic Plan",
-    price: 299,
+    price: 1055,
     category: "basic",
     features: ["Annual tune-up", "Basic cleaning", "Safety inspection", "Priority scheduling", "10% discount on repairs"]
   },
   {
     name: "Premium Plan", 
-    price: 549,
+    price: 1755,
     category: "premium",
     popular: true,
     features: ["Bi-annual tune-ups", "Comprehensive cleaning", "Detailed inspection", "Priority emergency service", "15% discount on repairs", "Free filter replacements"]
   },
   {
     name: "Commercial Plan",
-    price: 899,
+    price: 2499,
     category: "commercial", 
     features: ["Quarterly maintenance", "Commercial-grade service", "24/7 emergency support", "Preventive maintenance", "20% discount on all services", "Customized service plan"]
   }
@@ -145,7 +145,7 @@ const waterTankCards = [
     name: "Standard Electric",
     size: "40-50 Gallon",
     model: "Standard Electric Water Heater",
-    installPrice: 1599,
+    installPrice: 2399,
     category: "standard",
     features: ["Electric heating element", "Standard efficiency", "6-year warranty", "Professional installation"]
   },
@@ -153,7 +153,7 @@ const waterTankCards = [
     name: "High Efficiency Gas",
     size: "40-50 Gallon", 
     model: "High Efficiency Gas Water Heater",
-    installPrice: 1899,
+    installPrice: 2899,
     category: "premium",
     popular: true,
     features: ["Natural gas operation", "High efficiency rating", "8-year warranty", "Faster recovery time"]
@@ -162,7 +162,7 @@ const waterTankCards = [
     name: "Tankless Gas",
     size: "On-Demand",
     model: "Tankless Gas Water Heater",
-    installPrice: 2999,
+    installPrice: 4799,
     category: "premium",
     features: ["Endless hot water", "Space-saving design", "High efficiency", "12-year warranty"]
   }
@@ -174,7 +174,7 @@ const hrvCards = [
     name: "Basic HRV",
     model: "Heat Recovery Ventilator",
     cfm: "100-150 CFM",
-    installPrice: 2499,
+    installPrice: 3799,
     category: "standard",
     features: ["Heat recovery", "Fresh air ventilation", "Energy efficient", "Improved air quality"]
   },
@@ -182,7 +182,7 @@ const hrvCards = [
     name: "Premium ERV",
     model: "Energy Recovery Ventilator", 
     cfm: "150-200 CFM",
-    installPrice: 3299,
+    installPrice: 4999,
     category: "premium",
     popular: true,
     features: ["Heat & moisture recovery", "Advanced controls", "Variable speed", "HEPA filtration"]
@@ -195,7 +195,7 @@ const humidifierCards = [
     name: "Bypass Humidifier",
     model: "Whole House Bypass Humidifier",
     coverage: "Up to 4,000 sq ft",
-    installPrice: 599,
+    installPrice: 1299,
     category: "standard",
     features: ["Whole house coverage", "Automatic operation", "Low maintenance", "Professional installation"]
   },
@@ -203,7 +203,7 @@ const humidifierCards = [
     name: "Steam Humidifier",
     model: "Whole House Steam Humidifier",
     coverage: "Up to 6,000 sq ft",
-    installPrice: 1299,
+    installPrice: 2199,
     category: "premium",
     popular: true,
     features: ["Steam technology", "Precise humidity control", "Self-cleaning", "Advanced controls"]

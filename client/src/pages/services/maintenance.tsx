@@ -19,42 +19,42 @@ import { Link } from "wouter";
 export default function HVACMaintenance() {
   const maintenancePlans = [
     {
-      name: "Essential Plan",
-      price: "$299/year",
-      description: "Basic maintenance for residential HVAC systems",
+      name: "Basic Plan",
+      price: "$1,055/year",
+      description: "Essential maintenance for residential HVAC systems",
       features: [
-        "Annual system inspection",
-        "Filter replacement",
+        "Annual tune-up",
         "Basic cleaning",
-        "Safety check",
-        "Performance report"
+        "Safety inspection",
+        "Priority scheduling",
+        "10% discount on repairs"
       ]
     },
     {
-      name: "Dominion Plan",
-      price: "$1,055/year",
+      name: "Premium Plan",
+      price: "$1,755/year",
       description: "Comprehensive maintenance and priority service",
       features: [
-        "Bi-annual inspections",
+        "Bi-annual tune-ups",
+        "Comprehensive cleaning",
+        "Detailed inspection",
         "Priority emergency service",
-        "20% discount on repairs",
-        "Advanced diagnostics",
-        "Performance optimization",
-        "Extended warranty coverage"
+        "15% discount on repairs",
+        "Free filter replacements"
       ],
       popular: true
     },
     {
       name: "Commercial Plan",
-      price: "Custom pricing",
-      description: "Tailored maintenance for commercial properties",
+      price: "$2,499/year",
+      description: "Professional maintenance for commercial properties",
       features: [
-        "Quarterly inspections",
-        "24/7 emergency service",
+        "Quarterly maintenance",
+        "Commercial-grade service",
+        "24/7 emergency support",
         "Preventive maintenance",
-        "Energy efficiency reports",
-        "Equipment lifecycle planning",
-        "Dedicated account manager"
+        "20% discount on all services",
+        "Customized service plan"
       ]
     }
   ];
