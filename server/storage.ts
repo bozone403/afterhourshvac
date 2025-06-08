@@ -1065,7 +1065,7 @@ export class DatabaseStorage implements IStorage {
   async endUserSession(sessionId: string): Promise<void> {
     await db
       .update(userSessions)
-      .set({ logoutAt: new Date(), isActive: false })
+      .set({ isActive: false })
       .where(eq(userSessions.sessionId, sessionId));
   }
 
@@ -1228,7 +1228,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteJobSchedule(id: number): Promise<boolean> {
     const result = await db.delete(jobSchedules).where(eq(jobSchedules.id, id));
-    return result.count > 0;
+    return result.rowCount !== null && result.rowCount > 0;
   }
 
   async getJobSchedulesByDate(startDate: Date, endDate: Date): Promise<any[]> {
@@ -1278,7 +1278,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteMaintenancePlan(id: number): Promise<boolean> {
     const result = await db.delete(maintenancePlans).where(eq(maintenancePlans.id, id));
-    return result.count > 0;
+    return result.rowCount !== null && result.rowCount > 0;
   }
 
   async completeServiceJourneyStage(serviceRequestId: number, stage: string): Promise<ServiceJourneyStage | undefined> {
@@ -1622,13 +1622,7 @@ export class DatabaseStorage implements IStorage {
     return sessions;
   }
 
-  async createUserSession(data: any): Promise<any> {
-    const [session] = await db
-      .insert(userSessions)
-      .values(data)
-      .returning();
-    return session;
-  }
+
 
   async getUserSessionBySessionId(sessionId: string): Promise<any> {
     const [session] = await db
@@ -1809,7 +1803,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(serviceBookings)
       .where(eq(serviceBookings.id, id));
-    return result.rowCount > 0;
+    return result.rowCount !== null && result.rowCount > 0;
   }
 
   async getServiceBooking(id: number): Promise<ServiceBooking | undefined> {
@@ -1842,7 +1836,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(forumPosts)
       .where(eq(forumPosts.id, id));
-    return (result.rowCount || 0) > 0;
+    return result.rowCount !== null && result.rowCount > 0;
   }
 
   async updateServiceBookingStatus(id: number, status: string): Promise<ServiceBooking | undefined> {
