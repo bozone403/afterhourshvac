@@ -3272,6 +3272,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // EMERGENCY SERVICE TRACKING ENDPOINTS
   
+  // Submit emergency request
+  app.post("/api/emergency-requests", async (req, res) => {
+    try {
+      const emergencyData = insertEmergencyRequestSchema.parse(req.body);
+      const request = await storage.createEmergencyRequest(emergencyData);
+      
+      res.status(201).json({ 
+        success: true, 
+        message: "Emergency request submitted successfully",
+        id: request.id 
+      });
+    } catch (error: any) {
+      console.error("Error creating emergency request:", error);
+      res.status(500).json({ 
+        error: "Error creating emergency request", 
+        message: error.message 
+      });
+    }
+  });
+  
   // Get all emergency requests (admin) or user's own requests
   app.get("/api/emergency-requests", async (req, res) => {
     try {
