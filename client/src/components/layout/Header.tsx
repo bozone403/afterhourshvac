@@ -41,10 +41,12 @@ const Header = () => {
   const navigationItems = [
     { name: "Home", href: "/", icon: Home },
     {
-      name: "Shop Equipment", 
-      href: "/shop/furnaces",
-      icon: Wrench,
+      name: "Shop Services", 
+      href: "/shop/residential",
+      icon: Building2,
       submenu: [
+        { name: "Residential Custom & New Builds", href: "/shop/residential", isPro: false },
+        { name: "Commercial & Multi-Family", href: "/shop/commercial", isPro: false },
         { name: "High-Efficiency Furnaces", href: "/shop/furnaces", isPro: false },
         { name: "Central Air Conditioning", href: "/shop/air-conditioning", isPro: false },
         { name: "Gas Water Heaters", href: "/shop/water-heaters", isPro: false },
