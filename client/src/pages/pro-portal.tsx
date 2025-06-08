@@ -418,11 +418,11 @@ For complete terms, consult full legal document.`;
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <FileCheck className="h-8 w-8 text-green-600 mb-2" />
-                    <CardTitle>Quote Builder</CardTitle>
-                    <CardDescription>Real-time quoting with Alggin pricing</CardDescription>
+                    <CardTitle>Professional Quote Builder</CardTitle>
+                    <CardDescription>Complete job estimating with comprehensive Alggin catalog pricing</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Link href="/calculators/quote-builder">
+                    <Link href="/calculators/enhanced-quote-builder">
                       <Button className="w-full bg-green-600 hover:bg-green-700">
                         Open Calculator
                       </Button>

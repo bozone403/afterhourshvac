@@ -180,7 +180,11 @@ function EnhancedQuoteBuilderContent() {
     if (!selectedCategory || !selectedItem || !quantity) return;
 
     const categoryData = algginPricing[selectedCategory as keyof typeof algginPricing];
+    if (!categoryData) return;
+    
     const itemData = categoryData[selectedItem as keyof typeof categoryData];
+    if (!itemData) return;
+    
     const qty = parseFloat(quantity);
     
     const newItem: QuoteItem = {
@@ -433,12 +437,13 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                       </SelectTrigger>
                       <SelectContent className="max-h-60">
                         {filteredItems.map(item => {
-                          const itemData = algginPricing[selectedCategory as keyof typeof algginPricing][item as any];
+                          const categoryData = algginPricing[selectedCategory as keyof typeof algginPricing];
+                          const itemData = categoryData ? categoryData[item as keyof typeof categoryData] : null;
                           return (
                             <SelectItem key={item} value={item}>
                               <div className="flex justify-between items-center w-full">
                                 <span className="text-gray-900 font-medium">{item}</span>
-                                <span className="text-green-600 font-bold ml-4">${itemData.price.toFixed(2)}</span>
+                                <span className="text-green-600 font-bold ml-4">${itemData?.price?.toFixed(2) || "0.00"}</span>
                               </div>
                             </SelectItem>
                           );
