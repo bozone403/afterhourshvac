@@ -1842,6 +1842,23 @@ export class DatabaseStorage implements IStorage {
     return request;
   }
 
+  // Forum post moderation methods
+  async updateForumPost(id: number, data: Partial<ForumPost>): Promise<ForumPost | undefined> {
+    const [updatedPost] = await db
+      .update(forumPosts)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(forumPosts.id, id))
+      .returning();
+    return updatedPost;
+  }
+
+  async deleteForumPost(id: number): Promise<boolean> {
+    const result = await db
+      .delete(forumPosts)
+      .where(eq(forumPosts.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
   async updateServiceBookingStatus(id: number, status: string): Promise<ServiceBooking | undefined> {
     const [updatedBooking] = await db
       .update(serviceBookings)

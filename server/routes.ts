@@ -3871,6 +3871,43 @@ Login to manage: afterhourshvac.ca/admin`;
     }
   });
 
+  // Admin - Update forum post
+  app.put("/api/admin/forum-posts/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      const updatedPost = await storage.updateForumPost(parseInt(id), updates);
+      
+      if (!updatedPost) {
+        return res.status(404).json({ error: "Forum post not found" });
+      }
+      
+      res.json(updatedPost);
+    } catch (error: any) {
+      console.error("Error updating forum post:", error);
+      res.status(500).json({ error: "Failed to update forum post" });
+    }
+  });
+
+  // Admin - Delete forum post
+  app.delete("/api/admin/forum-posts/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      const success = await storage.deleteForumPost(parseInt(id));
+      
+      if (!success) {
+        return res.status(404).json({ error: "Forum post not found" });
+      }
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error deleting forum post:", error);
+      res.status(500).json({ error: "Failed to delete forum post" });
+    }
+  });
+
   // Admin - Get all service requests  
   app.get("/api/admin/service-requests", requireAuth, requireAdmin, async (req, res) => {
     try {

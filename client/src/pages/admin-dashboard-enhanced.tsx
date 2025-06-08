@@ -436,6 +436,66 @@ export default function AdminDashboardEnhanced() {
     }
   };
 
+  // Forum moderation mutations
+  const updateForumPostMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+      return await apiRequest("PUT", `/api/admin/forum-posts/${id}`, data);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Post Updated",
+        description: "Forum post has been updated successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/forum-posts"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Failed to update forum post.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteForumPostMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest("DELETE", `/api/admin/forum-posts/${id}`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Post Deleted",
+        description: "Forum post has been deleted successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/forum-posts"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Failed to delete forum post.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Forum moderation handlers
+  const approveForumPost = (id: number) => {
+    updateForumPostMutation.mutate({ id, data: { isApproved: true, moderatedAt: new Date() } });
+  };
+
+  const rejectForumPost = (id: number) => {
+    updateForumPostMutation.mutate({ id, data: { isApproved: false, moderatedAt: new Date() } });
+  };
+
+  const deleteForumPost = (id: number) => {
+    if (confirm("Are you sure you want to delete this forum post? This action cannot be undone.")) {
+      deleteForumPostMutation.mutate(id);
+    }
+  };
+
+  const toggleForumPostVisibility = (id: number, currentStatus: boolean) => {
+    updateForumPostMutation.mutate({ id, data: { isVisible: !currentStatus } });
+  };
+
   const getUserTypeColor = (userType: string) => {
     switch (userType) {
       case 'admin': return 'bg-red-100 text-red-800';
@@ -1162,17 +1222,66 @@ export default function AdminDashboardEnhanced() {
                   {forumPosts && forumPosts.length > 0 ? (
                     forumPosts.map((post: any) => (
                       <div key={post.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div>
+                        <div className="flex-1">
                           <h4 className="font-semibold">{post.title}</h4>
                           <p className="text-sm text-muted-foreground">
-                            By: {post.author} • Category: {post.category}
+                            By: {post.username || post.author} • Category: {post.categoryName || post.category}
                           </p>
                           <p className="text-sm">{post.content?.substring(0, 150)}...</p>
+                          <div className="flex gap-2 mt-2">
+                            {post.isApproved === null && (
+                              <Badge variant="outline" className="text-yellow-600">Pending Review</Badge>
+                            )}
+                            {post.isApproved === true && (
+                              <Badge variant="default" className="bg-green-100 text-green-800">Approved</Badge>
+                            )}
+                            {post.isApproved === false && (
+                              <Badge variant="destructive">Rejected</Badge>
+                            )}
+                            {post.isVisible === false && (
+                              <Badge variant="secondary">Hidden</Badge>
+                            )}
+                          </div>
                         </div>
                         <div className="flex flex-col gap-2">
-                          <Badge variant={post.isPublished ? "default" : "secondary"}>
-                            {post.isPublished ? "Published" : "Draft"}
-                          </Badge>
+                          <div className="flex gap-1">
+                            {post.isApproved !== true && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="bg-green-50 hover:bg-green-100"
+                                onClick={() => approveForumPost(post.id)}
+                              >
+                                Approve
+                              </Button>
+                            )}
+                            {post.isApproved !== false && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="bg-red-50 hover:bg-red-100"
+                                onClick={() => rejectForumPost(post.id)}
+                              >
+                                Reject
+                              </Button>
+                            )}
+                          </div>
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => toggleForumPostVisibility(post.id, post.isVisible)}
+                            >
+                              {post.isVisible ? 'Hide' : 'Show'}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => deleteForumPost(post.id)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
                           <span className="text-xs text-muted-foreground">
                             {new Date(post.createdAt).toLocaleDateString()}
                           </span>
