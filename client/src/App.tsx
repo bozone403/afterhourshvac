@@ -41,6 +41,8 @@ import DuctCleaning from "@/pages/services/duct-cleaning";
 import HVACMaintenance from "@/pages/services/maintenance";
 import EnergyAudit from "@/pages/services/energy-audit";
 import ServiceAreas from "@/pages/service-areas";
+import Careers from "@/pages/careers";
+import Reviews from "@/pages/reviews";
 import BlogIndex from "@/pages/blog/index";
 import BlogFurnaceWinter from "@/pages/blog/prepare-furnace-winter";
 import BlogCommercialVsResidential from "@/pages/blog/commercial-vs-residential-hvac";

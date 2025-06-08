@@ -11,6 +11,7 @@ import {
   Star,
   CheckCircle,
   Phone,
+  Mail,
   Calendar,
   Wrench,
   Heart,
@@ -21,13 +22,15 @@ import {
   Target,
   Eye,
   Zap,
-  TrendingUp
+  TrendingUp,
+  Building,
+  MapPin
 } from "lucide-react";
 
 const About = () => {
   const stats = [
     { number: "15+", label: "Years in Business", icon: Award },
-    { number: "2000+", label: "Satisfied Customers", icon: Users },
+    { number: "5000+", label: "Satisfied Customers", icon: Users },
     { number: "24/7", label: "Emergency Service", icon: Clock },
     { number: "100%", label: "Licensed & Insured", icon: Shield }
   ];
@@ -93,42 +96,39 @@ const About = () => {
 
   const teamMembers = [
     {
-      name: "Jordan Bozanich",
+      name: "Jordan Boisclair",
       role: "Owner & Master Technician",
       experience: "15+ Years Experience",
-      specialties: ["Commercial HVAC", "System Design", "Energy Audits"]
+      specialties: ["Commercial HVAC", "System Design", "Energy Audits"],
+      description: "Leading AfterHours HVAC with expertise in complex commercial systems and energy-efficient solutions."
     },
     {
-      name: "Sarah Thompson",
-      role: "Senior HVAC Technician",
-      experience: "10+ Years Experience", 
-      specialties: ["Residential Service", "Heat Pumps", "Indoor Air Quality"]
+      name: "Earl McRae",
+      role: "AI Operations Specialist",
+      experience: "Advanced AI Systems",
+      specialties: ["Process Optimization", "Digital Solutions", "Customer Experience"],
+      description: "Enhancing service delivery through cutting-edge technology and automated systems."
     },
     {
-      name: "Mike Rodriguez",
-      role: "Installation Specialist",
-      experience: "8+ Years Experience",
-      specialties: ["New Construction", "System Upgrades", "Ductwork"]
-    },
-    {
-      name: "Lisa Chen",
-      role: "Customer Service Manager",
-      experience: "5+ Years Experience",
-      specialties: ["Customer Relations", "Service Scheduling", "Quality Assurance"]
+      name: "Derek Thompson",
+      role: "Senior Field Technician",
+      experience: "12+ Years Experience", 
+      specialties: ["Residential Service", "Emergency Repairs", "Installation"],
+      description: "Expert technician specializing in residential HVAC systems and emergency service calls."
     }
   ];
 
   return (
     <>
       <Helmet>
-        <title>About Us - Calgary's Trusted HVAC Experts | AfterHours HVAC</title>
-        <meta name="description" content="Learn about AfterHours HVAC - Calgary's premier heating and cooling experts with 15+ years of experience. Licensed, insured, and committed to excellence." />
+        <title>About AfterHours HVAC - Calgary's Premier HVAC Experts | Professional Heating & Cooling</title>
+        <meta name="description" content="Learn about AfterHours HVAC - Calgary's premier heating and cooling experts with 15+ years of experience. Licensed, insured, and committed to excellence. Meet our team of professionals." />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <section className="hvac-gradient-hero text-white">
-          <div className="hvac-container py-24">
+        <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-orange-600 text-white py-20">
+          <div className="hvac-container">
             <div className="max-w-4xl mx-auto text-center space-y-8">
               <Badge className="bg-orange-500 text-white px-6 py-2 text-lg font-semibold">
                 Calgary's HVAC Experts Since 2009
@@ -142,9 +142,9 @@ const About = () => {
                 neighbors, committed to keeping your family comfortable year-round.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="hvac-button-secondary text-lg px-8 py-4">
+                <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-lg px-8 py-4">
                   <Phone className="w-5 h-5 mr-2" />
-                  Call (403) 555-0123
+                  Call (403) 613-6014
                 </Button>
                 <Button 
                   size="lg" 
@@ -163,30 +163,32 @@ const About = () => {
         </section>
 
         {/* Stats Section */}
-        <section className="hvac-section bg-white">
+        <section className="py-16 bg-white">
           <div className="hvac-container">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
-                <div key={index} className="stat-card group hover:scale-105 transition-transform duration-300">
-                  <stat.icon className="w-10 h-10 text-blue-600 mx-auto mb-4 group-hover:text-orange-500 transition-colors" />
-                  <div className="stat-number text-4xl">{stat.number}</div>
-                  <div className="stat-label">{stat.label}</div>
-                </div>
+                <Card key={index} className="text-center border-0 shadow-lg hover:scale-105 transition-transform duration-300">
+                  <CardContent className="p-6">
+                    <stat.icon className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+                    <div className="text-4xl font-bold text-gray-900 mb-2">{stat.number}</div>
+                    <div className="text-gray-600 font-medium">{stat.label}</div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
         </section>
 
         {/* Our Story Section */}
-        <section className="hvac-section">
+        <section className="py-16 bg-blue-50">
           <div className="hvac-container">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div className="space-y-8">
                 <div>
-                  <h2 className="hvac-heading-lg mb-6">Our Story</h2>
-                  <div className="space-y-6 hvac-text-base">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
+                  <div className="space-y-6 text-gray-700 leading-relaxed">
                     <p>
-                      Founded in 2009 by Jordan Bozanich, AfterHours HVAC began with a simple mission: 
+                      Founded in 2009 by Jordan Boisclair, AfterHours HVAC began with a simple mission: 
                       to provide Calgary families and businesses with reliable, professional HVAC services 
                       when they need them most – including after hours and on weekends.
                     </p>
@@ -197,14 +199,14 @@ const About = () => {
                     </p>
                     <p>
                       Today, our team of certified technicians continues to serve the Greater Calgary Area 
-                      with the same dedication to excellence that has earned us over 2,000 satisfied customers 
+                      with the same dedication to excellence that has earned us over 5,000 satisfied customers 
                       and countless referrals from friends and neighbors.
                     </p>
                   </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button className="hvac-button-primary" asChild>
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white" asChild>
                     <Link href="/contact">Get Your Free Quote</Link>
                   </Button>
                   <Button variant="outline" className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white" asChild>
@@ -215,40 +217,40 @@ const About = () => {
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-6">
-                  <div className="pro-card">
+                  <Card className="p-6 bg-white border-0 shadow-lg">
                     <Target className="w-8 h-8 text-blue-600 mb-4" />
                     <h4 className="font-bold text-gray-900 mb-3">Our Mission</h4>
                     <p className="text-sm text-gray-700">
                       To provide exceptional HVAC services that keep Calgary families and businesses 
                       comfortable while building lasting relationships based on trust and reliability.
                     </p>
-                  </div>
-                  <div className="emergency-card">
+                  </Card>
+                  <Card className="p-6 bg-red-50 border-0 shadow-lg">
                     <TrendingUp className="w-8 h-8 text-red-600 mb-4" />
                     <h4 className="font-bold text-gray-900 mb-3">Our Growth</h4>
                     <p className="text-sm text-gray-700">
                       From humble beginnings to Calgary's premier HVAC service provider, we've grown 
                       through referrals and repeat customers who trust our expertise.
                     </p>
-                  </div>
+                  </Card>
                 </div>
                 <div className="space-y-6 pt-8">
-                  <div className="success-card">
+                  <Card className="p-6 bg-green-50 border-0 shadow-lg">
                     <Eye className="w-8 h-8 text-green-600 mb-4" />
                     <h4 className="font-bold text-gray-900 mb-3">Our Vision</h4>
                     <p className="text-sm text-gray-700">
                       To be Western Canada's most trusted HVAC company, known for innovation, 
                       sustainability, and unmatched customer satisfaction.
                     </p>
-                  </div>
-                  <div className="hvac-card">
+                  </Card>
+                  <Card className="p-6 bg-orange-50 border-0 shadow-lg">
                     <Heart className="w-8 h-8 text-orange-500 mb-4" />
                     <h4 className="font-bold text-gray-900 mb-3">Our Promise</h4>
                     <p className="text-sm text-gray-700">
                       Every job is completed to the highest standards with a focus on quality, 
                       safety, and customer satisfaction – guaranteed.
                     </p>
-                  </div>
+                  </Card>
                 </div>
               </div>
             </div>
@@ -256,18 +258,18 @@ const About = () => {
         </section>
 
         {/* Our Values Section */}
-        <section className="hvac-section bg-white">
+        <section className="py-16 bg-white">
           <div className="hvac-container">
             <div className="text-center mb-16">
-              <h2 className="hvac-heading-lg mb-4">Our Core Values</h2>
-              <p className="hvac-text-lg max-w-3xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Core Values</h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 These fundamental principles guide every decision we make and every service we provide.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {values.map((value, index) => (
-                <Card key={index} className="hvac-card text-center border-0 hover:scale-105 transition-transform duration-300">
+                <Card key={index} className="text-center border-0 shadow-lg hover:scale-105 transition-transform duration-300">
                   <CardHeader className="pb-4">
                     <value.icon className="w-12 h-12 text-blue-600 mx-auto mb-4" />
                     <CardTitle className="text-xl font-bold text-gray-900">{value.title}</CardTitle>
@@ -283,12 +285,51 @@ const About = () => {
           </div>
         </section>
 
-        {/* Services Overview */}
-        <section className="hvac-section">
+        {/* Team Section */}
+        <section className="py-16 bg-gray-100">
           <div className="hvac-container">
             <div className="text-center mb-16">
-              <h2 className="hvac-heading-lg mb-4">Complete HVAC Solutions</h2>
-              <p className="hvac-text-lg max-w-3xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Meet Our Expert Team</h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                Our certified professionals bring decades of combined experience and a commitment 
+                to excellence in every job we complete.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {teamMembers.map((member, index) => (
+                <Card key={index} className="text-center border-0 shadow-lg hover:scale-105 transition-transform duration-300">
+                  <CardHeader className="pb-4">
+                    <div className="w-24 h-24 bg-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <Users className="w-12 h-12 text-white" />
+                    </div>
+                    <CardTitle className="text-xl font-bold text-gray-900">{member.name}</CardTitle>
+                    <CardDescription className="text-blue-600 font-semibold text-lg">{member.role}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Badge className="bg-orange-100 text-orange-600">{member.experience}</Badge>
+                    <p className="text-sm text-gray-600 leading-relaxed">{member.description}</p>
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-gray-900 text-sm">Specialties:</h4>
+                      {member.specialties.map((specialty, idx) => (
+                        <div key={idx} className="text-sm text-gray-600">
+                          • {specialty}
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Services Overview */}
+        <section className="py-16 bg-white">
+          <div className="hvac-container">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Complete HVAC Solutions</h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 From emergency repairs to new installations, we provide comprehensive heating, 
                 cooling, and ventilation services for residential and commercial properties.
               </p>
@@ -296,7 +337,7 @@ const About = () => {
 
             <div className="grid md:grid-cols-2 gap-8">
               {services.map((service, index) => (
-                <Card key={index} className="hvac-card border-0 hover:shadow-xl transition-shadow duration-300">
+                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
                   <CardHeader className="pb-4">
                     <div className="flex items-center space-x-4 mb-4">
                       <div className="p-3 bg-blue-50 rounded-xl">
@@ -326,36 +367,22 @@ const About = () => {
           </div>
         </section>
 
-        {/* Team Section */}
-        <section className="hvac-section bg-white">
+        {/* Certifications */}
+        <section className="py-16 bg-blue-50">
           <div className="hvac-container">
-            <div className="text-center mb-16">
-              <h2 className="hvac-heading-lg mb-4">Meet Our Expert Team</h2>
-              <p className="hvac-text-lg max-w-3xl mx-auto">
-                Our certified technicians bring decades of combined experience and a commitment 
-                to excellence in every job we complete.
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Licensed, Certified & Insured</h2>
+              <p className="text-lg text-gray-600">
+                We maintain the highest professional standards and certifications in the industry.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {teamMembers.map((member, index) => (
-                <Card key={index} className="hvac-card text-center border-0 hover:scale-105 transition-transform duration-300">
-                  <CardHeader className="pb-4">
-                    <div className="w-20 h-20 bg-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <Users className="w-10 h-10 text-white" />
-                    </div>
-                    <CardTitle className="text-lg font-bold text-gray-900">{member.name}</CardTitle>
-                    <CardDescription className="text-blue-600 font-semibold">{member.role}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Badge className="bg-orange-100 text-orange-600 mb-4">{member.experience}</Badge>
-                    <div className="space-y-2">
-                      {member.specialties.map((specialty, idx) => (
-                        <div key={idx} className="text-sm text-gray-600">
-                          • {specialty}
-                        </div>
-                      ))}
-                    </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {certifications.map((cert, index) => (
+                <Card key={index} className="text-center border-0 shadow-lg">
+                  <CardContent className="p-6">
+                    <Shield className="w-8 h-8 text-green-500 mx-auto mb-3" />
+                    <h3 className="font-semibold text-gray-900">{cert}</h3>
                   </CardContent>
                 </Card>
               ))}
@@ -363,63 +390,24 @@ const About = () => {
           </div>
         </section>
 
-        {/* Certifications Section */}
-        <section className="hvac-section">
-          <div className="hvac-container">
-            <div className="text-center mb-16">
-              <h2 className="hvac-heading-lg mb-4">Licensed, Certified & Insured</h2>
-              <p className="hvac-text-lg max-w-3xl mx-auto">
-                We maintain the highest industry certifications and insurance coverage to protect 
-                our customers and ensure quality workmanship on every job.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {certifications.map((cert, index) => (
-                <div key={index} className="hvac-card flex items-center space-x-4 p-6">
-                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <span className="font-semibold text-gray-900">{cert}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* CTA Section */}
-        <section className="hvac-section hvac-gradient-hero">
+        <section className="py-16 bg-gray-900 text-white">
           <div className="hvac-container text-center">
-            <div className="max-w-4xl mx-auto text-white space-y-8">
-              <h2 className="text-3xl lg:text-4xl font-bold">Ready to Experience the AfterHours Difference?</h2>
-              <p className="text-xl text-blue-100">
-                Join thousands of satisfied customers who trust AfterHours HVAC for all their 
-                heating and cooling needs. Contact us today for your free consultation.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="hvac-button-secondary text-lg px-8 py-4">
-                  <Phone className="w-5 h-5 mr-2" />
-                  Call (403) 555-0123
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-2 border-white text-white hover:bg-white hover:text-blue-900 text-lg px-8 py-4"
-                  asChild
-                >
-                  <Link href="/contact">
-                    <Calendar className="w-5 h-5 mr-2" />
-                    Get Free Quote
-                  </Link>
-                </Button>
-              </div>
-
-              <div className="flex items-center justify-center space-x-6 pt-8">
-                <div className="flex items-center space-x-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <span className="text-blue-100">5.0 Rating • 500+ Reviews</span>
-              </div>
+            <h2 className="text-3xl font-bold mb-4">
+              Ready to Experience the AfterHours Difference?
+            </h2>
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              Join thousands of satisfied customers who trust AfterHours HVAC for all their heating and cooling needs.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="bg-orange-500 hover:bg-orange-600">
+                <Phone className="w-5 h-5 mr-2" />
+                Call (403) 613-6014
+              </Button>
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
+                <Mail className="w-5 h-5 mr-2" />
+                Email Jordan@Afterhourshvac.ca
+              </Button>
             </div>
           </div>
         </section>
