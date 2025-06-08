@@ -127,9 +127,7 @@ export default function AdminDashboardEnhanced() {
     queryKey: ["/api/admin/contact-submissions"],
   });
 
-  const { data: galleryImages = [] } = useQuery<GalleryImage[]>({
-    queryKey: ["/api/gallery"],
-  });
+
 
   const { data: forumTopics = [] } = useQuery<ForumTopic[]>({
     queryKey: ["/api/forum/topics"],
@@ -272,7 +270,7 @@ export default function AdminDashboardEnhanced() {
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-gray-900">Business Quotes Management</h2>
                 <Badge className="bg-blue-100 text-blue-800">
-                  {allQuotes.length} Total Quotes
+                  {Array.isArray(allQuotes) ? allQuotes.length : 0} Total Quotes
                 </Badge>
               </div>
 
@@ -285,7 +283,7 @@ export default function AdminDashboardEnhanced() {
                       <p className="text-gray-600">Customer quotes will appear here when created through the enhanced quote builder.</p>
                     </CardContent>
                   </Card>
-                ) : (
+                ) : Array.isArray(allQuotes) ? (
                   allQuotes.map((quote: any) => (
                     <Card key={quote.id} className="border border-gray-200">
                       <CardHeader>
@@ -366,7 +364,7 @@ export default function AdminDashboardEnhanced() {
                       </CardContent>
                     </Card>
                   ))
-                )}
+                ) : null}
               </div>
             </TabsContent>
 
@@ -654,7 +652,7 @@ export default function AdminDashboardEnhanced() {
                     <div className="text-center p-6 bg-slate-900/50 rounded-lg">
                       <Briefcase className="h-8 w-8 text-green-400 mx-auto mb-2" />
                       <div className="text-2xl font-bold text-white">
-                        {jobApplicationsQuery.data?.length || 0}
+                        {Array.isArray(jobApplicationsQuery.data) ? jobApplicationsQuery.data.length : 0}
                       </div>
                       <p className="text-slate-400">Job Applications</p>
                     </div>
