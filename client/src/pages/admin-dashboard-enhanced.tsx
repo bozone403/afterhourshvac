@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -739,7 +739,7 @@ export default function AdminDashboardEnhanced() {
                 </Dialog>
               </div>
             </div>
-            <CardContent>
+            <div>
               {usersLoading ? (
                 <div className="flex items-center justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -1123,18 +1123,20 @@ export default function AdminDashboardEnhanced() {
                   )}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Service Bookings Tab */}
         <TabsContent value="bookings" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Service Bookings</CardTitle>
-              <CardDescription>Manage scheduled service appointments</CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="hvac-card">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="hvac-heading-md mb-2">Service Bookings</h2>
+                <p className="hvac-text-base text-gray-600">Manage scheduled service appointments</p>
+              </div>
+            </div>
+            <div>
               {bookingsLoading ? (
                 <div className="flex items-center justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -1199,18 +1201,20 @@ export default function AdminDashboardEnhanced() {
                   )}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Forum Management Tab */}
         <TabsContent value="forum" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Forum Management</CardTitle>
-              <CardDescription>Moderate forum posts and discussions</CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="hvac-card">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="hvac-heading-md mb-2">Forum Management</h2>
+                <p className="hvac-text-base text-gray-600">Moderate forum posts and discussions</p>
+              </div>
+            </div>
+            <div>
               {forumLoading ? (
                 <div className="flex items-center justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -1291,8 +1295,8 @@ export default function AdminDashboardEnhanced() {
                   )}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
 
