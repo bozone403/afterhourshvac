@@ -62,6 +62,14 @@ export default function ForumInteractive() {
     queryKey: ["/api/user"]
   });
 
+  // Auto-populate username fields when user data loads
+  useEffect(() => {
+    if (user?.username) {
+      setNewTopicUsername(user.username);
+      setNewPostUsername(user.username);
+    }
+  }, [user]);
+
   // Get forum categories
   const { data: categories = [] } = useQuery<ForumCategory[]>({
     queryKey: ["/api/forum/categories"]
