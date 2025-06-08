@@ -31,6 +31,7 @@ import DuctSizingCalculator from "@/pages/calculators/duct-sizing-calculator";
 import QuoteBuilder from "@/pages/calculators/quote-builder";
 import EnhancedQuoteBuilder from "@/pages/calculators/enhanced-quote-builder";
 import ServiceTracking from "@/pages/service-tracking";
+import EmergencyTracker from "@/pages/emergency-tracker";
 import ProCalculator from "@/pages/pro-calculator";
 import ProCalculatorV2 from "@/pages/pro-calculator-v2";
 import ProPortal from "@/pages/pro-portal";
@@ -100,6 +101,7 @@ function Router() {
         <Route path="/services/maintenance" component={HVACMaintenance} />
         <Route path="/services/energy-audit" component={EnergyAudit} />
         <Route path="/emergency" component={ServiceTracking} />
+        <Route path="/emergency-tracker" component={EmergencyTracker} />
         <Route path="/products/furnace" component={FurnacePage} />
         
         {/* Shop routes */}

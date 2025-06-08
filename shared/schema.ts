@@ -392,6 +392,45 @@ export const quoteRequests = pgTable("quote_requests", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Job Applications
+export const jobApplications = pgTable("job_applications", {
+  id: serial("id").primaryKey(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  address: text("address").notNull(),
+  city: text("city").notNull(),
+  province: text("province").notNull(),
+  postalCode: text("postal_code").notNull(),
+  position: text("position").notNull(), // hvac_technician, apprentice, service_manager, etc
+  experience: text("experience").notNull(), // 0-1, 1-3, 3-5, 5-10, 10+ years
+  education: text("education"), // high_school, college, university, trade_school
+  certifications: jsonb("certifications"), // Array of certifications
+  availableStartDate: text("available_start_date"),
+  expectedSalary: text("expected_salary"),
+  employmentType: text("employment_type").notNull(), // full_time, part_time, contract
+  workAuthorization: boolean("work_authorization").notNull(),
+  relocateWillingness: boolean("relocate_willingness").default(false),
+  resumeUrl: text("resume_url"), // File upload path
+  coverLetter: text("cover_letter"),
+  references: jsonb("references"), // Array of reference objects
+  previousEmployment: jsonb("previous_employment"), // Array of employment history
+  skills: jsonb("skills"), // Array of technical skills
+  drivingRecord: text("driving_record"), // clean, minor_violations, major_violations
+  criminalBackground: boolean("criminal_background").default(false),
+  backgroundDetails: text("background_details"),
+  motivation: text("motivation"), // Why they want to work for us
+  availability: jsonb("availability"), // Days/hours available
+  status: text("status").default("submitted"), // submitted, reviewing, interview_scheduled, hired, rejected
+  notes: text("notes"), // Admin notes
+  reviewedBy: integer("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  interviewDate: timestamp("interview_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // User Sessions and Activity Tracking
 export const userSessions = pgTable("user_sessions", {
   id: serial("id").primaryKey(),
@@ -559,6 +598,7 @@ export const insertCustomerSchema = createInsertSchema(customers);
 export const insertContactSubmissionSchema = createInsertSchema(contactSubmissions);
 export const insertEmergencyRequestSchema = createInsertSchema(emergencyRequests);
 export const insertQuoteRequestSchema = createInsertSchema(quoteRequests);
+export const insertJobApplicationSchema = createInsertSchema(jobApplications);
 
 // TYPES
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -622,6 +662,9 @@ export type EmergencyRequest = typeof emergencyRequests.$inferSelect;
 
 export type InsertQuoteRequest = typeof quoteRequests.$inferInsert;
 export type QuoteRequest = typeof quoteRequests.$inferSelect;
+
+export type InsertJobApplication = typeof jobApplications.$inferInsert;
+export type JobApplication = typeof jobApplications.$inferSelect;
 
 export type InsertUserSession = typeof userSessions.$inferInsert;
 export type UserSession = typeof userSessions.$inferSelect;
