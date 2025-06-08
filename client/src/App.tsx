@@ -36,6 +36,11 @@ import ProCalculatorV2 from "@/pages/pro-calculator-v2";
 import ProPortal from "@/pages/pro-portal";
 import MembershipSimple from "@/pages/membership-simple";
 import FurnaceInstall from "@/pages/services/furnace-install";
+import ACRepair from "@/pages/services/ac-repair";
+import DuctCleaning from "@/pages/services/duct-cleaning";
+import HVACMaintenance from "@/pages/services/maintenance";
+import EnergyAudit from "@/pages/services/energy-audit";
+import ServiceAreas from "@/pages/service-areas";
 import BlogIndex from "@/pages/blog/index";
 import BlogFurnaceWinter from "@/pages/blog/prepare-furnace-winter";
 import BlogCommercialVsResidential from "@/pages/blog/commercial-vs-residential-hvac";
@@ -88,6 +93,11 @@ function Router() {
         <Route path="/calculators/load-calculator" component={LoadCalculator} />
         <Route path="/service-tracking" component={ServiceTracking} />
         <Route path="/services/furnace-install" component={FurnaceInstall} />
+        <Route path="/services/ac-repair" component={ACRepair} />
+        <Route path="/services/duct-cleaning" component={DuctCleaning} />
+        <Route path="/services/maintenance" component={HVACMaintenance} />
+        <Route path="/services/energy-audit" component={EnergyAudit} />
+        <Route path="/emergency" component={ServiceTracking} />
         <Route path="/products/furnace" component={FurnacePage} />
         
         {/* Shop routes */}
