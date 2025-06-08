@@ -3729,5 +3729,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Literature download endpoints
+  app.get("/api/download/:filename", async (req, res) => {
+    try {
+      const filename = req.params.filename;
+      
+      // Map of available documents
+      const documents = {
+        'calgary-hvac-pricing.pdf': {
+          title: 'Calgary HVAC Installation Pricing Guide',
+          contentType: 'application/pdf'
+        },
+        'alberta-hvac-codes.pdf': {
+          title: 'Alberta Residential HVAC Codes',
+          contentType: 'application/pdf'
+        },
+        'emergency-protocols.pdf': {
+          title: 'HVAC Emergency Response Protocols',
+          contentType: 'application/pdf'
+        },
+        'installation-standards.pdf': {
+          title: 'Professional Installation Standards',
+          contentType: 'application/pdf'
+        },
+        'safety-procedures.pdf': {
+          title: 'HVAC Safety Procedures Manual',
+          contentType: 'application/pdf'
+        }
+      };
+
+      const document = documents[filename as keyof typeof documents];
+      
+      if (!document) {
+        return res.status(404).json({ error: "Document not found" });
+      }
+
+      // Set appropriate headers for PDF download
+      res.setHeader('Content-Type', document.contentType);
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Cache-Control', 'no-cache');
+      
+      // Generate actual PDF content using jsPDF for professional documents
+      const { jsPDF } = require('jspdf');
+      const doc = new jsPDF();
+      
+      // Add content based on document type
+      if (filename === 'calgary-hvac-pricing.pdf') {
+        doc.setFontSize(20);
+        doc.text('Calgary HVAC Installation Pricing Guide', 20, 30);
+        doc.setFontSize(12);
+        doc.text('AfterHours HVAC - Professional Installation Services', 20, 50);
+        doc.text('Phone: (403) 613-6014 | Email: Jordan@Afterhourshvac.ca', 20, 60);
+        
+        // Add pricing content
+        doc.setFontSize(14);
+        doc.text('Furnace Installation Pricing:', 20, 80);
+        doc.setFontSize(10);
+        doc.text('• High-Efficiency Condensing Furnace (80k BTU): $3,500 - $4,500', 25, 95);
+        doc.text('• Mid-Efficiency Furnace (100k BTU): $2,800 - $3,800', 25, 105);
+        doc.text('• Standard Efficiency Furnace: $2,200 - $3,200', 25, 115);
+        
+        doc.text('Air Conditioning Installation:', 20, 135);
+        doc.text('• Central Air 3-Ton System: $3,200 - $4,200', 25, 150);
+        doc.text('• Heat Pump Installation: $4,500 - $6,500', 25, 160);
+        doc.text('• Ductless Mini-Split: $2,800 - $4,200', 25, 170);
+        
+      } else if (filename === 'alberta-hvac-codes.pdf') {
+        doc.setFontSize(20);
+        doc.text('Alberta Residential HVAC Codes', 20, 30);
+        doc.setFontSize(12);
+        doc.text('Building Code Requirements & Safety Standards', 20, 50);
+        
+        doc.setFontSize(14);
+        doc.text('Gas Furnace Installation Requirements:', 20, 70);
+        doc.setFontSize(10);
+        doc.text('• Minimum clearances: 24" front, 6" sides, 12" top', 25, 85);
+        doc.text('• Combustion air: 1 sq inch per 1,000 BTU input', 25, 95);
+        doc.text('• Direct vent required for high-efficiency units', 25, 105);
+        doc.text('• Electrical disconnect required within sight', 25, 115);
+        
+      } else {
+        doc.setFontSize(20);
+        doc.text(document.title, 20, 30);
+        doc.setFontSize(12);
+        doc.text('AfterHours HVAC Professional Documentation', 20, 50);
+        doc.text('Contact: (403) 613-6014 | Jordan@Afterhourshvac.ca', 20, 60);
+        doc.setFontSize(10);
+        doc.text('This document contains professional HVAC reference material.', 20, 80);
+      }
+      
+      // Add footer
+      doc.setFontSize(8);
+      doc.text('© 2025 AfterHours HVAC - Calgary, Alberta', 20, 280);
+      doc.text('Professional HVAC Services & Installation', 20, 290);
+      
+      const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
+      res.status(200).send(pdfBuffer);
+    } catch (error: any) {
+      console.error("Error downloading document:", error);
+      res.status(500).json({ 
+        error: "Failed to download document", 
+        message: error.message 
+      });
+    }
+  });
+
   return httpServer;
 }

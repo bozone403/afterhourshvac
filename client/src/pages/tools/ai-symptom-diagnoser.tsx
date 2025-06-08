@@ -142,9 +142,9 @@ export default function AISymptomDiagnoser() {
       const utterance = new SpeechSynthesisUtterance(text);
       
       // Configure for Earl's gruff male voice
-      utterance.rate = 0.85;
-      utterance.pitch = 0.75; // Lower pitch for masculine, gruff voice
-      utterance.volume = 0.8;
+      utterance.rate = 0.95; // Natural conversational speed
+      utterance.pitch = 0.85; // Slightly lower for masculine tone
+      utterance.volume = 0.9;
       
       // Try to use a high-quality US male voice
       const voices = speechSynthesis.getVoices();
