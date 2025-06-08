@@ -107,6 +107,30 @@ export default function AdminDashboardEnhanced() {
     enabled: true
   });
 
+  // Fetch service bookings
+  const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
+    queryKey: ["/api/admin/bookings"],
+    enabled: true
+  });
+
+  // Fetch contact messages
+  const { data: contacts = [], isLoading: contactsLoading } = useQuery({
+    queryKey: ["/api/admin/contacts"],
+    enabled: true
+  });
+
+  // Fetch emergency requests
+  const { data: emergencyRequests = [], isLoading: emergencyLoading } = useQuery({
+    queryKey: ["/api/admin/emergency-requests"],
+    enabled: true
+  });
+
+  // Fetch forum posts
+  const { data: forumPosts = [], isLoading: forumLoading } = useQuery({
+    queryKey: ["/api/admin/forum-posts"],
+    enabled: true
+  });
+
   // Create user mutation
   const createUserMutation = useMutation({
     mutationFn: async (userData: CreateUserForm) => {
@@ -378,6 +402,10 @@ export default function AdminDashboardEnhanced() {
         <TabsList>
           <TabsTrigger value="users">User Management</TabsTrigger>
           <TabsTrigger value="applications">Job Applications</TabsTrigger>
+          <TabsTrigger value="bookings">Service Bookings</TabsTrigger>
+          <TabsTrigger value="contacts">Contact Messages</TabsTrigger>
+          <TabsTrigger value="emergency">Emergency Requests</TabsTrigger>
+          <TabsTrigger value="forum">Forum Management</TabsTrigger>
         </TabsList>
 
         {/* User Management Tab */}

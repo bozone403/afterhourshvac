@@ -1700,6 +1700,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteUser(userId: number): Promise<User | undefined> {
+    // First, delete related forum posts to avoid foreign key constraint
+    await db.delete(forumPosts).where(eq(forumPosts.userId, userId));
+    
+    // Then delete the user
     const [deletedUser] = await db
       .delete(users)
       .where(eq(users.id, userId))
