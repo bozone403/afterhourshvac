@@ -31,7 +31,7 @@ export default function ProDiagnosticAssistant() {
     {
       id: '1',
       type: 'earl',
-      content: "Alright, I'm Earl - your field diagnostic assistant. I've got comprehensive knowledge of HVAC, sheet metal, plumbing, electrical, and building science. What are you working on today? Give me the equipment model and what you're seeing.",
+      content: "Earl here - been in the trades for 30+ years. I know HVAC, sheet metal, plumbing, electrical, and building science inside and out. What's the job today? Give me the equipment details, model numbers, and what you're seeing. Don't waste time with vague descriptions - I need the real technical details to help you properly.",
       timestamp: new Date(),
       category: 'diagnostic'
     }

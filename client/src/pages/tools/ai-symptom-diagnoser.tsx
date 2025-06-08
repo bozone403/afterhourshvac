@@ -40,7 +40,7 @@ export default function AISymptomDiagnoser() {
     {
       id: '1',
       type: 'earl',
-      content: "Hi there! I'm Earl, your HVAC diagnostic assistant. Tell me what's happening with your heating or cooling system, and I'll help you figure out what might be wrong. Don't worry about technical terms - just describe what you're experiencing in your own words.",
+      content: "Earl here. Been diagnosing HVAC problems for over 30 years in Alberta. I know these systems inside and out. Tell me what's going wrong with your heating or cooling - give me the real details, not just 'it's broken.' The more specific you are, the better I can help you fix it.",
       timestamp: new Date(),
       nextQuestions: [
         "My AC is running but not cooling",
@@ -139,9 +139,27 @@ export default function AISymptomDiagnoser() {
     if (synthRef.current && voiceEnabled) {
       synthRef.current.cancel(); // Stop any current speech
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;
-      utterance.pitch = 1.0;
+      
+      // Configure for Earl's gruff male voice
+      utterance.rate = 0.85;
+      utterance.pitch = 0.75; // Lower pitch for masculine, gruff voice
       utterance.volume = 0.8;
+      
+      // Try to use a male voice with natural quality
+      const voices = speechSynthesis.getVoices();
+      const preferredVoice = voices.find(voice => 
+        voice.name.includes('Male') ||
+        voice.name.includes('David') ||
+        voice.name.includes('Mark') ||
+        voice.name.includes('Google US English Male')
+      ) || voices.find(voice => 
+        voice.lang.includes('en-US') && 
+        (voice.name.includes('Google') || voice.name.includes('Microsoft'))
+      );
+      
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
       
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => setIsSpeaking(false);

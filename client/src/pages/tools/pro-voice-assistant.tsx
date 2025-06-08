@@ -25,7 +25,7 @@ const ProVoiceAssistant = () => {
   const [messages, setMessages] = useState<Array<{id: number, text: string, sender: 'user' | 'assistant'}>>([
     {
       id: 1,
-      text: "Professional HVAC Voice Assistant ready. I'm your advanced AI diagnostic partner with natural conversation capabilities. Ask me anything about installation, troubleshooting, codes, or system analysis. I can provide detailed technical guidance with conversational flow.",
+      text: "Earl here - your expert HVAC consultant with 30+ years in the trades. Been working Alberta systems since before you were probably born. I know every furnace, every code, every trick in the book. What's your problem? Give me the details and I'll tell you exactly how to fix it right the first time.",
       sender: 'assistant'
     }
   ]);
@@ -148,10 +148,10 @@ const ProVoiceAssistant = () => {
     if ('speechSynthesis' in window) {
       setIsSpeaking(true);
       
-      // Use higher quality voice synthesis
+      // Configure for Earl's gruff male voice
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
+      utterance.rate = 0.85;
+      utterance.pitch = 0.75; // Lower pitch for masculine, gruff voice
       utterance.volume = 0.9;
       
       // Try to use a male voice with natural quality
