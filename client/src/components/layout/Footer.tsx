@@ -84,7 +84,7 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-orange-500 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold">(403) 555-0123</p>
+                  <p className="font-semibold">(403) 613-6014</p>
                   <p className="text-sm text-gray-400">24/7 Emergency Line</p>
                 </div>
               </div>
@@ -92,7 +92,7 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-orange-500 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold">info@afterhourshvac.ca</p>
+                  <p className="font-semibold">Jordan@Afterhourshvac.ca</p>
                   <p className="text-sm text-gray-400">Get a Free Quote</p>
                 </div>
               </div>
@@ -229,7 +229,7 @@ const Footer = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-white text-red-600 hover:bg-gray-100 font-bold">
                 <Phone className="w-5 h-5 mr-2" />
-                Call Emergency Line: (403) 555-0123
+                Call Emergency Line: (403) 613-6014
               </Button>
               <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-red-600" asChild>
                 <Link href="/emergency">
