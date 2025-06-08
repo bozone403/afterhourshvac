@@ -238,7 +238,7 @@ const Header = () => {
                   </DropdownMenuItem>
                   
                   <DropdownMenuItem asChild>
-                    <Link href="/tools" className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg">
+                    <Link href="/calculators" className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg">
                       <Calculator className="w-4 h-4" />
                       <span>Tools</span>
                     </Link>
