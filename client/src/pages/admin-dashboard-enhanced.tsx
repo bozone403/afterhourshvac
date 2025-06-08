@@ -96,37 +96,37 @@ export default function AdminDashboardEnhanced() {
   const [newPassword, setNewPassword] = useState("");
 
   // Fetch users
-  const { data: users = [], isLoading: usersLoading, refetch: refetchUsers } = useQuery({
+  const { data: users = [], isLoading: usersLoading, refetch: refetchUsers } = useQuery<User[]>({
     queryKey: ["/api/admin/users"],
     enabled: true
   });
 
   // Fetch job applications
-  const { data: applications = [], isLoading: applicationsLoading, refetch: refetchApplications } = useQuery({
+  const { data: applications = [], isLoading: applicationsLoading, refetch: refetchApplications } = useQuery<JobApplication[]>({
     queryKey: ["/api/admin/job-applications"],
     enabled: true
   });
 
   // Fetch service bookings
-  const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
+  const { data: bookings = [], isLoading: bookingsLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/bookings"],
     enabled: true
   });
 
   // Fetch contact messages
-  const { data: contacts = [], isLoading: contactsLoading } = useQuery({
+  const { data: contacts = [], isLoading: contactsLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/contacts"],
     enabled: true
   });
 
   // Fetch emergency requests
-  const { data: emergencyRequests = [], isLoading: emergencyLoading } = useQuery({
+  const { data: emergencyRequests = [], isLoading: emergencyLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/emergency-requests"],
     enabled: true
   });
 
   // Fetch forum posts
-  const { data: forumPosts = [], isLoading: forumLoading } = useQuery({
+  const { data: forumPosts = [], isLoading: forumLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/forum-posts"],
     enabled: true
   });
@@ -526,12 +526,12 @@ export default function AdminDashboardEnhanced() {
 
   // Calculate system statistics
   const systemStats: SystemStats = {
-    totalUsers: users.length,
-    activeUsers: users.filter((u: User) => !u.accountLocked).length,
-    proUsers: users.filter((u: User) => u.hasProAccess).length,
-    adminUsers: users.filter((u: User) => u.isAdmin).length,
-    pendingApplications: applications.filter((a: JobApplication) => a.status === 'pending').length,
-    totalRevenue: users.filter((u: User) => u.hasProAccess).length * 49 // Estimate based on pro users
+    totalUsers: Array.isArray(users) ? users.length : 0,
+    activeUsers: Array.isArray(users) ? users.filter((u: User) => !u.accountLocked).length : 0,
+    proUsers: Array.isArray(users) ? users.filter((u: User) => u.hasProAccess).length : 0,
+    adminUsers: Array.isArray(users) ? users.filter((u: User) => u.isAdmin).length : 0,
+    pendingApplications: Array.isArray(applications) ? applications.filter((a: JobApplication) => a.status === 'pending').length : 0,
+    totalRevenue: Array.isArray(users) ? users.filter((u: User) => u.hasProAccess).length * 49 : 0 // Estimate based on pro users
   };
 
   return (
