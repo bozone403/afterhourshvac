@@ -1682,15 +1682,34 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteUser(userId: number): Promise<User | undefined> {
-    // First, delete related forum posts to avoid foreign key constraint
+    // Delete in proper order to handle foreign key constraints
+    
+    // 1. Delete forum likes first (references forum posts)
+    await db.delete(forumLikes).where(eq(forumLikes.userId, userId));
+    
+    // 2. Delete forum posts (may be referenced by forum likes)
     await db.delete(forumPosts).where(eq(forumPosts.userId, userId));
     
-    // Then delete the user
+    // 3. Delete forum topics (may reference user)
+    await db.delete(forumTopics).where(eq(forumTopics.userId, userId));
+    
+    // 4. Delete any other user-related data
+    await db.delete(jobApplications).where(eq(jobApplications.reviewedBy, userId));
+    await db.delete(emergencyRequests).where(eq(emergencyRequests.customerId, userId));
+    
+    // 5. Finally delete the user
     const [deletedUser] = await db
       .delete(users)
       .where(eq(users.id, userId))
       .returning();
     return deletedUser;
+  }
+
+  async updateUserPassword(userId: number, hashedPassword: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ password: hashedPassword })
+      .where(eq(users.id, userId));
   }
 
   async createSecurityLog(data: any): Promise<any> {

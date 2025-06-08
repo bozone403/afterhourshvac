@@ -3566,7 +3566,7 @@ Login to manage: afterhourshvac.ca/admin`;
           certifications: certifications || null,
           availability: availability || null,
           salaryExpectation: salaryExpectation || null,
-          references: references || null,
+          referenceInfo: references || null,
           status: 'pending'
         };
       } else {
@@ -3586,7 +3586,7 @@ Login to manage: afterhourshvac.ca/admin`;
           certifications: certifications || null,
           availability: availability || null,
           salaryExpectation: salaryExpectation || null,
-          references: references || null,
+          referenceInfo: references || null,
           status: 'pending'
         };
       }
@@ -3994,6 +3994,49 @@ Login to manage: afterhourshvac.ca/admin`;
       console.error("Error creating corporate inquiry:", error);
       res.status(500).json({ 
         error: "Failed to submit corporate inquiry", 
+        message: error.message 
+      });
+    }
+  });
+
+  // User password change endpoint
+  app.put("/api/user/password", requireAuth, async (req, res) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      const userId = (req.user as any)?.id;
+
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ error: "Current password and new password are required" });
+      }
+
+      if (newPassword.length < 6) {
+        return res.status(400).json({ error: "New password must be at least 6 characters long" });
+      }
+
+      // Get user and verify current password
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const isCurrentPasswordValid = await comparePasswords(currentPassword, user.password);
+      if (!isCurrentPasswordValid) {
+        return res.status(400).json({ error: "Current password is incorrect" });
+      }
+
+      // Hash new password and update
+      const hashedNewPassword = await hashPassword(newPassword);
+      await storage.updateUserPassword(userId, hashedNewPassword);
+
+      res.json({ success: true, message: "Password updated successfully" });
+    } catch (error: any) {
+      console.error("Error updating password:", error);
+      res.status(500).json({ 
+        error: "Failed to update password", 
         message: error.message 
       });
     }
