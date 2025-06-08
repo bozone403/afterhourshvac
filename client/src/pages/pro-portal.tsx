@@ -347,10 +347,14 @@ For complete terms, consult full legal document.`;
 
           {/* Main Content */}
           <Tabs defaultValue="earl" className="max-w-6xl mx-auto">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsList className="grid w-full grid-cols-5 mb-8">
               <TabsTrigger value="earl" className="flex items-center gap-2">
                 <Bot className="h-4 w-4" />
                 Earl AI
+              </TabsTrigger>
+              <TabsTrigger value="diagnostics" className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4" />
+                Diagnostics
               </TabsTrigger>
               <TabsTrigger value="calculators" className="flex items-center gap-2">
                 <Calculator className="h-4 w-4" />
@@ -381,6 +385,55 @@ For complete terms, consult full legal document.`;
                   <EarlChatbot />
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="diagnostics">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Card className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <Bot className="h-8 w-8 text-orange-600 mb-2" />
+                    <CardTitle>Professional Diagnostic Assistant</CardTitle>
+                    <CardDescription>Advanced AI-powered diagnostic system for HVAC professionals with technical analysis</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Link href="/tools/pro-diagnostic-assistant">
+                      <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                        Launch Pro Diagnostics
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                <Card className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <MessageSquare className="h-8 w-8 text-blue-600 mb-2" />
+                    <CardTitle>Voice-Enabled Diagnostics</CardTitle>
+                    <CardDescription>Hands-free diagnostic assistant with step-by-step guidance and safety alerts</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Link href="/tools/ai-symptom-diagnoser">
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                        Start Voice Diagnostics
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                <Card className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <Calculator className="h-8 w-8 text-green-600 mb-2" />
+                    <CardTitle>Alberta Rebate Calculator</CardTitle>
+                    <CardDescription>Calculate available rebates and incentives for HVAC installations in Alberta</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Link href="/tools/alberta-rebate-calculator">
+                      <Button className="w-full bg-green-600 hover:bg-green-700">
+                        Calculate Rebates
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             <TabsContent value="calculators">

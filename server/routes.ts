@@ -451,6 +451,106 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // CORPORATE STRIPE ENDPOINTS
+  
+  // Create corporate subscription
+  app.post("/api/create-corporate-subscription", requireAuth, async (req, res) => {
+    try {
+      const { companyName, contactEmail, maxUsers, customPricing } = req.body;
+      const user = req.user as any;
+
+      if (!stripe) {
+        return res.status(500).json({ error: "Stripe not configured" });
+      }
+
+      // Create Stripe customer for corporate account
+      const customer = await stripe.customers.create({
+        email: contactEmail,
+        name: companyName,
+        metadata: {
+          type: 'corporate',
+          maxUsers: maxUsers.toString(),
+          customPricing: customPricing || 'standard',
+          adminUserId: user.id.toString()
+        }
+      });
+
+      // Create checkout session for corporate subscription
+      const session = await stripe.checkout.sessions.create({
+        customer: customer.id,
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'cad',
+              product_data: {
+                name: `Corporate HVAC Pro Membership - ${companyName}`,
+                description: `Up to ${maxUsers} users with full Pro access`,
+                metadata: {
+                  type: 'corporate',
+                  maxUsers: maxUsers.toString()
+                }
+              },
+              unit_amount: 500000, // $5000 CAD in cents
+              recurring: {
+                interval: 'year'
+              }
+            },
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        success_url: `${req.headers.origin}/corporate-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${req.headers.origin}/corporate-membership`,
+        metadata: {
+          type: 'corporate',
+          companyName,
+          maxUsers: maxUsers.toString(),
+          adminUserId: user.id.toString()
+        }
+      });
+
+      res.json({ checkoutUrl: session.url });
+    } catch (error: any) {
+      console.error("Error creating corporate subscription:", error);
+      res.status(500).json({ error: "Failed to create subscription" });
+    }
+  });
+
+  // Corporate inquiry submission
+  app.post("/api/corporate-inquiry", async (req, res) => {
+    try {
+      const inquiryData = req.body;
+      
+      // Send notification email to admin
+      const emailService = await import('./services/email');
+      await emailService.sendEmail({
+        to: "Jordan@Afterhourshvac.ca",
+        subject: `Corporate Inquiry - ${inquiryData.companyName}`,
+        html: `
+          <h2>New Corporate Membership Inquiry</h2>
+          <p><strong>Company:</strong> ${inquiryData.companyName}</p>
+          <p><strong>Contact:</strong> ${inquiryData.contactName}</p>
+          <p><strong>Email:</strong> ${inquiryData.email}</p>
+          <p><strong>Phone:</strong> ${inquiryData.phone}</p>
+          <p><strong>Industry:</strong> ${inquiryData.industry}</p>
+          <p><strong>Company Size:</strong> ${inquiryData.companySize}</p>
+          <p><strong>Annual Revenue:</strong> ${inquiryData.annualRevenue}</p>
+          <p><strong>Current Users:</strong> ${inquiryData.currentUsers}</p>
+          <p><strong>Projected Users:</strong> ${inquiryData.projectedUsers}</p>
+          <p><strong>Timeline:</strong> ${inquiryData.timeline}</p>
+          <p><strong>Specific Needs:</strong></p>
+          <p>${inquiryData.specificNeeds}</p>
+        `
+      });
+
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error processing corporate inquiry:", error);
+      res.status(500).json({ error: "Failed to process inquiry" });
+    }
+  });
+
   // Enhanced Quotes API Routes
   app.post("/api/quotes", requireAuth, async (req, res) => {
     try {

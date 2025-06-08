@@ -79,6 +79,33 @@ export default function CorporateMembership() {
     }
   };
 
+  const handleCorporatePayment = async () => {
+    setIsSubmitting(true);
+    try {
+      const response = await apiRequest("POST", "/api/create-corporate-subscription", {
+        companyName: inquiry.companyName,
+        contactEmail: inquiry.email,
+        maxUsers: inquiry.projectedUsers,
+        customPricing: inquiry.annualRevenue
+      });
+      
+      const data = await response.json();
+      
+      if (data.checkoutUrl) {
+        // Redirect to Stripe Checkout for corporate subscription
+        window.location.href = data.checkoutUrl;
+      }
+    } catch (error) {
+      toast({
+        title: "Payment Setup Failed",
+        description: "Please contact us directly for corporate pricing at Jordan@Afterhourshvac.ca",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
       <div className="max-w-7xl mx-auto space-y-8">
