@@ -246,6 +246,13 @@ const Header = () => {
                     </Link>
                   </DropdownMenuItem>
                   
+                  <DropdownMenuItem asChild>
+                    <Link href="/tools" className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg">
+                      <Calculator className="w-4 h-4" />
+                      <span>Tools</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  
                   {user.isAdmin && (
                     <DropdownMenuItem asChild>
                       <Link href="/admin" className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg">
@@ -379,6 +386,13 @@ const Header = () => {
                       <Link href="/customer-dashboard" onClick={() => setIsMobileMenuOpen(false)}>
                         <Settings className="w-4 h-4 mr-3" />
                         Dashboard
+                      </Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild className="w-full justify-start px-4 py-3 rounded-xl">
+                      <Link href="/tools" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Calculator className="w-4 h-4 mr-3" />
+                        Tools
                       </Link>
                     </Button>
                     
