@@ -51,13 +51,12 @@ export default function WelcomeModal({ isOpen, onClose }: WelcomeModalProps) {
 
   return (
     <>
-      {/* Emergency Service Modal */}
       <Dialog open={showEmergencyModal} onOpenChange={() => {}}>
         <DialogContent className="max-w-md bg-white border-2 border-red-200 shadow-2xl">
           <Button 
             variant="ghost" 
             size="sm" 
-            className="absolute right-2 top-2 h-8 w-8 p-0" 
+            className="absolute right-2 top-2 h-8 w-8 p-0 z-50" 
             onClick={handleClose}
           >
             <X className="h-4 w-4" />
@@ -111,13 +110,12 @@ export default function WelcomeModal({ isOpen, onClose }: WelcomeModalProps) {
         </DialogContent>
       </Dialog>
 
-      {/* User Type Selection Modal */}
       <Dialog open={showUserTypeModal} onOpenChange={() => {}}>
-        <DialogContent className="max-w-2xl bg-white border-2 border-blue-200 shadow-2xl" hideCloseButton>
+        <DialogContent className="max-w-2xl bg-white border-2 border-blue-200 shadow-2xl">
           <Button 
             variant="ghost" 
             size="sm" 
-            className="absolute right-2 top-2 h-8 w-8 p-0" 
+            className="absolute right-2 top-2 h-8 w-8 p-0 z-50" 
             onClick={handleClose}
           >
             <X className="h-4 w-4" />
@@ -140,7 +138,6 @@ export default function WelcomeModal({ isOpen, onClose }: WelcomeModalProps) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Customer Card */}
               <Card 
                 className="cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-300"
                 onClick={() => handleUserTypeSelection('customer')}
@@ -165,7 +162,6 @@ export default function WelcomeModal({ isOpen, onClose }: WelcomeModalProps) {
                 </CardContent>
               </Card>
 
-              {/* Professional Card */}
               <Card 
                 className="cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-orange-300"
                 onClick={() => handleUserTypeSelection('pro')}

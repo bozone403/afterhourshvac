@@ -193,6 +193,21 @@ function Router() {
 }
 
 function App() {
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+
+  useEffect(() => {
+    // Check if this is a first-time visitor
+    const hasVisited = localStorage.getItem('hasVisited');
+    if (!hasVisited) {
+      setShowWelcomeModal(true);
+      localStorage.setItem('hasVisited', 'true');
+    }
+  }, []);
+
+  const handleCloseWelcomeModal = () => {
+    setShowWelcomeModal(false);
+  };
+
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
       <QueryClientProvider client={queryClient}>
@@ -206,6 +221,10 @@ function App() {
               <Footer />
             </div>
             <Toaster />
+            <WelcomeModal 
+              isOpen={showWelcomeModal} 
+              onClose={handleCloseWelcomeModal} 
+            />
           </TooltipProvider>
         </AuthProvider>
       </QueryClientProvider>
