@@ -91,31 +91,6 @@ export const phoneVerificationAttempts = pgTable("phone_verification_attempts", 
   blockedUntil: timestamp("blocked_until"),
 });
 
-// Service Bookings - for consultation appointments and service scheduling
-export const serviceBookings = pgTable("service_bookings", {
-  id: serial("id").primaryKey(),
-  customerName: text("customer_name").notNull(),
-  customerPhone: text("customer_phone").notNull(),
-  customerEmail: text("customer_email"),
-  serviceAddress: text("service_address").notNull(),
-  serviceType: text("service_type").notNull(), // 'residential_consultation', 'commercial_consultation', 'maintenance', etc.
-  bookingDate: timestamp("booking_date").notNull(),
-  bookingTime: text("booking_time").notNull(),
-  status: text("status").default("pending"), // pending, confirmed, completed, cancelled
-  notes: text("notes"),
-  amount: numeric("amount", { precision: 10, scale: 2 }).default("0"),
-  paymentIntentId: text("payment_intent_id"),
-  paymentStatus: text("payment_status").default("pending"), // pending, paid, refunded
-  assignedTechnicianId: integer("assigned_technician_id").references(() => users.id),
-  estimatedDuration: integer("estimated_duration"), // in minutes
-  isEmergency: boolean("is_emergency").default(false),
-  priority: text("priority").default("normal"), // low, normal, high, urgent
-  source: text("source").default("website"), // website, phone, referral
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-  completedAt: timestamp("completed_at"),
-});
-
 // Suspicious Activity Log
 export const securityLogs = pgTable("security_logs", {
   id: serial("id").primaryKey(),
@@ -478,6 +453,34 @@ export const emergencyRequests = pgTable("emergency_requests", {
   totalCost: numeric("total_cost", { precision: 10, scale: 2 }),
 });
 
+// Service Bookings
+export const serviceBookings = pgTable("service_bookings", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customer_id").references(() => customers.id),
+  userId: integer("user_id").references(() => users.id),
+  name: text("name").notNull(),
+  email: text("email"),
+  phone: text("phone").notNull(),
+  address: text("address").notNull(),
+  serviceType: text("service_type").notNull(), // installation, repair, maintenance, inspection
+  description: text("description"),
+  preferredDate: timestamp("preferred_date"),
+  preferredTime: text("preferred_time"),
+  status: text("status").default("pending"), // pending, confirmed, in_progress, completed, cancelled
+  assignedTechnician: integer("assigned_technician").references(() => users.id),
+  estimatedDuration: integer("estimated_duration"), // in minutes
+  actualStartTime: timestamp("actual_start_time"),
+  actualEndTime: timestamp("actual_end_time"),
+  totalCost: numeric("total_cost", { precision: 10, scale: 2 }),
+  notes: text("notes"),
+  internalNotes: text("internal_notes"),
+  invoiceSent: boolean("invoice_sent").default(false),
+  invoiceId: text("invoice_id"),
+  paymentStatus: text("payment_status").default("pending"), // pending, paid, partial, overdue
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Quote Requests
 export const quoteRequests = pgTable("quote_requests", {
   id: serial("id").primaryKey(),
@@ -686,6 +689,11 @@ export const insertEmergencyRequestSchema = createInsertSchema(emergencyRequests
   requestedAt: true
 });
 export const insertQuoteRequestSchema = createInsertSchema(quoteRequests);
+export const insertServiceBookingSchema = createInsertSchema(serviceBookings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
 export const insertJobApplicationSchema = createInsertSchema(jobApplications);
 
 // TYPES
@@ -760,8 +768,6 @@ export type UserSession = typeof userSessions.$inferSelect;
 export type InsertPageView = typeof pageViews.$inferInsert;
 export type PageView = typeof pageViews.$inferSelect;
 
-// SERVICE BOOKINGS
-export const insertServiceBookingSchema = createInsertSchema(serviceBookings);
 export type InsertServiceBooking = z.infer<typeof insertServiceBookingSchema>;
 export type ServiceBooking = typeof serviceBookings.$inferSelect;
 
