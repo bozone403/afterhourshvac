@@ -750,9 +750,11 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                             const item: QuoteItem = {
                               id: Date.now().toString(),
                               name: itemName,
+                              category: itemData.category,
+                              item: itemName,
                               unitPrice: itemData.price,
                               quantity: 1,
-                              totalPrice: itemData.price,
+                              total: itemData.price,
                               laborHours: itemData.laborHours
                             };
                             setQuote(prev => ({
