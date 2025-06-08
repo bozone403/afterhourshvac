@@ -240,7 +240,7 @@ const Header = () => {
                   )}
                   
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg">
+                    <Link href="/customer-dashboard" className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg">
                       <Settings className="w-4 h-4" />
                       <span>Dashboard</span>
                     </Link>
@@ -376,7 +376,7 @@ const Header = () => {
                     )}
                     
                     <Button variant="ghost" asChild className="w-full justify-start px-4 py-3 rounded-xl">
-                      <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link href="/customer-dashboard" onClick={() => setIsMobileMenuOpen(false)}>
                         <Settings className="w-4 h-4 mr-3" />
                         Dashboard
                       </Link>
