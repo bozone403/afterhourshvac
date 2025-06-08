@@ -28,6 +28,7 @@ import { promisify } from "util";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
+import { getEarlResponse, analyzeHVACSymptoms } from "./services/anthropic";
 
 // Initialize Stripe with the provided secret key
 import Stripe from 'stripe';
@@ -3683,6 +3684,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error getting corporate account:", error);
       res.status(500).json({ 
         error: "Failed to get corporate account", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Earl AI Chat API routes
+  app.post("/api/earl/chat", async (req, res) => {
+    try {
+      const { message, isProLevel = false } = req.body;
+      
+      if (!message || typeof message !== 'string') {
+        return res.status(400).json({ error: "Message is required" });
+      }
+
+      const response = await getEarlResponse(message, isProLevel);
+      res.json({ response });
+    } catch (error: any) {
+      console.error("Error getting Earl response:", error);
+      res.status(500).json({ 
+        error: "Failed to get response from Earl", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Earl AI Symptom Analysis API route
+  app.post("/api/earl/analyze-symptoms", async (req, res) => {
+    try {
+      const { symptoms } = req.body;
+      
+      if (!symptoms || typeof symptoms !== 'string') {
+        return res.status(400).json({ error: "Symptoms description is required" });
+      }
+
+      const analysis = await analyzeHVACSymptoms(symptoms);
+      res.json(analysis);
+    } catch (error: any) {
+      console.error("Error analyzing symptoms:", error);
+      res.status(500).json({ 
+        error: "Failed to analyze symptoms", 
         message: error.message 
       });
     }

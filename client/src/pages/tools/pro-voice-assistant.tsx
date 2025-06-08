@@ -204,20 +204,44 @@ const ProVoiceAssistant = () => {
 
     setMessages(prev => [...prev, userMessage]);
     
-    // Simulate processing time for advanced AI
-    setTimeout(() => {
-      const response = generateAdvancedResponse(transcript);
+    try {
+      // Call Earl AI API for real HVAC expertise
+      const response = await fetch('/api/earl/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: transcript,
+          isProLevel: true
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from Earl');
+      }
+
+      const data = await response.json();
       const assistantMessage = {
         id: Date.now() + 1,
-        text: response,
+        text: data.response,
         sender: 'assistant' as const
       };
       
       setMessages(prev => [...prev, assistantMessage]);
-      speakResponse(response);
+      speakResponse(data.response);
       setInputText('');
+    } catch (error) {
+      console.error('Error getting Earl response:', error);
+      const errorMessage = {
+        id: Date.now() + 1,
+        text: "Sorry, I'm having trouble connecting right now. Let me know what HVAC issue you're dealing with and I'll help you troubleshoot it.",
+        sender: 'assistant' as const
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsProcessing(false);
-    }, 2000);
+    }
   };
 
   const sendMessage = () => {

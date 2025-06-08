@@ -543,19 +543,88 @@ export default function AISymptomDiagnoser() {
     setCurrentInput("");
     setIsAnalyzing(true);
 
-    // Simulate AI processing delay
-    setTimeout(() => {
-      const { response, diagnoses } = analyzeSymptoms(inputText);
+    try {
+      // Call Earl AI API for real HVAC expertise
+      const [chatResponse, analysisResponse] = await Promise.all([
+        fetch('/api/earl/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: inputText,
+            isProLevel: false
+          }),
+        }),
+        fetch('/api/earl/analyze-symptoms', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            symptoms: inputText
+          }),
+        })
+      ]);
+
+      if (!chatResponse.ok || !analysisResponse.ok) {
+        throw new Error('Failed to get response from Earl');
+      }
+
+      const chatData = await chatResponse.json();
+      const analysisData = await analysisResponse.json();
+
+      const response: ChatMessage = {
+        id: Date.now().toString(),
+        type: 'earl',
+        content: chatData.response,
+        timestamp: new Date(),
+        nextQuestions: [
+          "Can you tell me more about when this started?",
+          "Have you checked any specific components?",
+          "What's the age and model of your system?",
+          "Are there any unusual sounds or smells?"
+        ]
+      };
+
       setMessages(prev => [...prev, response]);
-      setCurrentDiagnosis(diagnoses);
+      
+      // Convert analysis data to diagnosis format
+      const diagnosis: Diagnosis = {
+        id: Date.now().toString(),
+        category: analysisData.severity || 'medium',
+        likelihood: analysisData.severity === 'high' ? 90 : analysisData.severity === 'medium' ? 70 : 50,
+        title: analysisData.diagnosis || 'HVAC System Analysis',
+        description: analysisData.diagnosis || chatData.response,
+        recommendations: analysisData.recommendations || [],
+        safetyLevel: analysisData.severity || 'medium'
+      };
+
+      setCurrentDiagnosis([diagnosis]);
       
       // Auto-speak response if voice is enabled
       if (voiceEnabled && response.content) {
         speakResponse(response.content);
       }
       
+    } catch (error) {
+      console.error('Error getting Earl response:', error);
+      const errorResponse: ChatMessage = {
+        id: Date.now().toString(),
+        type: 'earl',
+        content: "I'm having trouble connecting right now, but I can still help. Based on what you've described, let me know more details about your HVAC system and I'll guide you through some troubleshooting steps.",
+        timestamp: new Date(),
+        nextQuestions: [
+          "What type of system do you have? (furnace, heat pump, etc.)",
+          "Is it a heating or cooling problem?",
+          "When did you first notice this issue?",
+          "Have you tried anything to fix it already?"
+        ]
+      };
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
       setIsAnalyzing(false);
-    }, 1500);
+    }
   };
 
   const handleQuickQuestion = (question: string) => {
