@@ -146,45 +146,63 @@ const ProVoiceAssistant = () => {
 
   const speakResponse = (text: string) => {
     if ('speechSynthesis' in window) {
+      speechSynthesis.cancel(); // Stop any current speech
       setIsSpeaking(true);
       
-      // Configure for Earl's gruff male voice
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9; // Slightly faster for natural flow
-      utterance.pitch = 0.8; // Natural masculine pitch
+      // Process text for more natural speech patterns
+      const naturalText = text
+        .replace(/\./g, '. ') // Add pause after periods
+        .replace(/\,/g, ', ') // Add pause after commas
+        .replace(/\:/g, ': ') // Add pause after colons
+        .replace(/\;/g, '; ') // Add pause after semicolons
+        .replace(/\?/g, '? ') // Add pause after questions
+        .replace(/\!/g, '! ') // Add pause after exclamations
+        .replace(/\s+/g, ' ') // Clean up extra spaces
+        .replace(/(\d+)\s*degrees?/gi, '$1 degrees') // Fix temperature pronunciation
+        .replace(/HVAC/g, 'H-V-A-C') // Spell out acronym
+        .replace(/BTU/g, 'B-T-U') // Spell out acronym
+        .replace(/CFM/g, 'C-F-M') // Spell out acronym
+        .replace(/AFUE/g, 'A-F-U-E') // Spell out acronym
+        .trim();
+      
+      const utterance = new SpeechSynthesisUtterance(naturalText);
+      
+      // More natural speech parameters
+      utterance.rate = 1.0; // Normal speaking rate
+      utterance.pitch = 1.0; // Natural pitch
       utterance.volume = 0.9;
       
-      // Try to use the most natural-sounding US male voice available
+      // Get voices and select the most natural one
       const voices = speechSynthesis.getVoices();
       
-      // Priority order for natural-sounding male voices
+      // Prioritize natural-sounding voices
       const preferredVoice = voices.find(voice => 
+        // Look for high-quality system voices first
+        (voice.name.includes('Samantha') && voice.lang.startsWith('en-US')) ||
         (voice.name.includes('Alex') && voice.lang.startsWith('en-US')) ||
-        (voice.name.includes('Daniel') && voice.lang.startsWith('en-US')) ||
-        (voice.name.includes('Nathan') && voice.lang.startsWith('en-US')) ||
-        (voice.name.includes('David') && voice.name.includes('Enhanced')) ||
-        (voice.name.includes('Microsoft David Desktop')) ||
-        (voice.name.includes('Google US English Male'))
+        (voice.name.includes('Tom') && voice.lang.startsWith('en-US')) ||
+        (voice.name.includes('Daniel') && voice.lang.startsWith('en-US'))
       ) || voices.find(voice => 
+        // Fallback to other good US voices
         voice.lang.startsWith('en-US') && 
-        voice.localService && 
-        (voice.name.toLowerCase().includes('male') || 
-         voice.name.includes('David') || 
-         voice.name.includes('Mark') ||
-         voice.name.includes('Aaron'))
+        voice.localService &&
+        !voice.name.includes('Google') // Avoid robotic Google voices
       ) || voices.find(voice => 
-        voice.lang.startsWith('en-US') && voice.localService
+        // Last resort - any US English voice
+        voice.lang.startsWith('en-US')
       );
       
       if (preferredVoice) {
         utterance.voice = preferredVoice;
+        console.log('Using voice:', preferredVoice.name);
       }
       
       utterance.onend = () => {
         setIsSpeaking(false);
       };
       
-      utterance.onerror = () => {
+      utterance.onerror = (event) => {
+        console.error('Speech error:', event);
         setIsSpeaking(false);
       };
       

@@ -115,7 +115,7 @@ export default function HVACLiterature() {
       description: "Complete reference guide for Alberta residential HVAC building codes, safety standards, and compliance requirements.",
       tags: ["Alberta", "Building Codes", "Safety", "Compliance"],
       lastUpdated: "2024-12-15",
-      downloadUrl: "/api/download/alberta-hvac-codes.pdf",
+      downloadUrl: "https://www.csagroup.org/store/product/CSA%20B149.1-20/",
       content: `
 # Alberta Residential HVAC Codes - Quick Reference
 
@@ -369,7 +369,7 @@ export default function HVACLiterature() {
       description: "Emergency response procedures for HVAC system failures, gas leaks, and safety situations.",
       tags: ["Emergency", "Safety", "Protocols", "Response"],
       lastUpdated: "2024-12-10",
-      downloadUrl: "/api/download/emergency-protocols.pdf",
+      downloadUrl: "https://www.hrai.ca/resources/",
       content: `
 # Emergency Service Protocols - AfterHours HVAC
 
