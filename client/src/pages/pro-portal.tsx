@@ -347,7 +347,7 @@ For complete terms, consult full legal document.`;
 
           {/* Main Content */}
           <Tabs defaultValue="earl" className="max-w-6xl mx-auto">
-            <TabsList className="grid w-full grid-cols-5 mb-8">
+            <TabsList className="grid w-full grid-cols-6 mb-8">
               <TabsTrigger value="earl" className="flex items-center gap-2">
                 <Bot className="h-4 w-4" />
                 Earl AI
@@ -360,12 +360,16 @@ For complete terms, consult full legal document.`;
                 <Calculator className="h-4 w-4" />
                 Calculators
               </TabsTrigger>
-              <TabsTrigger value="cheatsheet" className="flex items-center gap-2">
+              <TabsTrigger value="literature" className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
+                Literature
+              </TabsTrigger>
+              <TabsTrigger value="cheatsheet" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
                 Calgary Codes
               </TabsTrigger>
               <TabsTrigger value="docs" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
+                <Download className="h-4 w-4" />
                 Documents
               </TabsTrigger>
             </TabsList>
@@ -375,10 +379,10 @@ For complete terms, consult full legal document.`;
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MessageSquare className="h-5 w-5 text-orange-600" />
-                    Earl - Your HVAC Expert Assistant
+                    Earl - Professional HVAC Expert Assistant
                   </CardTitle>
                   <CardDescription>
-                    Chat with Earl, your gruff but knowledgeable HVAC expert. He knows Alberta and BC codes inside out.
+                    Voice-enabled AI assistant for HVAC professionals. Earl provides expert guidance on diagnostics, installations, codes, and troubleshooting with decades of Alberta/BC experience.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -483,6 +487,52 @@ For complete terms, consult full legal document.`;
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            <TabsContent value="literature">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5 text-blue-600" />
+                    Professional HVAC Literature
+                  </CardTitle>
+                  <CardDescription>
+                    Comprehensive library of codes, manuals, pricing guides, and Calgary-specific documentation.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Link href="/tools/hvac-literature">
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      Access Literature Library
+                    </Button>
+                  </Link>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-900 mb-2">Available Documents</h4>
+                      <ul className="text-sm text-gray-700 space-y-1">
+                        <li>• Calgary HVAC Installation Pricing Guide</li>
+                        <li>• Alberta Residential HVAC Codes</li>
+                        <li>• Furnace Installation Best Practices</li>
+                        <li>• Emergency Service Protocols</li>
+                        <li>• Safety Standards & Compliance</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <h4 className="font-semibold text-blue-900 mb-2">Quick Reference</h4>
+                      <ul className="text-sm text-blue-800 space-y-1">
+                        <li>• Building codes & STANDATA</li>
+                        <li>• Installation procedures</li>
+                        <li>• Pricing & labor rates</li>
+                        <li>• Emergency protocols</li>
+                        <li>• Warranty information</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="cheatsheet">
