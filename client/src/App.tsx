@@ -38,6 +38,8 @@ import ProCalculatorV2 from "@/pages/pro-calculator-v2";
 import ProPortal from "@/pages/pro-portal";
 import MembershipSimple from "@/pages/membership-simple";
 import CorporateMembership from "@/pages/corporate-membership";
+import AISymptomDiagnoser from "@/pages/tools/ai-symptom-diagnoser";
+import AlbertaRebateCalculator from "@/pages/tools/alberta-rebate-calculator";
 import FurnaceInstall from "@/pages/services/furnace-install";
 import ACRepair from "@/pages/services/ac-repair";
 import DuctCleaning from "@/pages/services/duct-cleaning";
@@ -96,6 +98,8 @@ function Router() {
         <Route path="/calculators/btu-calculator" component={BTUCalc} />
         <Route path="/calculators/energy-savings" component={EnergySavingsCalculator} />
         <Route path="/calculators/load-calculator" component={LoadCalculator} />
+        <Route path="/tools/ai-symptom-diagnoser" component={AISymptomDiagnoser} />
+        <Route path="/tools/alberta-rebate-calculator" component={AlbertaRebateCalculator} />
         <Route path="/service-tracking" component={ServiceTracking} />
         <Route path="/emergency-service" component={EmergencyService} />
         <Route path="/services/furnace-install" component={FurnaceInstall} />
