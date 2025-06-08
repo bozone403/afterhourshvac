@@ -41,6 +41,8 @@ import CorporateMembership from "@/pages/corporate-membership";
 import AISymptomDiagnoser from "@/pages/tools/ai-symptom-diagnoser";
 import AlbertaRebateCalculator from "@/pages/tools/alberta-rebate-calculator";
 import ProDiagnosticAssistant from "@/pages/tools/pro-diagnostic-assistant";
+import ProVoiceAssistant from "@/pages/tools/pro-voice-assistant";
+import SystemAnalyzer from "@/pages/tools/system-analyzer";
 import HVACLiterature from "@/pages/tools/hvac-literature";
 import FurnaceInstall from "@/pages/services/furnace-install";
 import ACRepair from "@/pages/services/ac-repair";
@@ -106,6 +108,8 @@ function Router() {
         <Route path="/tools/ai-symptom-diagnoser" component={AISymptomDiagnoser} />
         <Route path="/tools/alberta-rebate-calculator" component={AlbertaRebateCalculator} />
         <Route path="/tools/pro-diagnostic-assistant" component={ProDiagnosticAssistant} />
+        <Route path="/tools/pro-voice-assistant" component={ProVoiceAssistant} />
+        <Route path="/tools/system-analyzer" component={SystemAnalyzer} />
         <Route path="/tools/hvac-literature" component={HVACLiterature} />
         <Route path="/service-tracking" component={ServiceTracking} />
         <Route path="/emergency-service" component={EmergencyService} />

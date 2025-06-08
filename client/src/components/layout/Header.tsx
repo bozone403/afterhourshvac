@@ -54,6 +54,7 @@ const Header = () => {
       icon: Settings,
       submenu: [
         { name: "Basic BTU Calculator", href: "/calculators/btu", isPro: false },
+        { name: "Voice HVAC Helper", href: "/tools/ai-symptom-diagnoser", isPro: false },
         { name: "Alberta Rebate Calculator", href: "/tools/alberta-rebate-calculator", isPro: false },
         { name: "Energy Efficiency Guide", href: "/tools/energy-guide", isPro: false }
       ]

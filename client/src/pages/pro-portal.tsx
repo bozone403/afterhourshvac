@@ -420,13 +420,13 @@ const ProPortal = () => {
                   <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-blue-50 to-blue-100">
                     <CardHeader className="pb-3">
                       <MessageSquare className="h-8 w-8 text-blue-600 mb-2" />
-                      <CardTitle className="text-lg">Voice Diagnostics</CardTitle>
-                      <CardDescription className="text-sm">Hands-free diagnostic assistant</CardDescription>
+                      <CardTitle className="text-lg">Advanced Voice Diagnostics</CardTitle>
+                      <CardDescription className="text-sm">Professional AI with natural conversation flow</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href="/tools/ai-symptom-diagnoser">
+                      <Link href="/tools/pro-voice-assistant">
                         <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                          Start Voice Mode
+                          Start Advanced Voice
                         </Button>
                       </Link>
                     </CardContent>
