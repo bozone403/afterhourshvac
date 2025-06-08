@@ -49,6 +49,14 @@ const Header = () => {
       ]
     },
     { name: "Forum", href: "/forum", icon: MessageSquare },
+    { 
+      name: "HVAC Tools", 
+      icon: Settings,
+      subItems: [
+        { name: "AI Symptom Diagnoser", href: "/tools/ai-symptom-diagnoser" },
+        { name: "Alberta Rebate Calculator", href: "/tools/alberta-rebate-calculator" }
+      ]
+    },
     { name: "Corporate", href: "/corporate-membership", icon: Crown },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" }
