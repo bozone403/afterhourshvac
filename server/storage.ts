@@ -1499,7 +1499,7 @@ export class DatabaseStorage implements IStorage {
     const results = await db
       .select()
       .from(emergencyRequests)
-      .where(eq(emergencyRequests.userId, userId))
+      .where(eq(emergencyRequests.customerId, userId))
       .orderBy(desc(emergencyRequests.createdAt));
     return results;
   }

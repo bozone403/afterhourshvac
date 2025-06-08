@@ -140,7 +140,7 @@ const Header = () => {
                       <Button
                         variant="ghost"
                         className={`relative nav-link flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 overflow-hidden group ${
-                          isActivePage(item.href) 
+                          item.href && isActivePage(item.href) 
                             ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-xl transform scale-105" 
                             : "text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-orange-50 hover:shadow-lg hover:transform hover:scale-105"
                         }`}
@@ -316,11 +316,11 @@ const Header = () => {
                     variant="ghost"
                     asChild
                     className={`w-full justify-start px-4 py-3 rounded-xl ${
-                      isActivePage(item.href) ? "nav-link-active bg-blue-50" : "hover:bg-gray-50"
+                      item.href && isActivePage(item.href) ? "nav-link-active bg-blue-50" : "hover:bg-gray-50"
                     }`}
                     onClick={() => !item.submenu && setIsMobileMenuOpen(false)}
                   >
-                    <Link href={item.href}>
+                    <Link href={item.href || "#"}>
                       {item.icon && <item.icon className="w-4 h-4 mr-3" />}
                       {item.name}
                     </Link>

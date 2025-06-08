@@ -3457,7 +3457,7 @@ Login to manage: afterhourshvac.ca/admin`;
   app.get("/api/emergency-requests", async (req, res) => {
     try {
       const user = req.user as any;
-      let emergencyRequests;
+      let emergencyRequests: any[];
       
       if (user && user.isAdmin) {
         // Admin can see all requests
@@ -4475,7 +4475,7 @@ Immediate response required!`;
         totalCost: totalCost.toString(),
         status: 'pending_payment',
         requestedAt: new Date(),
-        userId: req.user?.id || null
+        userId: (req.user as any)?.id || null
       };
 
       const serviceRequest = await storage.createEmergencyRequest(serviceData);
@@ -4713,7 +4713,7 @@ Immediate response required!`;
   app.delete("/api/admin/users/:id", requireAuth, requireAdmin, async (req, res) => {
     try {
       const userId = parseInt(req.params.id);
-      const currentUserId = req.user?.id;
+      const currentUserId = (req.user as any)?.id;
       
       if (!userId || isNaN(userId)) {
         return res.status(400).json({ error: "Valid user ID is required" });
