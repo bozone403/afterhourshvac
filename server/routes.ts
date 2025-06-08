@@ -3268,5 +3268,174 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // EMERGENCY SERVICE TRACKING ENDPOINTS
+  
+  // Get all emergency requests (admin) or user's own requests
+  app.get("/api/emergency-requests", async (req, res) => {
+    try {
+      const user = req.user as any;
+      let emergencyRequests;
+      
+      if (user && user.isAdmin) {
+        // Admin can see all requests
+        emergencyRequests = await storage.getAllEmergencyRequests();
+      } else if (user) {
+        // User can only see their own requests
+        emergencyRequests = await storage.getUserEmergencyRequests(user.id);
+      } else {
+        // Public access - allow searching by phone/email for tracking
+        emergencyRequests = [];
+      }
+      
+      res.json(emergencyRequests);
+    } catch (error: any) {
+      console.error("Error getting emergency requests:", error);
+      res.status(500).json({ 
+        error: "Error getting emergency requests", 
+        message: error.message 
+      });
+    }
+  });
+  
+  // Search emergency requests by phone, email, or ID
+  app.get("/api/emergency-requests/search", async (req, res) => {
+    try {
+      const query = req.query.q as string;
+      
+      if (!query) {
+        return res.status(400).json({ error: "Search query is required" });
+      }
+      
+      const requests = await storage.searchEmergencyRequests(query);
+      res.json(requests);
+    } catch (error: any) {
+      console.error("Error searching emergency requests:", error);
+      res.status(500).json({ 
+        error: "Error searching emergency requests", 
+        message: error.message 
+      });
+    }
+  });
+  
+  // Update emergency request status (admin only)
+  app.put("/api/emergency-requests/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "Invalid emergency request ID" });
+      }
+      
+      const updateData = req.body;
+      const request = await storage.updateEmergencyRequest(id, updateData);
+      
+      if (!request) {
+        return res.status(404).json({ error: "Emergency request not found" });
+      }
+      
+      res.json(request);
+    } catch (error: any) {
+      console.error("Error updating emergency request:", error);
+      res.status(500).json({ 
+        error: "Error updating emergency request", 
+        message: error.message 
+      });
+    }
+  });
+
+  // JOB APPLICATION ENDPOINTS
+  
+  // Submit job application
+  app.post("/api/job-applications", async (req, res) => {
+    try {
+      const applicationData = insertJobApplicationSchema.parse(req.body);
+      const application = await storage.createJobApplication(applicationData);
+      
+      res.status(201).json({ 
+        success: true, 
+        message: "Application submitted successfully",
+        applicationId: application.id 
+      });
+    } catch (error: any) {
+      console.error("Error creating job application:", error);
+      res.status(500).json({ 
+        error: "Error creating job application", 
+        message: error.message 
+      });
+    }
+  });
+  
+  // Get all job applications (admin only)
+  app.get("/api/job-applications", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const applications = await storage.getAllJobApplications();
+      res.json(applications);
+    } catch (error: any) {
+      console.error("Error getting job applications:", error);
+      res.status(500).json({ 
+        error: "Error getting job applications", 
+        message: error.message 
+      });
+    }
+  });
+  
+  // Get job application by ID (admin only)
+  app.get("/api/job-applications/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "Invalid application ID" });
+      }
+      
+      const application = await storage.getJobApplicationById(id);
+      
+      if (!application) {
+        return res.status(404).json({ error: "Job application not found" });
+      }
+      
+      res.json(application);
+    } catch (error: any) {
+      console.error("Error getting job application:", error);
+      res.status(500).json({ 
+        error: "Error getting job application", 
+        message: error.message 
+      });
+    }
+  });
+  
+  // Update job application status (admin only)
+  app.put("/api/job-applications/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const user = req.user as any;
+      
+      if (!id || isNaN(id)) {
+        return res.status(400).json({ error: "Invalid application ID" });
+      }
+      
+      const updateData = {
+        ...req.body,
+        reviewedBy: user.id,
+        reviewedAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      const application = await storage.updateJobApplication(id, updateData);
+      
+      if (!application) {
+        return res.status(404).json({ error: "Job application not found" });
+      }
+      
+      res.json(application);
+    } catch (error: any) {
+      console.error("Error updating job application:", error);
+      res.status(500).json({ 
+        error: "Error updating job application", 
+        message: error.message 
+      });
+    }
+  });
+
   return httpServer;
 }
