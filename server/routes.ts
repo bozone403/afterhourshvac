@@ -3405,7 +3405,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/emergency-requests", async (req, res) => {
     try {
       const emergencyData = insertEmergencyRequestSchema.parse(req.body);
-      const request = await storage.createEmergencyRequest(emergencyData);
+      
+      // Map description to issue_description for database compatibility
+      const mappedData = {
+        ...emergencyData,
+        issueDescription: emergencyData.description,
+        urgencyLevel: emergencyData.severity || 'high'
+      };
+      
+      const request = await storage.createEmergencyRequest(mappedData);
+      
+      // Send SMS notification to Jordan
+      const smsMessage = `🚨 NEW EMERGENCY REQUEST
+
+Customer: ${request.name}
+Phone: ${request.phone}
+Issue: ${request.emergencyType}
+Location: ${request.address}
+Description: ${request.description}
+
+Time: ${new Date().toLocaleString()}
+
+Login to manage: afterhourshvac.ca/admin`;
+
+      await sendSMS("+14036136014", smsMessage);
       
       res.status(201).json({ 
         success: true, 

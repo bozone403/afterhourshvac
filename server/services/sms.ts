@@ -67,14 +67,7 @@ Action Required: Contact customer immediately`;
 }
 
 export async function sendTestNotification(phoneNumber: string): Promise<boolean> {
-  const message = `🔧 TEST: AfterHours HVAC SMS System
-
-This confirms your SMS notifications are working correctly.
-
-Time: ${new Date().toLocaleString()}
-Status: ✅ OPERATIONAL
-
-Jordan, you'll now receive text alerts for emergency service requests!`;
+  const message = `TEST SMS from AfterHours HVAC - Your SMS notifications are working! Time: ${new Date().toLocaleString()}`;
 
   return await sendSMS(phoneNumber, message);
 }

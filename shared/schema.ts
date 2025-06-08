@@ -457,18 +457,25 @@ export const emergencyRequests = pgTable("emergency_requests", {
   id: serial("id").primaryKey(),
   customerId: integer("customer_id").references(() => customers.id),
   name: text("name").notNull(),
-  email: text("email").notNull(),
+  email: text("email"),
   phone: text("phone").notNull(),
   address: text("address").notNull(),
-  emergencyType: text("emergency_type").notNull(), // no_heat, no_cooling, gas_leak, etc
-  description: text("description").notNull(),
-  severity: text("severity").default("high"), // medium, high, critical
-  status: text("status").default("received"), // received, dispatched, in_progress, completed
-  assignedTechnician: integer("assigned_technician").references(() => users.id),
-  estimatedArrival: timestamp("estimated_arrival"),
+  issueDescription: text("issue_description").notNull(),
+  urgencyLevel: text("urgency_level").notNull(),
+  status: text("status").default("pending"),
+  requestedAt: timestamp("requested_at").defaultNow(),
   completedAt: timestamp("completed_at"),
-  totalCost: numeric("total_cost", { precision: 10, scale: 2 }),
+  location: text("location"),
+  priority: text("priority"),
+  assignedTo: integer("assigned_to").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  emergencyType: text("emergency_type"),
+  description: text("description"),
+  severity: text("severity"),
+  assignedTechnician: text("assigned_technician"),
+  estimatedArrival: timestamp("estimated_arrival"),
+  totalCost: numeric("total_cost", { precision: 10, scale: 2 }),
 });
 
 // Quote Requests
