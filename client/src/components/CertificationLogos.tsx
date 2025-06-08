@@ -84,7 +84,7 @@ const CertificationLogos = () => {
         <div className="mt-12 text-center">
           <div className="inline-flex items-center space-x-2 bg-green-50 text-green-800 px-6 py-3 rounded-full border border-green-200">
             <CheckCircle className="w-5 h-5" />
-            <span className="font-semibold">Fully Licensed & Insured • Alberta License #12345</span>
+            <span className="font-semibold">Fully Licensed & Insured</span>
           </div>
         </div>
       </div>

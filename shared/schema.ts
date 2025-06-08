@@ -468,43 +468,22 @@ export const quoteRequests = pgTable("quote_requests", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Job Applications
+// Job Applications Table (Simplified)
 export const jobApplications = pgTable("job_applications", {
   id: serial("id").primaryKey(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email").notNull(),
   phone: text("phone").notNull(),
-  address: text("address").notNull(),
-  city: text("city").notNull(),
-  province: text("province").notNull(),
-  postalCode: text("postal_code").notNull(),
-  position: text("position").notNull(), // hvac_technician, apprentice, service_manager, etc
-  experience: text("experience").notNull(), // 0-1, 1-3, 3-5, 5-10, 10+ years
-  education: text("education"), // high_school, college, university, trade_school
-  certifications: jsonb("certifications"), // Array of certifications
-  availableStartDate: text("available_start_date"),
-  expectedSalary: text("expected_salary"),
-  employmentType: text("employment_type").notNull(), // full_time, part_time, contract
-  workAuthorization: boolean("work_authorization").notNull(),
-  relocateWillingness: boolean("relocate_willingness").default(false),
-  resumeUrl: text("resume_url"), // File upload path
+  position: text("position").notNull(),
+  experience: text("experience").notNull(),
   coverLetter: text("cover_letter"),
-  references: jsonb("references"), // Array of reference objects
-  previousEmployment: jsonb("previous_employment"), // Array of employment history
-  skills: jsonb("skills"), // Array of technical skills
-  drivingRecord: text("driving_record"), // clean, minor_violations, major_violations
-  criminalBackground: boolean("criminal_background").default(false),
-  backgroundDetails: text("background_details"),
-  motivation: text("motivation"), // Why they want to work for us
-  availability: jsonb("availability"), // Days/hours available
-  status: text("status").default("submitted"), // submitted, reviewing, interview_scheduled, hired, rejected
-  notes: text("notes"), // Admin notes
-  reviewedBy: integer("reviewed_by").references(() => users.id),
+  resumeUrl: text("resume_url"),
+  status: text("status").default("pending"), // pending, reviewing, interviewing, hired, rejected
+  appliedAt: timestamp("applied_at").defaultNow(),
   reviewedAt: timestamp("reviewed_at"),
-  interviewDate: timestamp("interview_date"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  reviewedBy: integer("reviewed_by").references(() => users.id),
+  notes: text("notes"), // Internal admin notes
 });
 
 // Removed duplicate userSessions - using the more comprehensive one defined above

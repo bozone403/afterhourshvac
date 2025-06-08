@@ -2,6 +2,9 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { pool } from "./db";
+import multer from "multer";
+import path from "path";
+import { mkdir } from "fs/promises";
 import { z } from "zod";
 import { 
   insertUserSchema, 
@@ -3829,6 +3832,128 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error downloading document:", error);
       res.status(500).json({ 
         error: "Failed to download document", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Job Applications API Routes
+  app.post("/api/job-applications", upload.single('resume'), async (req, res) => {
+    try {
+      const { firstName, lastName, email, phone, position, experience, coverLetter } = req.body;
+      
+      if (!firstName || !lastName || !email || !phone || !position || !experience) {
+        return res.status(400).json({ error: "All required fields must be filled" });
+      }
+
+      let resumeUrl = null;
+      if (req.file) {
+        // In production, this would upload to cloud storage
+        resumeUrl = `/uploads/resumes/${req.file.filename}`;
+      }
+
+      const application = await storage.createJobApplication({
+        firstName,
+        lastName,
+        email,
+        phone,
+        position,
+        experience,
+        coverLetter: coverLetter || null,
+        resumeUrl,
+        status: 'pending'
+      });
+
+      res.status(201).json(application);
+    } catch (error: any) {
+      console.error("Error submitting job application:", error);
+      res.status(500).json({ 
+        error: "Failed to submit application", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Admin Job Applications Routes
+  app.get("/api/admin/job-applications", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const applications = await storage.getAllJobApplications();
+      res.json(applications);
+    } catch (error: any) {
+      console.error("Error fetching job applications:", error);
+      res.status(500).json({ 
+        error: "Failed to fetch applications", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.patch("/api/admin/job-applications/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const applicationId = parseInt(req.params.id);
+      const { status, notes } = req.body;
+      const userId = req.user?.id;
+
+      if (!applicationId || !status) {
+        return res.status(400).json({ error: "Application ID and status are required" });
+      }
+
+      const updatedApplication = await storage.updateJobApplicationStatus(
+        applicationId, 
+        status, 
+        userId,
+        notes
+      );
+
+      res.json(updatedApplication);
+    } catch (error: any) {
+      console.error("Error updating job application:", error);
+      res.status(500).json({ 
+        error: "Failed to update application", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Admin User Management Routes
+  app.get("/api/admin/users", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      // Remove sensitive information
+      const sanitizedUsers = users.map(user => ({
+        ...user,
+        password: undefined,
+        phoneVerificationCode: undefined
+      }));
+      res.json(sanitizedUsers);
+    } catch (error: any) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ 
+        error: "Failed to fetch users", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.patch("/api/admin/users/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const updates = req.body;
+
+      if (!userId) {
+        return res.status(400).json({ error: "User ID is required" });
+      }
+
+      const updatedUser = await storage.updateUserAccess(userId, updates);
+      res.json({
+        ...updatedUser,
+        password: undefined,
+        phoneVerificationCode: undefined
+      });
+    } catch (error: any) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ 
+        error: "Failed to update user", 
         message: error.message 
       });
     }

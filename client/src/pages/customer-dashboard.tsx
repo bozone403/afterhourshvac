@@ -1,711 +1,431 @@
-import { Helmet } from 'react-helmet-async';
-import { useAuth } from '@/hooks/use-auth';
-import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   User, 
-  CreditCard, 
+  Settings, 
   FileText, 
   Calendar, 
-  Wrench, 
-  Crown,
-  Settings,
-  DollarSign,
   Clock,
   CheckCircle,
   AlertCircle,
-  Home,
   Phone,
+  Mail,
   MapPin,
+  CreditCard,
   Star,
-  TrendingUp,
-  Shield,
-  Thermometer
-} from 'lucide-react';
-import { Link } from 'wouter';
+  Wrench,
+  Shield
+} from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 const CustomerDashboard = () => {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState("overview");
 
-  const { data: customerData, isLoading } = useQuery({
-    queryKey: ['/api/customer/profile'],
-    enabled: !!user,
+  // Fetch user's service requests
+  const { data: serviceRequests = [] } = useQuery({
+    queryKey: ["/api/service-requests"],
   });
 
-  const { data: quotes } = useQuery({
-    queryKey: ['/api/quotes'],
-    enabled: !!user,
+  // Fetch user's quotes
+  const { data: quotes = [] } = useQuery({
+    queryKey: ["/api/quotes"],
   });
 
-  const { data: payments } = useQuery({
-    queryKey: ['/api/customer/payments'],
-    enabled: !!user,
-  });
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'text-green-600 bg-green-50';
+      case 'in_progress': return 'text-blue-600 bg-blue-50';
+      case 'scheduled': return 'text-purple-600 bg-purple-50';
+      case 'pending': return 'text-yellow-600 bg-yellow-50';
+      case 'cancelled': return 'text-red-600 bg-red-50';
+      default: return 'text-gray-600 bg-gray-50';
+    }
+  };
 
-  const { data: customerMaintenancePlans } = useQuery({
-    queryKey: ['/api/customer/maintenance-plans'],
-    enabled: !!user,
-  });
-
-  const { data: serviceHistory } = useQuery({
-    queryKey: ['/api/customer/service-history'],
-    enabled: !!user,
-  });
-
-  const { data: schedules } = useQuery({
-    queryKey: ['/api/schedules'],
-    enabled: !!user,
-  });
-
-  const { data: maintenanceSchedules } = useQuery({
-    queryKey: ['/api/maintenance-plans'],
-    enabled: !!user,
-  });
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-gray-900">Access Restricted</CardTitle>
-            <CardDescription>Please log in to view your customer dashboard</CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <Link href="/auth">
-              <Button className="bg-orange-600 hover:bg-orange-700">
-                Log In
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full"></div>
-      </div>
-    );
-  }
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed': return <CheckCircle className="h-4 w-4" />;
+      case 'in_progress': return <Clock className="h-4 w-4" />;
+      case 'scheduled': return <Calendar className="h-4 w-4" />;
+      case 'pending': return <AlertCircle className="h-4 w-4" />;
+      default: return <Clock className="h-4 w-4" />;
+    }
+  };
 
   return (
-    <>
-      <Helmet>
-        <title>Customer Dashboard | AfterHours HVAC</title>
-        <meta name="description" content="Manage your HVAC services, quotes, payments, and maintenance plans with AfterHours HVAC." />
-      </Helmet>
-
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
-        <div className="container mx-auto px-4 py-8">
-          
-          {/* Welcome Section */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome back, {user.username}!
-            </h1>
-            <p className="text-gray-600">
-              Manage your HVAC services, quotes, and account settings
-            </p>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4 max-w-6xl">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Welcome back, {user?.firstName || user?.username}!
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Manage your HVAC services and account settings
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              {user?.hasProAccess && (
+                <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+                  <Star className="h-3 w-3 mr-1" />
+                  Pro Member
+                </Badge>
+              )}
+              <Badge variant="outline" className="bg-green-50 text-green-700">
+                <Shield className="h-3 w-3 mr-1" />
+                Verified Customer
+              </Badge>
+            </div>
           </div>
+        </div>
 
-          {/* Membership Status */}
-          {user.hasPro && (
-            <Card className="mb-8 border-orange-200">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Crown className="h-6 w-6 text-orange-600 mr-2" />
-                    <CardTitle className="text-lg text-gray-900">Pro Membership Active</CardTitle>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="services" className="flex items-center gap-2">
+              <Wrench className="h-4 w-4" />
+              Service History
+            </TabsTrigger>
+            <TabsTrigger value="quotes" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Quotes & Estimates
+            </TabsTrigger>
+            <TabsTrigger value="account" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Account Settings
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Wrench className="h-5 w-5 text-blue-600" />
+                    Active Services
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {serviceRequests.filter((req: any) => req.status === 'in_progress').length}
                   </div>
-                  <Badge className="bg-orange-100 text-orange-800">Pro</Badge>
-                </div>
-                <CardDescription>
-                  You have access to all professional HVAC calculation tools
-                </CardDescription>
+                  <p className="text-sm text-gray-600">Services in progress</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-green-600" />
+                    Upcoming
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-green-600">
+                    {serviceRequests.filter((req: any) => req.status === 'scheduled').length}
+                  </div>
+                  <p className="text-sm text-gray-600">Scheduled appointments</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-purple-600" />
+                    Pending Quotes
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-purple-600">
+                    {quotes.filter((quote: any) => quote.status === 'pending').length}
+                  </div>
+                  <p className="text-sm text-gray-600">Awaiting approval</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent Activity */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Activity</CardTitle>
+                <CardDescription>Your latest service requests and updates</CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="/pro-calculator">
-                  <Button className="bg-orange-600 hover:bg-orange-700">
-                    Access Pro Tools
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Dashboard Tabs */}
-          <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="quotes">Quotes</TabsTrigger>
-              <TabsTrigger value="calendar">Calendar</TabsTrigger>
-              <TabsTrigger value="payments">Payments</TabsTrigger>
-              <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
-            </TabsList>
-
-            {/* Overview Tab */}
-            <TabsContent value="overview" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-600">
-                      Active Quotes
-                    </CardTitle>
-                    <FileText className="h-4 w-4 text-orange-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-gray-900">
-                      {Array.isArray(quotes) ? quotes.length : 0}
+                <div className="space-y-4">
+                  {serviceRequests.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <Wrench className="h-8 w-8 mx-auto mb-3 text-gray-400" />
+                      <p>No service history yet</p>
+                      <p className="text-sm">Book your first service to get started!</p>
                     </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-600">
-                      Total Spent
-                    </CardTitle>
-                    <DollarSign className="h-4 w-4 text-blue-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-gray-900">
-                      ${Array.isArray(payments) ? payments.reduce((sum: number, p: any) => sum + p.amount, 0).toLocaleString() : '0'}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-600">
-                      Service Calls
-                    </CardTitle>
-                    <Wrench className="h-4 w-4 text-orange-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-gray-900">
-                      {Array.isArray(serviceHistory) ? serviceHistory.length : 0}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-600">
-                      Maintenance Plans
-                    </CardTitle>
-                    <Calendar className="h-4 w-4 text-blue-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-gray-900">
-                      {Array.isArray(customerMaintenancePlans) ? customerMaintenancePlans.length : 0}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Recent Activity */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg text-gray-900">Recent Activity</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {Array.isArray(serviceHistory) && serviceHistory.length > 0 ? (
-                      serviceHistory.slice(0, 5).map((service: any, index: number) => (
-                        <div key={index} className="flex items-center justify-between border-b border-gray-100 pb-2">
-                          <div className="flex items-center">
-                            <Wrench className="h-4 w-4 text-orange-600 mr-3" />
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">{service.description}</p>
-                              <p className="text-xs text-gray-500">
-                                {new Date(service.date).toLocaleDateString()}
-                              </p>
-                            </div>
-                          </div>
-                          <Badge variant={service.status === 'completed' ? 'default' : 'secondary'}>
-                            {service.status}
-                          </Badge>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-500 text-center py-4">No recent activity</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Quotes Tab */}
-            <TabsContent value="quotes" className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-gray-900">Your Quotes</h2>
-                <div className="flex gap-2">
-                  <Link href="/calculators/enhanced-quote-builder">
-                    <Button className="bg-orange-600 hover:bg-orange-700">
-                      Create Quote
-                    </Button>
-                  </Link>
-                  <Link href="/contact">
-                    <Button variant="outline">
-                      Request Quote
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-              
-              <div className="grid gap-6">
-                {Array.isArray(quotes) && quotes.length > 0 ? quotes.map((quote: any) => (
-                  <Card key={quote.id} className="border-l-4 border-l-orange-500">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg text-gray-900">
-                          Quote {quote.quoteNumber}
-                        </CardTitle>
-                        <Badge variant={quote.paymentStatus === 'paid' ? 'default' : 'secondary'}>
-                          {quote.paymentStatus}
-                        </Badge>
-                      </div>
-                      <CardDescription>
-                        {quote.customerName} • {quote.jobDescription}
-                      </CardDescription>
-                      <div className="text-sm text-gray-500">
-                        Created {new Date(quote.createdAt).toLocaleDateString()}
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div>
-                          <p className="text-sm text-gray-600">Customer</p>
-                          <p className="font-medium">{quote.customerName}</p>
-                          <p className="text-sm text-gray-500">{quote.customerEmail}</p>
-                          {quote.customerPhone && (
-                            <p className="text-sm text-gray-500">{quote.customerPhone}</p>
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Project Details</p>
-                          <p className="font-medium">{quote.laborHours}h @ ${quote.laborRate}/hr</p>
-                          <p className="text-sm text-gray-500">Markup: {quote.markupPercentage}%</p>
-                        </div>
-                      </div>
-                      
-                      <div className="border-t pt-4">
-                        <div className="flex justify-between items-center">
+                  ) : (
+                    serviceRequests.slice(0, 5).map((request: any, index: number) => (
+                      <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          {getStatusIcon(request.status)}
                           <div>
-                            <div className="text-2xl font-bold text-gray-900">
-                              ${parseFloat(quote.total).toLocaleString('en-CA', { minimumFractionDigits: 2 })}
-                            </div>
-                            {quote.depositAmount && (
-                              <div className="text-sm text-green-600">
-                                Deposit: ${parseFloat(quote.depositAmount).toLocaleString('en-CA', { minimumFractionDigits: 2 })}
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex gap-2">
-                            {quote.paymentStatus === 'pending' && (
-                              <Button 
-                                className="bg-green-600 hover:bg-green-700"
-                                onClick={() => {
-                                  // Create payment intent for this quote
-                                  const amount = quote.depositAmount || quote.total;
-                                  const isDeposit = !!quote.depositAmount;
-                                  
-                                  fetch('/api/create-payment-intent', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                      amount: parseFloat(amount),
-                                      quoteNumber: quote.quoteNumber,
-                                      customerInfo: {
-                                        name: quote.customerName,
-                                        email: quote.customerEmail
-                                      },
-                                      isDeposit
-                                    })
-                                  })
-                                  .then(res => res.json())
-                                  .then(data => {
-                                    window.open(`/checkout?client_secret=${data.clientSecret}`, '_blank');
-                                  });
-                                }}
-                              >
-                                {quote.depositAmount ? 'Pay Deposit' : 'Pay Full Amount'}
-                              </Button>
-                            )}
-                            <Button variant="outline" size="sm">
-                              View Details
-                            </Button>
+                            <h4 className="font-medium">{request.serviceType}</h4>
+                            <p className="text-sm text-gray-600">{request.description}</p>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )) : (
-                  <Card>
-                    <CardContent className="text-center py-8">
-                      <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500">No quotes yet</p>
-                      <div className="flex gap-2 justify-center mt-4">
-                        <Link href="/calculators/enhanced-quote-builder">
-                          <Button className="bg-orange-600 hover:bg-orange-700">
-                            Create Your First Quote
-                          </Button>
-                        </Link>
-                        <Link href="/contact">
-                          <Button variant="outline">
-                            Request Quote
-                          </Button>
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            </TabsContent>
-
-            {/* Calendar Tab */}
-            <TabsContent value="calendar" className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-gray-900">Job Schedule & Calendar</h2>
-                <Button className="bg-orange-600 hover:bg-orange-700">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Schedule Service
-                </Button>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Calendar View */}
-                <div className="lg:col-span-2">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Calendar className="h-5 w-5" />
-                        January 2025
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-7 gap-1 mb-4">
-                        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                          <div key={day} className="p-2 text-center text-sm font-medium text-gray-500">
-                            {day}
-                          </div>
-                        ))}
-                        {Array.from({ length: 31 }, (_, i) => {
-                          const day = i + 1;
-                          const hasAppointment = [8, 15, 22, 29].includes(day);
-                          const isToday = day === 8;
-                          
-                          return (
-                            <div
-                              key={day}
-                              className={`
-                                p-2 text-center text-sm border border-gray-100 cursor-pointer hover:bg-gray-50
-                                ${isToday ? 'bg-orange-100 border-orange-300 text-orange-700' : ''}
-                                ${hasAppointment ? 'bg-blue-50 border-blue-200' : ''}
-                              `}
-                            >
-                              <div className="font-medium">{day}</div>
-                              {hasAppointment && (
-                                <div className="w-2 h-2 bg-blue-500 rounded-full mx-auto mt-1"></div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-                
-                {/* Upcoming Jobs */}
-                <div>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Upcoming Jobs</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {Array.isArray(schedules) && schedules.length > 0 ? schedules.slice(0, 5).map((schedule: any) => {
-                        const scheduleDate = new Date(schedule.scheduledDate);
-                        const borderColor = schedule.jobType === 'installation' ? 'border-l-orange-500' : 
-                                          schedule.jobType === 'maintenance' ? 'border-l-blue-500' : 'border-l-green-500';
-                        
-                        return (
-                          <div key={schedule.id} className={`border-l-4 ${borderColor} pl-4`}>
-                            <div className="flex items-center justify-between mb-1">
-                              <p className="font-medium text-gray-900 capitalize">
-                                {schedule.serviceType} {schedule.jobType}
-                              </p>
-                              <Badge variant={schedule.status === 'completed' ? 'default' : 'secondary'}>
-                                {scheduleDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-gray-600">{schedule.customerName}</p>
-                            <p className="text-xs text-gray-500">
-                              {schedule.startTime} - {schedule.endTime}
-                            </p>
-                          </div>
-                        );
-                      }) : (
-                        <div className="text-center py-8">
-                          <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-500">No upcoming jobs scheduled</p>
-                          <p className="text-sm text-gray-400">Jobs will appear here when payments are completed</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                  
-                  {/* Quick Actions */}
-                  <Card className="mt-4">
-                    <CardHeader>
-                      <CardTitle className="text-lg">Quick Actions</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <Button variant="outline" className="w-full justify-start">
-                        <Thermometer className="h-4 w-4 mr-2" />
-                        Schedule Furnace Service
-                      </Button>
-                      <Button variant="outline" className="w-full justify-start">
-                        <Wrench className="h-4 w-4 mr-2" />
-                        Book AC Maintenance
-                      </Button>
-                      <Button variant="outline" className="w-full justify-start">
-                        <AlertCircle className="h-4 w-4 mr-2" />
-                        Emergency Service
-                      </Button>
-                      <Button variant="outline" className="w-full justify-start">
-                        <Phone className="h-4 w-4 mr-2" />
-                        Call for Quote
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-              
-              {/* Job Details for Selected Date */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Job Details - January 15, 2025</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Installation Details</h4>
-                      <div className="space-y-2 text-sm">
-                        <p><span className="font-medium">Job Type:</span> Furnace Installation</p>
-                        <p><span className="font-medium">Quote:</span> AH-653575</p>
-                        <p><span className="font-medium">Duration:</span> 6 hours (9:00 AM - 3:00 PM)</p>
-                        <p><span className="font-medium">Technician:</span> Jordan B. & Team</p>
-                        <p><span className="font-medium">Equipment:</span> High-Efficiency Gas Furnace</p>
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Customer Information</h4>
-                      <div className="space-y-2 text-sm">
-                        <p><span className="font-medium">Address:</span> 123 Main St, Calgary AB</p>
-                        <p><span className="font-medium">Contact:</span> (403) 555-0123</p>
-                        <p><span className="font-medium">Special Notes:</span> Customer will be home all day</p>
-                        <p><span className="font-medium">Access:</span> Key available from office</p>
-                        <p><span className="font-medium">Payment:</span> Deposit paid, balance on completion</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6 flex gap-2">
-                    <Button className="bg-green-600 hover:bg-green-700">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Mark Complete
-                    </Button>
-                    <Button variant="outline">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      Reschedule
-                    </Button>
-                    <Button variant="outline">
-                      <Phone className="h-4 w-4 mr-2" />
-                      Contact Customer
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Payments Tab */}
-            <TabsContent value="payments" className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900">Payment History</h2>
-              
-              <div className="grid gap-4">
-                {Array.isArray(payments) && payments.length > 0 ? payments.map((payment: any, index: number) => (
-                  <Card key={index}>
-                    <CardContent className="flex items-center justify-between p-6">
-                      <div className="flex items-center">
-                        <CreditCard className="h-5 w-5 text-blue-600 mr-3" />
-                        <div>
-                          <p className="font-medium text-gray-900">{payment.description}</p>
-                          <p className="text-sm text-gray-500">
-                            {new Date(payment.date).toLocaleDateString()} • 
-                            {payment.method}
+                        <div className="text-right">
+                          <Badge className={`${getStatusColor(request.status)} border-0`}>
+                            {request.status.replace('_', ' ')}
+                          </Badge>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {new Date(request.createdAt).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-gray-900">${payment.amount.toLocaleString()}</p>
-                        <Badge variant={payment.status === 'completed' ? 'default' : 'secondary'}>
-                          {payment.status}
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )) : (
-                  <Card>
-                    <CardContent className="text-center py-8">
-                      <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500">No payment history</p>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            </TabsContent>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-            {/* Maintenance Tab */}
-            <TabsContent value="maintenance" className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-gray-900">Maintenance Plans</h2>
-                <Link href="/pricing">
-                  <Button className="bg-orange-600 hover:bg-orange-700">
-                    View Plans
-                  </Button>
-                </Link>
-              </div>
-              
-              <div className="grid gap-6">
-                {Array.isArray(customerMaintenancePlans) && customerMaintenancePlans.length > 0 ? customerMaintenancePlans.map((plan: any, index: number) => (
-                  <Card key={index}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg text-gray-900">
-                          {plan.name}
-                        </CardTitle>
-                        <Badge variant={plan.status === 'active' ? 'default' : 'secondary'}>
-                          {plan.status}
-                        </Badge>
-                      </div>
-                      <CardDescription>
-                        Next service: {new Date(plan.nextService).toLocaleDateString()}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="text-sm text-gray-600">Annual Cost</p>
-                          <p className="text-xl font-bold text-gray-900">${plan.cost}</p>
-                        </div>
-                        <Button variant="outline">
-                          Schedule Service
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )) : (
-                  <Card>
-                    <CardContent className="text-center py-8">
-                      <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500">No maintenance plans</p>
-                      <Link href="/pricing">
-                        <Button className="mt-4 bg-orange-600 hover:bg-orange-700">
-                          Browse Plans
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            </TabsContent>
+          {/* Service History Tab */}
+          <TabsContent value="services" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Service History</CardTitle>
+                <CardDescription>
+                  Complete history of all your HVAC services with AfterHours HVAC
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {serviceRequests.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Wrench className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Service History</h3>
+                      <p className="text-gray-600 mb-6">You haven't booked any services with us yet.</p>
+                      <Button>Schedule Your First Service</Button>
+                    </div>
+                  ) : (
+                    serviceRequests.map((request: any, index: number) => (
+                      <Card key={index} className="border-l-4 border-l-blue-500">
+                        <CardContent className="p-6">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <h3 className="text-lg font-semibold">{request.serviceType}</h3>
+                                <Badge className={`${getStatusColor(request.status)} border-0`}>
+                                  {getStatusIcon(request.status)}
+                                  {request.status.replace('_', ' ')}
+                                </Badge>
+                              </div>
+                              
+                              <p className="text-gray-600 mb-4">{request.description}</p>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div className="flex items-center gap-2 text-gray-600">
+                                  <Calendar className="h-4 w-4" />
+                                  Requested: {new Date(request.createdAt).toLocaleDateString()}
+                                </div>
+                                {request.scheduledDate && (
+                                  <div className="flex items-center gap-2 text-gray-600">
+                                    <Clock className="h-4 w-4" />
+                                    Scheduled: {new Date(request.scheduledDate).toLocaleDateString()}
+                                  </div>
+                                )}
+                                {request.totalCost && (
+                                  <div className="flex items-center gap-2 text-gray-600">
+                                    <CreditCard className="h-4 w-4" />
+                                    Cost: ${request.totalCost}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-            {/* Settings Tab */}
-            <TabsContent value="settings" className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900">Account Settings</h2>
-              
+          {/* Quotes Tab */}
+          <TabsContent value="quotes" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Quotes & Estimates</CardTitle>
+                <CardDescription>
+                  View and manage your service quotes and estimates
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {quotes.length === 0 ? (
+                    <div className="text-center py-12">
+                      <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Quotes Yet</h3>
+                      <p className="text-gray-600 mb-6">Request a quote for your HVAC needs.</p>
+                      <Button>Request Quote</Button>
+                    </div>
+                  ) : (
+                    quotes.map((quote: any, index: number) => (
+                      <Card key={index} className="border">
+                        <CardContent className="p-6">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-lg mb-2">{quote.serviceType}</h3>
+                              <p className="text-gray-600 mb-4">{quote.description}</p>
+                              
+                              <div className="flex gap-6 text-sm text-gray-600">
+                                <span>Quote #{quote.id}</span>
+                                <span>Expires: {new Date(quote.validUntil).toLocaleDateString()}</span>
+                              </div>
+                            </div>
+                            
+                            <div className="text-right">
+                              <div className="text-2xl font-bold text-green-600 mb-2">
+                                ${quote.quoteAmount}
+                              </div>
+                              <Badge className={`${getStatusColor(quote.status)} border-0 mb-3`}>
+                                {quote.status}
+                              </Badge>
+                              <div className="space-x-2">
+                                <Button size="sm" variant="outline">View Details</Button>
+                                {quote.status === 'pending' && (
+                                  <Button size="sm">Accept Quote</Button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Account Settings Tab */}
+          <TabsContent value="account" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg text-gray-900">Profile Information</CardTitle>
-                  <CardDescription>
-                    Update your account details and preferences
-                  </CardDescription>
+                  <CardTitle>Personal Information</CardTitle>
+                  <CardDescription>Update your personal details</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Username
-                      </label>
-                      <input 
-                        type="text" 
-                        value={user.username} 
-                        className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-gray-900" 
-                        readOnly 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email
-                      </label>
-                      <input 
-                        type="email" 
-                        value={user.email || ''} 
-                        className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-gray-900" 
-                        readOnly 
-                      />
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Full Name</label>
+                    <p className="text-gray-900">{user?.firstName && user?.lastName ? 
+                      `${user.firstName} ${user.lastName}` : user?.username}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Email</label>
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-gray-400" />
+                      <p className="text-gray-900">{user?.email}</p>
                     </div>
                   </div>
-                  <Button className="bg-blue-600 hover:bg-blue-700">
-                    Update Profile
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Phone</label>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-gray-400" />
+                      <p className="text-gray-900">{user?.phone || 'Not provided'}</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" className="w-full">
+                    Edit Information
                   </Button>
                 </CardContent>
               </Card>
 
-              {/* Membership Section */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg text-gray-900">Membership</CardTitle>
-                  <CardDescription>
-                    Manage your Pro membership and billing
-                  </CardDescription>
+                  <CardTitle>Membership Status</CardTitle>
+                  <CardDescription>Your current membership benefits</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  {user.hasPro ? (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <Crown className="h-5 w-5 text-orange-600 mr-2" />
-                        <span className="font-medium text-gray-900">Pro Membership</span>
-                      </div>
-                      <Button variant="outline">
-                        Manage Billing
-                      </Button>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Membership Type</label>
+                    <div className="flex items-center gap-2">
+                      {user?.hasProAccess ? (
+                        <>
+                          <Star className="h-4 w-4 text-yellow-500" />
+                          <p className="text-gray-900 font-medium">Pro Member</p>
+                        </>
+                      ) : (
+                        <>
+                          <User className="h-4 w-4 text-gray-400" />
+                          <p className="text-gray-900">Standard Member</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {user?.hasProAccess ? (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                      <h4 className="font-medium text-yellow-800 mb-2">Pro Benefits Active</h4>
+                      <ul className="text-sm text-yellow-700 space-y-1">
+                        <li>• Priority scheduling</li>
+                        <li>• Advanced diagnostic tools</li>
+                        <li>• Detailed cost calculators</li>
+                        <li>• Extended warranties</li>
+                      </ul>
                     </div>
                   ) : (
-                    <div className="text-center py-4">
-                      <p className="text-gray-600 mb-4">
-                        Upgrade to Pro for advanced HVAC calculation tools
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <h4 className="font-medium text-blue-800 mb-2">Upgrade to Pro</h4>
+                      <p className="text-sm text-blue-700 mb-3">
+                        Get access to advanced tools and priority support for just $49/month.
                       </p>
-                      <Link href="/membership">
-                        <Button className="bg-orange-600 hover:bg-orange-700">
-                          Upgrade to Pro
-                        </Button>
-                      </Link>
+                      <Button size="sm" className="w-full">
+                        Upgrade Now
+                      </Button>
                     </div>
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+            </div>
+
+            {/* Emergency Contact */}
+            <Card>
+              <CardHeader>
+                <CardTitle>24/7 Emergency Service</CardTitle>
+                <CardDescription>Need immediate HVAC assistance?</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Phone className="h-6 w-6 text-red-600" />
+                    <div>
+                      <h3 className="font-semibold text-red-800">Emergency Hotline</h3>
+                      <p className="text-red-700 text-2xl font-bold">(403) 613-6014</p>
+                    </div>
+                  </div>
+                  <p className="text-red-700 text-sm mb-4">
+                    Available 24/7 for heating, cooling, and ventilation emergencies throughout Calgary.
+                  </p>
+                  <Button variant="destructive" className="w-full">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Call Emergency Service
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-    </>
+    </div>
   );
 };
 
