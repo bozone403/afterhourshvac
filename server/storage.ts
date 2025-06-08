@@ -1685,20 +1685,6 @@ export class DatabaseStorage implements IStorage {
     return allUsers;
   }
 
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user;
-  }
-
-  async updateUser(userId: number, updateData: Partial<User>): Promise<User | undefined> {
-    const [updatedUser] = await db
-      .update(users)
-      .set(updateData)
-      .where(eq(users.id, userId))
-      .returning();
-    return updatedUser;
-  }
-
   async deleteUser(userId: number): Promise<User | undefined> {
     // First, delete related forum posts to avoid foreign key constraint
     await db.delete(forumPosts).where(eq(forumPosts.userId, userId));

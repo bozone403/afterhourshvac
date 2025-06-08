@@ -942,10 +942,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const bookingData = {
-        customerName,
-        customerPhone,
-        customerEmail: customerEmail || null,
-        serviceAddress,
+        name: customerName,
+        phone: customerPhone,
+        email: customerEmail || null,
+        address: serviceAddress,
         serviceType,
         bookingDate: new Date(`${date}T${time}`),
         bookingTime: time,
@@ -3544,7 +3544,6 @@ Login to manage: afterhourshvac.ca/admin`;
           coverLetter: coverLetter || null,
           status: 'pending',
           // Additional fields for enhanced application
-          yearsExperience: yearsExperience || null,
           education: education || null,
           certifications: certifications || null,
           availability: availability || null,
@@ -4477,8 +4476,7 @@ Immediate response required!`;
         email: customerEmail || '',
         phone: customerPhone,
         address: serviceAddress,
-        emergencyType: 'Service Call',
-        description: issueDescription,
+        issueDescription: issueDescription,
         urgencyLevel: urgencyLevel || 'standard',
         baseRate: hour >= 8 && hour < 17 ? 135 : 175,
         minimumHours,
