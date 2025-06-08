@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Bot, MessageSquare, AlertTriangle, CheckCircle, Wrench, Phone, ArrowRight, Lightbulb } from "lucide-react";
+import { Bot, MessageSquare, AlertTriangle, CheckCircle, Wrench, Phone, ArrowRight, Lightbulb, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ChatMessage {
@@ -49,7 +49,106 @@ export default function AISymptomDiagnoser() {
   const [currentInput, setCurrentInput] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentDiagnosis, setCurrentDiagnosis] = useState<Diagnosis[]>([]);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const synthRef = useRef<SpeechSynthesis | null>(null);
   const { toast } = useToast();
+
+  // Initialize voice capabilities
+  useEffect(() => {
+    // Check for speech recognition support
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = 'en-US';
+
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setCurrentInput(transcript);
+        setIsListening(false);
+        toast({
+          title: "Voice Input Captured",
+          description: `Heard: "${transcript}"`,
+        });
+      };
+
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+        toast({
+          title: "Voice Recognition Error",
+          description: "Please try speaking again or use text input.",
+          variant: "destructive"
+        });
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+
+    // Check for speech synthesis support
+    if ('speechSynthesis' in window) {
+      synthRef.current = window.speechSynthesis;
+      setVoiceEnabled(true);
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      if (synthRef.current) {
+        synthRef.current.cancel();
+      }
+    };
+  }, [toast]);
+
+  // Voice recognition functions
+  const startListening = () => {
+    if (recognitionRef.current && !isListening) {
+      setIsListening(true);
+      recognitionRef.current.start();
+      toast({
+        title: "Listening...",
+        description: "Describe your HVAC problem",
+      });
+    }
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current && isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
+  };
+
+  // Text-to-speech functions
+  const speakResponse = (text: string) => {
+    if (synthRef.current && voiceEnabled) {
+      synthRef.current.cancel(); // Stop any current speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      utterance.volume = 0.8;
+      
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      
+      synthRef.current.speak(utterance);
+    }
+  };
+
+  const stopSpeaking = () => {
+    if (synthRef.current) {
+      synthRef.current.cancel();
+      setIsSpeaking(false);
+    }
+  };
 
   // AI logic for basic homeowner troubleshooting
   const analyzeSymptoms = (userInput: string): { response: ChatMessage, diagnoses: Diagnosis[] } => {
@@ -303,14 +402,21 @@ export default function AISymptomDiagnoser() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const inputText = currentInput;
     setCurrentInput("");
     setIsAnalyzing(true);
 
     // Simulate AI processing delay
     setTimeout(() => {
-      const { response, diagnoses } = analyzeSymptoms(currentInput);
+      const { response, diagnoses } = analyzeSymptoms(inputText);
       setMessages(prev => [...prev, response]);
       setCurrentDiagnosis(diagnoses);
+      
+      // Auto-speak response if voice is enabled
+      if (voiceEnabled && response.content) {
+        speakResponse(response.content);
+      }
+      
       setIsAnalyzing(false);
     }, 1500);
   };
@@ -422,6 +528,32 @@ export default function AISymptomDiagnoser() {
                       onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                       className="flex-1"
                     />
+                    
+                    {/* Voice Controls */}
+                    {voiceEnabled && (
+                      <>
+                        <Button
+                          onClick={isListening ? stopListening : startListening}
+                          disabled={isAnalyzing}
+                          variant={isListening ? "destructive" : "outline"}
+                          size="sm"
+                          title={isListening ? "Stop listening" : "Start voice input"}
+                        >
+                          {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                        </Button>
+                        
+                        <Button
+                          onClick={isSpeaking ? stopSpeaking : () => speakResponse("Voice is ready")}
+                          disabled={isAnalyzing}
+                          variant={isSpeaking ? "destructive" : "outline"}
+                          size="sm"
+                          title={isSpeaking ? "Stop speaking" : "Test voice output"}
+                        >
+                          {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                        </Button>
+                      </>
+                    )}
+                    
                     <Button onClick={handleSendMessage} disabled={isAnalyzing || !currentInput.trim()}>
                       <ArrowRight className="h-4 w-4" />
                     </Button>
