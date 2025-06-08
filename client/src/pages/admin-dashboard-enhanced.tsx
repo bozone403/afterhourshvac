@@ -148,6 +148,10 @@ export default function AdminDashboardEnhanced() {
     queryKey: ['/api/admin/quotes'],
   });
 
+  const { data: jobApplications = [] } = useQuery({
+    queryKey: ['/api/admin/job-applications'],
+  });
+
   // Add gallery image mutation
   const addImageMutation = useMutation({
     mutationFn: async (data: Omit<GalleryImage, 'id' | 'createdAt'>) => {

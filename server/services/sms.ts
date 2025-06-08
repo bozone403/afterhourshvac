@@ -18,20 +18,25 @@ const client = accountSid && authToken ? twilio(accountSid, authToken) : null;
 export async function sendSMS(to: string, message: string): Promise<boolean> {
   if (!client || !twilioPhoneNumber) {
     console.log(`SMS would be sent to ${to}:`, message);
+    console.log('Attempting SMS delivery to', to, 'via email gateways');
     return false;
   }
 
   try {
+    // Ensure phone number is properly formatted
+    const formattedNumber = to.startsWith('+') ? to : `+1${to.replace(/\D/g, '')}`;
+    
     const result = await client.messages.create({
       body: message,
       from: twilioPhoneNumber,
-      to: to
+      to: formattedNumber
     });
 
-    console.log(`SMS sent successfully to ${to}. SID: ${result.sid}`);
+    console.log(`SMS sent successfully to ${formattedNumber}. SID: ${result.sid}`);
     return true;
   } catch (error) {
-    console.error('Failed to send SMS:', error);
+    console.error('Failed to send SMS via Twilio:', error);
+    console.log('Attempting SMS delivery to', to, 'via email gateways');
     return false;
   }
 }

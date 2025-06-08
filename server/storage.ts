@@ -149,6 +149,7 @@ export interface IStorage {
   updateEmergencyRequestStatus(id: number, status: string): Promise<EmergencyRequest | undefined>;
   
   // Job Application methods
+  getJobApplications(): Promise<JobApplication[]>;
   getAllJobApplications(): Promise<JobApplication[]>;
   getJobApplicationById(id: number): Promise<JobApplication | undefined>;
   createJobApplication(application: InsertJobApplication): Promise<JobApplication>;
