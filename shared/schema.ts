@@ -158,6 +158,7 @@ export const forumPosts = pgTable("forum_posts", {
   topicId: integer("topic_id").references(() => forumTopics.id),
   userId: integer("user_id").references(() => users.id),
   content: text("content").notNull(),
+  displayName: text("display_name"),
   isEdited: boolean("is_edited").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

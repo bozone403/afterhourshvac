@@ -548,6 +548,7 @@ export class DatabaseStorage implements IStorage {
         title: forumTopics.title,
         content: forumTopics.content,
         slug: forumTopics.slug,
+        displayName: forumTopics.displayName,
         views: forumTopics.views,
         isPinned: forumTopics.isPinned,
         isLocked: forumTopics.isLocked,
@@ -562,7 +563,7 @@ export class DatabaseStorage implements IStorage {
     
     return results.map(result => ({
       ...result,
-      username: result.username || 'Unknown User'
+      username: result.displayName || result.username || 'Unknown User'
     }));
   }
   
@@ -573,6 +574,7 @@ export class DatabaseStorage implements IStorage {
         topicId: forumPosts.topicId,
         userId: forumPosts.userId,
         content: forumPosts.content,
+        displayName: forumPosts.displayName,
         isEdited: forumPosts.isEdited,
         createdAt: forumPosts.createdAt,
         updatedAt: forumPosts.updatedAt,
@@ -585,7 +587,7 @@ export class DatabaseStorage implements IStorage {
     
     return results.map(result => ({
       ...result,
-      username: result.username || 'Unknown User'
+      username: result.displayName || result.username || 'Unknown User'
     }));
   }
   
