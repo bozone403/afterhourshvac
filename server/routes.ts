@@ -4219,21 +4219,25 @@ Immediate response required!`;
           description: `HVAC Service Call - ${serviceAddress} (${minimumHours}h minimum @ $${serviceData.baseRate}/h)`
         });
 
-        // Send notification to Jordan
-        const notificationMessage = `📞 NEW HVAC SERVICE CALL REQUEST
-Name: ${customerName}
-Phone: ${customerPhone}
-Address: ${serviceAddress}
-Issue: ${issueDescription}
-Urgency: ${urgencyLevel}
-Time: ${new Date().toLocaleString()}
-Charge: $${totalCost} (${minimumHours}h minimum @ $${serviceData.baseRate}/h)
-Preferred Time: ${preferredTime}
-Customer Email: ${customerEmail}
-
-Payment pending - will be dispatched once paid.`;
-
-        console.log("SERVICE CALL NOTIFICATION TO JORDAN +14036136014:", notificationMessage);
+        // Send SMS notification to Jordan
+        try {
+          const { sendEmergencyNotification } = await import('./services/sms');
+          await sendEmergencyNotification(
+            "+14036136014",
+            customerName,
+            customerPhone,
+            serviceAddress,
+            issueDescription,
+            urgencyLevel,
+            totalCost,
+            minimumHours,
+            serviceData.baseRate,
+            preferredTime,
+            customerEmail
+          );
+        } catch (smsError) {
+          console.error("Failed to send SMS notification:", smsError);
+        }
 
         res.status(201).json({ 
           id: serviceRequest.id,
@@ -4266,23 +4270,12 @@ Payment pending - will be dispatched once paid.`;
   // Test SMS endpoint
   app.post("/api/test-sms", async (req, res) => {
     try {
-      const testMessage = `🔧 TEST SMS from AfterHours HVAC System
-
-This is a test notification to verify SMS functionality is working correctly.
-
-Time: ${new Date().toLocaleString()}
-System Status: ✅ OPERATIONAL
-
-Jordan, your SMS notifications are working properly!`;
-
-      console.log("TEST SMS TO JORDAN +14036136014:", testMessage);
-      
-      // In a real implementation, this would send via SMS service
-      // For now, we're logging to verify the notification system works
+      const { sendTestNotification } = await import('./services/sms');
+      const success = await sendTestNotification("+14036136014");
       
       res.status(200).json({ 
-        success: true,
-        message: "Test SMS sent successfully to Jordan's phone", 
+        success,
+        message: success ? "Test SMS sent successfully to Jordan's phone" : "SMS logged to console (Twilio not configured)",
         phoneNumber: "+14036136014",
         timestamp: new Date().toISOString()
       });
