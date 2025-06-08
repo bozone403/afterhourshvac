@@ -37,18 +37,20 @@ const Gallery = () => {
     staleTime: 5 * 60 * 1000,
   });
 
+  const typedGalleryItems = (galleryItems as GalleryItem[]) || [];
+
   const categories = [
-    { id: "all", name: "All Projects", count: galleryItems.length },
-    { id: "furnace", name: "Furnace Installation", count: galleryItems.filter((item: GalleryItem) => item.category === "furnace").length },
-    { id: "ac", name: "AC Systems", count: galleryItems.filter((item: GalleryItem) => item.category === "ac").length },
-    { id: "ductwork", name: "Ductwork", count: galleryItems.filter((item: GalleryItem) => item.category === "ductwork").length },
-    { id: "maintenance", name: "Maintenance", count: galleryItems.filter((item: GalleryItem) => item.category === "maintenance").length },
-    { id: "commercial", name: "Commercial", count: galleryItems.filter((item: GalleryItem) => item.category === "commercial").length }
+    { id: "all", name: "All Projects", count: typedGalleryItems.length },
+    { id: "furnace", name: "Furnace Installation", count: typedGalleryItems.filter((item: GalleryItem) => item.category === "furnace").length },
+    { id: "ac", name: "AC Systems", count: typedGalleryItems.filter((item: GalleryItem) => item.category === "ac").length },
+    { id: "ductwork", name: "Ductwork", count: typedGalleryItems.filter((item: GalleryItem) => item.category === "ductwork").length },
+    { id: "maintenance", name: "Maintenance", count: typedGalleryItems.filter((item: GalleryItem) => item.category === "maintenance").length },
+    { id: "commercial", name: "Commercial", count: typedGalleryItems.filter((item: GalleryItem) => item.category === "commercial").length }
   ];
 
   const filteredItems = selectedCategory === "all" 
-    ? galleryItems 
-    : galleryItems.filter((item: GalleryItem) => item.category === selectedCategory);
+    ? typedGalleryItems 
+    : typedGalleryItems.filter((item: GalleryItem) => item.category === selectedCategory);
 
   if (isLoading) {
     return (

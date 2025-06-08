@@ -3561,6 +3561,12 @@ Login to manage: afterhourshvac.ca/admin`;
           position,
           experience,
           coverLetter: coverLetter || null,
+          yearsExperience: yearsExperience || null,
+          education: education || null,
+          certifications: certifications || null,
+          availability: availability || null,
+          salaryExpectation: salaryExpectation || null,
+          references: references || null,
           status: 'pending'
         };
       } else {
@@ -3575,6 +3581,12 @@ Login to manage: afterhourshvac.ca/admin`;
           position,
           experience,
           coverLetter: coverLetter || null,
+          yearsExperience: yearsExperience || null,
+          education: education || null,
+          certifications: certifications || null,
+          availability: availability || null,
+          salaryExpectation: salaryExpectation || null,
+          references: references || null,
           status: 'pending'
         };
       }
