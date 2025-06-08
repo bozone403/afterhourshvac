@@ -449,6 +449,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enhanced Quotes API Routes
+  app.post("/api/quotes", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const quoteData = req.body;
+      
+      const quote = await storage.createEnhancedQuote({
+        ...quoteData,
+        userId,
+        customerName: quoteData.customerInfo.name,
+        customerEmail: quoteData.customerInfo.email,
+        customerPhone: quoteData.customerInfo.phone,
+        customerAddress: quoteData.customerInfo.address,
+        jobDescription: quoteData.customerInfo.jobDescription,
+      });
+      
+      res.status(201).json(quote);
+    } catch (error: any) {
+      console.error("Error saving quote:", error);
+      res.status(500).json({ 
+        error: "Error saving quote", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.get("/api/quotes", requireAuth, async (req, res) => {
+    try {
+      const quotes = await storage.getEnhancedQuotes();
+      res.json(quotes);
+    } catch (error: any) {
+      console.error("Error fetching quotes:", error);
+      res.status(500).json({ 
+        error: "Error fetching quotes", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.get("/api/quotes/:id", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const quote = await storage.getEnhancedQuoteById(id);
+      
+      if (!quote) {
+        return res.status(404).json({ error: "Quote not found" });
+      }
+      
+      res.json(quote);
+    } catch (error: any) {
+      console.error("Error fetching quote:", error);
+      res.status(500).json({ 
+        error: "Error fetching quote", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Enhanced Stripe Payment Intent for Quotes
+  app.post("/api/create-payment-intent", async (req, res) => {
+    try {
+      const { amount, quoteNumber, customerInfo, isDeposit } = req.body;
+      
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ error: "Invalid amount" });
+      }
+      
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // Convert to cents
+        currency: "cad",
+        metadata: {
+          quoteNumber: quoteNumber || "",
+          customerName: customerInfo?.name || "",
+          customerEmail: customerInfo?.email || "",
+          isDeposit: isDeposit ? "true" : "false"
+        },
+        description: `HVAC ${isDeposit ? 'Deposit' : 'Payment'} - Quote ${quoteNumber}`,
+      });
+      
+      res.json({ 
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id
+      });
+    } catch (error: any) {
+      console.error("Error creating payment intent:", error);
+      res.status(500).json({ 
+        error: "Error creating payment intent", 
+        message: error.message 
+      });
+    }
+  });
+
   // Check if user has Pro Calculator access (legacy endpoint)
   app.get("/api/check-pro-access", async (req, res) => {
     try {

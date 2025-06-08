@@ -111,6 +111,7 @@ function Router() {
         <Route path="/calculators/duct-sizing" component={DuctSizingCalculator} />
         <Route path="/calculators/quote-builder" component={QuoteBuilder} />
         <Route path="/calculators/enhanced-quote-builder" component={EnhancedQuoteBuilder} />
+        <Route path="/checkout" component={Checkout} />
         <Route path="/checkout/:productId" component={Checkout} />
         <Route path="/payment/:productId" component={Payment} />
         <Route path="/stripe-checkout" component={StripeCheckout} />
