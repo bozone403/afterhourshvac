@@ -679,7 +679,12 @@ export const insertTechnicianLocationSchema = createInsertSchema(technicianLocat
 // CUSTOMER DATA
 export const insertCustomerSchema = createInsertSchema(customers);
 export const insertContactSubmissionSchema = createInsertSchema(contactSubmissions);
-export const insertEmergencyRequestSchema = createInsertSchema(emergencyRequests);
+export const insertEmergencyRequestSchema = createInsertSchema(emergencyRequests).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  requestedAt: true
+});
 export const insertQuoteRequestSchema = createInsertSchema(quoteRequests);
 export const insertJobApplicationSchema = createInsertSchema(jobApplications);
 
@@ -737,10 +742,10 @@ export type ProCalculatorQuote = typeof proCalculatorQuotes.$inferSelect;
 export type InsertCustomer = typeof customers.$inferInsert;
 export type Customer = typeof customers.$inferSelect;
 
-export type InsertContactSubmission = typeof contactSubmissions.$inferInsert;
+export type InsertContactSubmission = z.infer<typeof insertContactSubmissionSchema>;
 export type ContactSubmission = typeof contactSubmissions.$inferSelect;
 
-export type InsertEmergencyRequest = typeof emergencyRequests.$inferInsert;
+export type InsertEmergencyRequest = z.infer<typeof insertEmergencyRequestSchema>;
 export type EmergencyRequest = typeof emergencyRequests.$inferSelect;
 
 export type InsertQuoteRequest = typeof quoteRequests.$inferInsert;

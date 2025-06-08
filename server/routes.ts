@@ -2,6 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { pool } from "./db";
+import { sendSMS } from "./services/sms";
 
 import { z } from "zod";
 import { 
@@ -3404,16 +3405,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Submit emergency request
   app.post("/api/emergency-requests", async (req, res) => {
     try {
-      const emergencyData = insertEmergencyRequestSchema.parse(req.body);
-      
-      // Map description to issue_description for database compatibility
-      const mappedData = {
-        ...emergencyData,
-        issueDescription: emergencyData.description,
-        urgencyLevel: emergencyData.severity || 'high'
+      // Direct mapping without schema validation to handle field differences
+      const requestData = {
+        name: req.body.name,
+        email: req.body.email,
+        phone: req.body.phone,
+        address: req.body.address,
+        issueDescription: req.body.issueDescription || req.body.description || req.body.emergencyType || 'Emergency request',
+        urgencyLevel: req.body.urgencyLevel || req.body.severity || 'high',
+        emergencyType: req.body.emergencyType,
+        description: req.body.description,
+        severity: req.body.severity
       };
       
-      const request = await storage.createEmergencyRequest(mappedData);
+      const request = await storage.createEmergencyRequest(requestData);
       
       // Send SMS notification to Jordan
       const smsMessage = `🚨 NEW EMERGENCY REQUEST
