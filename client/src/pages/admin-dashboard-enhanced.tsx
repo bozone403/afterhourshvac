@@ -876,18 +876,32 @@ export default function AdminDashboardEnhanced() {
                   {emergencyRequests && emergencyRequests.length > 0 ? (
                     emergencyRequests.map((request: any) => (
                       <div key={request.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div>
+                        <div className="flex-1">
                           <h4 className="font-semibold">{request.name}</h4>
                           <p className="text-sm text-muted-foreground">{request.phone} • {request.address}</p>
                           <p className="text-sm">{request.issueDescription}</p>
                           <p className="text-sm text-muted-foreground">
                             Priority: {request.urgencyLevel} • Cost: ${request.totalCost}
                           </p>
+                          {request.notes && (
+                            <p className="text-sm text-blue-600 mt-1">Notes: {request.notes}</p>
+                          )}
                         </div>
                         <div className="flex flex-col gap-2">
-                          <Badge className={getStatusColor(request.status)}>
-                            {request.status}
-                          </Badge>
+                          <Select
+                            value={request.status}
+                            onValueChange={(newStatus) => updateEmergencyRequest(request.id, { status: newStatus })}
+                          >
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="in-progress">In Progress</SelectItem>
+                              <SelectItem value="completed">Completed</SelectItem>
+                              <SelectItem value="cancelled">Cancelled</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <span className="text-xs text-muted-foreground">
                             {new Date(request.createdAt).toLocaleDateString()}
                           </span>

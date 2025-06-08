@@ -3665,6 +3665,57 @@ Login to manage: afterhourshvac.ca/admin`;
     }
   });
 
+  // Admin - Update emergency request status and assignment
+  app.put("/api/admin/emergency-requests/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status, notes, estimatedArrival, assignedTechnician } = req.body;
+
+      const updatedRequest = await storage.updateEmergencyRequest(parseInt(id), {
+        status,
+        notes,
+        estimatedArrival: estimatedArrival ? new Date(estimatedArrival) : undefined,
+        assignedTechnician
+      });
+
+      res.json(updatedRequest);
+    } catch (error: any) {
+      console.error("Error updating emergency request:", error);
+      res.status(500).json({ error: "Failed to update emergency request" });
+    }
+  });
+
+  // Admin - Get all service requests  
+  app.get("/api/admin/service-requests", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const requests = await storage.getAllServiceRequests();
+      res.json(requests);
+    } catch (error: any) {
+      console.error("Error getting service requests:", error);
+      res.status(500).json({ error: "Failed to fetch service requests" });
+    }
+  });
+
+  // Admin - Update service request status and scheduling
+  app.put("/api/admin/service-requests/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status, notes, scheduledDate, assignedTechnician } = req.body;
+
+      const updatedRequest = await storage.updateServiceRequest(parseInt(id), {
+        status,
+        notes,
+        scheduledDate: scheduledDate ? new Date(scheduledDate) : undefined,
+        assignedTechnician
+      });
+
+      res.json(updatedRequest);
+    } catch (error: any) {
+      console.error("Error updating service request:", error);
+      res.status(500).json({ error: "Failed to update service request" });
+    }
+  });
+
   // Corporate inquiry endpoints
   app.post("/api/corporate-inquiry", async (req, res) => {
     try {
