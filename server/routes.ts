@@ -3527,18 +3527,34 @@ Login to manage: afterhourshvac.ca/admin`;
   // Submit job application
   app.post("/api/job-applications", async (req, res) => {
     try {
-      const applicationData = insertJobApplicationSchema.parse(req.body);
+      const { firstName, lastName, email, phone, position, experience, coverLetter } = req.body;
+      
+      if (!firstName || !lastName || !email || !phone || !position || !experience) {
+        return res.status(400).json({ error: "All required fields must be filled" });
+      }
+
+      const applicationData = {
+        firstName,
+        lastName,
+        email,
+        phone,
+        position,
+        experience,
+        coverLetter: coverLetter || null,
+        status: 'pending'
+      };
+
       const application = await storage.createJobApplication(applicationData);
       
       res.status(201).json({ 
-        success: true, 
+        success: true,
         message: "Application submitted successfully",
         applicationId: application.id 
       });
     } catch (error: any) {
       console.error("Error creating job application:", error);
       res.status(500).json({ 
-        error: "Error creating job application", 
+        error: "Failed to submit application", 
         message: error.message 
       });
     }
@@ -4034,44 +4050,7 @@ Immediate response required!`;
     }
   });
 
-  // Job Applications API Routes (Simplified)
-  app.post("/api/job-applications", async (req, res) => {
-    try {
-      const { firstName, lastName, email, phone, position, experience, coverLetter } = req.body;
-      
-      if (!firstName || !lastName || !email || !phone || !position || !experience) {
-        return res.status(400).json({ error: "All required fields must be filled" });
-      }
 
-      // Simple storage without file upload for now
-      const applicationData = {
-        firstName,
-        lastName,
-        email,
-        phone,
-        position,
-        experience,
-        coverLetter: coverLetter || null,
-        status: 'pending'
-      };
-
-      // Store in a simple array for now (in production would use database)
-      console.log("Job application received:", applicationData);
-      
-      res.status(201).json({ 
-        id: Date.now(),
-        ...applicationData,
-        appliedAt: new Date().toISOString(),
-        message: "Application submitted successfully" 
-      });
-    } catch (error: any) {
-      console.error("Error submitting job application:", error);
-      res.status(500).json({ 
-        error: "Failed to submit application", 
-        message: error.message 
-      });
-    }
-  });
 
   // Admin Job Applications Routes (Mock data for now)
   app.get("/api/admin/job-applications", requireAuth, requireAdmin, async (req, res) => {
