@@ -52,16 +52,7 @@ const Header = () => {
         { name: "Maintenance Plans", href: "/shop/maintenance-plans", isPro: false }
       ]
     },
-    { 
-      name: "Tools", 
-      icon: Calculator,
-      submenu: [
-        { name: "BTU Calculator", href: "/calculators/btu", isPro: false },
-        { name: "AI HVAC Assistant", href: "/tools/ai-symptom-diagnoser", isPro: false },
-        { name: "Alberta Rebates", href: "/tools/alberta-rebate-calculator", isPro: false },
-        { name: "Pro Calculators", href: "/pro-calculator", isPro: true }
-      ]
-    },
+
     { name: "Forum", href: "/forum", icon: MessageSquare },
     { name: "About", href: "/about" }
   ];

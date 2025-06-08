@@ -48,7 +48,9 @@ export default function ForumInteractive() {
   const [selectedTopic, setSelectedTopic] = useState<number | null>(null);
   const [newTopicTitle, setNewTopicTitle] = useState("");
   const [newTopicContent, setNewTopicContent] = useState("");
+  const [newTopicUsername, setNewTopicUsername] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
+  const [newPostUsername, setNewPostUsername] = useState("");
   const [showNewTopicDialog, setShowNewTopicDialog] = useState(false);
   const [editingPostId, setEditingPostId] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState("");
@@ -164,7 +166,7 @@ export default function ForumInteractive() {
 
   // Create new topic mutation
   const createTopicMutation = useMutation({
-    mutationFn: async (data: { title: string; content: string; categoryId: number }) => {
+    mutationFn: async (data: { title: string; content: string; categoryId: number; username?: string }) => {
       const response = await apiRequest("POST", "/api/forum/topics", data);
       return response.json();
     },
@@ -172,6 +174,7 @@ export default function ForumInteractive() {
       queryClient.invalidateQueries({ queryKey: ["/api/forum/topics"] });
       setNewTopicTitle("");
       setNewTopicContent("");
+      setNewTopicUsername("");
       setShowNewTopicDialog(false);
       toast({
         title: "Success",
@@ -189,13 +192,14 @@ export default function ForumInteractive() {
 
   // Create new post mutation
   const createPostMutation = useMutation({
-    mutationFn: async (data: { content: string; topicId: number }) => {
+    mutationFn: async (data: { content: string; topicId: number; username?: string }) => {
       const response = await apiRequest("POST", "/api/forum/posts", data);
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/forum/posts"] });
       setNewPostContent("");
+      setNewPostUsername("");
       toast({
         title: "Success",
         description: "Post created successfully!"
@@ -505,6 +509,14 @@ export default function ForumInteractive() {
                         <DialogTitle className="text-xl font-bold text-blue-900">Create New Topic</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Display Name</label>
+                          <Input
+                            value={newTopicUsername}
+                            onChange={(e) => setNewTopicUsername(e.target.value)}
+                            placeholder="Enter your display name for this post..."
+                          />
+                        </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
                           <Input
