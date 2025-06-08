@@ -12,6 +12,7 @@ import { ProAccessGuard } from "@/components/ProAccessGuard";
 
 interface QuoteItem {
   id: string;
+  name: string;
   category: string;
   item: string;
   quantity: number;
@@ -448,6 +449,25 @@ const algginPricing = {
   }
 };
 
+// Popular/Common HVAC items for quick selection
+const popularItems = {
+  "Round 90° Elbow 4\" Residential": { category: "elbowsRound", price: 3.13, laborHours: 0.2 },
+  "Round 90° Elbow 5\" Residential": { category: "elbowsRound", price: 3.55, laborHours: 0.2 },
+  "Round 90° Elbow 6\" Residential": { category: "elbowsRound", price: 4.50, laborHours: 0.2 },
+  "Galvanized Pipe 4\" x60\" 30ga": { category: "pipe", price: 2.58, laborHours: 0.05 },
+  "Galvanized Pipe 5\" x60\" 30ga": { category: "pipe", price: 3.14, laborHours: 0.05 },
+  "Galvanized Pipe 6\" x60\" 30ga": { category: "pipe", price: 3.52, laborHours: 0.05 },
+  "Universal Boot 4\" 3x10": { category: "boots", price: 7.36, laborHours: 0.3 },
+  "Universal Boot 5\" 3x10": { category: "boots", price: 7.04, laborHours: 0.3 },
+  "Universal Boot 6\" 3x10": { category: "boots", price: 8.13, laborHours: 0.3 },
+  "Side Take Off 4\"": { category: "takeOffs", price: 6.28, laborHours: 0.2 },
+  "Side Take Off 5\"": { category: "takeOffs", price: 6.61, laborHours: 0.2 },
+  "Side Take Off 6\"": { category: "takeOffs", price: 8.89, laborHours: 0.2 },
+  "Galvanized Damper 4\"": { category: "dampers", price: 2.80, laborHours: 0.2 },
+  "Galvanized Damper 5\"": { category: "dampers", price: 3.04, laborHours: 0.2 },
+  "Galvanized Damper 6\"": { category: "dampers", price: 3.55, laborHours: 0.2 },
+};
+
 function EnhancedQuoteBuilderContent() {
   const [quote, setQuote] = useState<Quote>({
     items: [],
@@ -462,6 +482,21 @@ function EnhancedQuoteBuilderContent() {
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [quantity, setQuantity] = useState<string>("1");
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [showPopularItems, setShowPopularItems] = useState(true);
+  const [quickFilter, setQuickFilter] = useState("");
+
+  // Filter items based on search term
+  const getFilteredItems = (category: string) => {
+    if (!algginPricing[category as keyof typeof algginPricing]) return [];
+    
+    const items = Object.keys(algginPricing[category as keyof typeof algginPricing]);
+    
+    if (!searchTerm) return items;
+    
+    return items.filter(item => 
+      item.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
   const [laborRate] = useState<number>(95); // $95/hour Calgary rate
   const [markupPercentage, setMarkupPercentage] = useState<number>(40); // 40% markup
   const [taxRate] = useState<number>(5); // 5% GST
@@ -699,37 +734,146 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
+              {/* Quick Selection Popular Items */}
+              {!selectedCategory && (
+                <div className="mb-6">
+                  <Label className="text-gray-800 font-semibold mb-3 block">Quick Add Popular Items</Label>
+                  <div className="grid grid-cols-1 gap-2">
+                    {Object.entries(popularItems).slice(0, 6).map(([itemName, itemData]) => (
+                      <Button
+                        key={itemName}
+                        variant="outline"
+                        className="h-auto p-3 text-left justify-between hover:bg-green-50"
+                        onClick={() => {
+                          const categoryData = algginPricing[itemData.category as keyof typeof algginPricing];
+                          if (categoryData && itemName in categoryData) {
+                            const item: QuoteItem = {
+                              id: Date.now().toString(),
+                              name: itemName,
+                              unitPrice: itemData.price,
+                              quantity: 1,
+                              totalPrice: itemData.price,
+                              laborHours: itemData.laborHours
+                            };
+                            setQuote(prev => ({
+                              ...prev,
+                              items: [...prev.items, item]
+                            }));
+                          }
+                        }}
+                      >
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900 text-sm">{itemName.replace(/"/g, '"')}</div>
+                          <div className="text-green-600 font-bold text-xs">${itemData.price.toFixed(2)} • {itemData.laborHours}h labor</div>
+                        </div>
+                        <Plus className="h-4 w-4 text-green-600" />
+                      </Button>
+                    ))}
+                  </div>
+                  <div className="mt-3 text-center">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => setSelectedCategory("elbowsRound")}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Browse All Categories →
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Search and Filter */}
               <div>
-                <Label htmlFor="category" className="text-gray-800 font-semibold">Category</Label>
+                <Label className="text-gray-800 font-semibold">Search Materials</Label>
+                <div className="relative mt-1">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search by name or size (e.g. '4 inch elbow', 'galvanized pipe')..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 text-gray-900"
+                  />
+                </div>
+              </div>
+
+              {/* Quick Filter Buttons */}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={quickFilter === "4inch" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    setQuickFilter(quickFilter === "4inch" ? "" : "4inch");
+                    setSearchTerm(quickFilter === "4inch" ? "" : "4");
+                  }}
+                  className="text-xs"
+                >
+                  4" Items
+                </Button>
+                <Button
+                  variant={quickFilter === "5inch" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    setQuickFilter(quickFilter === "5inch" ? "" : "5inch");
+                    setSearchTerm(quickFilter === "5inch" ? "" : "5");
+                  }}
+                  className="text-xs"
+                >
+                  5" Items
+                </Button>
+                <Button
+                  variant={quickFilter === "6inch" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    setQuickFilter(quickFilter === "6inch" ? "" : "6inch");
+                    setSearchTerm(quickFilter === "6inch" ? "" : "6");
+                  }}
+                  className="text-xs"
+                >
+                  6" Items
+                </Button>
+                <Button
+                  variant={quickFilter === "elbows" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    setQuickFilter(quickFilter === "elbows" ? "" : "elbows");
+                    setSearchTerm(quickFilter === "elbows" ? "" : "elbow");
+                  }}
+                  className="text-xs"
+                >
+                  Elbows
+                </Button>
+                <Button
+                  variant={quickFilter === "pipe" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    setQuickFilter(quickFilter === "pipe" ? "" : "pipe");
+                    setSearchTerm(quickFilter === "pipe" ? "" : "pipe");
+                  }}
+                  className="text-xs"
+                >
+                  Pipe
+                </Button>
+              </div>
+
+              <div>
+                <Label htmlFor="category" className="text-gray-800 font-semibold">Browse by Category</Label>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select material category" />
+                    <SelectValue placeholder="Select category or use search above" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="plenums">Plenums & Plenum Components</SelectItem>
-                    <SelectItem value="filterFrames">Filter Frames</SelectItem>
-                    <SelectItem value="plenumTakeOffs">Plenum Take Offs</SelectItem>
-                    <SelectItem value="ductwork">Rectangular Ductwork</SelectItem>
-                    <SelectItem value="endCaps">End Caps</SelectItem>
-                    <SelectItem value="ductReducers">Duct Reducers</SelectItem>
-                    <SelectItem value="elbowsRectangular">Rectangular Elbows</SelectItem>
-                    <SelectItem value="elbowsRound">Round Elbows (4\", 5\", 6\", 7\", 8\", 9\", 10\"+)</SelectItem>
-                    <SelectItem value="drainPans">Drain Pans</SelectItem>
-                    <SelectItem value="freshAirIntakes">Fresh Air Intake Hoods</SelectItem>
-                    <SelectItem value="combustionAirDiffusers">Combustion Air Diffusers</SelectItem>
-                    <SelectItem value="dampers">Dampers & Inline Dampers</SelectItem>
-                    <SelectItem value="takeOffs">Take Offs (Side, Top, Universal)</SelectItem>
-                    <SelectItem value="tapInCollars">Tap-In Collars</SelectItem>
-                    <SelectItem value="boots">Boots (Right Angle, Universal, End)</SelectItem>
-                    <SelectItem value="ovalBoots">Oval Boots</SelectItem>
-                    <SelectItem value="pipe">Galvanized Round Pipe (All Sizes)</SelectItem>
-                    <SelectItem value="ovalPipe">Oval Pipe</SelectItem>
-                    <SelectItem value="teesAndWyes">Tees & Wye Branches</SelectItem>
-                    <SelectItem value="reducersIncreasers">Round Reducers & Increasers</SelectItem>
-                    <SelectItem value="capsAndPlugs">Caps & Plugs (All Sizes)</SelectItem>
-                    <SelectItem value="joistLiners">Joist Liners</SelectItem>
-                    <SelectItem value="supports">Supports & Hardware</SelectItem>
-                    <SelectItem value="miscellaneous">Miscellaneous Components</SelectItem>
+                    <SelectItem value="elbowsRound">Round Elbows (4", 5", 6"+)</SelectItem>
+                    <SelectItem value="pipe">Galvanized Pipe (All Sizes)</SelectItem>
+                    <SelectItem value="boots">Boots & Transitions</SelectItem>
+                    <SelectItem value="takeOffs">Take Offs</SelectItem>
+                    <SelectItem value="dampers">Dampers</SelectItem>
+                    <SelectItem value="teesAndWyes">Tees & Wyes</SelectItem>
+                    <SelectItem value="reducersIncreasers">Reducers</SelectItem>
+                    <SelectItem value="capsAndPlugs">Caps & Plugs</SelectItem>
+                    <SelectItem value="plenums">Plenums</SelectItem>
+                    <SelectItem value="ductwork">Ductwork</SelectItem>
+                    <SelectItem value="supports">Hardware</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
