@@ -42,20 +42,20 @@ const Header = () => {
       href: "/shop/furnaces",
       icon: Wrench,
       submenu: [
-        { name: "High-Efficiency Furnaces", href: "/shop/furnaces" },
-        { name: "Central Air Conditioning", href: "/shop/air-conditioning" },
-        { name: "Gas Water Heaters", href: "/shop/water-heaters" },
-        { name: "Maintenance Plans", href: "/shop/maintenance-plans" }
+        { name: "High-Efficiency Furnaces", href: "/shop/furnaces", isPro: false },
+        { name: "Central Air Conditioning", href: "/shop/air-conditioning", isPro: false },
+        { name: "Gas Water Heaters", href: "/shop/water-heaters", isPro: false },
+        { name: "Maintenance Plans", href: "/shop/maintenance-plans", isPro: false }
       ]
     },
     { name: "Forum", href: "/forum", icon: MessageSquare },
     { 
-      name: "HVAC Tools", 
+      name: "Customer Tools", 
       icon: Settings,
-      subItems: [
-        { name: "AI Symptom Diagnoser", href: "/tools/ai-symptom-diagnoser" },
-        { name: "Alberta Rebate Calculator", href: "/tools/alberta-rebate-calculator" },
-        { name: "Pro Diagnostic Assistant", href: "/tools/pro-diagnostic-assistant" }
+      submenu: [
+        { name: "Basic BTU Calculator", href: "/calculators/btu", isPro: false },
+        { name: "Alberta Rebate Calculator", href: "/tools/alberta-rebate-calculator", isPro: false },
+        { name: "Energy Efficiency Guide", href: "/tools/energy-guide", isPro: false }
       ]
     },
     { name: "Corporate", href: "/corporate-membership", icon: Crown },

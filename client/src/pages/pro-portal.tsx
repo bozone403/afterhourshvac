@@ -118,35 +118,103 @@ const EarlChatbot = () => {
   const generateEarlResponse = (userInput: string): string => {
     const lowerInput = userInput.toLowerCase();
     
+    // Venting and flue systems
     if (lowerInput.includes('vent') || lowerInput.includes('flue')) {
       return "Alright, venting. First thing - what type of furnace are we dealing with? High-efficiency condensing unit or conventional? For high-efficiency, you need System 636 certified PVC/CPVC, sloped 1/4\" per foot back toward the unit. Conventional uses B-vent, sloped 1/4\" per foot UP toward the termination. And for the love of all that's holy, check your clearances from windows, doors, and property lines. B149.1 Table 7.3 has all the termination clearances.";
     }
     
+    // Ductwork and sizing
     if (lowerInput.includes('duct') || lowerInput.includes('size')) {
       return "Ductwork sizing, eh? Manual D is your bible here. Don't just guess - do the calculations. Support every 8-10 feet for rigid metal, every 4 feet for flex. Seal every joint with mastic, not just tape. And insulate according to the current STANDATA requirements. Trust me, the inspector will check.";
     }
     
-    if (lowerInput.includes('code') || lowerInput.includes('alberta') || lowerInput.includes('calgary')) {
-      return "Alberta codes - now you're speaking my language. ABC 2019 is current, but you MUST check the STANDATA. They're constantly updating interpretations. B149.1-20 for gas work, Section 7 for venting. City of Calgary has their own amendments too. When in doubt, call the building department. Better to ask than to fail inspection.";
+    // Heat pumps and system types
+    if (lowerInput.includes('heat pump') || lowerInput.includes('heat strip') || lowerInput.includes('auxiliary heat')) {
+      return "Heat pumps in Alberta? You're dealing with cold climate units here. Look for models rated down to -25°C minimum. Dual fuel setups work great - heat pump above 0°C, gas backup below. Heat strips are electric resistance - check your amp draw, most units pull 20-40 amps per strip. And don't forget your crankcase heater in cold climates.";
     }
     
-    if (lowerInput.includes('combustion') || lowerInput.includes('air')) {
+    // Furnace troubleshooting
+    if (lowerInput.includes('furnace') && (lowerInput.includes('not') || lowerInput.includes('problem') || lowerInput.includes('issue'))) {
+      return "Furnace acting up? Start with the basics - thermostat calling for heat? Power to the unit? Gas valve open? Check your sequence: thermostat calls, inducer starts, pressure switch closes, igniter glows, gas valve opens, burner lights, blower delay, then heat. If it's stopping anywhere in that sequence, that's your problem area.";
+    }
+    
+    // Boiler systems
+    if (lowerInput.includes('boiler') || lowerInput.includes('hydronic') || lowerInput.includes('radiant')) {
+      return "Boiler work, eh? Cast iron, steel fire tube, or condensing? Each has its quirks. Operating temps: cast iron 160-180°F, condensing 130-140°F for efficiency. Watch your water quality - hardness over 7 grains, you need treatment. Expansion tank sizing is critical - 1 gallon per 50 gallons system volume. And don't forget your low water cutoff.";
+    }
+    
+    // Air conditioning and cooling
+    if (lowerInput.includes('ac') || lowerInput.includes('air condition') || lowerInput.includes('cooling') || lowerInput.includes('evaporator')) {
+      return "AC problems? First check - is the outdoor unit running? Dirty filter will kill airflow and freeze your evap coil. Refrigerant leak? Look for oil stains, ice buildup, or short cycling. Superheat should be 8-12°F for most systems, subcooling 10-15°F. Low superheat = overcharge or restriction, high superheat = undercharge or airflow issues.";
+    }
+    
+    // Refrigeration and commercial
+    if (lowerInput.includes('refrigeration') || lowerInput.includes('commercial') || lowerInput.includes('walk-in') || lowerInput.includes('freezer')) {
+      return "Commercial refrigeration? That's a different beast. Walk-ins typically run R-404A or R-449A now. Evap temp for coolers: 28-32°F, freezers: -10 to -5°F. Defrost is critical - electric, hot gas, or reverse cycle. TXV bulb placement matters - secure contact, insulated. And always check your oil return in low-temp systems.";
+    }
+    
+    // Controls and thermostats
+    if (lowerInput.includes('thermostat') || lowerInput.includes('control') || lowerInput.includes('zone')) {
+      return "Controls giving you grief? Old mercury stats are simple but done. Digital programmables need proper wire sizing - 18 AWG minimum for runs over 50 feet. Heat pump stats need O/B wire - O for cooling, B for heating call. Zone systems? Check your damper motors, end switches, and static pressure. Bypass damper might be needed.";
+    }
+    
+    // Combustion air and ventilation
+    if (lowerInput.includes('combustion') || lowerInput.includes('air') || lowerInput.includes('ventilation')) {
       return "Combustion air - critical stuff. High-efficiency units usually pull air directly from outside through concentric or twin-pipe systems. For confined spaces with conventional units, you need openings sized per B149.1 Section 8. Two openings minimum - one high, one low. Each needs to be sized for the appliance BTU input. Don't screw this up - it's a safety issue.";
     }
 
+    // Gas pressure and testing
     if (lowerInput.includes('pressure') || lowerInput.includes('gas')) {
       return "Gas pressure testing - listen up. Before you fire anything up, you better test that system. Incoming pressure should be 7\" WC for natural gas, 11\" WC for propane. Manifold pressure varies by unit - check the rating plate. Use a manometer, not some janky gauge. And don't forget to check for leaks with proper soap solution. One small leak can kill someone.";
     }
 
-    if (lowerInput.includes('electrical') || lowerInput.includes('wire')) {
-      return "Electrical work on HVAC? Better know what you're doing. Disconnect within sight of the unit, proper wire sizing for the amp draw, and don't forget your grounding. Low voltage thermostat wires are usually 18 AWG, but check your heat pump requirements - some need heavier gauge for the heat strips. And for God's sake, turn the power off before you start poking around.";
+    // Electrical systems
+    if (lowerInput.includes('electrical') || lowerInput.includes('wire') || lowerInput.includes('motor')) {
+      return "Electrical work on HVAC? Better know what you're doing. Disconnect within sight of the unit, proper wire sizing for the amp draw, and don't forget your grounding. Low voltage thermostat wires are usually 18 AWG, but check your heat pump requirements - some need heavier gauge for the heat strips. Compressor motors - check your start components: contactor, capacitors, and overloads.";
     }
 
-    if (lowerInput.includes('refrigerant') || lowerInput.includes('charge')) {
+    // Refrigerant and charging
+    if (lowerInput.includes('refrigerant') || lowerInput.includes('charge') || lowerInput.includes('leak')) {
       return "Refrigerant work? You better have your tickets for this. Proper charging is critical - overcharge and you'll kill efficiency and shorten compressor life. Undercharge and same thing happens. Use manifold gauges, know your superheat and subcooling numbers. And recovery - don't you dare vent refrigerant to atmosphere. EPA will have your hide.";
     }
     
-    return "I hear ya. Can you be more specific about what you're dealing with? Are we talking installation, troubleshooting, code compliance, or something else? The more details you give me, the better I can help you avoid the common mistakes I see techs make every day. I've been doing this for 30+ years and seen every screw-up in the book.";
+    // Codes and regulations
+    if (lowerInput.includes('code') || lowerInput.includes('alberta') || lowerInput.includes('calgary') || lowerInput.includes('inspection')) {
+      return "Alberta codes - now you're speaking my language. ABC 2019 is current, but you MUST check the STANDATA. They're constantly updating interpretations. B149.1-20 for gas work, Section 7 for venting. City of Calgary has their own amendments too. When in doubt, call the building department. Better to ask than to fail inspection.";
+    }
+    
+    // Installation and startup
+    if (lowerInput.includes('install') || lowerInput.includes('startup') || lowerInput.includes('commission')) {
+      return "Installation time? Do it right the first time. Level the unit, proper clearances, secure gas connections with pipe dope or thread sealant - never Teflon tape on gas threads. Electrical connections tight, condensate drain sloped properly. Startup sequence: gas leak test, electrical check, airflow verification, temperature rise check, and document everything.";
+    }
+    
+    // Maintenance and service
+    if (lowerInput.includes('maintenance') || lowerInput.includes('service') || lowerInput.includes('tune') || lowerInput.includes('clean')) {
+      return "Maintenance keeps you in business. Annual service minimum - change filters, check gas pressures, clean flame sensor, inspect heat exchanger, test safety controls. Coil cleaning with proper chemicals, not just water. Belt tension - 1\" deflection per foot of span. And always check your combustion analysis - CO levels, draft, and efficiency.";
+    }
+    
+    // Safety and troubleshooting
+    if (lowerInput.includes('safety') || lowerInput.includes('carbon monoxide') || lowerInput.includes('co') || lowerInput.includes('dangerous')) {
+      return "Safety first - that's not just talk. Carbon monoxide kills. Test every gas appliance annually with a combustion analyzer. Cracked heat exchangers, blocked vents, improper installations - all potential killers. If you smell gas, shut it down immediately. When in doubt, tag it out. Your reputation and someone's life depends on it.";
+    }
+    
+    // Specific equipment brands
+    if (lowerInput.includes('carrier') || lowerInput.includes('lennox') || lowerInput.includes('trane') || lowerInput.includes('goodman') || lowerInput.includes('rheem')) {
+      return "Brand-specific issues? Each manufacturer has their quirks. Carrier - watch their integrated controls. Lennox - heat exchanger issues on older units. Trane - solid but parts cost more. Goodman - budget option but check your installation manual closely. Rheem - good mid-range, watch for pressure switch issues on newer models.";
+    }
+    
+    // Tools and equipment
+    if (lowerInput.includes('tool') || lowerInput.includes('equipment') || lowerInput.includes('meter') || lowerInput.includes('gauge')) {
+      return "Tools make the job. Digital manifold gauges are worth the investment - faster evacuation, better accuracy. Combustion analyzer is mandatory for gas work. Good multimeter, megohmmeter for motor testing, manometer for pressures. Don't cheap out on recovery equipment - it'll cost you more in the long run when it breaks down.";
+    }
+    
+    // Energy efficiency and upgrades
+    if (lowerInput.includes('efficiency') || lowerInput.includes('upgrade') || lowerInput.includes('rebate') || lowerInput.includes('energy')) {
+      return "Efficiency upgrades? AFUE ratings: 80% minimum, 90%+ for condensing. SEER ratings for cooling: 13 minimum, 16+ for high efficiency. Variable speed equipment costs more upfront but saves long-term. Don't forget about proper sizing - oversized equipment short cycles and wastes energy. Load calculations are mandatory.";
+    }
+
+    // Default comprehensive response
+    return "I hear ya. Can you be more specific about what you're dealing with? Are we talking installation, troubleshooting, code compliance, or something else? I've got 30+ years in this trade - furnaces, boilers, heat pumps, AC, refrigeration, controls, you name it. Gas, electric, oil - seen it all. The more details you give me, the better I can help you avoid the common mistakes I see techs make every day.";
   };
 
   return (
@@ -366,14 +434,14 @@ const ProPortal = () => {
 
                   <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-green-50 to-green-100">
                     <CardHeader className="pb-3">
-                      <Calculator className="h-8 w-8 text-green-600 mb-2" />
-                      <CardTitle className="text-lg">Alberta Rebates</CardTitle>
-                      <CardDescription className="text-sm">Calculate rebates and incentives</CardDescription>
+                      <Settings className="h-8 w-8 text-green-600 mb-2" />
+                      <CardTitle className="text-lg">System Analyzer</CardTitle>
+                      <CardDescription className="text-sm">Advanced system performance analysis</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href="/tools/alberta-rebate-calculator">
+                      <Link href="/tools/system-analyzer">
                         <Button className="w-full bg-green-600 hover:bg-green-700">
-                          Calculate Rebates
+                          Analyze System
                         </Button>
                       </Link>
                     </CardContent>
@@ -463,8 +531,11 @@ const ProPortal = () => {
                       <CardDescription className="text-sm">ABC 2019 with STANDATA updates</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button className="w-full bg-red-600 hover:bg-red-700">
-                        View ABC 2019
+                      <Button 
+                        className="w-full bg-red-600 hover:bg-red-700"
+                        onClick={() => window.open('https://www.alberta.ca/building-code', '_blank')}
+                      >
+                        View Official ABC
                       </Button>
                     </CardContent>
                   </Card>
@@ -476,8 +547,11 @@ const ProPortal = () => {
                       <CardDescription className="text-sm">CSA B149.1-20 Installation Code</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button className="w-full bg-orange-600 hover:bg-orange-700">
-                        View B149.1
+                      <Button 
+                        className="w-full bg-orange-600 hover:bg-orange-700"
+                        onClick={() => window.open('https://www.csagroup.org/store/product/CSA%20B149.1-20/', '_blank')}
+                      >
+                        View CSA B149.1
                       </Button>
                     </CardContent>
                   </Card>
@@ -485,12 +559,15 @@ const ProPortal = () => {
                   <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50 to-yellow-100">
                     <CardHeader className="pb-3">
                       <Crown className="h-8 w-8 text-yellow-600 mb-2" />
-                      <CardTitle className="text-lg">Calgary Cheat Sheet</CardTitle>
-                      <CardDescription className="text-sm">Earl's field reference guide</CardDescription>
+                      <CardTitle className="text-lg">Calgary Permit Guide</CardTitle>
+                      <CardDescription className="text-sm">City of Calgary HVAC requirements</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button className="w-full bg-yellow-600 hover:bg-yellow-700">
-                        View Cheat Sheet
+                      <Button 
+                        className="w-full bg-yellow-600 hover:bg-yellow-700"
+                        onClick={() => window.open('https://www.calgary.ca/pda/pd/permits/residential-permits.html', '_blank')}
+                      >
+                        View City Requirements
                       </Button>
                     </CardContent>
                   </Card>
@@ -498,12 +575,15 @@ const ProPortal = () => {
                   <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-green-50 to-green-100">
                     <CardHeader className="pb-3">
                       <Settings className="h-8 w-8 text-green-600 mb-2" />
-                      <CardTitle className="text-lg">HVAC Installation Guide</CardTitle>
-                      <CardDescription className="text-sm">Best practices and procedures</CardDescription>
+                      <CardTitle className="text-lg">TSSA Guidelines</CardTitle>
+                      <CardDescription className="text-sm">Technical Standards & Safety Authority</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button className="w-full bg-green-600 hover:bg-green-700">
-                        View Guide
+                      <Button 
+                        className="w-full bg-green-600 hover:bg-green-700"
+                        onClick={() => window.open('https://www.tssa.org/', '_blank')}
+                      >
+                        View TSSA Resources
                       </Button>
                     </CardContent>
                   </Card>
@@ -515,8 +595,11 @@ const ProPortal = () => {
                       <CardDescription className="text-sm">Canadian Electrical Code (CEC)</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        View CEC
+                      <Button 
+                        className="w-full bg-blue-600 hover:bg-blue-700"
+                        onClick={() => window.open('https://www.csagroup.org/store/product/2403604/', '_blank')}
+                      >
+                        View CEC Standards
                       </Button>
                     </CardContent>
                   </Card>
@@ -524,12 +607,15 @@ const ProPortal = () => {
                   <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-purple-50 to-purple-100">
                     <CardHeader className="pb-3">
                       <Download className="h-8 w-8 text-purple-600 mb-2" />
-                      <CardTitle className="text-lg">Pricing Guides</CardTitle>
-                      <CardDescription className="text-sm">Alberta HVAC pricing standards</CardDescription>
+                      <CardTitle className="text-lg">HRAI Resources</CardTitle>
+                      <CardDescription className="text-sm">Heating, Refrigeration & Air Conditioning Institute</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button className="w-full bg-purple-600 hover:bg-purple-700">
-                        View Pricing
+                      <Button 
+                        className="w-full bg-purple-600 hover:bg-purple-700"
+                        onClick={() => window.open('https://www.hrai.ca/', '_blank')}
+                      >
+                        View Industry Standards
                       </Button>
                     </CardContent>
                   </Card>
