@@ -72,6 +72,7 @@ import CustomerDashboard from "@/pages/customer-dashboard";
 import ResidentialServices from "@/pages/shop/residential";
 import CommercialServices from "@/pages/shop/commercial";
 import AddOnsExtras from "@/pages/shop/addons-extras";
+import ServiceCalloutPayment from "@/pages/service-callout-payment";
 import FurnacesShop from "@/pages/shop/furnaces";
 import MaintenancePlansShop from "@/pages/shop/maintenance-plans";
 import AirConditioningShop from "@/pages/shop/air-conditioning";
@@ -164,13 +165,19 @@ function Router() {
         <Route path="/stripe-checkout" component={StripeCheckout} />
         <Route path="/payment-confirmation" component={PaymentConfirmation} />
         <Route path="/calendar-booking" component={CalendarBooking} />
+        <Route path="/service-callout" component={ServiceCalloutPayment} />
         
         {/* Protected routes that require authentication */}
         <ProtectedRoute path="/forum" component={ForumPage} />
         <ProtectedRoute path="/settings" component={UserSettings} />
-        <ProtectedRoute path="/dashboard" component={CustomerDashboard} />
         
-        {/* Admin-only routes */}
+        {/* Customer-only routes - regular customers without Pro or Admin access */}
+        <ProtectedRoute path="/dashboard" component={CustomerDashboard} customerOnly={true} />
+        
+        {/* Pro-only routes - Pro members only */}
+        <ProtectedRoute path="/pro-portal" component={ProPortal} proOnly={true} />
+        
+        {/* Admin-only routes - only JordanBoz */}
         <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
         <ProtectedRoute path="/admin/photos" component={AdminPhotos} adminOnly={true} />
         

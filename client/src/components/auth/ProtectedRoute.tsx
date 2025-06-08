@@ -5,12 +5,16 @@ import { Redirect, Route, RouteProps } from "wouter";
 type ProtectedRouteProps = RouteProps & {
   component: React.ComponentType;
   adminOnly?: boolean;
+  proOnly?: boolean;
+  customerOnly?: boolean;
 };
 
 export function ProtectedRoute({
   path,
   component: Component,
   adminOnly = false,
+  proOnly = false,
+  customerOnly = false,
 }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
 
@@ -34,8 +38,26 @@ export function ProtectedRoute({
     );
   }
 
-  // If route requires admin and user is not admin, redirect to home
+  // Admin only routes - only JordanBoz admin access
   if (adminOnly && (user.role !== "admin" || user.username !== "JordanBoz")) {
+    return (
+      <Route path={path}>
+        <Redirect to="/" />
+      </Route>
+    );
+  }
+
+  // Pro only routes - users with Pro access but not customer portal access
+  if (proOnly && (!user.hasProAccess && !user.hasPro)) {
+    return (
+      <Route path={path}>
+        <Redirect to="/membership" />
+      </Route>
+    );
+  }
+
+  // Customer only routes - regular customers, no Pro or Admin access
+  if (customerOnly && (user.hasProAccess || user.hasPro || user.role === "admin")) {
     return (
       <Route path={path}>
         <Redirect to="/" />
