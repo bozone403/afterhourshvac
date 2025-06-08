@@ -507,20 +507,21 @@ export default function AdminDashboardEnhanced() {
 
   const getUserTypeColor = (userType: string) => {
     switch (userType) {
-      case 'admin': return 'bg-red-600 text-white';
-      case 'pro': return 'bg-purple-600 text-white';
-      case 'corporate': return 'bg-blue-600 text-white';
-      default: return 'bg-gray-600 text-white';
+      case 'admin': return 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg';
+      case 'pro': return 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg';
+      case 'corporate': return 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg';
+      default: return 'bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-orange-600 text-white';
-      case 'reviewing': return 'bg-blue-600 text-white';
-      case 'approved': return 'bg-green-600 text-white';
-      case 'rejected': return 'bg-red-600 text-white';
-      default: return 'bg-gray-600 text-white';
+      case 'pending': return 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg';
+      case 'reviewing': return 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg';
+      case 'approved': return 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg';
+      case 'rejected': return 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg';
+      case 'hired': return 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg';
+      default: return 'bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg';
     }
   };
 
@@ -535,79 +536,60 @@ export default function AdminDashboardEnhanced() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Comprehensive user and system management</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-orange-50">
+      <div className="hvac-container space-y-8">
+        <div className="hvac-card">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="hvac-heading-lg mb-4 bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+                Admin Dashboard
+              </h1>
+              <p className="hvac-text-lg text-gray-600">Comprehensive user and system management for HVAC professionals</p>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={() => refetchUsers()} className="hvac-button-primary">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+            </div>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => refetchUsers()} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
-          </Button>
+
+        {/* System Statistics */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <div className="stat-card">
+            <Users className="h-8 w-8 text-blue-600 mb-4" />
+            <div className="stat-number">{systemStats.totalUsers}</div>
+            <div className="stat-label">Total Users</div>
+          </div>
+          <div className="stat-card">
+            <Activity className="h-8 w-8 text-green-600 mb-4" />
+            <div className="stat-number">{systemStats.activeUsers}</div>
+            <div className="stat-label">Active Users</div>
+          </div>
+          <div className="stat-card">
+            <Shield className="h-8 w-8 text-purple-600 mb-4" />
+            <div className="stat-number">{systemStats.proUsers}</div>
+            <div className="stat-label">Pro Users</div>
+          </div>
+          <div className="stat-card">
+            <Settings className="h-8 w-8 text-red-600 mb-4" />
+            <div className="stat-number">{systemStats.adminUsers}</div>
+            <div className="stat-label">Admin Users</div>
+          </div>
+          <div className="stat-card">
+            <FileText className="h-8 w-8 text-orange-600 mb-4" />
+            <div className="stat-number">{systemStats.pendingApplications}</div>
+            <div className="stat-label">Pending Apps</div>
+          </div>
+          <div className="stat-card">
+            <DollarSign className="h-8 w-8 text-emerald-600 mb-4" />
+            <div className="stat-number">${systemStats.totalRevenue}</div>
+            <div className="stat-label">Est. Revenue</div>
+          </div>
         </div>
-      </div>
 
-      {/* System Statistics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{systemStats.totalUsers}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{systemStats.activeUsers}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pro Users</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{systemStats.proUsers}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Admin Users</CardTitle>
-            <Settings className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{systemStats.adminUsers}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Apps</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{systemStats.pendingApplications}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Est. Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${systemStats.totalRevenue}</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="users" className="space-y-4">
+        <Tabs defaultValue="users" className="space-y-6">
         <TabsList>
           <TabsTrigger value="users">User Management</TabsTrigger>
           <TabsTrigger value="applications">Job Applications</TabsTrigger>
@@ -1433,6 +1415,7 @@ export default function AdminDashboardEnhanced() {
           </div>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 }
