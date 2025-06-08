@@ -520,7 +520,7 @@ export const jobApplications = pgTable("job_applications", {
   certifications: text("certifications"),
   availability: text("availability"),
   salaryExpectation: text("salary_expectation"),
-  references: text("references"),
+  referenceInfo: text("reference_info"),
   resumeUrl: text("resume_url"),
   status: text("status").default("pending"), // pending, reviewing, interviewing, hired, rejected
   appliedAt: timestamp("applied_at").defaultNow(),
