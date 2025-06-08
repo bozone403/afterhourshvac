@@ -121,7 +121,7 @@ const Careers = () => {
   });
 
   const onSubmit = (data: ApplicationForm) => {
-    submitApplication.mutate({ ...data, resumeFile });
+    submitApplication.mutate({ ...data, resumeFile: resumeFile || undefined });
   };
 
   const handleResumeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

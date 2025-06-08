@@ -23,17 +23,15 @@ const Hero = () => {
                 </svg>
                 Get a Free Quote
               </Link>
-              <a 
-                href="https://calendar.app.google/NXZB4v1PP57HhARL7" 
-                target="_blank" 
-                rel="noopener noreferrer"
+              <Link 
+                to="/service-callout"
                 className="inline-flex items-center justify-center px-6 py-4 border border-transparent rounded-md shadow-sm text-base font-medium text-charcoal bg-electric hover:bg-electric/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electric transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                Book a Service
-              </a>
+                Book a Service Call
+              </Link>
             </div>
           </div>
           
