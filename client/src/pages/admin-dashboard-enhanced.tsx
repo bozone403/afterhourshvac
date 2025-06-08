@@ -788,6 +788,163 @@ export default function AdminDashboardEnhanced() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Service Bookings Tab */}
+        <TabsContent value="bookings" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Service Bookings</CardTitle>
+              <CardDescription>Manage customer service appointments and bookings</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {bookingsLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {bookings && bookings.length > 0 ? (
+                    bookings.map((booking: any) => (
+                      <div key={booking.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <h4 className="font-semibold">{booking.customerName}</h4>
+                          <p className="text-sm text-muted-foreground">{booking.service} • {booking.date}</p>
+                          <p className="text-sm text-muted-foreground">{booking.address}</p>
+                        </div>
+                        <Badge>{booking.status}</Badge>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-muted-foreground py-8">No service bookings found</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Contact Messages Tab */}
+        <TabsContent value="contacts" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Contact Messages</CardTitle>
+              <CardDescription>Review and respond to customer inquiries</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {contactsLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {contacts && contacts.length > 0 ? (
+                    contacts.map((contact: any) => (
+                      <div key={contact.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <h4 className="font-semibold">{contact.name}</h4>
+                          <p className="text-sm text-muted-foreground">{contact.email} • {contact.phone}</p>
+                          <p className="text-sm">{contact.message}</p>
+                        </div>
+                        <Badge variant={contact.responded ? "default" : "secondary"}>
+                          {contact.responded ? "Responded" : "Pending"}
+                        </Badge>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-muted-foreground py-8">No contact messages found</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Emergency Requests Tab */}
+        <TabsContent value="emergency" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Emergency Service Requests</CardTitle>
+              <CardDescription>Monitor urgent HVAC service requests</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {emergencyLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {emergencyRequests && emergencyRequests.length > 0 ? (
+                    emergencyRequests.map((request: any) => (
+                      <div key={request.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <h4 className="font-semibold">{request.name}</h4>
+                          <p className="text-sm text-muted-foreground">{request.phone} • {request.address}</p>
+                          <p className="text-sm">{request.issueDescription}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Priority: {request.urgencyLevel} • Cost: ${request.totalCost}
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Badge className={getStatusColor(request.status)}>
+                            {request.status}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(request.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-muted-foreground py-8">No emergency requests found</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Forum Management Tab */}
+        <TabsContent value="forum" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Forum Management</CardTitle>
+              <CardDescription>Moderate forum posts and discussions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {forumLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {forumPosts && forumPosts.length > 0 ? (
+                    forumPosts.map((post: any) => (
+                      <div key={post.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <h4 className="font-semibold">{post.title}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            By: {post.author} • Category: {post.category}
+                          </p>
+                          <p className="text-sm">{post.content?.substring(0, 150)}...</p>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Badge variant={post.isPublished ? "default" : "secondary"}>
+                            {post.isPublished ? "Published" : "Draft"}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(post.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-muted-foreground py-8">No forum posts found</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       {/* Edit User Dialog */}
