@@ -4359,38 +4359,11 @@ Immediate response required!`;
 
 
 
-  // Admin Job Applications Routes (Mock data for now)
+  // Admin Job Applications Routes
   app.get("/api/admin/job-applications", requireAuth, requireAdmin, async (req, res) => {
     try {
-      // Mock data for demonstration
-      const mockApplications = [
-        {
-          id: 1,
-          firstName: "John",
-          lastName: "Smith",
-          email: "john.smith@email.com",
-          phone: "(403) 555-0123",
-          position: "Senior HVAC Technician",
-          experience: "8 years of residential and commercial HVAC experience",
-          coverLetter: "I am excited to apply for the Senior HVAC Technician position...",
-          status: "pending",
-          appliedAt: "2024-12-15T10:30:00Z"
-        },
-        {
-          id: 2,
-          firstName: "Sarah",
-          lastName: "Johnson",
-          email: "sarah.johnson@email.com",
-          phone: "(403) 555-0456",
-          position: "HVAC Apprentice",
-          experience: "Recently completed HVAC training program, eager to learn",
-          coverLetter: "I am passionate about starting my career in HVAC...",
-          status: "reviewing",
-          appliedAt: "2024-12-14T14:15:00Z"
-        }
-      ];
-      
-      res.json(mockApplications);
+      const applications = await storage.getJobApplications();
+      res.json(applications);
     } catch (error: any) {
       console.error("Error fetching job applications:", error);
       res.status(500).json({ 
