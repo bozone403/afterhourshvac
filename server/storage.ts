@@ -1572,8 +1572,6 @@ export class DatabaseStorage implements IStorage {
     await db
       .update(users)
       .set({
-        phoneVerified: true,
-        phoneVerifiedAt: new Date(),
         phoneVerificationCode: null,
         phoneVerificationExpiresAt: null
       })
@@ -1721,6 +1719,25 @@ export class DatabaseStorage implements IStorage {
         maxSessions: 5 // Corporate users get more sessions
       })
       .where(eq(users.id, userId));
+  }
+
+  async createCorporateInquiry(data: any): Promise<any> {
+    // For now, store in contact submissions table since we don't have a separate corporate inquiries table
+    const inquiryData = {
+      name: data.contactName,
+      email: data.email,
+      phone: data.phone,
+      subject: `Corporate Inquiry - ${data.companyName}`,
+      message: `Company: ${data.companyName}\nIndustry: ${data.industry}\nCompany Size: ${data.companySize}\nAnnual Revenue: ${data.annualRevenue}\nCurrent Users: ${data.currentUsers}\nProjected Users: ${data.projectedUsers}\nSpecific Needs: ${data.specificNeeds}\nTimeline: ${data.timeline}`,
+      createdAt: new Date()
+    };
+
+    const [inquiry] = await db
+      .insert(contactSubmissions)
+      .values(inquiryData)
+      .returning();
+    
+    return inquiry;
   }
 }
 

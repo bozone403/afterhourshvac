@@ -3565,7 +3565,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/corporate-accounts/:id", requireAuth, async (req, res) => {
     try {
       const accountId = parseInt(req.params.id);
-      const user = req.user as User;
+      const user = req.user as any;
 
       const account = await storage.getCorporateAccount(accountId);
       
