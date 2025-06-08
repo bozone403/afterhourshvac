@@ -1425,7 +1425,7 @@ export default function AdminDashboardEnhanced() {
           </div>
         </DialogContent>
       </Dialog>
-      </Tabs>
+      </div>
     </div>
   );
 }
