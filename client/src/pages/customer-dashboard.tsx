@@ -45,13 +45,23 @@ const CustomerDashboard = () => {
     enabled: !!user,
   });
 
-  const { data: maintenancePlans } = useQuery({
+  const { data: customerMaintenancePlans } = useQuery({
     queryKey: ['/api/customer/maintenance-plans'],
     enabled: !!user,
   });
 
   const { data: serviceHistory } = useQuery({
     queryKey: ['/api/customer/service-history'],
+    enabled: !!user,
+  });
+
+  const { data: schedules } = useQuery({
+    queryKey: ['/api/schedules'],
+    enabled: !!user,
+  });
+
+  const { data: maintenanceSchedules } = useQuery({
+    queryKey: ['/api/maintenance-plans'],
     enabled: !!user,
   });
 
@@ -419,32 +429,34 @@ const CustomerDashboard = () => {
                       <CardTitle className="text-lg">Upcoming Jobs</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div className="border-l-4 border-l-orange-500 pl-4">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="font-medium text-gray-900">Furnace Installation</p>
-                          <Badge>Jan 15</Badge>
+                      {Array.isArray(schedules) && schedules.length > 0 ? schedules.slice(0, 5).map((schedule: any) => {
+                        const scheduleDate = new Date(schedule.scheduledDate);
+                        const borderColor = schedule.jobType === 'installation' ? 'border-l-orange-500' : 
+                                          schedule.jobType === 'maintenance' ? 'border-l-blue-500' : 'border-l-green-500';
+                        
+                        return (
+                          <div key={schedule.id} className={`border-l-4 ${borderColor} pl-4`}>
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="font-medium text-gray-900 capitalize">
+                                {schedule.serviceType} {schedule.jobType}
+                              </p>
+                              <Badge variant={schedule.status === 'completed' ? 'default' : 'secondary'}>
+                                {scheduleDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-gray-600">{schedule.customerName}</p>
+                            <p className="text-xs text-gray-500">
+                              {schedule.startTime} - {schedule.endTime}
+                            </p>
+                          </div>
+                        );
+                      }) : (
+                        <div className="text-center py-8">
+                          <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                          <p className="text-gray-500">No upcoming jobs scheduled</p>
+                          <p className="text-sm text-gray-400">Jobs will appear here when payments are completed</p>
                         </div>
-                        <p className="text-sm text-gray-600">Quote AH-653575</p>
-                        <p className="text-xs text-gray-500">9:00 AM - 3:00 PM</p>
-                      </div>
-                      
-                      <div className="border-l-4 border-l-blue-500 pl-4">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="font-medium text-gray-900">Maintenance Check</p>
-                          <Badge variant="secondary">Jan 22</Badge>
-                        </div>
-                        <p className="text-sm text-gray-600">Annual Service Plan</p>
-                        <p className="text-xs text-gray-500">10:00 AM - 12:00 PM</p>
-                      </div>
-                      
-                      <div className="border-l-4 border-l-green-500 pl-4">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="font-medium text-gray-900">AC Installation</p>
-                          <Badge variant="outline">Jan 29</Badge>
-                        </div>
-                        <p className="text-sm text-gray-600">Summer Prep</p>
-                        <p className="text-xs text-gray-500">8:00 AM - 4:00 PM</p>
-                      </div>
+                      )}
                     </CardContent>
                   </Card>
                   

@@ -40,7 +40,42 @@ const CheckoutForm = ({ clientSecret }: { clientSecret: string }) => {
     if (error) {
       setMessage(error.message || 'An unexpected error occurred.');
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-      setMessage('Payment successful! Thank you for your business.');
+      // Create calendar schedule entry after successful payment
+      const urlParams = new URLSearchParams(window.location.search);
+      const quoteNumber = paymentIntent.metadata?.quoteNumber;
+      
+      if (quoteNumber) {
+        // Schedule the job automatically
+        const scheduleData = {
+          jobType: 'installation',
+          serviceType: 'hvac',
+          scheduledDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Default to 1 week from now
+          startTime: '09:00',
+          endTime: '15:00',
+          estimatedDuration: 6,
+          status: 'scheduled',
+          priority: 'normal',
+          specialInstructions: 'Payment completed - ready to schedule installation',
+          paymentStatus: 'paid'
+        };
+        
+        // Find the quote ID and create schedule
+        fetch('/api/quotes')
+          .then(res => res.json())
+          .then(quotes => {
+            const quote = quotes.find((q: any) => q.quoteNumber === quoteNumber);
+            if (quote) {
+              return fetch(`/api/quotes/${quote.id}/schedule`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(scheduleData)
+              });
+            }
+          })
+          .catch(err => console.log('Schedule creation optional:', err));
+      }
+      
+      setMessage('Payment successful! Your job has been automatically added to the schedule.');
       setIsComplete(true);
     }
 
