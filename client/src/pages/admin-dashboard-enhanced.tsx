@@ -216,89 +216,89 @@ export default function AdminDashboardEnhanced() {
         <title>Admin Dashboard - AfterHours HVAC</title>
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-4">Admin Dashboard</h1>
-            <p className="text-xl text-slate-300">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-orange-600 bg-clip-text text-transparent">Admin Dashboard</h1>
+            <p className="text-xl text-gray-600">
               Manage your HVAC business website content and customer interactions
             </p>
           </div>
 
           <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5 bg-slate-800">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="gallery">Gallery</TabsTrigger>
-              <TabsTrigger value="forum">Forum</TabsTrigger>
-              <TabsTrigger value="customers">Customers</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-5 bg-white border border-gray-200">
+              <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Overview</TabsTrigger>
+              <TabsTrigger value="gallery" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Gallery</TabsTrigger>
+              <TabsTrigger value="forum" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Forum</TabsTrigger>
+              <TabsTrigger value="customers" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Customers</TabsTrigger>
+              <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Analytics</TabsTrigger>
             </TabsList>
 
             {/* Overview Tab */}
             <TabsContent value="overview" className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="bg-slate-800/50 border-slate-700">
+                <Card className="bg-white border-gray-200 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-white">Total Inquiries</CardTitle>
-                    <Mail className="h-4 w-4 text-blue-400" />
+                    <CardTitle className="text-sm font-medium text-gray-900">Total Inquiries</CardTitle>
+                    <Mail className="h-4 w-4 text-blue-600" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-white">{dashboardStats?.totalInquiries || 0}</div>
-                    <p className="text-xs text-slate-400">Customer contacts</p>
+                    <div className="text-2xl font-bold text-gray-900">{dashboardStats?.totalInquiries || 0}</div>
+                    <p className="text-xs text-gray-600">Customer contacts</p>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-slate-800/50 border-slate-700">
+                <Card className="bg-white border-gray-200 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-white">Emergency Requests</CardTitle>
-                    <AlertTriangle className="h-4 w-4 text-red-400" />
+                    <CardTitle className="text-sm font-medium text-gray-900">Emergency Requests</CardTitle>
+                    <AlertTriangle className="h-4 w-4 text-orange-600" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-white">{dashboardStats?.emergencyRequests || 0}</div>
-                    <p className="text-xs text-slate-400">Urgent service calls</p>
+                    <div className="text-2xl font-bold text-gray-900">{dashboardStats?.emergencyRequests || 0}</div>
+                    <p className="text-xs text-gray-600">Urgent service calls</p>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-slate-800/50 border-slate-700">
+                <Card className="bg-white border-gray-200 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-white">Pending Quotes</CardTitle>
-                    <FileText className="h-4 w-4 text-yellow-400" />
+                    <CardTitle className="text-sm font-medium text-gray-900">Pending Quotes</CardTitle>
+                    <FileText className="h-4 w-4 text-yellow-600" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-white">{dashboardStats?.pendingQuotes || 0}</div>
-                    <p className="text-xs text-slate-400">Awaiting response</p>
+                    <div className="text-2xl font-bold text-gray-900">{dashboardStats?.pendingQuotes || 0}</div>
+                    <p className="text-xs text-gray-600">Awaiting response</p>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-slate-800/50 border-slate-700">
+                <Card className="bg-white border-gray-200 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-white">Active Users</CardTitle>
-                    <Users className="h-4 w-4 text-green-400" />
+                    <CardTitle className="text-sm font-medium text-gray-900">Active Users</CardTitle>
+                    <Users className="h-4 w-4 text-green-600" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-white">{dashboardStats?.activeUsers || 0}</div>
-                    <p className="text-xs text-slate-400">Registered users</p>
+                    <div className="text-2xl font-bold text-gray-900">{dashboardStats?.activeUsers || 0}</div>
+                    <p className="text-xs text-gray-600">Registered users</p>
                   </CardContent>
                 </Card>
               </div>
 
               {/* Recent Activity */}
-              <Card className="bg-slate-800/50 border-slate-700">
+              <Card className="bg-white border-gray-200 shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-white">Recent Customer Inquiries</CardTitle>
-                  <CardDescription>Latest contact form submissions</CardDescription>
+                  <CardTitle className="text-gray-900">Recent Customer Inquiries</CardTitle>
+                  <CardDescription className="text-gray-600">Latest contact form submissions</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {contactSubmissions.length === 0 ? (
-                    <p className="text-slate-400 text-center py-8">No recent inquiries</p>
+                    <p className="text-gray-500 text-center py-8">No recent inquiries</p>
                   ) : (
                     <div className="space-y-4">
                       {contactSubmissions.slice(0, 5).map((submission) => (
-                        <div key={submission.id} className="flex items-center justify-between p-4 bg-slate-900/50 rounded-lg">
+                        <div key={submission.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
                           <div>
-                            <div className="font-medium text-white">{submission.name}</div>
-                            <div className="text-sm text-slate-300">{submission.email}</div>
-                            <div className="text-sm text-slate-400">{submission.message.substring(0, 100)}...</div>
+                            <div className="font-medium text-gray-900">{submission.name}</div>
+                            <div className="text-sm text-gray-600">{submission.email}</div>
+                            <div className="text-sm text-gray-500">{submission.message.substring(0, 100)}...</div>
                           </div>
                           <div className="text-right">
                             <Badge variant={submission.status === 'pending' ? 'destructive' : 'default'}>
