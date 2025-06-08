@@ -328,7 +328,8 @@ export default function ForumInteractive() {
     createTopicMutation.mutate({
       title: newTopicTitle,
       content: newTopicContent,
-      categoryId: selectedCategory
+      categoryId: selectedCategory,
+      username: newTopicUsername.trim() || `User ${user.id}`
     });
   };
 
@@ -362,7 +363,8 @@ export default function ForumInteractive() {
 
     createPostMutation.mutate({
       content: newPostContent,
-      topicId: selectedTopic
+      topicId: selectedTopic,
+      username: newPostUsername.trim() || `User ${user.id}`
     });
   };
 
@@ -745,12 +747,23 @@ export default function ForumInteractive() {
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-4">
-                          <Textarea
-                            value={newPostContent}
-                            onChange={(e) => setNewPostContent(e.target.value)}
-                            placeholder="Enter your reply..."
-                            rows={4}
-                          />
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Display Name</label>
+                            <Input
+                              value={newPostUsername}
+                              onChange={(e) => setNewPostUsername(e.target.value)}
+                              placeholder="Enter your display name for this reply..."
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Reply</label>
+                            <Textarea
+                              value={newPostContent}
+                              onChange={(e) => setNewPostContent(e.target.value)}
+                              placeholder="Enter your reply..."
+                              rows={4}
+                            />
+                          </div>
                           <div className="flex justify-end">
                             <Button 
                               onClick={handleCreatePost}

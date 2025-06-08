@@ -145,6 +145,7 @@ export const forumTopics = pgTable("forum_topics", {
   title: text("title").notNull(),
   content: text("content").notNull(),
   slug: text("slug").notNull(),
+  displayName: text("display_name"),
   views: integer("views").default(0),
   isPinned: boolean("is_pinned").default(false),
   isLocked: boolean("is_locked").default(false),
