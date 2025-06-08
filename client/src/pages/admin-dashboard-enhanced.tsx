@@ -458,13 +458,13 @@ export default function AdminDashboardEnhanced() {
   });
 
   const deleteForumPostMutation = useMutation({
-    mutationFn: async (id: number) => {
-      return await apiRequest("DELETE", `/api/admin/forum-posts/${id}`);
+    mutationFn: async (postId: number) => {
+      return await apiRequest("DELETE", `/api/admin/forum-posts/${postId}`);
     },
     onSuccess: () => {
       toast({
         title: "Post Deleted",
-        description: "Forum post has been deleted successfully.",
+        description: "Forum post has been permanently deleted.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/forum-posts"] });
     },
@@ -478,22 +478,31 @@ export default function AdminDashboardEnhanced() {
   });
 
   // Forum moderation handlers
-  const approveForumPost = (id: number) => {
-    updateForumPostMutation.mutate({ id, data: { isApproved: true, moderatedAt: new Date() } });
+  const approveForumPost = (postId: number) => {
+    updateForumPostMutation.mutate({ 
+      id: postId, 
+      data: { isApproved: true, isVisible: true } 
+    });
   };
 
-  const rejectForumPost = (id: number) => {
-    updateForumPostMutation.mutate({ id, data: { isApproved: false, moderatedAt: new Date() } });
+  const rejectForumPost = (postId: number) => {
+    updateForumPostMutation.mutate({ 
+      id: postId, 
+      data: { isApproved: false, isVisible: false } 
+    });
   };
 
-  const deleteForumPost = (id: number) => {
+  const deleteForumPost = (postId: number) => {
     if (confirm("Are you sure you want to delete this forum post? This action cannot be undone.")) {
-      deleteForumPostMutation.mutate(id);
+      deleteForumPostMutation.mutate(postId);
     }
   };
 
-  const toggleForumPostVisibility = (id: number, currentStatus: boolean) => {
-    updateForumPostMutation.mutate({ id, data: { isVisible: !currentStatus } });
+  const toggleForumPostVisibility = (postId: number, isVisible: boolean) => {
+    updateForumPostMutation.mutate({ 
+      id: postId, 
+      data: { isVisible: !isVisible } 
+    });
   };
 
   const getUserTypeColor = (userType: string) => {
