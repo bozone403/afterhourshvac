@@ -1,7 +1,9 @@
 import { apiRequest } from "./queryClient";
-import { createLogger } from "./utils";
 
-const logger = createLogger("FormHandlers");
+const logger = {
+  info: (...args: any[]) => console.log("[FormHandlers]", ...args),
+  error: (...args: any[]) => console.error("[FormHandlers]", ...args)
+};
 
 export interface EmergencyFormData {
   name: string;
@@ -37,7 +39,20 @@ export interface CalculatorFormData {
 export const submitEmergencyForm = async (data: EmergencyFormData): Promise<{ success: boolean; message: string }> => {
   try {
     logger.info("Submitting emergency form", data);
-    const response = await apiRequest("POST", "/api/emergency-request", data);
+    
+    // Map frontend form data to backend schema
+    const requestData = {
+      name: data.name,
+      phone: data.phone,
+      address: "Address not provided", // Default since not collected in emergency form
+      issueDescription: data.description,
+      urgencyLevel: "high", // Emergency requests are always high priority
+      emergencyType: data.issueType,
+      description: data.description,
+      severity: "high"
+    };
+    
+    const response = await apiRequest("POST", "/api/emergency-requests", requestData);
     
     if (!response.ok) {
       const errorData = await response.json();
