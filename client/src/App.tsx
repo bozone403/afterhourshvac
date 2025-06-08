@@ -78,6 +78,7 @@ import MaintenancePlansShop from "@/pages/shop/maintenance-plans";
 import AirConditioningShop from "@/pages/shop/air-conditioning";
 import WaterHeatersShop from "@/pages/shop/water-heaters";
 import TermsOfService from "@/pages/terms-of-service";
+import JobApplication from "@/pages/job-application";
 import PrivacyPolicy from "@/pages/privacy-policy";
 import Sitemap from "@/pages/sitemap";
 
@@ -140,6 +141,7 @@ function Router() {
         <Route path="/blog/commercial-vs-residential-hvac" component={BlogCommercialVsResidential} />
         <Route path="/service-areas" component={ServiceAreas} />
         <Route path="/careers" component={Careers} />
+        <Route path="/job-application" component={JobApplication} />
         <Route path="/reviews" component={Reviews} />
         <Route path="/auth" component={AuthPage} />
         <Route path="/login" component={LoginPage} />

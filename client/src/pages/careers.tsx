@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -70,6 +71,7 @@ interface JobPosition {
 
 const Careers = () => {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [selectedPosition, setSelectedPosition] = useState<string>("");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [showApplication, setShowApplication] = useState(false);
@@ -408,9 +410,7 @@ const Careers = () => {
                     <Button 
                       className="flex-1"
                       onClick={() => {
-                        setSelectedPosition(position.title);
-                        form.setValue('position', position.title);
-                        setShowApplication(true);
+                        setLocation(`/job-application?position=${encodeURIComponent(position.title)}`);
                       }}
                     >
                       Apply Now
