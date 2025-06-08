@@ -30,6 +30,34 @@ interface Quote {
   total: number;
 }
 
+// Category-specific multipliers based on supplier rates
+const categoryMultipliers = {
+  plenums: 0.625, // Residential
+  filterFrames: 0.625, // Residential
+  plenumTakeOffs: 0.625, // Residential
+  ductwork: 0.625, // Residential
+  endCaps: 0.625, // Residential
+  ductReducers: 0.625, // Residential
+  elbowsRectangular: 0.625, // Residential
+  elbowsRound: 0.625, // Residential
+  drainPans: 0.525, // Heating & Cooling - Residential
+  freshAirIntakes: 0.618, // Venting
+  combustionAirDiffusers: 0.618, // Venting
+  dampers: 0.600, // Louvers & Dampers
+  takeOffs: 0.625, // Residential
+  tapInCollars: 0.625, // Residential
+  boots: 0.625, // Residential
+  ovalBoots: 0.625, // Residential
+  pipe: 0.625, // Residential
+  ovalPipe: 0.625, // Residential
+  teesAndWyes: 0.625, // Residential
+  reducersIncreasers: 0.625, // Residential
+  capsAndPlugs: 0.625, // Residential
+  joistLiners: 0.600, // Miscellaneous
+  supports: 0.600, // Miscellaneous
+  miscellaneous: 0.600, // Miscellaneous
+};
+
 // Complete Alggin pricing data from Calgary catalog - ALL components included
 const algginPricing = {
   plenums: {
@@ -449,6 +477,11 @@ const algginPricing = {
   }
 };
 
+// Function to get category-specific multiplier
+const getCategoryMultiplier = (category: string): number => {
+  return categoryMultipliers[category as keyof typeof categoryMultipliers] || 0.625;
+};
+
 // Popular/Common HVAC items for quick selection
 const popularItems = {
   "Round 90° Elbow 4\" Residential": { category: "elbowsRound", price: 3.13, laborHours: 0.2 },
@@ -498,7 +531,7 @@ function EnhancedQuoteBuilderContent() {
     );
   };
   const [laborRate, setLaborRate] = useState<number>(95); // $95/hour Calgary rate
-  const [priceMultiplier, setPriceMultiplier] = useState<number>(1.0); // 1.0 = full price, 0.343 = 34.3% of full price
+  const [priceMultiplier, setPriceMultiplier] = useState<number>(0.625); // Default residential multiplier
   const [markupPercentage, setMarkupPercentage] = useState<number>(40); // 40% markup on final price
   const [taxRate] = useState<number>(5); // 5% GST
   const [customerInfo, setCustomerInfo] = useState({
@@ -529,7 +562,8 @@ function EnhancedQuoteBuilderContent() {
     if (!itemData) return;
     
     const qty = parseFloat(quantity);
-    const discountedPrice = itemData.price * priceMultiplier; // Apply multiplier as discount
+    const categoryMultiplier = getCategoryMultiplier(selectedCategory);
+    const discountedPrice = itemData.price * categoryMultiplier; // Apply category-specific multiplier
     
     const newItem: QuoteItem = {
       id: `${Date.now()}-${Math.random()}`,
@@ -740,17 +774,24 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                   />
                 </div>
                 <div>
-                  <Label htmlFor="priceMultiplier" className="text-gray-800 font-semibold">Price Multiplier</Label>
-                  <Input
-                    id="priceMultiplier"
-                    type="number"
-                    step="0.001"
-                    value={priceMultiplier}
-                    onChange={(e) => setPriceMultiplier(parseFloat(e.target.value) || 1.0)}
-                    placeholder="1.0"
-                    className="mt-1 text-gray-900"
-                  />
-                  <div className="text-xs text-gray-600 mt-1">1.0 = full price, 0.343 = 34.3% of retail</div>
+                  <Label className="text-gray-800 font-semibold">Category Multipliers</Label>
+                  <div className="mt-1 p-2 bg-white rounded border text-xs">
+                    <div className="grid grid-cols-2 gap-1 text-gray-700">
+                      <div>Residential: 62.5%</div>
+                      <div>Commercial: 61.6%</div>
+                      <div>Spiral: 35.3%</div>
+                      <div>B-Vent: 61.0%</div>
+                      <div>Venting: 61.8%</div>
+                      <div>Flexible: 61.8%</div>
+                      <div>Grilles: 60.0%</div>
+                      <div>Tools: 60.0%</div>
+                      <div>Fans: 60.0%</div>
+                      <div>Dampers: 60.0%</div>
+                      <div>Misc: 60.0%</div>
+                      <div>HVAC: 52.5%</div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-600 mt-1">Automatic pricing based on category</div>
                 </div>
               </div>
               
@@ -793,7 +834,8 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                         onClick={() => {
                           const categoryData = algginPricing[itemData.category as keyof typeof algginPricing];
                           if (categoryData && itemName in categoryData) {
-                            const discountedPrice = itemData.price * priceMultiplier;
+                            const categoryMultiplier = getCategoryMultiplier(itemData.category);
+                            const discountedPrice = itemData.price * categoryMultiplier;
                             const item: QuoteItem = {
                               id: Date.now().toString(),
                               name: itemName,
@@ -813,7 +855,7 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                       >
                         <div className="flex-1">
                           <div className="font-medium text-gray-900 text-sm">{itemName.replace(/"/g, '"')}</div>
-                          <div className="text-green-600 font-bold text-xs">${(itemData.price * priceMultiplier).toFixed(2)}</div>
+                          <div className="text-green-600 font-bold text-xs">${(itemData.price * getCategoryMultiplier(itemData.category)).toFixed(2)}</div>
                         </div>
                         <Plus className="h-4 w-4 text-green-600" />
                       </Button>
