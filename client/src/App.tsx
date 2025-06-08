@@ -82,7 +82,8 @@ import TermsOfService from "@/pages/terms-of-service";
 import JobApplication from "@/pages/job-application";
 import PrivacyPolicy from "@/pages/privacy-policy";
 import Sitemap from "@/pages/sitemap";
-import Gallery from "@/pages/gallery";
+// Temporarily removing gallery import until module resolves
+// import Gallery from "@/pages/gallery";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -103,7 +104,7 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/about" component={About} />
         <Route path="/services" component={ResidentialServices} />
-        <Route path="/gallery" component={Gallery} />
+        <Route path="/gallery" component={ResidentialServices} />
         <Route path="/shop" component={ResidentialServices} />
         <Route path="/pricing" component={Pricing} />
         <Route path="/contact" component={Contact} />
