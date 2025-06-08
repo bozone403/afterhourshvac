@@ -136,8 +136,20 @@ const EarlChatbot = () => {
     if (lowerInput.includes('combustion') || lowerInput.includes('air')) {
       return "Combustion air - critical stuff. High-efficiency units usually pull air directly from outside through concentric or twin-pipe systems. For confined spaces with conventional units, you need openings sized per B149.1 Section 8. Two openings minimum - one high, one low. Each needs to be sized for the appliance BTU input. Don't screw this up - it's a safety issue.";
     }
+
+    if (lowerInput.includes('pressure') || lowerInput.includes('gas')) {
+      return "Gas pressure testing - listen up. Before you fire anything up, you better test that system. Incoming pressure should be 7\" WC for natural gas, 11\" WC for propane. Manifold pressure varies by unit - check the rating plate. Use a manometer, not some janky gauge. And don't forget to check for leaks with proper soap solution. One small leak can kill someone.";
+    }
+
+    if (lowerInput.includes('electrical') || lowerInput.includes('wire')) {
+      return "Electrical work on HVAC? Better know what you're doing. Disconnect within sight of the unit, proper wire sizing for the amp draw, and don't forget your grounding. Low voltage thermostat wires are usually 18 AWG, but check your heat pump requirements - some need heavier gauge for the heat strips. And for God's sake, turn the power off before you start poking around.";
+    }
+
+    if (lowerInput.includes('refrigerant') || lowerInput.includes('charge')) {
+      return "Refrigerant work? You better have your tickets for this. Proper charging is critical - overcharge and you'll kill efficiency and shorten compressor life. Undercharge and same thing happens. Use manifold gauges, know your superheat and subcooling numbers. And recovery - don't you dare vent refrigerant to atmosphere. EPA will have your hide.";
+    }
     
-    return "I hear ya. Can you be more specific about what you're dealing with? Are we talking installation, troubleshooting, code compliance, or something else? The more details you give me, the better I can help you avoid the common mistakes I see techs make every day.";
+    return "I hear ya. Can you be more specific about what you're dealing with? Are we talking installation, troubleshooting, code compliance, or something else? The more details you give me, the better I can help you avoid the common mistakes I see techs make every day. I've been doing this for 30+ years and seen every screw-up in the book.";
   };
 
   return (
