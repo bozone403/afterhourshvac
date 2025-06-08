@@ -171,8 +171,9 @@ function Router() {
         <ProtectedRoute path="/forum" component={ForumPage} />
         <ProtectedRoute path="/settings" component={UserSettings} />
         
-        {/* Customer-only routes - regular customers without Pro or Admin access */}
+        {/* Customer dashboard routes */}
         <ProtectedRoute path="/dashboard" component={CustomerDashboard} customerOnly={true} />
+        <ProtectedRoute path="/customer-dashboard" component={CustomerDashboard} />
         
         {/* Pro-only routes - Pro members only */}
         <ProtectedRoute path="/pro-portal" component={ProPortal} proOnly={true} />
