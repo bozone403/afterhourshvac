@@ -41,32 +41,28 @@ const Header = () => {
   const navigationItems = [
     { name: "Home", href: "/", icon: Home },
     {
-      name: "Shop Services", 
+      name: "Services", 
       href: "/shop/residential",
       icon: Building2,
       submenu: [
         { name: "Residential Custom & New Builds", href: "/shop/residential", isPro: false },
         { name: "Commercial & Multi-Family", href: "/shop/commercial", isPro: false },
-        { name: "High-Efficiency Furnaces", href: "/shop/furnaces", isPro: false },
-        { name: "Central Air Conditioning", href: "/shop/air-conditioning", isPro: false },
-        { name: "Gas Water Heaters", href: "/shop/water-heaters", isPro: false },
+        { name: "Equipment & Products", href: "/shop/furnaces", isPro: false },
         { name: "Maintenance Plans", href: "/shop/maintenance-plans", isPro: false }
       ]
     },
-    { name: "Forum", href: "/forum", icon: MessageSquare },
     { 
-      name: "Customer Tools", 
-      icon: Settings,
+      name: "Tools", 
+      icon: Calculator,
       submenu: [
-        { name: "Basic BTU Calculator", href: "/calculators/btu", isPro: false },
-        { name: "Voice HVAC Helper", href: "/tools/ai-symptom-diagnoser", isPro: false },
-        { name: "Alberta Rebate Calculator", href: "/tools/alberta-rebate-calculator", isPro: false },
-        { name: "Energy Efficiency Guide", href: "/tools/energy-guide", isPro: false }
+        { name: "BTU Calculator", href: "/calculators/btu", isPro: false },
+        { name: "AI HVAC Assistant", href: "/tools/ai-symptom-diagnoser", isPro: false },
+        { name: "Alberta Rebates", href: "/tools/alberta-rebate-calculator", isPro: false },
+        { name: "Pro Calculators", href: "/pro-calculator", isPro: true }
       ]
     },
-    { name: "Corporate", href: "/corporate-membership", icon: Crown },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" }
+    { name: "Forum", href: "/forum", icon: MessageSquare },
+    { name: "About", href: "/about" }
   ];
 
   const isActivePage = (href: string) => {

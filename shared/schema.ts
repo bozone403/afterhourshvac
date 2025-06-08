@@ -91,6 +91,31 @@ export const phoneVerificationAttempts = pgTable("phone_verification_attempts", 
   blockedUntil: timestamp("blocked_until"),
 });
 
+// Service Bookings - for consultation appointments and service scheduling
+export const serviceBookings = pgTable("service_bookings", {
+  id: serial("id").primaryKey(),
+  customerName: text("customer_name").notNull(),
+  customerPhone: text("customer_phone").notNull(),
+  customerEmail: text("customer_email"),
+  serviceAddress: text("service_address").notNull(),
+  serviceType: text("service_type").notNull(), // 'residential_consultation', 'commercial_consultation', 'maintenance', etc.
+  bookingDate: timestamp("booking_date").notNull(),
+  bookingTime: text("booking_time").notNull(),
+  status: text("status").default("pending"), // pending, confirmed, completed, cancelled
+  notes: text("notes"),
+  amount: numeric("amount", { precision: 10, scale: 2 }).default("0"),
+  paymentIntentId: text("payment_intent_id"),
+  paymentStatus: text("payment_status").default("pending"), // pending, paid, refunded
+  assignedTechnicianId: integer("assigned_technician_id").references(() => users.id),
+  estimatedDuration: integer("estimated_duration"), // in minutes
+  isEmergency: boolean("is_emergency").default(false),
+  priority: text("priority").default("normal"), // low, normal, high, urgent
+  source: text("source").default("website"), // website, phone, referral
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
+});
+
 // Suspicious Activity Log
 export const securityLogs = pgTable("security_logs", {
   id: serial("id").primaryKey(),
@@ -722,6 +747,11 @@ export type UserSession = typeof userSessions.$inferSelect;
 
 export type InsertPageView = typeof pageViews.$inferInsert;
 export type PageView = typeof pageViews.$inferSelect;
+
+// SERVICE BOOKINGS
+export const insertServiceBookingSchema = createInsertSchema(serviceBookings);
+export type InsertServiceBooking = z.infer<typeof insertServiceBookingSchema>;
+export type ServiceBooking = typeof serviceBookings.$inferSelect;
 
 export type InsertCalculatorUsage = typeof calculatorUsage.$inferInsert;
 export type CalculatorUsage = typeof calculatorUsage.$inferSelect;

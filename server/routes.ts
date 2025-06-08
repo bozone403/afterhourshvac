@@ -930,23 +930,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing required booking information" });
       }
 
-      const booking = {
-        date,
-        time,
+      // Determine service type based on service name
+      let serviceType = 'hvac_service';
+      if (service && service.toLowerCase().includes('residential')) {
+        serviceType = 'residential_consultation';
+      } else if (service && service.toLowerCase().includes('commercial')) {
+        serviceType = 'commercial_consultation';
+      } else if (service && service.toLowerCase().includes('maintenance')) {
+        serviceType = 'maintenance';
+      }
+
+      const bookingData = {
         customerName,
         customerPhone,
         customerEmail: customerEmail || null,
         serviceAddress,
+        serviceType,
+        bookingDate: new Date(`${date}T${time}`),
+        bookingTime: time,
+        status: status || 'pending',
         notes: notes || null,
-        service: service || 'HVAC Service',
-        amount: amount || 0,
+        amount: amount || "0",
         paymentIntentId: paymentIntentId || null,
-        status: status || 'confirmed',
-        createdAt: new Date(),
-        updatedAt: new Date()
+        paymentStatus: paymentIntentId ? 'paid' : 'pending',
+        source: 'website'
       };
 
-      console.log(`[Booking Created] ${customerName} - ${service} on ${date} at ${time}`);
+      const booking = await storage.createServiceBooking(bookingData);
+
+      console.log(`[Booking Created] ${customerName} - ${serviceType} on ${date} at ${time}`);
       
       res.status(201).json({ 
         message: "Booking created successfully",
@@ -958,6 +970,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: "Error creating booking", 
         message: error.message 
       });
+    }
+  });
+
+  // Get all bookings for admin dashboard
+  app.get('/api/admin/bookings', requireAuth, async (req, res) => {
+    try {
+      if (!req.user || !req.user.isAdmin) {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+
+      const bookings = await storage.getAllServiceBookings();
+      res.json(bookings);
+    } catch (error: any) {
+      console.error("Error fetching bookings:", error);
+      res.status(500).json({ error: "Failed to fetch bookings" });
     }
   });
 

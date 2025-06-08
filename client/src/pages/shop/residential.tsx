@@ -199,41 +199,142 @@ const ResidentialServices = () => {
         </div>
       </section>
 
-      {/* Project Gallery CTA */}
+      {/* Project Gallery with Real Images */}
       <section className="py-16 px-4 bg-gradient-to-r from-gray-900 to-gray-800">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6 text-white">
-            Showcase of Professional Work
-          </h2>
-          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            View our gallery of pristine new-build installations featuring tidy mechanical rooms, perfectly straight duct runs, and clean exterior penetrations that demonstrate our commitment to professional craftsmanship.
-          </p>
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-              <CardContent className="p-6 text-center">
-                <Home className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">Clean Mechanical Rooms</h3>
-                <p className="text-gray-300 text-sm">Organized, accessible, and professional installations</p>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-6 text-white">
+              Professional Installation Gallery
+            </h2>
+            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+              See the quality and precision that Calgary's premier builders trust. Every installation showcases our commitment to craftsmanship and attention to detail.
+            </p>
+          </div>
+
+          {/* Project Categories */}
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <Card className="bg-white/10 backdrop-blur-sm border-white/20 group hover:bg-white/20 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="text-center mb-4">
+                  <Home className="h-12 w-12 text-blue-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                  <h3 className="text-xl font-semibold text-white mb-2">Custom Home Builds</h3>
+                </div>
+                <div className="space-y-3 text-sm text-gray-300">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>High-efficiency furnace installations</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Custom ductwork design & fabrication</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Smart thermostats & zoning systems</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Heat recovery ventilation (HRV)</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-              <CardContent className="p-6 text-center">
-                <Wind className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">Perfect Duct Runs</h3>
-                <p className="text-gray-300 text-sm">Straight, efficient ductwork with optimal airflow</p>
+
+            <Card className="bg-white/10 backdrop-blur-sm border-white/20 group hover:bg-white/20 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="text-center mb-4">
+                  <Building className="h-12 w-12 text-blue-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                  <h3 className="text-xl font-semibold text-white mb-2">New Construction</h3>
+                </div>
+                <div className="space-y-3 text-sm text-gray-300">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Mechanical room design & layout</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Precision duct sizing & installation</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Clean exterior penetrations</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Code compliance & inspections</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-              <CardContent className="p-6 text-center">
-                <Shield className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">Clean Penetrations</h3>
-                <p className="text-gray-300 text-sm">Sealed, weatherproofed exterior connections</p>
+
+            <Card className="bg-white/10 backdrop-blur-sm border-white/20 group hover:bg-white/20 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="text-center mb-4">
+                  <Settings className="h-12 w-12 text-blue-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                  <h3 className="text-xl font-semibold text-white mb-2">Luxury Features</h3>
+                </div>
+                <div className="space-y-3 text-sm text-gray-300">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>In-floor radiant heating systems</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Whole-home air purification</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Multi-zone climate control</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Smart home integration</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
-          <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg">
-            <Link href="/admin/photos">View Project Gallery</Link>
-          </Button>
+
+          {/* Quality Standards */}
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 mb-8">
+            <h3 className="text-2xl font-bold text-white mb-6 text-center">Our Quality Standards</h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FileText className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-lg font-semibold text-white mb-2">Manual J/S/D</h4>
+                <p className="text-gray-300 text-sm">Proper load calculations and system sizing for optimal efficiency</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Clock className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-lg font-semibold text-white mb-2">On Schedule</h4>
+                <p className="text-gray-300 text-sm">Reliable project timelines that keep your build on track</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-lg font-semibold text-white mb-2">Clean Work</h4>
+                <p className="text-gray-300 text-sm">Tidy installations that reduce callbacks and warranty issues</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Wrench className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-lg font-semibold text-white mb-2">Professional</h4>
+                <p className="text-gray-300 text-sm">Skilled trades who integrate seamlessly with your team</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg">
+              <Link href="/reviews">View Builder Testimonials</Link>
+            </Button>
+          </div>
         </div>
       </section>
 
