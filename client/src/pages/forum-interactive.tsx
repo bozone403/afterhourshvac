@@ -135,7 +135,7 @@ export default function ForumInteractive() {
       const posts = await response.json();
       
       // Enhance posts with like counts and user like status
-      const enhancedPosts = await Promise.all(posts.map(async (post: ForumPost) => {
+      const enhancedPosts = await Promise.all(posts.map(async (post: any) => {
         try {
           // Get like count
           const likeResponse = await fetch(`/api/forum/likes/count?postId=${post.id}`);
@@ -155,14 +155,14 @@ export default function ForumInteractive() {
             ...post,
             likeCount: count,
             hasLiked,
-            userName: `User ${post.userId}` // TODO: Get actual username
+            userName: post.username || `User ${post.userId}`
           };
         } catch {
           return {
             ...post,
             likeCount: 0,
             hasLiked: false,
-            userName: `User ${post.userId}`
+            userName: post.username || `User ${post.userId}`
           };
         }
       }));
