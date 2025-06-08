@@ -1,4 +1,4 @@
-import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, forumLikes, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, userSessions, pageViews, calculatorUsage, systemMetrics, serviceRequests, serviceJourneyStages, serviceUpdates, technicianLocations, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type ForumLike, type InsertForumLike, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric, type ServiceRequest, type InsertServiceRequest, type ServiceJourneyStage, type InsertServiceJourneyStage, type ServiceUpdate, type InsertServiceUpdate, type TechnicianLocation, type InsertTechnicianLocation } from "@shared/schema";
+import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, forumLikes, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, userSessions, pageViews, calculatorUsage, systemMetrics, serviceRequests, serviceJourneyStages, serviceUpdates, technicianLocations, enhancedQuotes, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type ForumLike, type InsertForumLike, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric, type ServiceRequest, type InsertServiceRequest, type ServiceJourneyStage, type InsertServiceJourneyStage, type ServiceUpdate, type InsertServiceUpdate, type TechnicianLocation, type InsertTechnicianLocation } from "@shared/schema";
 import { eq, and, gte, desc, count } from "drizzle-orm";
 import { db, pool } from "./db";
 import session from "express-session";
@@ -131,6 +131,13 @@ export interface IStorage {
   // User session tracking
   createUserSession(data: InsertUserSession): Promise<UserSession>;
   endUserSession(sessionId: string): Promise<void>;
+
+  // Enhanced Quotes methods
+  getEnhancedQuotes(): Promise<any[]>;
+  getEnhancedQuoteById(id: number): Promise<any | undefined>;
+  getEnhancedQuoteByNumber(quoteNumber: string): Promise<any | undefined>;
+  createEnhancedQuote(quote: any): Promise<any>;
+  updateEnhancedQuote(id: number, data: any): Promise<any | undefined>;
   
   // Service Journey Tracking methods
   getServiceRequests(status?: string): Promise<ServiceRequest[]>;
@@ -999,6 +1006,42 @@ export class DatabaseStorage implements IStorage {
       .update(userSessions)
       .set({ logoutAt: new Date(), isActive: false })
       .where(eq(userSessions.sessionId, sessionId));
+  }
+
+  // Enhanced Quotes Implementation
+  async getEnhancedQuotes(): Promise<any[]> {
+    return await db.select().from(enhancedQuotes).orderBy(desc(enhancedQuotes.createdAt));
+  }
+
+  async getEnhancedQuoteById(id: number): Promise<any | undefined> {
+    const [quote] = await db.select().from(enhancedQuotes).where(eq(enhancedQuotes.id, id));
+    return quote;
+  }
+
+  async getEnhancedQuoteByNumber(quoteNumber: string): Promise<any | undefined> {
+    const [quote] = await db.select().from(enhancedQuotes).where(eq(enhancedQuotes.quoteNumber, quoteNumber));
+    return quote;
+  }
+
+  async createEnhancedQuote(quote: any): Promise<any> {
+    const [newQuote] = await db
+      .insert(enhancedQuotes)
+      .values({
+        ...quote,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    return newQuote;
+  }
+
+  async updateEnhancedQuote(id: number, data: any): Promise<any | undefined> {
+    const [updatedQuote] = await db
+      .update(enhancedQuotes)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(enhancedQuotes.id, id))
+      .returning();
+    return updatedQuote;
   }
 
   // Service Journey Tracking Implementation

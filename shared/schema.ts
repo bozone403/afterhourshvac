@@ -244,6 +244,32 @@ export const proCalculatorQuotes = pgTable("pro_calculator_quotes", {
   notes: text("notes"),
 });
 
+export const enhancedQuotes = pgTable("enhanced_quotes", {
+  id: serial("id").primaryKey(),
+  quoteNumber: text("quote_number").notNull().unique(),
+  userId: integer("user_id").references(() => users.id),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerPhone: text("customer_phone"),
+  customerAddress: text("customer_address"),
+  jobDescription: text("job_description"),
+  items: jsonb("items").notNull(), // Array of quote items
+  laborHours: numeric("labor_hours", { precision: 5, scale: 1 }),
+  laborRate: numeric("labor_rate", { precision: 10, scale: 2 }),
+  markupPercentage: numeric("markup_percentage", { precision: 5, scale: 2 }),
+  taxRate: numeric("tax_rate", { precision: 5, scale: 2 }),
+  subtotal: numeric("subtotal", { precision: 10, scale: 2 }),
+  labor: numeric("labor", { precision: 10, scale: 2 }),
+  markup: numeric("markup", { precision: 10, scale: 2 }),
+  tax: numeric("tax", { precision: 10, scale: 2 }),
+  total: numeric("total", { precision: 10, scale: 2 }),
+  depositAmount: numeric("deposit_amount", { precision: 10, scale: 2 }),
+  paymentStatus: text("payment_status").default("pending"), // pending, paid, partial
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Customer Records and Analytics
 export const customers = pgTable("customers", {
   id: serial("id").primaryKey(),
@@ -472,6 +498,10 @@ export const insertBlogCategorySchema = createInsertSchema(blogCategories);
 
 // HVAC EQUIPMENT
 export const insertHvacEquipmentSchema = createInsertSchema(hvacEquipment);
+
+// ENHANCED QUOTES
+export const insertEnhancedQuoteSchema = createInsertSchema(enhancedQuotes);
+export const selectEnhancedQuoteSchema = enhancedQuotes;
 export const insertHvacMaterialsSchema = createInsertSchema(hvacMaterials);
 export const insertHvacAccessoriesSchema = createInsertSchema(hvacAccessories);
 export const insertProCalculatorQuoteSchema = createInsertSchema(proCalculatorQuotes);

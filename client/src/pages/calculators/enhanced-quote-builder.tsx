@@ -1258,17 +1258,60 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                 </div>
               </div>
 
+              {/* Deposit Override Field */}
+              <div className="pt-4 border-t border-gray-200">
+                <Label className="text-gray-800 font-semibold">Deposit Amount (Optional)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                  placeholder="Leave blank for full payment"
+                  className="mt-1 text-gray-900"
+                />
+                <div className="text-xs text-gray-600 mt-1">
+                  For trusted customers - override payment amount
+                </div>
+                {depositAmount && parseFloat(depositAmount) > 0 && (
+                  <div className="mt-2 p-2 bg-yellow-50 rounded border border-yellow-200">
+                    <div className="text-sm text-yellow-800">
+                      <div>Deposit: ${parseFloat(depositAmount).toFixed(2)}</div>
+                      <div>Balance Due: ${(quote.total - parseFloat(depositAmount)).toFixed(2)}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="pt-4 space-y-3">
                 <Button 
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-                  onClick={() => {
-                    const quoteText = generateQuoteText();
-                    navigator.clipboard.writeText(quoteText);
-                  }}
-                  disabled={quote.items.length === 0}
+                  onClick={generatePDF}
+                  disabled={quote.items.length === 0 || isGeneratingPDF}
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Copy Professional Quote
+                  {isGeneratingPDF ? 'Generating PDF...' : 'Download PDF Quote'}
+                </Button>
+
+                <Button 
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
+                  onClick={saveQuote}
+                  disabled={quote.items.length === 0 || isSavingQuote}
+                >
+                  <FileCheck className="h-4 w-4 mr-2" />
+                  {isSavingQuote ? 'Saving...' : 'Save Quote to Site'}
+                </Button>
+
+                <Button 
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold"
+                  onClick={processStripePayment}
+                  disabled={quote.items.length === 0 || isProcessingPayment}
+                >
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  {isProcessingPayment ? 'Processing...' : 
+                    depositAmount && parseFloat(depositAmount) > 0 
+                      ? `Collect $${parseFloat(depositAmount).toFixed(2)} Deposit`
+                      : `Collect $${quote.total.toFixed(2)} Payment`
+                  }
                 </Button>
                 
                 <div className="text-center text-sm text-gray-600">
