@@ -870,18 +870,20 @@ export default function AdminDashboardEnhanced() {
                   ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Job Applications Tab */}
         <TabsContent value="applications" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Job Applications</CardTitle>
-              <CardDescription>Review and manage job applications</CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="hvac-card">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="hvac-heading-md mb-2">Job Applications</h2>
+                <p className="hvac-text-base text-gray-600">Review and manage job applications</p>
+              </div>
+            </div>
+            <div>
               {applicationsLoading ? (
                 <div className="flex items-center justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -975,18 +977,20 @@ export default function AdminDashboardEnhanced() {
                   ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Service Bookings Tab */}
         <TabsContent value="bookings" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Service Bookings</CardTitle>
-              <CardDescription>Manage customer service appointments and bookings</CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="hvac-card">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="hvac-heading-md mb-2">Service Bookings</h2>
+                <p className="hvac-text-base text-gray-600">Manage customer service appointments and bookings</p>
+              </div>
+            </div>
+            <div>
               {bookingsLoading ? (
                 <div className="flex items-center justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -1009,18 +1013,20 @@ export default function AdminDashboardEnhanced() {
                   )}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Contact Messages Tab */}
         <TabsContent value="contacts" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Contact Messages</CardTitle>
-              <CardDescription>Review and respond to customer inquiries</CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="hvac-card">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="hvac-heading-md mb-2">Contact Messages</h2>
+                <p className="hvac-text-base text-gray-600">Review and respond to customer inquiries</p>
+              </div>
+            </div>
+            <div>
               {contactsLoading ? (
                 <div className="flex items-center justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -1045,18 +1051,20 @@ export default function AdminDashboardEnhanced() {
                   )}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Emergency Requests Tab */}
         <TabsContent value="emergency" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Emergency Service Requests</CardTitle>
-              <CardDescription>Monitor urgent HVAC service requests</CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="hvac-card">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="hvac-heading-md mb-2">Emergency Service Requests</h2>
+                <p className="hvac-text-base text-gray-600">Monitor urgent HVAC service requests</p>
+              </div>
+            </div>
+            <div>
               {emergencyLoading ? (
                 <div className="flex items-center justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
