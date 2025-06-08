@@ -774,9 +774,9 @@ export default function AdminDashboardEnhanced() {
                             <Badge className={getUserTypeColor(user.userType)}>
                               {user.userType}
                             </Badge>
-                            {user.isAdmin && <Badge variant="destructive">Admin</Badge>}
-                            {user.hasProAccess && <Badge variant="secondary">Pro</Badge>}
-                            {user.accountLocked && <Badge variant="outline"><Lock className="h-3 w-3 mr-1" />Locked</Badge>}
+                            {user.isAdmin && <Badge className="bg-red-600 text-white">Admin</Badge>}
+                            {user.hasProAccess && <Badge className="bg-purple-600 text-white">Pro</Badge>}
+                            {user.accountLocked && <Badge className="bg-red-800 text-white"><Lock className="h-3 w-3 mr-1" />Locked</Badge>}
                           </div>
                           <p className="text-sm text-muted-foreground">{user.email}</p>
                           <p className="text-xs text-muted-foreground">
@@ -1239,16 +1239,16 @@ export default function AdminDashboardEnhanced() {
                           <p className="text-sm">{post.content?.substring(0, 150)}...</p>
                           <div className="flex gap-2 mt-2">
                             {post.isApproved === null && (
-                              <Badge variant="outline" className="text-yellow-600">Pending Review</Badge>
+                              <Badge className="bg-orange-600 text-white">Pending Review</Badge>
                             )}
                             {post.isApproved === true && (
-                              <Badge variant="default" className="bg-green-100 text-green-800">Approved</Badge>
+                              <Badge className="bg-green-600 text-white">Approved</Badge>
                             )}
                             {post.isApproved === false && (
-                              <Badge variant="destructive">Rejected</Badge>
+                              <Badge className="bg-red-600 text-white">Rejected</Badge>
                             )}
                             {post.isVisible === false && (
-                              <Badge variant="secondary">Hidden</Badge>
+                              <Badge className="bg-gray-600 text-white">Hidden</Badge>
                             )}
                           </div>
                         </div>
