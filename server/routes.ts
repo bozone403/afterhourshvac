@@ -3669,19 +3669,205 @@ Login to manage: afterhourshvac.ca/admin`;
   app.put("/api/admin/emergency-requests/:id", requireAuth, requireAdmin, async (req, res) => {
     try {
       const { id } = req.params;
-      const { status, notes, estimatedArrival, assignedTechnician } = req.body;
+      const { status, notes, estimatedArrival, assignedTechnician, totalCost } = req.body;
 
       const updatedRequest = await storage.updateEmergencyRequest(parseInt(id), {
         status,
         notes,
         estimatedArrival: estimatedArrival ? new Date(estimatedArrival) : undefined,
-        assignedTechnician
+        assignedTechnician,
+        totalCost
       });
 
       res.json(updatedRequest);
     } catch (error: any) {
       console.error("Error updating emergency request:", error);
       res.status(500).json({ error: "Failed to update emergency request" });
+    }
+  });
+
+  // Admin - Send invoice for emergency request
+  app.post("/api/admin/emergency-requests/:id/send-invoice", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { amount, description } = req.body;
+      
+      const emergencyRequest = await storage.getEmergencyRequest(parseInt(id));
+      if (!emergencyRequest) {
+        return res.status(404).json({ error: "Emergency request not found" });
+      }
+
+      if (!stripe) {
+        return res.status(500).json({ error: "Payment system not configured" });
+      }
+
+      // Create or find customer
+      let customer;
+      try {
+        const customers = await stripe.customers.list({
+          email: emergencyRequest.email,
+          limit: 1
+        });
+        
+        if (customers.data.length > 0) {
+          customer = customers.data[0];
+        } else {
+          customer = await stripe.customers.create({
+            email: emergencyRequest.email,
+            name: emergencyRequest.name,
+            phone: emergencyRequest.phone,
+          });
+        }
+      } catch (error) {
+        customer = await stripe.customers.create({
+          email: emergencyRequest.email || `${emergencyRequest.phone}@afterhourshvac.ca`,
+          name: emergencyRequest.name,
+          phone: emergencyRequest.phone,
+        });
+      }
+
+      // Create invoice
+      const invoice = await stripe.invoices.create({
+        customer: customer.id,
+        description: description || `Emergency HVAC Service - ${emergencyRequest.issueDescription}`,
+        collection_method: 'send_invoice',
+        days_until_due: 30,
+      });
+
+      await stripe.invoiceItems.create({
+        customer: customer.id,
+        invoice: invoice.id,
+        amount: Math.round(amount * 100), // Convert to cents
+        currency: 'cad',
+        description: description || `Emergency HVAC Service - ${emergencyRequest.issueDescription}`,
+      });
+
+      await stripe.invoices.finalizeInvoice(invoice.id);
+      await stripe.invoices.sendInvoice(invoice.id);
+
+      // Update emergency request with invoice info
+      await storage.updateEmergencyRequest(parseInt(id), {
+        totalCost: amount.toString(),
+        status: 'invoiced'
+      });
+
+      res.json({ success: true, invoiceId: invoice.id });
+    } catch (error: any) {
+      console.error("Error sending invoice:", error);
+      res.status(500).json({ error: "Failed to send invoice" });
+    }
+  });
+
+  // Admin - Update service booking
+  app.put("/api/admin/bookings/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      const updatedBooking = await storage.updateServiceBooking(parseInt(id), updates);
+      
+      if (!updatedBooking) {
+        return res.status(404).json({ error: "Service booking not found" });
+      }
+      
+      res.json(updatedBooking);
+    } catch (error: any) {
+      console.error("Error updating service booking:", error);
+      res.status(500).json({ error: "Failed to update service booking" });
+    }
+  });
+
+  // Admin - Delete service booking
+  app.delete("/api/admin/bookings/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      const success = await storage.deleteServiceBooking(parseInt(id));
+      
+      if (!success) {
+        return res.status(404).json({ error: "Service booking not found" });
+      }
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error deleting service booking:", error);
+      res.status(500).json({ error: "Failed to delete service booking" });
+    }
+  });
+
+  // Admin - Send invoice for service booking
+  app.post("/api/admin/bookings/:id/send-invoice", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { amount, description } = req.body;
+      
+      const booking = await storage.getServiceBooking(parseInt(id));
+      if (!booking) {
+        return res.status(404).json({ error: "Service booking not found" });
+      }
+
+      if (!stripe) {
+        return res.status(500).json({ error: "Payment system not configured" });
+      }
+
+      // Create or find customer
+      let customer;
+      const customerEmail = booking.email || `${booking.phone}@afterhourshvac.ca`;
+      
+      try {
+        const customers = await stripe.customers.list({
+          email: customerEmail,
+          limit: 1
+        });
+        
+        if (customers.data.length > 0) {
+          customer = customers.data[0];
+        } else {
+          customer = await stripe.customers.create({
+            email: customerEmail,
+            name: booking.name,
+            phone: booking.phone,
+          });
+        }
+      } catch (error) {
+        customer = await stripe.customers.create({
+          email: customerEmail,
+          name: booking.name,
+          phone: booking.phone,
+        });
+      }
+
+      // Create invoice
+      const invoice = await stripe.invoices.create({
+        customer: customer.id,
+        description: description || `HVAC Service - ${booking.serviceType}`,
+        collection_method: 'send_invoice',
+        days_until_due: 30,
+      });
+
+      await stripe.invoiceItems.create({
+        customer: customer.id,
+        invoice: invoice.id,
+        amount: Math.round(amount * 100), // Convert to cents
+        currency: 'cad',
+        description: description || `HVAC Service - ${booking.serviceType}`,
+      });
+
+      await stripe.invoices.finalizeInvoice(invoice.id);
+      await stripe.invoices.sendInvoice(invoice.id);
+
+      // Update booking with invoice info
+      await storage.updateServiceBooking(parseInt(id), {
+        invoiceSent: true,
+        invoiceId: invoice.id,
+        totalCost: amount.toString(),
+        paymentStatus: 'pending'
+      });
+
+      res.json({ success: true, invoiceId: invoice.id });
+    } catch (error: any) {
+      console.error("Error sending invoice:", error);
+      res.status(500).json({ error: "Failed to send invoice" });
     }
   });
 

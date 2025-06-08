@@ -1819,6 +1819,29 @@ export class DatabaseStorage implements IStorage {
     return updatedBooking;
   }
 
+  async deleteServiceBooking(id: number): Promise<boolean> {
+    const result = await db
+      .delete(serviceBookings)
+      .where(eq(serviceBookings.id, id));
+    return result.rowCount > 0;
+  }
+
+  async getServiceBooking(id: number): Promise<ServiceBooking | undefined> {
+    const [booking] = await db
+      .select()
+      .from(serviceBookings)
+      .where(eq(serviceBookings.id, id));
+    return booking;
+  }
+
+  async getEmergencyRequest(id: number): Promise<EmergencyRequest | undefined> {
+    const [request] = await db
+      .select()
+      .from(emergencyRequests)
+      .where(eq(emergencyRequests.id, id));
+    return request;
+  }
+
   async updateServiceBookingStatus(id: number, status: string): Promise<ServiceBooking | undefined> {
     const [updatedBooking] = await db
       .update(serviceBookings)
