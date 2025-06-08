@@ -140,6 +140,10 @@ export default function AdminDashboardEnhanced() {
     queryKey: ["/api/forum/topics"],
   });
 
+  const { data: schedules = [] } = useQuery({
+    queryKey: ['/api/schedules'],
+  });
+
   // Add gallery image mutation
   const addImageMutation = useMutation({
     mutationFn: async (data: Omit<GalleryImage, 'id' | 'createdAt'>) => {
@@ -226,8 +230,9 @@ export default function AdminDashboardEnhanced() {
           </div>
 
           <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5 bg-white border border-gray-200">
+            <TabsList className="grid w-full grid-cols-6 bg-white border border-gray-200">
               <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Overview</TabsTrigger>
+              <TabsTrigger value="calendar" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Calendar</TabsTrigger>
               <TabsTrigger value="gallery" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Gallery</TabsTrigger>
               <TabsTrigger value="forum" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Forum</TabsTrigger>
               <TabsTrigger value="customers" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Customers</TabsTrigger>
@@ -310,6 +315,98 @@ export default function AdminDashboardEnhanced() {
                           </div>
                         </div>
                       ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Calendar Tab */}
+            <TabsContent value="calendar" className="space-y-6">
+              <Card className="bg-white border-gray-200 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="text-gray-900 flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-blue-600" />
+                    Scheduled Jobs Calendar
+                  </CardTitle>
+                  <CardDescription className="text-gray-600">
+                    All upcoming installations and maintenance appointments from completed payments
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {Array.isArray(schedules) && schedules.length > 0 ? (
+                    <div className="space-y-4">
+                      {schedules.map((schedule: any) => {
+                        const scheduleDate = new Date(schedule.scheduledDate);
+                        const borderColor = schedule.jobType === 'installation' ? 'border-l-orange-500' : 
+                                          schedule.jobType === 'maintenance' ? 'border-l-blue-500' : 'border-l-green-500';
+                        
+                        return (
+                          <div key={schedule.id} className={`border-l-4 ${borderColor} pl-4 p-4 bg-gray-50 rounded-lg`}>
+                            <div className="flex items-center justify-between mb-2">
+                              <div>
+                                <h4 className="font-semibold text-gray-900 capitalize">
+                                  {schedule.serviceType} {schedule.jobType}
+                                </h4>
+                                <p className="text-sm text-gray-600">{schedule.customerName}</p>
+                                <p className="text-xs text-gray-500">{schedule.customerEmail}</p>
+                              </div>
+                              <div className="text-right">
+                                <Badge variant={schedule.status === 'completed' ? 'default' : 'secondary'}>
+                                  {schedule.status}
+                                </Badge>
+                                <p className="text-sm font-medium text-gray-900 mt-1">
+                                  {scheduleDate.toLocaleDateString('en-US', { 
+                                    weekday: 'long',
+                                    month: 'short', 
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                  })}
+                                </p>
+                                <p className="text-xs text-gray-600">
+                                  {schedule.startTime} - {schedule.endTime}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-200">
+                              <div>
+                                <p className="text-sm text-gray-600">
+                                  <strong>Address:</strong> {schedule.address}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  <strong>Phone:</strong> {schedule.customerPhone}
+                                </p>
+                                {schedule.quoteId && (
+                                  <p className="text-sm text-gray-600">
+                                    <strong>Quote:</strong> AH-{schedule.quoteId}
+                                  </p>
+                                )}
+                              </div>
+                              <div>
+                                {schedule.notes && (
+                                  <p className="text-sm text-gray-600">
+                                    <strong>Notes:</strong> {schedule.notes}
+                                  </p>
+                                )}
+                                {schedule.estimatedDuration && (
+                                  <p className="text-sm text-gray-600">
+                                    <strong>Duration:</strong> {schedule.estimatedDuration} hours
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <Calendar className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Scheduled Jobs</h3>
+                      <p className="text-gray-600">
+                        Jobs will appear here automatically when customers complete payments for quotes
+                      </p>
                     </div>
                   )}
                 </CardContent>
