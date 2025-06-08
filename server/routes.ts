@@ -2797,6 +2797,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin quotes management
+  app.get("/api/admin/quotes", requireAdmin, async (req, res) => {
+    try {
+      const quotes = await storage.getAllQuotes();
+      res.json(quotes);
+    } catch (error: any) {
+      console.error("Error getting admin quotes:", error);
+      res.status(500).json({ 
+        error: "Error getting admin quotes", 
+        message: error.message 
+      });
+    }
+  });
+
   // PUBLIC FORM SUBMISSION ENDPOINTS
 
   // Contact form submission

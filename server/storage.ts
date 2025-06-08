@@ -134,6 +134,7 @@ export interface IStorage {
 
   // Enhanced Quotes methods
   getEnhancedQuotes(): Promise<any[]>;
+  getAllQuotes(): Promise<any[]>;
   getEnhancedQuoteById(id: number): Promise<any | undefined>;
   getEnhancedQuoteByNumber(quoteNumber: string): Promise<any | undefined>;
   createEnhancedQuote(quote: any): Promise<any>;
@@ -1025,6 +1026,10 @@ export class DatabaseStorage implements IStorage {
 
   // Enhanced Quotes Implementation
   async getEnhancedQuotes(): Promise<any[]> {
+    return await db.select().from(enhancedQuotes).orderBy(desc(enhancedQuotes.createdAt));
+  }
+
+  async getAllQuotes(): Promise<any[]> {
     return await db.select().from(enhancedQuotes).orderBy(desc(enhancedQuotes.createdAt));
   }
 

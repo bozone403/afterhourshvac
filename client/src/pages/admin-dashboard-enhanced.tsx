@@ -144,6 +144,10 @@ export default function AdminDashboardEnhanced() {
     queryKey: ['/api/schedules'],
   });
 
+  const { data: allQuotes = [] } = useQuery({
+    queryKey: ['/api/admin/quotes'],
+  });
+
   // Add gallery image mutation
   const addImageMutation = useMutation({
     mutationFn: async (data: Omit<GalleryImage, 'id' | 'createdAt'>) => {
@@ -230,8 +234,9 @@ export default function AdminDashboardEnhanced() {
           </div>
 
           <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 bg-white border border-gray-200">
+            <TabsList className="grid w-full grid-cols-7 bg-white border border-gray-200">
               <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Overview</TabsTrigger>
+              <TabsTrigger value="quotes" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Quotes</TabsTrigger>
               <TabsTrigger value="calendar" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Calendar</TabsTrigger>
               <TabsTrigger value="gallery" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Gallery</TabsTrigger>
               <TabsTrigger value="forum" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Forum</TabsTrigger>
@@ -319,6 +324,109 @@ export default function AdminDashboardEnhanced() {
                   )}
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* Quotes Tab */}
+            <TabsContent value="quotes" className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-gray-900">Business Quotes Management</h2>
+                <Badge className="bg-blue-100 text-blue-800">
+                  {allQuotes.length} Total Quotes
+                </Badge>
+              </div>
+
+              <div className="grid gap-6">
+                {allQuotes.length === 0 ? (
+                  <Card>
+                    <CardContent className="p-8 text-center">
+                      <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Quotes Yet</h3>
+                      <p className="text-gray-600">Customer quotes will appear here when created through the enhanced quote builder.</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  allQuotes.map((quote: any) => (
+                    <Card key={quote.id} className="border border-gray-200">
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-lg text-gray-900">
+                              Quote #{quote.quoteNumber}
+                            </CardTitle>
+                            <CardDescription className="text-gray-600">
+                              {quote.customerName} • {quote.customerEmail}
+                            </CardDescription>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Badge 
+                              className={
+                                quote.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                quote.status === 'paid' ? 'bg-blue-100 text-blue-800' :
+                                quote.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-gray-100 text-gray-800'
+                              }
+                            >
+                              {quote.status}
+                            </Badge>
+                            <span className="text-xl font-bold text-orange-600">
+                              ${quote.totalCost?.toLocaleString() || '0'}
+                            </span>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                          <div>
+                            <p className="text-sm text-gray-600">Address</p>
+                            <p className="font-medium text-gray-900">{quote.serviceAddress}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Phone</p>
+                            <p className="font-medium text-gray-900">{quote.customerPhone}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Created</p>
+                            <p className="font-medium text-gray-900">
+                              {new Date(quote.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        {quote.equipmentDetails && (
+                          <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                            <h4 className="font-medium text-gray-900 mb-2">Equipment Details</h4>
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                              {Object.entries(quote.equipmentDetails).map(([key, value]) => (
+                                <div key={key}>
+                                  <span className="text-gray-600">{key}:</span>
+                                  <span className="ml-2 text-gray-900">{String(value)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+                          <div className="text-sm text-gray-600">
+                            Labor: ${quote.laborCost?.toLocaleString() || '0'} • 
+                            Materials: ${quote.materialCost?.toLocaleString() || '0'}
+                          </div>
+                          <div className="flex space-x-2">
+                            <Button variant="outline" size="sm">
+                              <FileText className="h-4 w-4 mr-1" />
+                              View Details
+                            </Button>
+                            <Button variant="outline" size="sm">
+                              <Phone className="h-4 w-4 mr-1" />
+                              Contact Customer
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
             </TabsContent>
 
             {/* Calendar Tab */}
