@@ -157,7 +157,7 @@ export default function ForumPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-orange-50">
       <Helmet>
         <title>HVAC Community Forum - AfterHours HVAC</title>
         <meta name="description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners." />
@@ -167,14 +167,21 @@ export default function ForumPage() {
         <meta name="keywords" content="HVAC forum, heating cooling discussion, HVAC community, HVAC questions, HVAC advice" />
       </Helmet>
       
-      <div className="container mx-auto py-24 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">HVAC Discussion Forum</h1>
-            <Button className="bg-orange-600 hover:bg-orange-700">
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Contact Support
-            </Button>
+      <div className="hvac-container hvac-section">
+        <div className="max-w-6xl mx-auto">
+          <div className="hvac-card mb-8">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="hvac-heading-lg mb-4 bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+                  HVAC Discussion Forum
+                </h1>
+                <p className="hvac-text-base text-gray-600">Professional community for HVAC technicians and industry experts</p>
+              </div>
+              <Button className="hvac-button-secondary">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Contact Support
+              </Button>
+            </div>
           </div>
         
           <p className="text-gray-600 mb-8">

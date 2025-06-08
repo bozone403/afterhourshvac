@@ -309,35 +309,37 @@ const AddOnsExtrasPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4 max-w-7xl">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center bg-red-100 border border-red-200 rounded-full px-6 py-3 mb-6">
-            <Wrench className="h-5 w-5 text-red-700 mr-3" />
-            <span className="text-red-800 text-lg font-bold">HVAC Add-Ons & Extras</span>
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Professional HVAC Enhancements
-          </h1>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
-            Upgrade your HVAC system with our professional add-on services. From air quality improvements 
-            to smart controls, we offer everything you need for optimal comfort and efficiency.
-          </p>
-          
-          {/* Contact Info */}
-          <div className="bg-white rounded-lg shadow-sm border p-6 max-w-2xl mx-auto">
-            <div className="flex items-center justify-center gap-8">
-              <div className="flex items-center gap-2">
-                <Phone className="h-5 w-5 text-red-600" />
-                <span className="font-semibold">(403) 613-6014</span>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-orange-50">
+      <div className="hvac-container">
+        <div className="hvac-section">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300 rounded-full px-8 py-4 mb-8 shadow-lg">
+              <Wrench className="h-6 w-6 text-orange-700 mr-3" />
+              <span className="text-orange-800 hvac-text-lg font-bold">HVAC Add-Ons & Extras</span>
+            </div>
+            <h1 className="hvac-heading-xl mb-6 bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+              Professional HVAC Enhancements
+            </h1>
+            <p className="hvac-text-lg max-w-4xl mx-auto mb-10 text-gray-700">
+              Upgrade your HVAC system with our professional add-on services. From air quality improvements 
+              to smart controls, we offer everything you need for optimal comfort and efficiency.
+            </p>
+            
+            {/* Contact Info */}
+            <div className="hvac-card max-w-2xl mx-auto">
+              <div className="flex items-center justify-center gap-8">
+                <div className="flex items-center gap-3">
+                  <Phone className="h-6 w-6 text-blue-600" />
+                  <span className="hvac-text-lg font-bold text-gray-900">(403) 613-6014</span>
+                </div>
+                <div className="text-gray-400 text-2xl">|</div>
+                <Link href="/contact">
+                  <Button className="hvac-button-primary">
+                    Get Quote
+                  </Button>
+                </Link>
               </div>
-              <div className="text-gray-500">|</div>
-              <Link href="/contact">
-                <Button variant="outline" size="sm">
-                  Get Quote
-                </Button>
-              </Link>
             </div>
           </div>
         </div>

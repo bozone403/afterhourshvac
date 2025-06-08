@@ -590,31 +590,30 @@ export default function AdminDashboardEnhanced() {
         </div>
 
         <Tabs defaultValue="users" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="users">User Management</TabsTrigger>
-          <TabsTrigger value="applications">Job Applications</TabsTrigger>
-          <TabsTrigger value="bookings">Service Bookings</TabsTrigger>
-          <TabsTrigger value="contacts">Contact Messages</TabsTrigger>
-          <TabsTrigger value="emergency">Emergency Requests</TabsTrigger>
-          <TabsTrigger value="forum">Forum Management</TabsTrigger>
-        </TabsList>
+          <TabsList className="hvac-card p-2 bg-gradient-to-r from-blue-50 to-orange-50">
+            <TabsTrigger value="users" className="hvac-text-base px-6 py-3 rounded-xl font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white">User Management</TabsTrigger>
+            <TabsTrigger value="applications" className="hvac-text-base px-6 py-3 rounded-xl font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white">Job Applications</TabsTrigger>
+            <TabsTrigger value="bookings" className="hvac-text-base px-6 py-3 rounded-xl font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white">Service Bookings</TabsTrigger>
+            <TabsTrigger value="contacts" className="hvac-text-base px-6 py-3 rounded-xl font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white">Contact Messages</TabsTrigger>
+            <TabsTrigger value="emergency" className="hvac-text-base px-6 py-3 rounded-xl font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white">Emergency Requests</TabsTrigger>
+            <TabsTrigger value="forum" className="hvac-text-base px-6 py-3 rounded-xl font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white">Forum Management</TabsTrigger>
+          </TabsList>
 
         {/* User Management Tab */}
-        <TabsContent value="users" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>User Management</CardTitle>
-                  <CardDescription>Create, edit, and manage user accounts</CardDescription>
-                </div>
-                <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Create User
-                    </Button>
-                  </DialogTrigger>
+        <TabsContent value="users" className="space-y-6">
+          <div className="hvac-card">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="hvac-heading-md mb-2">User Management</h2>
+                <p className="hvac-text-base text-gray-600">Create, edit, and manage user accounts</p>
+              </div>
+              <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+                <DialogTrigger asChild>
+                  <Button className="hvac-button-primary">
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Create User
+                  </Button>
+                </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
                       <DialogTitle>Create New User</DialogTitle>
@@ -739,7 +738,7 @@ export default function AdminDashboardEnhanced() {
                   </DialogContent>
                 </Dialog>
               </div>
-            </CardHeader>
+            </div>
             <CardContent>
               {usersLoading ? (
                 <div className="flex items-center justify-center p-8">
