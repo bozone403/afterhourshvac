@@ -77,6 +77,24 @@ interface ContactSubmission {
   status: 'new' | 'contacted' | 'resolved';
 }
 
+interface ServiceBooking {
+  id: number;
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  serviceAddress: string;
+  serviceType: string;
+  bookingDate: string;
+  bookingTime: string;
+  status: string;
+  notes?: string;
+  amount: string;
+  paymentStatus: string;
+  source: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const AdminPanel = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("applications");
@@ -91,6 +109,11 @@ const AdminPanel = () => {
   // Fetch users for management
   const { data: users = [], isLoading: usersLoading } = useQuery({
     queryKey: ["/api/admin/users"],
+  });
+
+  // Fetch consultation bookings
+  const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
+    queryKey: ["/api/admin/bookings"],
   });
 
   // Fetch contact submissions
@@ -188,10 +211,14 @@ const AdminPanel = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="applications" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
               Job Applications
+            </TabsTrigger>
+            <TabsTrigger value="bookings" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Consultations
             </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
