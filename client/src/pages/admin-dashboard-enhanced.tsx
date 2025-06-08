@@ -296,6 +296,37 @@ export default function AdminDashboardEnhanced() {
     });
   };
 
+  // Update emergency request mutation
+  const updateEmergencyRequestMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: number; status: string }) => {
+      return await apiRequest("PUT", `/api/admin/emergency-requests/${id}`, { status });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Request Updated",
+        description: "Emergency request status updated successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/emergency-requests"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Failed to update emergency request.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Emergency request update handler
+  const updateEmergencyRequest = (id: number, status: string) => {
+    updateEmergencyRequestMutation.mutate({ id, status });
+  };
+
+  // Application status update handler
+  const updateApplicationStatus = (id: number, status: string) => {
+    updateApplicationMutation.mutate({ id, data: { status } });
+  };
+
   const getUserTypeColor = (userType: string) => {
     switch (userType) {
       case 'admin': return 'bg-red-100 text-red-800';
