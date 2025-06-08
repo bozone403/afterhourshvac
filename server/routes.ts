@@ -2207,10 +2207,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create forum topic (requires authentication)
   app.post("/api/forum/topics", requireAuth, async (req, res) => {
     try {
-      const topicData = insertForumTopicSchema.parse({
-        ...req.body,
-        userId: (req.user as any).id
-      });
+      const { title, content, categoryId, username } = req.body;
+      const user = req.user as any;
+      
+      const topicData = {
+        title,
+        content,
+        slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        userId: user.id,
+        categoryId: categoryId || 1,
+        displayName: username || user.username || `User ${user.id}`,
+        isPinned: false,
+        isLocked: false
+      };
       
       const topic = await storage.createForumTopic(topicData);
       res.status(201).json(topic);
@@ -2226,10 +2235,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create forum post (requires authentication)
   app.post("/api/forum/posts", requireAuth, async (req, res) => {
     try {
-      const postData = insertForumPostSchema.parse({
-        ...req.body,
-        userId: (req.user as any).id
-      });
+      const { content, topicId, username } = req.body;
+      const user = req.user as any;
+      
+      const postData = {
+        content,
+        topicId,
+        userId: user.id,
+        displayName: username || user.username || `User ${user.id}`,
+        isEdited: false
+      };
       
       const post = await storage.createForumPost(postData);
       res.status(201).json(post);
