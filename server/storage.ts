@@ -1,4 +1,4 @@
-import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, forumLikes, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, jobApplications, userSessions, pageViews, calculatorUsage, systemMetrics, serviceRequests, serviceJourneyStages, serviceUpdates, technicianLocations, enhancedQuotes, jobSchedules, maintenancePlans, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type ForumLike, type InsertForumLike, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type JobApplication, type InsertJobApplication, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric, type ServiceRequest, type InsertServiceRequest, type ServiceJourneyStage, type InsertServiceJourneyStage, type ServiceUpdate, type InsertServiceUpdate, type TechnicianLocation, type InsertTechnicianLocation } from "@shared/schema";
+import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, forumLikes, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, jobApplications, userSessions, pageViews, calculatorUsage, systemMetrics, serviceRequests, serviceJourneyStages, serviceUpdates, technicianLocations, enhancedQuotes, jobSchedules, maintenancePlans, corporateAccounts, phoneVerificationAttempts, securityLogs, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type ForumLike, type InsertForumLike, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type JobApplication, type InsertJobApplication, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric, type ServiceRequest, type InsertServiceRequest, type ServiceJourneyStage, type InsertServiceJourneyStage, type ServiceUpdate, type InsertServiceUpdate, type TechnicianLocation, type InsertTechnicianLocation } from "@shared/schema";
 import { eq, and, gte, lte, desc, count } from "drizzle-orm";
 import { db, pool } from "./db";
 import session from "express-session";
@@ -17,11 +17,37 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByPhone(phone: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, data: Partial<User>): Promise<User | undefined>;
   updateUserProAccess(userId: number, hasAccess: boolean, grantedAt: Date): Promise<User | undefined>;
   updateStripeCustomerId(userId: number, customerId: string): Promise<User | undefined>;
   checkProAccess(userId: number): Promise<boolean>;
+  
+  // Phone Verification methods
+  updateUserPhoneVerification(phone: string, code: string, expiresAt: Date): Promise<void>;
+  markPhoneAsVerified(userId: number): Promise<void>;
+  getPhoneVerificationAttempts(phone: string, ipAddress?: string): Promise<any>;
+  createPhoneVerificationAttempt(data: any): Promise<any>;
+  
+  // Session Management methods
+  getActiveUserSessions(userId: number): Promise<any[]>;
+  createUserSession(data: any): Promise<any>;
+  getUserSessionBySessionId(sessionId: string): Promise<any>;
+  updateSessionActivity(sessionId: string): Promise<void>;
+  terminateUserSession(sessionId: string): Promise<void>;
+  terminateOldestSession(userId: number): Promise<void>;
+  
+  // Security methods
+  updateUserDeviceFingerprint(userId: number, fingerprint: string): Promise<void>;
+  createSecurityLog(data: any): Promise<any>;
+  
+  // Corporate Account methods
+  createCorporateAccount(data: any): Promise<any>;
+  getCorporateAccount(id: number): Promise<any>;
+  getCorporateAccountByUserId(userId: number): Promise<any>;
+  updateCorporateAccountUserCount(accountId: number, count: number): Promise<void>;
+  addUserToCorporateAccount(userId: number, corporateAccountId: number): Promise<void>;
   
   // Product methods
   getProducts(): Promise<Product[]>;

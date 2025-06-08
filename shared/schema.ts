@@ -20,12 +20,88 @@ export const users = pgTable("users", {
   hasPro: boolean("has_pro").default(false),
   isAdmin: boolean("is_admin").default(false),
   proAccessGrantedAt: timestamp("pro_access_granted_at"),
-  membershipType: text("membership_type"), // 'monthly', 'yearly', 'lifetime'
+  membershipType: text("membership_type"), // 'monthly', 'yearly', 'lifetime', 'corporate'
   membershipExpiresAt: timestamp("membership_expires_at"),
   isLifetimeMember: boolean("is_lifetime_member").default(false),
   profileImageUrl: text("profile_image_url"),
+  
+  // Phone Verification & Account Security
+  phoneVerified: boolean("phone_verified").default(false),
+  phoneVerificationCode: text("phone_verification_code"),
+  phoneVerificationExpiresAt: timestamp("phone_verification_expires_at"),
+  phoneVerifiedAt: timestamp("phone_verified_at"),
+  
+  // Corporate Membership Features
+  corporateAccountId: integer("corporate_account_id").references(() => corporateAccounts.id),
+  isCorporateAdmin: boolean("is_corporate_admin").default(false),
+  
+  // Device & Session Tracking
+  maxSessions: integer("max_sessions").default(1), // Pro: 3, Corporate: unlimited per corporate account
+  deviceFingerprint: text("device_fingerprint"), // Browser/device identification
+  lastDeviceFingerprint: text("last_device_fingerprint"),
+  suspiciousLoginDetected: boolean("suspicious_login_detected").default(false),
+  accountLocked: boolean("account_locked").default(false),
+  lockedAt: timestamp("locked_at"),
+  lockReason: text("lock_reason"),
+  
   createdAt: timestamp("created_at").defaultNow(),
   lastLogin: timestamp("last_login"),
+});
+
+// Corporate Accounts - for managing multiple users under one subscription
+export const corporateAccounts = pgTable("corporate_accounts", {
+  id: serial("id").primaryKey(),
+  companyName: text("company_name").notNull(),
+  adminUserId: integer("admin_user_id").notNull(),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  maxUsers: integer("max_users").default(10), // Standard corporate: 10, custom for more
+  currentUsers: integer("current_users").default(0),
+  isActive: boolean("is_active").default(true),
+  subscriptionType: text("subscription_type").default("corporate"), // corporate, enterprise_custom
+  annualRevenue: text("annual_revenue"), // For custom enterprise pricing
+  customPricingNotes: text("custom_pricing_notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Active Sessions - track where users are logged in
+export const userSessions = pgTable("user_sessions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  sessionId: text("session_id").notNull().unique(),
+  deviceFingerprint: text("device_fingerprint").notNull(),
+  deviceInfo: jsonb("device_info"), // Browser, OS, IP, etc.
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  location: text("location"), // City, Country from IP
+  isActive: boolean("is_active").default(true),
+  lastActivity: timestamp("last_activity").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+  expiresAt: timestamp("expires_at"),
+});
+
+// Phone Verification Attempts - rate limiting
+export const phoneVerificationAttempts = pgTable("phone_verification_attempts", {
+  id: serial("id").primaryKey(),
+  phone: text("phone").notNull(),
+  ipAddress: text("ip_address"),
+  attemptCount: integer("attempt_count").default(1),
+  lastAttempt: timestamp("last_attempt").defaultNow(),
+  blockedUntil: timestamp("blocked_until"),
+});
+
+// Suspicious Activity Log
+export const securityLogs = pgTable("security_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  eventType: text("event_type").notNull(), // 'login', 'failed_login', 'device_change', 'suspicious_activity'
+  details: jsonb("details"),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  severity: text("severity").default("low"), // low, medium, high, critical
+  resolved: boolean("resolved").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Product Access Tracking for different systems
@@ -431,17 +507,7 @@ export const jobApplications = pgTable("job_applications", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// User Sessions and Activity Tracking
-export const userSessions = pgTable("user_sessions", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id),
-  sessionId: text("session_id").notNull(),
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
-  loginAt: timestamp("login_at").defaultNow(),
-  logoutAt: timestamp("logout_at"),
-  isActive: boolean("is_active").default(true),
-});
+// Removed duplicate userSessions - using the more comprehensive one defined above
 
 // Website Analytics
 export const pageViews = pgTable("page_views", {
@@ -556,6 +622,12 @@ export const insertUserSchema = createInsertSchema(users).pick({
 });
 
 export const insertUserAdminSchema = createInsertSchema(users);
+
+// Security and Corporate Account schemas
+export const insertCorporateAccountSchema = createInsertSchema(corporateAccounts);
+export const insertUserSessionSchema = createInsertSchema(userSessions);
+export const insertPhoneVerificationAttemptSchema = createInsertSchema(phoneVerificationAttempts);
+export const insertSecurityLogSchema = createInsertSchema(securityLogs);
 
 // PRODUCTS AND ACCESS
 export const insertProductSchema = createInsertSchema(products);
