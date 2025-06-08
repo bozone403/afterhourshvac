@@ -37,6 +37,7 @@ import ProCalculator from "@/pages/pro-calculator";
 import ProCalculatorV2 from "@/pages/pro-calculator-v2";
 import ProPortal from "@/pages/pro-portal";
 import MembershipSimple from "@/pages/membership-simple";
+import CorporateMembership from "@/pages/corporate-membership";
 import FurnaceInstall from "@/pages/services/furnace-install";
 import ACRepair from "@/pages/services/ac-repair";
 import DuctCleaning from "@/pages/services/duct-cleaning";
@@ -124,6 +125,7 @@ function Router() {
         
         {/* Membership and Pro routes */}
         <Route path="/membership" component={MembershipSimple} />
+        <Route path="/corporate-membership" component={CorporateMembership} />
         <Route path="/pro-calculator" component={ProCalculatorV2} />
         <Route path="/pro-portal" component={ProPortal} />
         <Route path="/calculators/pro-btu" component={ProBTUCalculator} />

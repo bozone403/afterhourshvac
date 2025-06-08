@@ -3459,5 +3459,134 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Corporate inquiry endpoints
+  app.post("/api/corporate-inquiry", async (req, res) => {
+    try {
+      const inquiryData = {
+        companyName: req.body.companyName,
+        contactName: req.body.contactName,
+        email: req.body.email,
+        phone: req.body.phone,
+        industry: req.body.industry || null,
+        companySize: req.body.companySize || null,
+        annualRevenue: req.body.annualRevenue || null,
+        currentUsers: req.body.currentUsers || 1,
+        projectedUsers: req.body.projectedUsers || 10,
+        specificNeeds: req.body.specificNeeds || null,
+        timeline: req.body.timeline || null,
+        status: 'pending',
+        createdAt: new Date()
+      };
+
+      const inquiry = await storage.createCorporateInquiry(inquiryData);
+      
+      res.status(201).json({ 
+        success: true, 
+        message: "Corporate inquiry submitted successfully",
+        inquiryId: inquiry.id 
+      });
+    } catch (error: any) {
+      console.error("Error creating corporate inquiry:", error);
+      res.status(500).json({ 
+        error: "Failed to submit corporate inquiry", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Phone verification endpoints
+  app.post("/api/phone/send-verification", async (req, res) => {
+    try {
+      const { phone } = req.body;
+      const ipAddress = req.ip || req.connection.remoteAddress;
+
+      if (!phone) {
+        return res.status(400).json({ error: "Phone number is required" });
+      }
+
+      const PhoneVerificationService = require('./services/phone-verification').PhoneVerificationService;
+      const result = await PhoneVerificationService.sendVerificationCode(phone, ipAddress);
+
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error sending verification code:", error);
+      res.status(500).json({ 
+        error: "Failed to send verification code", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.post("/api/phone/verify-code", async (req, res) => {
+    try {
+      const { phone, code } = req.body;
+
+      if (!phone || !code) {
+        return res.status(400).json({ error: "Phone number and verification code are required" });
+      }
+
+      const PhoneVerificationService = require('./services/phone-verification').PhoneVerificationService;
+      const result = await PhoneVerificationService.verifyPhoneCode(phone, code);
+
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error verifying phone code:", error);
+      res.status(500).json({ 
+        error: "Failed to verify phone code", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Corporate account management endpoints
+  app.post("/api/corporate-accounts", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const accountData = {
+        companyName: req.body.companyName,
+        contactEmail: req.body.contactEmail,
+        maxUsers: req.body.maxUsers || 10,
+        currentUsers: 0,
+        planType: req.body.planType || 'corporate',
+        status: 'active',
+        createdAt: new Date()
+      };
+
+      const account = await storage.createCorporateAccount(accountData);
+      res.status(201).json(account);
+    } catch (error: any) {
+      console.error("Error creating corporate account:", error);
+      res.status(500).json({ 
+        error: "Failed to create corporate account", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.get("/api/corporate-accounts/:id", requireAuth, async (req, res) => {
+    try {
+      const accountId = parseInt(req.params.id);
+      const user = req.user as User;
+
+      const account = await storage.getCorporateAccount(accountId);
+      
+      if (!account) {
+        return res.status(404).json({ error: "Corporate account not found" });
+      }
+
+      // Only allow access if user is admin or belongs to this corporate account
+      if (!user.isAdmin && user.corporateAccountId !== accountId) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      res.json(account);
+    } catch (error: any) {
+      console.error("Error getting corporate account:", error);
+      res.status(500).json({ 
+        error: "Failed to get corporate account", 
+        message: error.message 
+      });
+    }
+  });
+
   return httpServer;
 }

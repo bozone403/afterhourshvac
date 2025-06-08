@@ -48,6 +48,7 @@ export interface IStorage {
   getCorporateAccountByUserId(userId: number): Promise<any>;
   updateCorporateAccountUserCount(accountId: number, count: number): Promise<void>;
   addUserToCorporateAccount(userId: number, corporateAccountId: number): Promise<void>;
+  createCorporateInquiry(data: any): Promise<any>;
   
   // Product methods
   getProducts(): Promise<Product[]>;
@@ -1549,6 +1550,177 @@ export class DatabaseStorage implements IStorage {
       .where(eq(jobApplications.id, id))
       .returning();
     return application;
+  }
+
+  // Phone Verification methods
+  async getUserByPhone(phone: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.phone, phone));
+    return user;
+  }
+
+  async updateUserPhoneVerification(phone: string, code: string, expiresAt: Date): Promise<void> {
+    await db
+      .update(users)
+      .set({
+        phoneVerificationCode: code,
+        phoneVerificationExpiresAt: expiresAt
+      })
+      .where(eq(users.phone, phone));
+  }
+
+  async markPhoneAsVerified(userId: number): Promise<void> {
+    await db
+      .update(users)
+      .set({
+        phoneVerified: true,
+        phoneVerifiedAt: new Date(),
+        phoneVerificationCode: null,
+        phoneVerificationExpiresAt: null
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async getPhoneVerificationAttempts(phone: string, ipAddress?: string): Promise<any> {
+    const [attempt] = await db
+      .select()
+      .from(phoneVerificationAttempts)
+      .where(eq(phoneVerificationAttempts.phone, phone))
+      .orderBy(desc(phoneVerificationAttempts.lastAttempt))
+      .limit(1);
+    return attempt;
+  }
+
+  async createPhoneVerificationAttempt(data: any): Promise<any> {
+    const [attempt] = await db
+      .insert(phoneVerificationAttempts)
+      .values(data)
+      .returning();
+    return attempt;
+  }
+
+  // Session Management methods
+  async getActiveUserSessions(userId: number): Promise<any[]> {
+    const sessions = await db
+      .select()
+      .from(userSessions)
+      .where(and(
+        eq(userSessions.userId, userId),
+        eq(userSessions.isActive, true)
+      ))
+      .orderBy(desc(userSessions.lastActivity));
+    return sessions;
+  }
+
+  async createUserSession(data: any): Promise<any> {
+    const [session] = await db
+      .insert(userSessions)
+      .values(data)
+      .returning();
+    return session;
+  }
+
+  async getUserSessionBySessionId(sessionId: string): Promise<any> {
+    const [session] = await db
+      .select()
+      .from(userSessions)
+      .where(eq(userSessions.sessionId, sessionId));
+    return session;
+  }
+
+  async updateSessionActivity(sessionId: string): Promise<void> {
+    await db
+      .update(userSessions)
+      .set({ lastActivity: new Date() })
+      .where(eq(userSessions.sessionId, sessionId));
+  }
+
+  async terminateUserSession(sessionId: string): Promise<void> {
+    await db
+      .update(userSessions)
+      .set({ isActive: false })
+      .where(eq(userSessions.sessionId, sessionId));
+  }
+
+  async terminateOldestSession(userId: number): Promise<void> {
+    const [oldestSession] = await db
+      .select()
+      .from(userSessions)
+      .where(and(
+        eq(userSessions.userId, userId),
+        eq(userSessions.isActive, true)
+      ))
+      .orderBy(userSessions.lastActivity)
+      .limit(1);
+
+    if (oldestSession) {
+      await this.terminateUserSession(oldestSession.sessionId);
+    }
+  }
+
+  // Security methods
+  async updateUserDeviceFingerprint(userId: number, fingerprint: string): Promise<void> {
+    await db
+      .update(users)
+      .set({
+        lastDeviceFingerprint: fingerprint,
+        deviceFingerprint: fingerprint
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async createSecurityLog(data: any): Promise<any> {
+    const [log] = await db
+      .insert(securityLogs)
+      .values(data)
+      .returning();
+    return log;
+  }
+
+  // Corporate Account methods
+  async createCorporateAccount(data: any): Promise<any> {
+    const [account] = await db
+      .insert(corporateAccounts)
+      .values(data)
+      .returning();
+    return account;
+  }
+
+  async getCorporateAccount(id: number): Promise<any> {
+    const [account] = await db
+      .select()
+      .from(corporateAccounts)
+      .where(eq(corporateAccounts.id, id));
+    return account;
+  }
+
+  async getCorporateAccountByUserId(userId: number): Promise<any> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId));
+    
+    if (user?.corporateAccountId) {
+      return await this.getCorporateAccount(user.corporateAccountId);
+    }
+    return null;
+  }
+
+  async updateCorporateAccountUserCount(accountId: number, count: number): Promise<void> {
+    await db
+      .update(corporateAccounts)
+      .set({ currentUsers: count })
+      .where(eq(corporateAccounts.id, accountId));
+  }
+
+  async addUserToCorporateAccount(userId: number, corporateAccountId: number): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        corporateAccountId,
+        membershipType: 'corporate',
+        maxSessions: 5 // Corporate users get more sessions
+      })
+      .where(eq(users.id, userId));
   }
 }
 
