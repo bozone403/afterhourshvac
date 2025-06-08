@@ -1,5 +1,5 @@
-import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, forumLikes, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, userSessions, pageViews, calculatorUsage, systemMetrics, serviceRequests, serviceJourneyStages, serviceUpdates, technicianLocations, enhancedQuotes, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type ForumLike, type InsertForumLike, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric, type ServiceRequest, type InsertServiceRequest, type ServiceJourneyStage, type InsertServiceJourneyStage, type ServiceUpdate, type InsertServiceUpdate, type TechnicianLocation, type InsertTechnicianLocation } from "@shared/schema";
-import { eq, and, gte, desc, count } from "drizzle-orm";
+import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, forumLikes, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, userSessions, pageViews, calculatorUsage, systemMetrics, serviceRequests, serviceJourneyStages, serviceUpdates, technicianLocations, enhancedQuotes, jobSchedules, maintenancePlans, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type ForumLike, type InsertForumLike, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric, type ServiceRequest, type InsertServiceRequest, type ServiceJourneyStage, type InsertServiceJourneyStage, type ServiceUpdate, type InsertServiceUpdate, type TechnicianLocation, type InsertTechnicianLocation } from "@shared/schema";
+import { eq, and, gte, lte, desc, count } from "drizzle-orm";
 import { db, pool } from "./db";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
@@ -138,6 +138,21 @@ export interface IStorage {
   getEnhancedQuoteByNumber(quoteNumber: string): Promise<any | undefined>;
   createEnhancedQuote(quote: any): Promise<any>;
   updateEnhancedQuote(id: number, data: any): Promise<any | undefined>;
+  
+  // Job Scheduling methods
+  getJobSchedules(userId?: number): Promise<any[]>;
+  getJobScheduleById(id: number): Promise<any | undefined>;
+  createJobSchedule(schedule: any): Promise<any>;
+  updateJobSchedule(id: number, data: any): Promise<any | undefined>;
+  deleteJobSchedule(id: number): Promise<boolean>;
+  getJobSchedulesByDate(startDate: Date, endDate: Date): Promise<any[]>;
+  
+  // Maintenance Plans methods
+  getMaintenancePlans(customerId?: number): Promise<any[]>;
+  getMaintenancePlanById(id: number): Promise<any | undefined>;
+  createMaintenancePlan(plan: any): Promise<any>;
+  updateMaintenancePlan(id: number, data: any): Promise<any | undefined>;
+  deleteMaintenancePlan(id: number): Promise<boolean>;
   
   // Service Journey Tracking methods
   getServiceRequests(status?: string): Promise<ServiceRequest[]>;
@@ -1122,6 +1137,98 @@ export class DatabaseStorage implements IStorage {
       .where(eq(serviceJourneyStages.id, id))
       .returning();
     return updatedStage;
+  }
+
+  // Job Scheduling implementation
+  async getJobSchedules(userId?: number): Promise<any[]> {
+    if (userId) {
+      return await db.select().from(jobSchedules)
+        .where(eq(jobSchedules.userId, userId))
+        .orderBy(jobSchedules.scheduledDate);
+    }
+    return await db.select().from(jobSchedules)
+      .orderBy(jobSchedules.scheduledDate);
+  }
+
+  async getJobScheduleById(id: number): Promise<any | undefined> {
+    const [schedule] = await db.select().from(jobSchedules).where(eq(jobSchedules.id, id));
+    return schedule;
+  }
+
+  async createJobSchedule(schedule: any): Promise<any> {
+    const [newSchedule] = await db
+      .insert(jobSchedules)
+      .values({
+        ...schedule,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    return newSchedule;
+  }
+
+  async updateJobSchedule(id: number, data: any): Promise<any | undefined> {
+    const [updatedSchedule] = await db
+      .update(jobSchedules)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(jobSchedules.id, id))
+      .returning();
+    return updatedSchedule;
+  }
+
+  async deleteJobSchedule(id: number): Promise<boolean> {
+    const result = await db.delete(jobSchedules).where(eq(jobSchedules.id, id));
+    return result.count > 0;
+  }
+
+  async getJobSchedulesByDate(startDate: Date, endDate: Date): Promise<any[]> {
+    return await db.select().from(jobSchedules)
+      .where(and(
+        gte(jobSchedules.scheduledDate, startDate),
+        lte(jobSchedules.scheduledDate, endDate)
+      ))
+      .orderBy(jobSchedules.scheduledDate);
+  }
+
+  // Maintenance Plans implementation
+  async getMaintenancePlans(customerId?: number): Promise<any[]> {
+    if (customerId) {
+      return await db.select().from(maintenancePlans)
+        .where(eq(maintenancePlans.customerId, customerId))
+        .orderBy(maintenancePlans.nextServiceDate);
+    }
+    return await db.select().from(maintenancePlans)
+      .orderBy(maintenancePlans.nextServiceDate);
+  }
+
+  async getMaintenancePlanById(id: number): Promise<any | undefined> {
+    const [plan] = await db.select().from(maintenancePlans).where(eq(maintenancePlans.id, id));
+    return plan;
+  }
+
+  async createMaintenancePlan(plan: any): Promise<any> {
+    const [newPlan] = await db
+      .insert(maintenancePlans)
+      .values({
+        ...plan,
+        createdAt: new Date(),
+      })
+      .returning();
+    return newPlan;
+  }
+
+  async updateMaintenancePlan(id: number, data: any): Promise<any | undefined> {
+    const [updatedPlan] = await db
+      .update(maintenancePlans)
+      .set(data)
+      .where(eq(maintenancePlans.id, id))
+      .returning();
+    return updatedPlan;
+  }
+
+  async deleteMaintenancePlan(id: number): Promise<boolean> {
+    const result = await db.delete(maintenancePlans).where(eq(maintenancePlans.id, id));
+    return result.count > 0;
   }
 
   async completeServiceJourneyStage(serviceRequestId: number, stage: string): Promise<ServiceJourneyStage | undefined> {

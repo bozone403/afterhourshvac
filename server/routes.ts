@@ -541,6 +541,129 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Job Scheduling API Routes
+  app.get("/api/schedules", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const schedules = await storage.getJobSchedules(userId);
+      res.json(schedules);
+    } catch (error: any) {
+      console.error("Error fetching schedules:", error);
+      res.status(500).json({ 
+        error: "Error fetching schedules", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.post("/api/schedules", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const scheduleData = req.body;
+      
+      const schedule = await storage.createJobSchedule({
+        ...scheduleData,
+        userId
+      });
+      
+      res.status(201).json(schedule);
+    } catch (error: any) {
+      console.error("Error creating schedule:", error);
+      res.status(500).json({ 
+        error: "Error creating schedule", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.put("/api/schedules/:id", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updateData = req.body;
+      
+      const schedule = await storage.updateJobSchedule(id, updateData);
+      
+      if (!schedule) {
+        return res.status(404).json({ error: "Schedule not found" });
+      }
+      
+      res.json(schedule);
+    } catch (error: any) {
+      console.error("Error updating schedule:", error);
+      res.status(500).json({ 
+        error: "Error updating schedule", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Maintenance Plans API Routes
+  app.get("/api/maintenance-plans", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const plans = await storage.getMaintenancePlans(userId);
+      res.json(plans);
+    } catch (error: any) {
+      console.error("Error fetching maintenance plans:", error);
+      res.status(500).json({ 
+        error: "Error fetching maintenance plans", 
+        message: error.message 
+      });
+    }
+  });
+
+  app.post("/api/maintenance-plans", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const planData = req.body;
+      
+      const plan = await storage.createMaintenancePlan({
+        ...planData,
+        customerId: userId
+      });
+      
+      res.status(201).json(plan);
+    } catch (error: any) {
+      console.error("Error creating maintenance plan:", error);
+      res.status(500).json({ 
+        error: "Error creating maintenance plan", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Schedule a job from quote
+  app.post("/api/quotes/:id/schedule", requireAuth, async (req, res) => {
+    try {
+      const quoteId = parseInt(req.params.id);
+      const userId = (req.user as any).id;
+      const scheduleData = req.body;
+      
+      const quote = await storage.getEnhancedQuoteById(quoteId);
+      if (!quote) {
+        return res.status(404).json({ error: "Quote not found" });
+      }
+      
+      const schedule = await storage.createJobSchedule({
+        quoteId,
+        userId,
+        customerName: quote.customerName,
+        customerEmail: quote.customerEmail,
+        customerPhone: quote.customerPhone,
+        customerAddress: quote.customerAddress,
+        ...scheduleData
+      });
+      
+      res.status(201).json(schedule);
+    } catch (error: any) {
+      console.error("Error scheduling job:", error);
+      res.status(500).json({ 
+        error: "Error scheduling job", 
+        message: error.message 
+      });
+    }
+  });
+
   // Check if user has Pro Calculator access (legacy endpoint)
   app.get("/api/check-pro-access", async (req, res) => {
     try {
