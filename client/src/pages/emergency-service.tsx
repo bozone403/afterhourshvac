@@ -1,443 +1,442 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { 
+  Phone, 
+  Clock, 
+  AlertTriangle, 
+  DollarSign, 
+  MapPin,
+  User,
+  MessageSquare,
+  CreditCard,
+  CheckCircle
+} from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Clock, Phone, MapPin, Wrench, Shield, Users, Star } from "lucide-react";
 
-const emergencySchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  phone: z.string().min(10, "Please enter a valid phone number"),
-  address: z.string().min(5, "Please enter a complete address"),
-  emergencyType: z.string().min(1, "Please select an emergency type"),
-  description: z.string().min(10, "Please provide a detailed description"),
-  severity: z.string().min(1, "Please select severity level"),
-});
+interface EmergencyPricing {
+  baseRate: number;
+  minimumHours: number;
+  totalCost: number;
+  timeSlot: string;
+  description: string;
+}
 
-type EmergencyFormData = z.infer<typeof emergencySchema>;
-
-export default function EmergencyService() {
+const EmergencyServicePage = () => {
+  const { user } = useAuth();
   const { toast } = useToast();
-  const [submissionId, setSubmissionId] = useState<string | null>(null);
-  
-  const form = useForm<EmergencyFormData>({
-    resolver: zodResolver(emergencySchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      emergencyType: "",
-      description: "",
-      severity: "",
-    },
+  const [currentPricing, setCurrentPricing] = useState<EmergencyPricing | null>(null);
+  const [formData, setFormData] = useState({
+    name: user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.username || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    address: '',
+    emergencyType: '',
+    description: '',
+    urgencyLevel: 'high'
   });
 
-  const submitEmergency = useMutation({
-    mutationFn: async (data: EmergencyFormData) => {
-      const response = await apiRequest("POST", "/api/emergency-requests", data);
+  // Calculate pricing based on current time
+  const calculateEmergencyPricing = (): EmergencyPricing => {
+    const now = new Date();
+    const hour = now.getHours();
+    const baseRate = 175; // $175/hour
+    
+    if (hour >= 17 || hour < 0) { // 5 PM to midnight
+      return {
+        baseRate,
+        minimumHours: 2,
+        totalCost: baseRate * 2,
+        timeSlot: "5:00 PM - 12:00 AM",
+        description: "Evening Emergency Rate (2 hour minimum)"
+      };
+    } else if (hour >= 0 && hour < 8) { // Midnight to 8 AM
+      return {
+        baseRate,
+        minimumHours: 3,
+        totalCost: baseRate * 3,
+        timeSlot: "12:00 AM - 8:00 AM",
+        description: "Overnight Emergency Rate (3 hour minimum)"
+      };
+    } else { // Regular hours
+      return {
+        baseRate,
+        minimumHours: 1,
+        totalCost: baseRate * 1,
+        timeSlot: "8:00 AM - 5:00 PM",
+        description: "Regular Emergency Rate (1 hour minimum)"
+      };
+    }
+  };
+
+  // Update pricing when component mounts
+  useEffect(() => {
+    setCurrentPricing(calculateEmergencyPricing());
+    
+    // Update pricing every minute
+    const interval = setInterval(() => {
+      setCurrentPricing(calculateEmergencyPricing());
+    }, 60000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  const emergencyMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest("POST", "/api/emergency-service", data);
       return response.json();
     },
-    onSuccess: (result) => {
-      setSubmissionId(result.id || "Emergency-" + Date.now());
+    onSuccess: () => {
       toast({
-        title: "Emergency Request Submitted",
-        description: "We've received your emergency request. A technician will contact you shortly.",
+        title: "Emergency Service Requested",
+        description: "Your emergency service request has been submitted. Jordan will be notified immediately and contact you shortly.",
       });
-      form.reset();
+      
+      // Reset form
+      setFormData({
+        ...formData,
+        address: '',
+        emergencyType: '',
+        description: ''
+      });
     },
-    onError: (error) => {
-      console.error("Emergency submission error:", error);
+    onError: (error: any) => {
       toast({
-        title: "Submission Failed",
-        description: "Unable to submit emergency request. Please call us directly at (403) 613-6014.",
+        title: "Request Failed",
+        description: error.message || "Failed to submit emergency service request. Please try again.",
         variant: "destructive",
       });
     },
   });
 
-  const onSubmit = (data: EmergencyFormData) => {
-    submitEmergency.mutate(data);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.name || !formData.phone || !formData.address || !formData.emergencyType || !formData.description) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!currentPricing) {
+      toast({
+        title: "Pricing Error",
+        description: "Unable to calculate pricing. Please refresh and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const emergencyData = {
+      ...formData,
+      pricing: currentPricing,
+      requestedAt: new Date().toISOString(),
+      userId: user?.id
+    };
+
+    emergencyMutation.mutate(emergencyData);
   };
 
-  if (submissionId) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="container mx-auto px-4 py-8">
-          <Card className="max-w-2xl mx-auto">
-            <CardHeader className="text-center">
-              <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                  <Shield className="w-8 h-8 text-green-600" />
-                </div>
-              </div>
-              <CardTitle className="text-2xl text-green-700">Emergency Request Submitted</CardTitle>
-              <CardDescription className="text-lg">
-                Your request ID: <Badge variant="outline" className="ml-2">{submissionId}</Badge>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <h3 className="font-semibold text-green-800 mb-2">What happens next:</h3>
-                <ul className="space-y-2 text-green-700">
-                  <li className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>A technician will contact you within 15 minutes</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4" />
-                    <span>We'll dispatch the nearest available technician</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Wrench className="w-4 h-4" />
-                    <span>Emergency repairs available 24/7</span>
-                  </li>
-                </ul>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
-                  onClick={() => setSubmissionId(null)} 
-                  variant="outline" 
-                  className="flex-1"
-                >
-                  Submit Another Request
-                </Button>
-                <Button 
-                  onClick={() => window.location.href = "/emergency-tracker"} 
-                  className="flex-1"
-                >
-                  Track This Request
-                </Button>
-              </div>
-              
-              <div className="text-center text-sm text-muted-foreground">
-                <p>Emergency Line: <strong>(403) 613-6014</strong></p>
-                <p>Available 24/7 • Licensed & Insured</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+  const emergencyTypes = [
+    "No Heat",
+    "No Air Conditioning", 
+    "Gas Leak",
+    "Water Leak from HVAC",
+    "Furnace Not Working",
+    "AC Unit Down",
+    "Strange Smells/Burning",
+    "System Making Loud Noises",
+    "Thermostat Issues",
+    "Other Emergency"
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-100">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center">
-              <AlertTriangle className="w-10 h-10 text-red-600" />
-            </div>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <AlertTriangle className="h-8 w-8 text-red-600" />
+            <h1 className="text-3xl font-bold text-gray-900">24/7 Emergency HVAC Service</h1>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">24/7 Emergency HVAC Service</h1>
-          <p className="text-xl text-gray-600 mb-4">Calgary's Fastest Response Time</p>
-          <div className="flex justify-center gap-6 text-sm">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-red-600" />
-              <span>15-Minute Response</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Phone className="w-4 h-4 text-red-600" />
-              <span>24/7 Availability</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-red-600" />
-              <span>Licensed & Insured</span>
-            </div>
-          </div>
+          <p className="text-gray-600 text-lg">
+            Immediate response for urgent heating, cooling, and ventilation emergencies in Calgary
+          </p>
         </div>
 
-        {/* Emergency Contact Banner */}
-        <Card className="mb-8 border-red-200 bg-red-50">
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="text-center md:text-left">
-                <h3 className="text-xl font-semibold text-red-800 mb-1">Immediate Emergency?</h3>
-                <p className="text-red-700">Call us now for instant assistance</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-red-600">(403) 613-6014</div>
-                  <div className="text-sm text-red-600">Available 24/7</div>
-                </div>
-                <Button size="lg" className="bg-red-600 hover:bg-red-700">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call Now
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Pricing Card */}
+          <div className="lg:col-span-1">
+            <Card className="border-red-200 bg-red-50">
+              <CardHeader>
+                <CardTitle className="text-red-800 flex items-center gap-2">
+                  <DollarSign className="h-5 w-5" />
+                  Current Emergency Pricing
+                </CardTitle>
+                <CardDescription className="text-red-600">
+                  Pricing automatically calculated based on current time
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {currentPricing && (
+                  <>
+                    <div className="bg-white rounded-lg p-4 border border-red-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock className="h-4 w-4 text-red-600" />
+                        <span className="font-medium text-red-800">Time Slot</span>
+                      </div>
+                      <p className="text-sm text-gray-700">{currentPricing.timeSlot}</p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Base Rate:</span>
+                        <span className="font-medium">${currentPricing.baseRate}/hour</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Minimum Hours:</span>
+                        <span className="font-medium">{currentPricing.minimumHours} hours</span>
+                      </div>
+                      <Separator />
+                      <div className="flex justify-between text-lg font-bold text-red-600">
+                        <span>Total Minimum:</span>
+                        <span>${currentPricing.totalCost}</span>
+                      </div>
+                    </div>
+                    
+                    <p className="text-xs text-gray-600 bg-white p-2 rounded border border-red-200">
+                      {currentPricing.description}
+                    </p>
+                  </>
+                )}
+              </CardContent>
+            </Card>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Emergency Form */}
+            {/* Contact Info */}
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Phone className="h-5 w-5" />
+                  Emergency Contact
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 mb-1">24/7 Emergency Hotline</p>
+                    <p className="text-2xl font-bold text-blue-600">(403) 613-6014</p>
+                  </div>
+                  <Separator />
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Service Area</p>
+                    <p className="font-medium">Calgary & Surrounding Areas</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Response Time</p>
+                    <p className="font-medium text-green-600">Within 2 hours</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Emergency Service Form */}
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle className="text-2xl">Submit Emergency Request</CardTitle>
+                <CardTitle>Emergency Service Request</CardTitle>
                 <CardDescription>
-                  Complete this form for non-immediate emergencies. For life-threatening situations, call 911 first.
+                  Fill out this form for immediate emergency service. Jordan will receive an instant notification.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Full Name *</FormLabel>
-                            <FormControl>
-                              <Input placeholder="John Smith" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Phone Number *</FormLabel>
-                            <FormControl>
-                              <Input placeholder="(403) 555-0123" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Contact Information */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="name" className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        Full Name *
+                      </Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        placeholder="Your full name"
+                        required
                       />
                     </div>
-
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email Address *</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="john@example.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Service Address *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="123 Main St, Calgary, AB T2P 1K2" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="emergencyType"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Emergency Type *</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select emergency type" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="no-heat">No Heat</SelectItem>
-                                <SelectItem value="no-cooling">No Air Conditioning</SelectItem>
-                                <SelectItem value="gas-leak">Gas Leak</SelectItem>
-                                <SelectItem value="carbon-monoxide">Carbon Monoxide Alarm</SelectItem>
-                                <SelectItem value="water-leak">Water Leak from HVAC</SelectItem>
-                                <SelectItem value="electrical">Electrical Issues</SelectItem>
-                                <SelectItem value="strange-noises">Strange Noises/Smells</SelectItem>
-                                <SelectItem value="thermostat">Thermostat Malfunction</SelectItem>
-                                <SelectItem value="frozen-pipes">Frozen Pipes</SelectItem>
-                                <SelectItem value="other">Other Emergency</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="severity"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Severity Level *</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select severity" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="critical">Critical - Safety Risk</SelectItem>
-                                <SelectItem value="urgent">Urgent - No Heat/Cooling</SelectItem>
-                                <SelectItem value="high">High Priority</SelectItem>
-                                <SelectItem value="moderate">Moderate</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                    <div>
+                      <Label htmlFor="phone" className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Phone Number *
+                      </Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        placeholder="(403) 555-0123"
+                        required
                       />
                     </div>
+                  </div>
 
-                    <FormField
-                      control={form.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Detailed Description *</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              placeholder="Please describe the emergency in detail. Include any error codes, unusual sounds, smells, or symptoms you've noticed..."
-                              rows={4}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                  <div>
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      placeholder="your.email@example.com"
                     />
+                  </div>
 
+                  <div>
+                    <Label htmlFor="address" className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4" />
+                      Service Address *
+                    </Label>
+                    <Input
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => setFormData({...formData, address: e.target.value})}
+                      placeholder="123 Main Street, Calgary, AB"
+                      required
+                    />
+                  </div>
+
+                  {/* Emergency Details */}
+                  <div>
+                    <Label htmlFor="emergencyType">Type of Emergency *</Label>
+                    <select
+                      id="emergencyType"
+                      value={formData.emergencyType}
+                      onChange={(e) => setFormData({...formData, emergencyType: e.target.value})}
+                      className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    >
+                      <option value="">Select emergency type</option>
+                      {emergencyTypes.map((type) => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="description" className="flex items-center gap-2">
+                      <MessageSquare className="h-4 w-4" />
+                      Detailed Description *
+                    </Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => setFormData({...formData, description: e.target.value})}
+                      placeholder="Please describe the emergency situation in detail. Include any symptoms, when it started, and any safety concerns..."
+                      rows={4}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="urgencyLevel">Urgency Level</Label>
+                    <select
+                      id="urgencyLevel"
+                      value={formData.urgencyLevel}
+                      onChange={(e) => setFormData({...formData, urgencyLevel: e.target.value})}
+                      className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="high">High - Immediate attention needed</option>
+                      <option value="critical">Critical - Safety hazard</option>
+                      <option value="moderate">Moderate - Can wait a few hours</option>
+                    </select>
+                  </div>
+
+                  {/* Pricing Summary */}
+                  {currentPricing && (
+                    <Alert>
+                      <CreditCard className="h-4 w-4" />
+                      <AlertDescription>
+                        <div className="space-y-2">
+                          <p className="font-medium">Service Call Minimum: ${currentPricing.totalCost}</p>
+                          <p className="text-sm text-gray-600">
+                            This covers the {currentPricing.minimumHours} hour minimum at ${currentPricing.baseRate}/hour for {currentPricing.timeSlot} service calls. Additional time will be billed at the same hourly rate.
+                          </p>
+                        </div>
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Submit Button */}
+                  <div className="space-y-4">
                     <Button 
                       type="submit" 
-                      size="lg" 
-                      className="w-full bg-red-600 hover:bg-red-700"
-                      disabled={submitEmergency.isPending}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white py-3 text-lg"
+                      disabled={emergencyMutation.isPending}
                     >
-                      {submitEmergency.isPending ? (
+                      {emergencyMutation.isPending ? (
                         <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                          <Clock className="h-5 w-5 mr-2 animate-spin" />
                           Submitting Emergency Request...
                         </>
                       ) : (
                         <>
-                          <AlertTriangle className="w-4 h-4 mr-2" />
-                          Submit Emergency Request
+                          <AlertTriangle className="h-5 w-5 mr-2" />
+                          Submit Emergency Service Request
                         </>
                       )}
                     </Button>
-                  </form>
-                </Form>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar Information */}
-          <div className="space-y-6">
-            {/* Service Guarantees */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-blue-600" />
-                  Service Guarantees
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Clock className="w-5 h-5 text-blue-600 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold">15-Minute Response</h4>
-                    <p className="text-sm text-muted-foreground">We guarantee contact within 15 minutes</p>
+                    
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600">
+                        By submitting this request, you agree to the minimum service charge and authorize payment processing.
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Users className="w-5 h-5 text-blue-600 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold">Licensed Technicians</h4>
-                    <p className="text-sm text-muted-foreground">All technicians are fully certified</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Star className="w-5 h-5 text-blue-600 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold">Satisfaction Guaranteed</h4>
-                    <p className="text-sm text-muted-foreground">100% satisfaction or we make it right</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Emergency Pricing */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Emergency Service Pricing</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between">
-                  <span>Emergency Service Call</span>
-                  <span className="font-semibold">$199</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>After Hours (6pm-8am)</span>
-                  <span className="font-semibold">$299</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Weekends & Holidays</span>
-                  <span className="font-semibold">$349</span>
-                </div>
-                <hr className="my-3" />
-                <p className="text-sm text-muted-foreground">
-                  Service call fee applies to diagnostic time and is deducted from repair costs.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Service Areas */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-green-600" />
-                  Service Areas
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>Calgary</div>
-                  <div>Airdrie</div>
-                  <div>Cochrane</div>
-                  <div>Okotoks</div>
-                  <div>Chestermere</div>
-                  <div>Strathmore</div>
-                  <div>Canmore</div>
-                  <div>High River</div>
-                </div>
-                <p className="text-xs text-muted-foreground mt-3">
-                  Additional travel charges may apply for locations outside Calgary city limits.
-                </p>
+                </form>
               </CardContent>
             </Card>
           </div>
         </div>
+
+        {/* Footer Info */}
+        <Card className="mt-8 bg-blue-50 border-blue-200">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <CheckCircle className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                <h3 className="font-semibold text-blue-800">Licensed & Insured</h3>
+                <p className="text-sm text-blue-600">Fully licensed HVAC technicians</p>
+              </div>
+              <div className="text-center">
+                <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                <h3 className="font-semibold text-blue-800">Fast Response</h3>
+                <p className="text-sm text-blue-600">Within 2 hours emergency response</p>
+              </div>
+              <div className="text-center">
+                <Phone className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                <h3 className="font-semibold text-blue-800">24/7 Availability</h3>
+                <p className="text-sm text-blue-600">Always available for emergencies</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
-}
+};
+
+export default EmergencyServicePage;

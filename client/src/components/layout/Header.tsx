@@ -18,7 +18,8 @@ import {
   LogOut,
   Crown,
   Shield,
-  Building2
+  Building2,
+  AlertTriangle
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -29,9 +30,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import EmergencyServicePopup from "@/components/EmergencyServicePopup";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isEmergencyPopupOpen, setIsEmergencyPopupOpen] = useState(false);
   const [location] = useLocation();
   const { user, logoutMutation } = useAuth();
 
