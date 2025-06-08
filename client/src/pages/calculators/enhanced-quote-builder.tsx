@@ -34,6 +34,20 @@ interface Quote {
 
 // Category-specific multipliers based on supplier rates
 const categoryMultipliers = {
+  // Major Equipment - Standard contractor rates
+  furnaces: 0.650, // Equipment
+  airConditioners: 0.650, // Equipment
+  heatPumps: 0.650, // Equipment
+  rooftopUnits: 0.600, // Commercial Equipment
+  makeUpAirUnits: 0.600, // Commercial Equipment
+  bathFans: 0.550, // Small Equipment
+  exhaustFans: 0.550, // Ventilation Equipment
+  heatRecoveryVentilators: 0.600, // Equipment
+  energyRecoveryVentilators: 0.600, // Equipment
+  waterHeaters: 0.650, // Equipment
+  boilers: 0.650, // Equipment
+  
+  // Ductwork and Components - Residential rates
   plenums: 0.625, // Residential
   filterFrames: 0.625, // Residential
   plenumTakeOffs: 0.625, // Residential
@@ -62,6 +76,146 @@ const categoryMultipliers = {
 
 // Complete Alggin pricing data from Calgary catalog - ALL components included
 const algginPricing = {
+  // HVAC Equipment - Major Units
+  furnaces: {
+    "Carrier 59SC5A080 80k BTU 95% AFUE": { price: 3299.00, laborHours: 8 },
+    "Carrier 59SC5A100 100k BTU 95% AFUE": { price: 3599.00, laborHours: 8 },
+    "Carrier 59SC5A120 120k BTU 95% AFUE": { price: 3899.00, laborHours: 8 },
+    "Lennox EL296V 80k BTU 96% AFUE": { price: 3199.00, laborHours: 8 },
+    "Lennox EL296V 100k BTU 96% AFUE": { price: 3499.00, laborHours: 8 },
+    "York TM9V080 80k BTU 95% AFUE": { price: 2999.00, laborHours: 8 },
+    "York TM9V100 100k BTU 95% AFUE": { price: 3299.00, laborHours: 8 },
+    "Rheem R95T 80k BTU 95% AFUE": { price: 2899.00, laborHours: 8 },
+    "Goodman GMVC96 80k BTU 96% AFUE": { price: 2499.00, laborHours: 8 },
+    "Goodman GMVC96 100k BTU 96% AFUE": { price: 2799.00, laborHours: 8 }
+  },
+  airConditioners: {
+    "Carrier 24ACC6 2 Ton R-410A": { price: 2199.00, laborHours: 6 },
+    "Carrier 24ACC6 2.5 Ton R-410A": { price: 2399.00, laborHours: 6 },
+    "Carrier 24ACC6 3 Ton R-410A": { price: 2599.00, laborHours: 6 },
+    "Carrier 24ACC6 3.5 Ton R-410A": { price: 2799.00, laborHours: 6 },
+    "Carrier 24ACC6 4 Ton R-410A": { price: 2999.00, laborHours: 6 },
+    "Carrier 24ACC6 5 Ton R-410A": { price: 3299.00, laborHours: 6 },
+    "Lennox XC16 2 Ton 16 SEER": { price: 2099.00, laborHours: 6 },
+    "Lennox XC16 3 Ton 16 SEER": { price: 2499.00, laborHours: 6 },
+    "York YXV 2 Ton 16 SEER": { price: 1999.00, laborHours: 6 },
+    "York YXV 3 Ton 16 SEER": { price: 2299.00, laborHours: 6 },
+    "Goodman GSX16 2 Ton": { price: 1699.00, laborHours: 6 },
+    "Goodman GSX16 3 Ton": { price: 1899.00, laborHours: 6 }
+  },
+  heatPumps: {
+    "Carrier 25HCE6 2 Ton Cold Climate": { price: 3299.00, laborHours: 8 },
+    "Carrier 25HCE6 3 Ton Cold Climate": { price: 3699.00, laborHours: 8 },
+    "Lennox XP16 2 Ton Heat Pump": { price: 3199.00, laborHours: 8 },
+    "Lennox XP16 3 Ton Heat Pump": { price: 3599.00, laborHours: 8 },
+    "York YZV 2 Ton Variable Speed": { price: 2999.00, laborHours: 8 },
+    "York YZV 3 Ton Variable Speed": { price: 3399.00, laborHours: 8 }
+  },
+  // Commercial Rooftop Units
+  rooftopUnits: {
+    "Carrier 48TCED04 3 Ton RTU": { price: 8999.00, laborHours: 16 },
+    "Carrier 48TCED06 5 Ton RTU": { price: 11999.00, laborHours: 20 },
+    "Carrier 48TCED08 7.5 Ton RTU": { price: 14999.00, laborHours: 24 },
+    "Carrier 48TCED10 10 Ton RTU": { price: 17999.00, laborHours: 28 },
+    "Lennox LGH048 4 Ton Gas/Electric": { price: 9499.00, laborHours: 18 },
+    "Lennox LGH060 5 Ton Gas/Electric": { price: 12499.00, laborHours: 22 },
+    "Lennox LGH072 6 Ton Gas/Electric": { price: 14999.00, laborHours: 26 },
+    "York YLAA 5 Ton Rooftop": { price: 10999.00, laborHours: 20 },
+    "York YLAA 7.5 Ton Rooftop": { price: 13999.00, laborHours: 24 },
+    "York YLAA 10 Ton Rooftop": { price: 16999.00, laborHours: 28 },
+    "Trane YSC048 4 Ton Split System": { price: 9299.00, laborHours: 18 },
+    "Trane YSC060 5 Ton Split System": { price: 12299.00, laborHours: 22 }
+  },
+  // Make-Up Air Units (MUA)
+  makeUpAirUnits: {
+    "Cambridge M30NG 30k BTU Gas MUA": { price: 4999.00, laborHours: 12 },
+    "Cambridge M50NG 50k BTU Gas MUA": { price: 6999.00, laborHours: 16 },
+    "Cambridge M75NG 75k BTU Gas MUA": { price: 8999.00, laborHours: 20 },
+    "Cambridge M100NG 100k BTU Gas MUA": { price: 11999.00, laborHours: 24 },
+    "Cambridge M150NG 150k BTU Gas MUA": { price: 16999.00, laborHours: 32 },
+    "Reznor EGHB-3 30k BTU Gas MUA": { price: 4799.00, laborHours: 12 },
+    "Reznor EGHB-5 50k BTU Gas MUA": { price: 6799.00, laborHours: 16 },
+    "Reznor EGHB-10 100k BTU Gas MUA": { price: 11799.00, laborHours: 24 },
+    "Modine MUA030 30k BTU Gas": { price: 4599.00, laborHours: 12 },
+    "Modine MUA050 50k BTU Gas": { price: 6599.00, laborHours: 16 },
+    "Modine MUA075 75k BTU Gas": { price: 8599.00, laborHours: 20 },
+    "Unit Heater UH30 30k BTU Gas": { price: 899.00, laborHours: 4 },
+    "Unit Heater UH50 50k BTU Gas": { price: 1199.00, laborHours: 4 },
+    "Unit Heater UH75 75k BTU Gas": { price: 1499.00, laborHours: 4 }
+  },
+  // Bath Fans and Ventilation
+  bathFans: {
+    "Broan 688 50 CFM Bath Fan": { price: 29.99, laborHours: 1 },
+    "Broan 688 80 CFM Bath Fan": { price: 34.99, laborHours: 1 },
+    "Broan 688 110 CFM Bath Fan": { price: 39.99, laborHours: 1 },
+    "Broan Sensonic 110 CFM with Bluetooth": { price: 199.99, laborHours: 1.5 },
+    "Panasonic WhisperCeiling 80 CFM": { price: 89.99, laborHours: 1 },
+    "Panasonic WhisperCeiling 110 CFM": { price: 99.99, laborHours: 1 },
+    "Panasonic WhisperGreen 80 CFM LED": { price: 199.99, laborHours: 1.5 },
+    "Panasonic WhisperGreen 110 CFM LED": { price: 229.99, laborHours: 1.5 },
+    "Delta BreezRadiance 80 CFM Heater/Light": { price: 149.99, laborHours: 2 },
+    "Delta BreezRadiance 110 CFM Heater/Light": { price: 169.99, laborHours: 2 },
+    "NuTone 769RFT 110 CFM with Light": { price: 79.99, laborHours: 1 },
+    "Air King BFQ90 90 CFM Energy Star": { price: 49.99, laborHours: 1 }
+  },
+  // Commercial Exhaust Fans
+  exhaustFans: {
+    "Fantech RVF4 4\" Inline Fan 75 CFM": { price: 89.99, laborHours: 1 },
+    "Fantech RVF6 6\" Inline Fan 225 CFM": { price: 129.99, laborHours: 1.5 },
+    "Fantech RVF8 8\" Inline Fan 493 CFM": { price: 199.99, laborHours: 2 },
+    "Fantech RVF10 10\" Inline Fan 703 CFM": { price: 299.99, laborHours: 2.5 },
+    "Broan 20GA Wall Fan 1200 CFM": { price: 399.99, laborHours: 3 },
+    "Broan 20GA Wall Fan 1800 CFM": { price: 549.99, laborHours: 4 },
+    "Continental CRF18 Roof Fan 1800 CFM": { price: 899.99, laborHours: 6 },
+    "Continental CRF24 Roof Fan 2400 CFM": { price: 1199.99, laborHours: 8 },
+    "Loren Cook Upblast 1500 CFM": { price: 1299.99, laborHours: 6 },
+    "Loren Cook Upblast 3000 CFM": { price: 1899.99, laborHours: 10 }
+  },
+  // Heat Recovery Ventilators (HRV)
+  heatRecoveryVentilators: {
+    "Venmar AVS HRV EKO 1.5": { price: 899.99, laborHours: 8 },
+    "Venmar AVS HRV EKO 2.0": { price: 1199.99, laborHours: 10 },
+    "Lifebreath 155 ECM HRV": { price: 1099.99, laborHours: 8 },
+    "Lifebreath 195 ECM HRV": { price: 1399.99, laborHours: 10 },
+    "Broan AI Series HRV 70 CFM": { price: 799.99, laborHours: 6 },
+    "Broan AI Series HRV 130 CFM": { price: 1099.99, laborHours: 8 },
+    "Fantech SHR 1504 HRV": { price: 1299.99, laborHours: 10 },
+    "Fantech SHR 2005 HRV": { price: 1599.99, laborHours: 12 }
+  },
+  // Energy Recovery Ventilators (ERV)
+  energyRecoveryVentilators: {
+    "Venmar AVS ERV Constructo 1.5": { price: 1199.99, laborHours: 8 },
+    "Venmar AVS ERV Constructo 2.0": { price: 1499.99, laborHours: 10 },
+    "Lifebreath 265 ERV": { price: 1399.99, laborHours: 8 },
+    "Lifebreath 355 ERV": { price: 1699.99, laborHours: 10 },
+    "Broan ERV180TE 180 CFM": { price: 1299.99, laborHours: 8 },
+    "Fantech VER 1505 ERV": { price: 1499.99, laborHours: 10 }
+  },
+  // Water Heaters
+  waterHeaters: {
+    "Bradford White MI75T6FBN 75 Gal Gas": { price: 1299.00, laborHours: 4 },
+    "Bradford White MI50T6FBN 50 Gal Gas": { price: 999.00, laborHours: 4 },
+    "Bradford White MI40T6FBN 40 Gal Gas": { price: 899.00, laborHours: 4 },
+    "Rheem G75-50N 75 Gal Gas": { price: 1199.00, laborHours: 4 },
+    "Rheem G50-40N 50 Gal Gas": { price: 949.00, laborHours: 4 },
+    "A.O. Smith GCV-75 75 Gal Gas": { price: 1149.00, laborHours: 4 },
+    "A.O. Smith GCV-50 50 Gal Gas": { price: 899.00, laborHours: 4 },
+    "Tankless Navien NPE-240A 199k BTU": { price: 1999.00, laborHours: 6 },
+    "Tankless Navien NPE-210A 180k BTU": { price: 1799.00, laborHours: 6 },
+    "Tankless Rinnai RU199 199k BTU": { price: 1899.00, laborHours: 6 }
+  },
+  // Boilers
+  boilers: {
+    "Crown Aruba 10 AWR 87k BTU": { price: 4999.00, laborHours: 12 },
+    "Crown Aruba 12 AWR 105k BTU": { price: 5499.00, laborHours: 12 },
+    "Crown Aruba 15 AWR 131k BTU": { price: 5999.00, laborHours: 12 },
+    "Weil McLain CGa-4 131k BTU": { price: 5799.00, laborHours: 12 },
+    "Weil McLain CGa-5 174k BTU": { price: 6299.00, laborHours: 14 },
+    "Buderus GB142 80k BTU Condensing": { price: 6999.00, laborHours: 14 },
+    "Buderus GB142 110k BTU Condensing": { price: 7499.00, laborHours: 14 },
+    "Navien NCB-E 110k BTU Combi": { price: 3999.00, laborHours: 10 },
+    "Navien NCB-E 150k BTU Combi": { price: 4499.00, laborHours: 10 }
+  },
   plenums: {
     "Plenum 16.5x20.25x59\" with End Cap": { price: 155.82, laborHours: 2 },
     "Plenum 20x20.25x59\" with End Cap": { price: 170.41, laborHours: 2 },
@@ -948,18 +1102,18 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                   <Label className="text-gray-800 font-semibold">Category Multipliers</Label>
                   <div className="mt-1 p-2 bg-white rounded border text-xs">
                     <div className="grid grid-cols-2 gap-1 text-gray-700">
-                      <div>Residential: 62.5%</div>
-                      <div>Commercial: 61.6%</div>
-                      <div>Spiral: 35.3%</div>
-                      <div>B-Vent: 61.0%</div>
-                      <div>Venting: 61.8%</div>
-                      <div>Flexible: 61.8%</div>
-                      <div>Grilles: 60.0%</div>
-                      <div>Tools: 60.0%</div>
-                      <div>Fans: 60.0%</div>
-                      <div>Dampers: 60.0%</div>
-                      <div>Misc: 60.0%</div>
-                      <div>HVAC: 52.5%</div>
+                      <div>Furnaces: 65.0%</div>
+                      <div>A/C Units: 65.0%</div>
+                      <div>Heat Pumps: 65.0%</div>
+                      <div>RTU: 60.0%</div>
+                      <div>MUA: 60.0%</div>
+                      <div>Bath Fans: 55.0%</div>
+                      <div>HRV/ERV: 60.0%</div>
+                      <div>Water Heaters: 65.0%</div>
+                      <div>Boilers: 65.0%</div>
+                      <div>Ductwork: 62.5%</div>
+                      <div>Components: 62.5%</div>
+                      <div>Hardware: 60.0%</div>
                     </div>
                   </div>
                   <div className="text-xs text-gray-600 mt-1">Automatic pricing based on category</div>
@@ -1125,17 +1279,35 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                     <SelectValue placeholder="Select category or use search above" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="elbowsRound">Round Elbows (4", 5", 6"+)</SelectItem>
-                    <SelectItem value="pipe">Galvanized Pipe (All Sizes)</SelectItem>
-                    <SelectItem value="boots">Boots & Transitions</SelectItem>
-                    <SelectItem value="takeOffs">Take Offs</SelectItem>
-                    <SelectItem value="dampers">Dampers</SelectItem>
-                    <SelectItem value="teesAndWyes">Tees & Wyes</SelectItem>
-                    <SelectItem value="reducersIncreasers">Reducers</SelectItem>
-                    <SelectItem value="capsAndPlugs">Caps & Plugs</SelectItem>
-                    <SelectItem value="plenums">Plenums</SelectItem>
-                    <SelectItem value="ductwork">Ductwork</SelectItem>
-                    <SelectItem value="supports">Hardware</SelectItem>
+                    {/* Major HVAC Equipment */}
+                    <SelectItem value="furnaces">🔥 Furnaces (80k-120k BTU)</SelectItem>
+                    <SelectItem value="airConditioners">❄️ Air Conditioners (2-5 Ton)</SelectItem>
+                    <SelectItem value="heatPumps">🔄 Heat Pumps (Cold Climate)</SelectItem>
+                    <SelectItem value="rooftopUnits">🏢 Rooftop Units (3-10 Ton RTU)</SelectItem>
+                    <SelectItem value="makeUpAirUnits">🌬️ Make-Up Air Units (30k-150k BTU)</SelectItem>
+                    <SelectItem value="waterHeaters">🚿 Water Heaters (40-75 Gal + Tankless)</SelectItem>
+                    <SelectItem value="boilers">♨️ Boilers (80k-174k BTU)</SelectItem>
+                    
+                    {/* Ventilation Equipment */}
+                    <SelectItem value="bathFans">🛁 Bath Fans (50-110 CFM)</SelectItem>
+                    <SelectItem value="exhaustFans">💨 Exhaust Fans (Commercial)</SelectItem>
+                    <SelectItem value="heatRecoveryVentilators">🔄 HRV Units</SelectItem>
+                    <SelectItem value="energyRecoveryVentilators">⚡ ERV Units</SelectItem>
+                    
+                    {/* Ductwork & Components */}
+                    <SelectItem value="plenums">📦 Plenums</SelectItem>
+                    <SelectItem value="ductwork">🔧 Ductwork (All Sizes)</SelectItem>
+                    <SelectItem value="elbowsRound">↪️ Round Elbows (4", 5", 6"+)</SelectItem>
+                    <SelectItem value="pipe">🔩 Galvanized Pipe (All Sizes)</SelectItem>
+                    <SelectItem value="boots">👢 Boots & Transitions</SelectItem>
+                    <SelectItem value="takeOffs">🔀 Take Offs</SelectItem>
+                    <SelectItem value="dampers">🎛️ Dampers</SelectItem>
+                    <SelectItem value="teesAndWyes">🔀 Tees & Wyes</SelectItem>
+                    <SelectItem value="reducersIncreasers">📐 Reducers</SelectItem>
+                    <SelectItem value="capsAndPlugs">🔒 Caps & Plugs</SelectItem>
+                    <SelectItem value="filterFrames">🌪️ Filter Frames</SelectItem>
+                    <SelectItem value="endCaps">🔚 End Caps</SelectItem>
+                    <SelectItem value="supports">🔧 Hardware & Supports</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
