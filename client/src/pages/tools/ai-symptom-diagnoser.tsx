@@ -27,12 +27,13 @@ interface ChatMessage {
 }
 
 interface Diagnosis {
-  issue: string;
-  probability: number;
-  severity: 'low' | 'medium' | 'high';
+  id: string;
+  category: 'low' | 'medium' | 'high';
+  likelihood: number;
+  title: string;
   description: string;
-  diyFix?: string;
-  whenToCallPro: string;
+  recommendations: string[];
+  safetyLevel: 'low' | 'medium' | 'high';
 }
 
 export default function AISymptomDiagnoser() {
@@ -145,16 +146,19 @@ export default function AISymptomDiagnoser() {
       utterance.pitch = 0.75; // Lower pitch for masculine, gruff voice
       utterance.volume = 0.8;
       
-      // Try to use a male voice with natural quality
+      // Try to use a high-quality US male voice
       const voices = speechSynthesis.getVoices();
       const preferredVoice = voices.find(voice => 
-        voice.name.includes('Male') ||
-        voice.name.includes('David') ||
-        voice.name.includes('Mark') ||
-        voice.name.includes('Google US English Male')
+        voice.name.includes('David (Enhanced)') ||
+        voice.name.includes('Alex') ||
+        voice.name.includes('Fred') ||
+        voice.name.includes('Google US English Male') ||
+        voice.name.includes('Microsoft David Desktop')
       ) || voices.find(voice => 
-        voice.lang.includes('en-US') && 
-        (voice.name.includes('Google') || voice.name.includes('Microsoft'))
+        voice.lang.startsWith('en-US') && 
+        (voice.name.includes('Male') || voice.name.includes('David') || voice.name.includes('Mark'))
+      ) || voices.find(voice => 
+        voice.lang.startsWith('en-US') && voice.localService
       );
       
       if (preferredVoice) {
