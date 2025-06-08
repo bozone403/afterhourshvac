@@ -87,13 +87,7 @@ export default function AdminDashboardEnhanced() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedTab, setSelectedTab] = useState("overview");
-  const [editingImage, setEditingImage] = useState<GalleryImage | null>(null);
-  const [newImageForm, setNewImageForm] = useState({
-    title: '',
-    description: '',
-    imageUrl: '',
-    category: 'Residential'
-  });
+
 
   // Check admin access
   if (!user || user.role !== 'admin' || user.username !== 'JordanBoz') {
@@ -149,33 +143,8 @@ export default function AdminDashboardEnhanced() {
     queryKey: ['/api/admin/quotes'],
   });
 
-  const { data: jobApplications = [] } = useQuery({
+  const jobApplicationsQuery = useQuery({
     queryKey: ['/api/admin/job-applications'],
-  });
-
-  // Add gallery image mutation
-  const addImageMutation = useMutation({
-    mutationFn: async (data: Omit<GalleryImage, 'id' | 'createdAt'>) => {
-      const response = await apiRequest('POST', '/api/gallery', data);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-      setNewImageForm({ title: '', description: '', imageUrl: '', category: 'Residential' });
-      toast({ title: "Success", description: "Image added to gallery" });
-    },
-  });
-
-  // Delete image mutation
-  const deleteImageMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await apiRequest('DELETE', `/api/gallery/${id}`);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
-      toast({ title: "Success", description: "Image deleted from gallery" });
-    },
   });
 
   // Delete forum topic mutation
@@ -189,39 +158,6 @@ export default function AdminDashboardEnhanced() {
       toast({ title: "Success", description: "Forum topic deleted" });
     },
   });
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setNewImageForm(prev => ({ 
-          ...prev, 
-          imageUrl: e.target?.result as string 
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleAddImage = () => {
-    if (!newImageForm.title || !newImageForm.description || !newImageForm.imageUrl) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all fields and upload an image",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    addImageMutation.mutate({
-      title: newImageForm.title,
-      description: newImageForm.description,
-      imageUrl: newImageForm.imageUrl,
-      category: newImageForm.category,
-      isActive: true
-    });
-  };
 
   return (
     <>
@@ -341,7 +277,7 @@ export default function AdminDashboardEnhanced() {
               </div>
 
               <div className="grid gap-6">
-                {allQuotes.length === 0 ? (
+                {Array.isArray(allQuotes) && allQuotes.length === 0 ? (
                   <Card>
                     <CardContent className="p-8 text-center">
                       <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -716,11 +652,11 @@ export default function AdminDashboardEnhanced() {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="text-center p-6 bg-slate-900/50 rounded-lg">
-                      <TrendingUp className="h-8 w-8 text-green-400 mx-auto mb-2" />
+                      <Briefcase className="h-8 w-8 text-green-400 mx-auto mb-2" />
                       <div className="text-2xl font-bold text-white">
-                        {galleryImages.length}
+                        {jobApplicationsQuery.data?.length || 0}
                       </div>
-                      <p className="text-slate-400">Gallery Images</p>
+                      <p className="text-slate-400">Job Applications</p>
                     </div>
                     <div className="text-center p-6 bg-slate-900/50 rounded-lg">
                       <MessageSquare className="h-8 w-8 text-blue-400 mx-auto mb-2" />
