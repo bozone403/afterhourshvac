@@ -3911,7 +3911,7 @@ Login to manage: afterhourshvac.ca/admin`;
   // Admin - Get all service requests  
   app.get("/api/admin/service-requests", requireAuth, requireAdmin, async (req, res) => {
     try {
-      const requests = await storage.getAllServiceRequests();
+      const requests = await storage.getServiceRequests();
       res.json(requests);
     } catch (error: any) {
       console.error("Error getting service requests:", error);
