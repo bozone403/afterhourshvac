@@ -659,7 +659,7 @@ export default function AdminDashboardEnhanced() {
                     <div className="text-center p-6 bg-slate-900/50 rounded-lg">
                       <MessageSquare className="h-8 w-8 text-blue-400 mx-auto mb-2" />
                       <div className="text-2xl font-bold text-white">
-                        {forumTopics.length}
+                        {Array.isArray(forumTopics) ? forumTopics.length : 0}
                       </div>
                       <p className="text-slate-400">Forum Topics</p>
                     </div>
