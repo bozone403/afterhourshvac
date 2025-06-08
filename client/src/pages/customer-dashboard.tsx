@@ -36,7 +36,7 @@ const CustomerDashboard = () => {
   });
 
   const { data: quotes } = useQuery({
-    queryKey: ['/api/customer/quotes'],
+    queryKey: ['/api/quotes'],
     enabled: !!user,
   });
 
@@ -130,9 +130,10 @@ const CustomerDashboard = () => {
 
           {/* Dashboard Tabs */}
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="quotes">Quotes</TabsTrigger>
+              <TabsTrigger value="calendar">Calendar</TabsTrigger>
               <TabsTrigger value="payments">Payments</TabsTrigger>
               <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -234,39 +235,104 @@ const CustomerDashboard = () => {
             <TabsContent value="quotes" className="space-y-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-gray-900">Your Quotes</h2>
-                <Link href="/contact">
-                  <Button className="bg-orange-600 hover:bg-orange-700">
-                    Request New Quote
-                  </Button>
-                </Link>
+                <div className="flex gap-2">
+                  <Link href="/calculators/enhanced-quote-builder">
+                    <Button className="bg-orange-600 hover:bg-orange-700">
+                      Create Quote
+                    </Button>
+                  </Link>
+                  <Link href="/contact">
+                    <Button variant="outline">
+                      Request Quote
+                    </Button>
+                  </Link>
+                </div>
               </div>
               
               <div className="grid gap-6">
-                {Array.isArray(quotes) && quotes.length > 0 ? quotes.map((quote: any, index: number) => (
-                  <Card key={index}>
+                {Array.isArray(quotes) && quotes.length > 0 ? quotes.map((quote: any) => (
+                  <Card key={quote.id} className="border-l-4 border-l-orange-500">
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-lg text-gray-900">
-                          Quote #{quote.id}
+                          Quote {quote.quoteNumber}
                         </CardTitle>
-                        <Badge variant={quote.status === 'approved' ? 'default' : 'secondary'}>
-                          {quote.status}
+                        <Badge variant={quote.paymentStatus === 'paid' ? 'default' : 'secondary'}>
+                          {quote.paymentStatus}
                         </Badge>
                       </div>
                       <CardDescription>
-                        {quote.description} • Created {new Date(quote.createdAt).toLocaleDateString()}
+                        {quote.customerName} • {quote.jobDescription}
                       </CardDescription>
+                      <div className="text-sm text-gray-500">
+                        Created {new Date(quote.createdAt).toLocaleDateString()}
+                      </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex justify-between items-center">
-                        <div className="text-2xl font-bold text-gray-900">
-                          ${quote.amount?.toLocaleString()}
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <p className="text-sm text-gray-600">Customer</p>
+                          <p className="font-medium">{quote.customerName}</p>
+                          <p className="text-sm text-gray-500">{quote.customerEmail}</p>
+                          {quote.customerPhone && (
+                            <p className="text-sm text-gray-500">{quote.customerPhone}</p>
+                          )}
                         </div>
-                        {quote.status === 'pending' && (
-                          <Button className="bg-blue-600 hover:bg-blue-700">
-                            Accept Quote
-                          </Button>
-                        )}
+                        <div>
+                          <p className="text-sm text-gray-600">Project Details</p>
+                          <p className="font-medium">{quote.laborHours}h @ ${quote.laborRate}/hr</p>
+                          <p className="text-sm text-gray-500">Markup: {quote.markupPercentage}%</p>
+                        </div>
+                      </div>
+                      
+                      <div className="border-t pt-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="text-2xl font-bold text-gray-900">
+                              ${parseFloat(quote.total).toLocaleString('en-CA', { minimumFractionDigits: 2 })}
+                            </div>
+                            {quote.depositAmount && (
+                              <div className="text-sm text-green-600">
+                                Deposit: ${parseFloat(quote.depositAmount).toLocaleString('en-CA', { minimumFractionDigits: 2 })}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex gap-2">
+                            {quote.paymentStatus === 'pending' && (
+                              <Button 
+                                className="bg-green-600 hover:bg-green-700"
+                                onClick={() => {
+                                  // Create payment intent for this quote
+                                  const amount = quote.depositAmount || quote.total;
+                                  const isDeposit = !!quote.depositAmount;
+                                  
+                                  fetch('/api/create-payment-intent', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                      amount: parseFloat(amount),
+                                      quoteNumber: quote.quoteNumber,
+                                      customerInfo: {
+                                        name: quote.customerName,
+                                        email: quote.customerEmail
+                                      },
+                                      isDeposit
+                                    })
+                                  })
+                                  .then(res => res.json())
+                                  .then(data => {
+                                    window.open(`/checkout?client_secret=${data.clientSecret}`, '_blank');
+                                  });
+                                }}
+                              >
+                                {quote.depositAmount ? 'Pay Deposit' : 'Pay Full Amount'}
+                              </Button>
+                            )}
+                            <Button variant="outline" size="sm">
+                              View Details
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -275,15 +341,185 @@ const CustomerDashboard = () => {
                     <CardContent className="text-center py-8">
                       <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                       <p className="text-gray-500">No quotes yet</p>
-                      <Link href="/contact">
-                        <Button className="mt-4 bg-orange-600 hover:bg-orange-700">
-                          Request Your First Quote
-                        </Button>
-                      </Link>
+                      <div className="flex gap-2 justify-center mt-4">
+                        <Link href="/calculators/enhanced-quote-builder">
+                          <Button className="bg-orange-600 hover:bg-orange-700">
+                            Create Your First Quote
+                          </Button>
+                        </Link>
+                        <Link href="/contact">
+                          <Button variant="outline">
+                            Request Quote
+                          </Button>
+                        </Link>
+                      </div>
                     </CardContent>
                   </Card>
                 )}
               </div>
+            </TabsContent>
+
+            {/* Calendar Tab */}
+            <TabsContent value="calendar" className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-gray-900">Job Schedule & Calendar</h2>
+                <Button className="bg-orange-600 hover:bg-orange-700">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Schedule Service
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Calendar View */}
+                <div className="lg:col-span-2">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Calendar className="h-5 w-5" />
+                        January 2025
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-7 gap-1 mb-4">
+                        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                          <div key={day} className="p-2 text-center text-sm font-medium text-gray-500">
+                            {day}
+                          </div>
+                        ))}
+                        {Array.from({ length: 31 }, (_, i) => {
+                          const day = i + 1;
+                          const hasAppointment = [8, 15, 22, 29].includes(day);
+                          const isToday = day === 8;
+                          
+                          return (
+                            <div
+                              key={day}
+                              className={`
+                                p-2 text-center text-sm border border-gray-100 cursor-pointer hover:bg-gray-50
+                                ${isToday ? 'bg-orange-100 border-orange-300 text-orange-700' : ''}
+                                ${hasAppointment ? 'bg-blue-50 border-blue-200' : ''}
+                              `}
+                            >
+                              <div className="font-medium">{day}</div>
+                              {hasAppointment && (
+                                <div className="w-2 h-2 bg-blue-500 rounded-full mx-auto mt-1"></div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                {/* Upcoming Jobs */}
+                <div>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Upcoming Jobs</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="border-l-4 border-l-orange-500 pl-4">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-medium text-gray-900">Furnace Installation</p>
+                          <Badge>Jan 15</Badge>
+                        </div>
+                        <p className="text-sm text-gray-600">Quote AH-653575</p>
+                        <p className="text-xs text-gray-500">9:00 AM - 3:00 PM</p>
+                      </div>
+                      
+                      <div className="border-l-4 border-l-blue-500 pl-4">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-medium text-gray-900">Maintenance Check</p>
+                          <Badge variant="secondary">Jan 22</Badge>
+                        </div>
+                        <p className="text-sm text-gray-600">Annual Service Plan</p>
+                        <p className="text-xs text-gray-500">10:00 AM - 12:00 PM</p>
+                      </div>
+                      
+                      <div className="border-l-4 border-l-green-500 pl-4">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-medium text-gray-900">AC Installation</p>
+                          <Badge variant="outline">Jan 29</Badge>
+                        </div>
+                        <p className="text-sm text-gray-600">Summer Prep</p>
+                        <p className="text-xs text-gray-500">8:00 AM - 4:00 PM</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Quick Actions */}
+                  <Card className="mt-4">
+                    <CardHeader>
+                      <CardTitle className="text-lg">Quick Actions</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <Button variant="outline" className="w-full justify-start">
+                        <Thermometer className="h-4 w-4 mr-2" />
+                        Schedule Furnace Service
+                      </Button>
+                      <Button variant="outline" className="w-full justify-start">
+                        <Wrench className="h-4 w-4 mr-2" />
+                        Book AC Maintenance
+                      </Button>
+                      <Button variant="outline" className="w-full justify-start">
+                        <AlertCircle className="h-4 w-4 mr-2" />
+                        Emergency Service
+                      </Button>
+                      <Button variant="outline" className="w-full justify-start">
+                        <Phone className="h-4 w-4 mr-2" />
+                        Call for Quote
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+              
+              {/* Job Details for Selected Date */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Job Details - January 15, 2025</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Installation Details</h4>
+                      <div className="space-y-2 text-sm">
+                        <p><span className="font-medium">Job Type:</span> Furnace Installation</p>
+                        <p><span className="font-medium">Quote:</span> AH-653575</p>
+                        <p><span className="font-medium">Duration:</span> 6 hours (9:00 AM - 3:00 PM)</p>
+                        <p><span className="font-medium">Technician:</span> Jordan B. & Team</p>
+                        <p><span className="font-medium">Equipment:</span> High-Efficiency Gas Furnace</p>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Customer Information</h4>
+                      <div className="space-y-2 text-sm">
+                        <p><span className="font-medium">Address:</span> 123 Main St, Calgary AB</p>
+                        <p><span className="font-medium">Contact:</span> (403) 555-0123</p>
+                        <p><span className="font-medium">Special Notes:</span> Customer will be home all day</p>
+                        <p><span className="font-medium">Access:</span> Key available from office</p>
+                        <p><span className="font-medium">Payment:</span> Deposit paid, balance on completion</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 flex gap-2">
+                    <Button className="bg-green-600 hover:bg-green-700">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Mark Complete
+                    </Button>
+                    <Button variant="outline">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      Reschedule
+                    </Button>
+                    <Button variant="outline">
+                      <Phone className="h-4 w-4 mr-2" />
+                      Contact Customer
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             {/* Payments Tab */}

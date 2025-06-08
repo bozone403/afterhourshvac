@@ -244,6 +244,48 @@ export const proCalculatorQuotes = pgTable("pro_calculator_quotes", {
   notes: text("notes"),
 });
 
+// Scheduling and Calendar System
+export const jobSchedules = pgTable("job_schedules", {
+  id: serial("id").primaryKey(),
+  quoteId: integer("quote_id").references(() => enhancedQuotes.id),
+  userId: integer("user_id").references(() => users.id),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email"),
+  customerPhone: text("customer_phone"),
+  customerAddress: text("customer_address"),
+  jobType: text("job_type").notNull(), // installation, maintenance, repair, inspection
+  serviceType: text("service_type"), // furnace, ac, ductwork, etc.
+  scheduledDate: timestamp("scheduled_date").notNull(),
+  startTime: text("start_time").notNull(),
+  endTime: text("end_time").notNull(),
+  estimatedDuration: integer("estimated_duration"), // in hours
+  technician: text("technician"),
+  status: text("status").default("scheduled"), // scheduled, in_progress, completed, cancelled, rescheduled
+  priority: text("priority").default("normal"), // low, normal, high, emergency
+  specialInstructions: text("special_instructions"),
+  equipmentRequired: jsonb("equipment_required"),
+  materialsRequired: jsonb("materials_required"),
+  completionNotes: text("completion_notes"),
+  paymentStatus: text("payment_status").default("pending"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const maintenancePlans = pgTable("maintenance_plans", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customer_id").references(() => users.id),
+  planType: text("plan_type").notNull(), // basic, premium, comprehensive
+  equipmentType: text("equipment_type").notNull(), // furnace, ac, heat_pump, boiler
+  startDate: timestamp("start_date").notNull(),
+  nextServiceDate: timestamp("next_service_date").notNull(),
+  frequency: text("frequency").notNull(), // monthly, quarterly, biannual, annual
+  annualCost: numeric("annual_cost", { precision: 10, scale: 2 }),
+  isActive: boolean("is_active").default(true),
+  servicesIncluded: jsonb("services_included"),
+  equipmentDetails: jsonb("equipment_details"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const enhancedQuotes = pgTable("enhanced_quotes", {
   id: serial("id").primaryKey(),
   quoteNumber: text("quote_number").notNull().unique(),
