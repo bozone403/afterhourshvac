@@ -4319,7 +4319,7 @@ Immediate response required!`;
   // Admin job applications endpoint
   app.get("/api/admin/job-applications", requireAuth, requireAdmin, async (req, res) => {
     try {
-      const applications = await storage.getJobApplications();
+      const applications = await storage.getAllJobApplications();
       res.json(applications);
     } catch (error: any) {
       console.error("Error fetching job applications:", error);

@@ -39,7 +39,8 @@ import {
   Camera,
   Upload,
   Save,
-  Eye
+  Eye,
+  Briefcase
 } from "lucide-react";
 
 type DashboardStats = {
@@ -242,7 +243,7 @@ export default function AdminDashboardEnhanced() {
               <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Overview</TabsTrigger>
               <TabsTrigger value="quotes" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Quotes</TabsTrigger>
               <TabsTrigger value="calendar" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Calendar</TabsTrigger>
-              <TabsTrigger value="gallery" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Gallery</TabsTrigger>
+              <TabsTrigger value="jobs" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Job Applications</TabsTrigger>
               <TabsTrigger value="forum" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Forum</TabsTrigger>
               <TabsTrigger value="customers" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Customers</TabsTrigger>
               <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Analytics</TabsTrigger>
@@ -525,115 +526,113 @@ export default function AdminDashboardEnhanced() {
               </Card>
             </TabsContent>
 
-            {/* Gallery Management Tab */}
-            <TabsContent value="gallery" className="space-y-6">
-              {/* Add New Image */}
-              <Card className="bg-slate-800/50 border-slate-700">
+            {/* Job Applications Management Tab */}
+            <TabsContent value="jobs" className="space-y-6">
+              <Card className="bg-white border-gray-200 shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <Plus className="h-5 w-5" />
-                    Add New Gallery Image
+                  <CardTitle className="text-gray-900 flex items-center gap-2">
+                    <Briefcase className="h-5 w-5 text-blue-600" />
+                    Job Applications Management
                   </CardTitle>
-                  <CardDescription>Upload project photos to showcase your work</CardDescription>
+                  <CardDescription className="text-gray-600">
+                    Review and manage job applications submitted through the careers page
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="title">Project Title</Label>
-                      <Input
-                        id="title"
-                        value={newImageForm.title}
-                        onChange={(e) => setNewImageForm(prev => ({ ...prev, title: e.target.value }))}
-                        className="bg-slate-900 border-slate-600"
-                        placeholder="Enter project title"
-                      />
+                <CardContent>
+                  {jobApplicationsQuery.isLoading ? (
+                    <div className="text-center py-12">
+                      <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+                      <p className="text-gray-600">Loading job applications...</p>
                     </div>
-                    <div>
-                      <Label htmlFor="category">Category</Label>
-                      <select
-                        value={newImageForm.category}
-                        onChange={(e) => setNewImageForm(prev => ({ ...prev, category: e.target.value }))}
-                        className="w-full p-2 bg-slate-900 border border-slate-600 rounded-md"
-                      >
-                        <option value="Residential">Residential</option>
-                        <option value="Commercial">Commercial</option>
-                        <option value="Emergency Repairs">Emergency Repairs</option>
-                        <option value="Installations">Installations</option>
-                        <option value="Maintenance">Maintenance</option>
-                        <option value="Before/After">Before/After</option>
-                      </select>
+                  ) : Array.isArray(jobApplicationsQuery.data) && jobApplicationsQuery.data.length > 0 ? (
+                    <div className="space-y-4">
+                      {jobApplicationsQuery.data.map((application: any) => (
+                        <div key={application.id} className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                          <div className="flex items-start justify-between mb-4">
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">{application.fullName}</h3>
+                              <p className="text-sm text-gray-600">{application.email}</p>
+                              <p className="text-sm text-gray-600">{application.phone}</p>
+                            </div>
+                            <div className="text-right">
+                              <Badge variant={application.status === 'pending' ? 'secondary' : 'default'}>
+                                {application.status || 'pending'}
+                              </Badge>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Applied: {new Date(application.createdAt || Date.now()).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                              <p className="text-sm text-gray-600">
+                                <strong>Position:</strong> {application.position}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                <strong>Experience:</strong> {application.yearsExperience} years
+                              </p>
+                              {application.currentEmployer && (
+                                <p className="text-sm text-gray-600">
+                                  <strong>Current Employer:</strong> {application.currentEmployer}
+                                </p>
+                              )}
+                            </div>
+                            <div>
+                              {application.expectedSalary && (
+                                <p className="text-sm text-gray-600">
+                                  <strong>Expected Salary:</strong> ${application.expectedSalary}
+                                </p>
+                              )}
+                              {application.availability && (
+                                <p className="text-sm text-gray-600">
+                                  <strong>Availability:</strong> {application.availability}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {application.coverLetter && (
+                            <div className="mb-4">
+                              <p className="text-sm font-medium text-gray-900 mb-2">Cover Letter:</p>
+                              <p className="text-sm text-gray-700 bg-white p-3 rounded border">
+                                {application.coverLetter}
+                              </p>
+                            </div>
+                          )}
+                          
+                          <div className="flex flex-wrap gap-2">
+                            {application.resumeUrl && (
+                              <Button variant="outline" size="sm" asChild>
+                                <a href={application.resumeUrl} target="_blank" rel="noopener noreferrer">
+                                  <FileText className="h-4 w-4 mr-1" />
+                                  View Resume
+                                </a>
+                              </Button>
+                            )}
+                            <Button variant="outline" size="sm">
+                              <Mail className="h-4 w-4 mr-1" />
+                              Contact Applicant
+                            </Button>
+                            <Button variant="outline" size="sm">
+                              <Phone className="h-4 w-4 mr-1" />
+                              Schedule Interview
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      value={newImageForm.description}
-                      onChange={(e) => setNewImageForm(prev => ({ ...prev, description: e.target.value }))}
-                      className="bg-slate-900 border-slate-600"
-                      placeholder="Describe the project..."
-                      rows={3}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="image">Upload Image</Label>
-                    <Input
-                      id="image"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="bg-slate-900 border-slate-600"
-                    />
-                    {newImageForm.imageUrl && (
-                      <div className="mt-4">
-                        <img 
-                          src={newImageForm.imageUrl} 
-                          alt="Preview" 
-                          className="max-w-xs h-32 object-cover rounded-lg border border-slate-600"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <Button 
-                    onClick={handleAddImage}
-                    disabled={addImageMutation.isPending}
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    {addImageMutation.isPending ? 'Adding...' : 'Add to Gallery'}
-                  </Button>
+                  ) : (
+                    <div className="text-center py-12">
+                      <Briefcase className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Job Applications</h3>
+                      <p className="text-gray-600">
+                        Job applications will appear here when candidates apply through the careers page
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
-
-              {/* Gallery Images List */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {galleryImages.map((image) => (
-                  <Card key={image.id} className="bg-slate-800/50 border-slate-700">
-                    <CardContent className="p-4">
-                      <img 
-                        src={image.imageUrl} 
-                        alt={image.title}
-                        className="w-full h-48 object-cover rounded-lg mb-4"
-                      />
-                      <h3 className="font-semibold text-white mb-2">{image.title}</h3>
-                      <p className="text-sm text-slate-300 mb-2">{image.description}</p>
-                      <Badge variant="outline" className="mb-4">{image.category}</Badge>
-                      <div className="flex gap-2">
-                        <Button 
-                          size="sm" 
-                          variant="destructive"
-                          onClick={() => deleteImageMutation.mutate(image.id)}
-                          disabled={deleteImageMutation.isPending}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
             </TabsContent>
 
             {/* Forum Management Tab */}

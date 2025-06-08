@@ -1530,8 +1530,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Job Application methods
+  async getJobApplications(): Promise<JobApplication[]> {
+    const results = await db.select().from(jobApplications).orderBy(desc(jobApplications.id));
+    return results;
+  }
+
   async getAllJobApplications(): Promise<JobApplication[]> {
-    const results = await db.select().from(jobApplications).orderBy(desc(jobApplications.createdAt));
+    const results = await db.select().from(jobApplications).orderBy(desc(jobApplications.id));
     return results;
   }
 
