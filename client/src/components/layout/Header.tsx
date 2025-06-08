@@ -184,6 +184,17 @@ const Header = () => {
             ))}
           </div>
 
+          {/* Emergency Service Button */}
+          <div className="hidden lg:flex items-center space-x-4">
+            <Button 
+              onClick={() => setIsEmergencyPopupOpen(true)}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl flex items-center space-x-2 animate-pulse shadow-lg"
+            >
+              <AlertTriangle className="w-4 h-4" />
+              <span className="font-semibold">Emergency Service</span>
+            </Button>
+          </div>
+
           {/* User Menu & CTA */}
           <div className="hidden lg:flex items-center space-x-4">
             {user ? (
@@ -403,11 +414,29 @@ const Header = () => {
                     Call (403) 613-6014
                   </a>
                 </Button>
+
+                {/* Mobile Emergency Service Button */}
+                <Button 
+                  onClick={() => {
+                    setIsEmergencyPopupOpen(true);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white mx-4 mt-2 animate-pulse"
+                >
+                  <AlertTriangle className="w-4 h-4 mr-2" />
+                  Emergency Service
+                </Button>
               </div>
             </div>
           </div>
         )}
       </nav>
+
+      {/* Emergency Service Popup */}
+      <EmergencyServicePopup 
+        isOpen={isEmergencyPopupOpen} 
+        onClose={() => setIsEmergencyPopupOpen(false)} 
+      />
     </header>
   );
 };
