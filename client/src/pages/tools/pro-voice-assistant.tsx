@@ -150,21 +150,28 @@ const ProVoiceAssistant = () => {
       
       // Configure for Earl's gruff male voice
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.85;
-      utterance.pitch = 0.75; // Lower pitch for masculine, gruff voice
+      utterance.rate = 0.9; // Slightly faster for natural flow
+      utterance.pitch = 0.8; // Natural masculine pitch
       utterance.volume = 0.9;
       
-      // Try to use a high-quality US male voice
+      // Try to use the most natural-sounding US male voice available
       const voices = speechSynthesis.getVoices();
+      
+      // Priority order for natural-sounding male voices
       const preferredVoice = voices.find(voice => 
-        voice.name.includes('David (Enhanced)') ||
-        voice.name.includes('Alex') ||
-        voice.name.includes('Fred') ||
-        voice.name.includes('Google US English Male') ||
-        voice.name.includes('Microsoft David Desktop')
+        (voice.name.includes('Alex') && voice.lang.startsWith('en-US')) ||
+        (voice.name.includes('Daniel') && voice.lang.startsWith('en-US')) ||
+        (voice.name.includes('Nathan') && voice.lang.startsWith('en-US')) ||
+        (voice.name.includes('David') && voice.name.includes('Enhanced')) ||
+        (voice.name.includes('Microsoft David Desktop')) ||
+        (voice.name.includes('Google US English Male'))
       ) || voices.find(voice => 
         voice.lang.startsWith('en-US') && 
-        (voice.name.includes('Male') || voice.name.includes('David') || voice.name.includes('Mark'))
+        voice.localService && 
+        (voice.name.toLowerCase().includes('male') || 
+         voice.name.includes('David') || 
+         voice.name.includes('Mark') ||
+         voice.name.includes('Aaron'))
       ) || voices.find(voice => 
         voice.lang.startsWith('en-US') && voice.localService
       );
