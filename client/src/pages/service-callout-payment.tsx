@@ -87,15 +87,32 @@ const ServiceCalloutPayment = () => {
 
   const createServiceRequest = useMutation({
     mutationFn: async (data: ServiceCalloutData & { amount: number }) => {
-      const response = await apiRequest("POST", "/api/service-callout", data);
+      const response = await apiRequest("POST", "/api/service-callout", {
+        customerName: data.customerName,
+        customerPhone: data.customerPhone,
+        customerEmail: data.customerEmail,
+        serviceAddress: data.serviceAddress,
+        issueDescription: data.issueDescription,
+        urgencyLevel: data.urgencyLevel,
+        preferredTime: data.preferredTime,
+        amount: data.amount
+      });
       return response.json();
     },
     onSuccess: (result) => {
-      toast({
-        title: "Service Request Created",
-        description: "Redirecting to payment...",
-      });
-      navigate(`/payment/${result.id}`);
+      if (result.clientSecret) {
+        toast({
+          title: "Service Request Created",
+          description: "Redirecting to payment...",
+        });
+        navigate(`/checkout?clientSecret=${result.clientSecret}&amount=${result.amount}&type=service&serviceId=${result.id}`);
+      } else {
+        toast({
+          title: "Service Request Submitted",
+          description: "Jordan will contact you within 2 hours to confirm your service appointment.",
+        });
+        navigate("/");
+      }
     },
     onError: (error) => {
       toast({

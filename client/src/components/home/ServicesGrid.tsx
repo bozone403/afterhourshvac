@@ -169,14 +169,12 @@ const ServicesGrid = () => {
         </div>
         
         <div className="text-center mt-12">
-          <a 
-            href="https://calendar.app.google/NXZB4v1PP57HhARL7" 
-            target="_blank" 
-            rel="noopener noreferrer"
+          <Link 
+            to="/service-callout"
             className="inline-flex items-center bg-primary hover:bg-opacity-80 text-white py-3 px-6 rounded-md transition-all font-semibold shadow-lg"
           >
             <i className="fas fa-calendar-alt mr-2"></i> Schedule a Service Call
-          </a>
+          </Link>
         </div>
       </div>
     </section>
