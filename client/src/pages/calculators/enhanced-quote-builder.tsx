@@ -9,6 +9,8 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { FileCheck, DollarSign, Calculator, Download, Plus, Trash2, Search, Package, Clock } from "lucide-react";
 import { ProAccessGuard } from "@/components/ProAccessGuard";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface QuoteItem {
   id: string;
@@ -543,6 +545,11 @@ function EnhancedQuoteBuilderContent() {
   });
   
   const [laborHours, setLaborHours] = useState<number>(0);
+  const [depositAmount, setDepositAmount] = useState<string>("");
+  const [quoteNumber, setQuoteNumber] = useState<string>("");
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [isSavingQuote, setIsSavingQuote] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   const categories = Object.keys(algginPricing);
   const availableItems = selectedCategory ? Object.keys(algginPricing[selectedCategory as keyof typeof algginPricing]) : [];
@@ -679,6 +686,170 @@ Phone: (403) 613-6014
 Email: info@afterhourshvac.ca
 
 Thank you for choosing AfterHours HVAC for your project needs.`;
+  };
+
+  const generatePDF = async () => {
+    setIsGeneratingPDF(true);
+    try {
+      const pdf = new jsPDF();
+      const date = new Date().toLocaleDateString();
+      const quoteNum = quoteNumber || `AH-${Date.now().toString().slice(-6)}`;
+      setQuoteNumber(quoteNum);
+      
+      // Header
+      pdf.setFontSize(20);
+      pdf.text('AFTERHOURS HVAC', 20, 30);
+      pdf.setFontSize(16);
+      pdf.text('Professional HVAC Estimate', 20, 40);
+      
+      // Quote Info
+      pdf.setFontSize(12);
+      pdf.text(`Quote #: ${quoteNum}`, 20, 55);
+      pdf.text(`Date: ${date}`, 120, 55);
+      
+      // Customer Info
+      pdf.setFontSize(14);
+      pdf.text('CUSTOMER INFORMATION', 20, 75);
+      pdf.setFontSize(10);
+      pdf.text(`Name: ${customerInfo.name}`, 20, 85);
+      pdf.text(`Address: ${customerInfo.address}`, 20, 95);
+      pdf.text(`Phone: ${customerInfo.phone}`, 20, 105);
+      pdf.text(`Email: ${customerInfo.email}`, 20, 115);
+      
+      // Job Description
+      pdf.setFontSize(14);
+      pdf.text('JOB DESCRIPTION', 20, 135);
+      pdf.setFontSize(10);
+      const jobLines = pdf.splitTextToSize(customerInfo.jobDescription, 170);
+      pdf.text(jobLines, 20, 145);
+      
+      // Materials
+      let yPos = 165;
+      pdf.setFontSize(14);
+      pdf.text('MATERIALS & LABOR', 20, yPos);
+      yPos += 15;
+      
+      pdf.setFontSize(10);
+      quote.items.forEach((item, index) => {
+        if (yPos > 250) {
+          pdf.addPage();
+          yPos = 30;
+        }
+        pdf.text(`${index + 1}. ${item.item}`, 20, yPos);
+        pdf.text(`Qty: ${item.quantity} @ $${item.unitPrice.toFixed(2)}`, 20, yPos + 8);
+        pdf.text(`$${item.total.toFixed(2)}`, 160, yPos);
+        yPos += 20;
+      });
+      
+      // Totals
+      yPos += 10;
+      if (yPos > 220) {
+        pdf.addPage();
+        yPos = 30;
+      }
+      
+      pdf.setFontSize(12);
+      pdf.text(`Materials Subtotal: $${quote.subtotal.toFixed(2)}`, 20, yPos);
+      pdf.text(`Labor (${laborHours}hrs @ $${laborRate}/hr): $${quote.labor.toFixed(2)}`, 20, yPos + 12);
+      pdf.text(`Markup (${markupPercentage}%): $${quote.markup.toFixed(2)}`, 20, yPos + 24);
+      pdf.text(`GST (${taxRate}%): $${quote.tax.toFixed(2)}`, 20, yPos + 36);
+      pdf.setFontSize(14);
+      pdf.text(`TOTAL: $${quote.total.toFixed(2)}`, 20, yPos + 50);
+      
+      if (depositAmount && parseFloat(depositAmount) > 0) {
+        pdf.setFontSize(12);
+        pdf.text(`DEPOSIT REQUIRED: $${parseFloat(depositAmount).toFixed(2)}`, 20, yPos + 65);
+        pdf.text(`BALANCE DUE: $${(quote.total - parseFloat(depositAmount)).toFixed(2)}`, 20, yPos + 77);
+      }
+      
+      // Footer
+      pdf.setFontSize(10);
+      pdf.text('Terms: Payment due within 30 days. Quote valid for 30 days.', 20, yPos + 95);
+      pdf.text('AfterHours HVAC | info@afterhourshvac.ca | Licensed & Insured', 20, yPos + 105);
+      
+      // Save PDF
+      pdf.save(`afterhours-hvac-quote-${quoteNum}.pdf`);
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
+  const saveQuote = async () => {
+    setIsSavingQuote(true);
+    try {
+      const quoteData = {
+        quoteNumber: quoteNumber || `AH-${Date.now().toString().slice(-6)}`,
+        customerInfo,
+        items: quote.items,
+        laborHours,
+        laborRate,
+        markupPercentage,
+        taxRate,
+        subtotal: quote.subtotal,
+        labor: quote.labor,
+        markup: quote.markup,
+        tax: quote.tax,
+        total: quote.total,
+        depositAmount: depositAmount ? parseFloat(depositAmount) : null,
+        createdAt: new Date().toISOString()
+      };
+      
+      const response = await fetch('/api/quotes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(quoteData),
+      });
+      
+      if (response.ok) {
+        alert('Quote saved successfully!');
+      } else {
+        throw new Error('Failed to save quote');
+      }
+    } catch (error) {
+      console.error('Error saving quote:', error);
+      alert('Error saving quote. Please try again.');
+    } finally {
+      setIsSavingQuote(false);
+    }
+  };
+
+  const processStripePayment = async () => {
+    setIsProcessingPayment(true);
+    try {
+      const paymentAmount = depositAmount && parseFloat(depositAmount) > 0 
+        ? parseFloat(depositAmount) 
+        : quote.total;
+      
+      const response = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: paymentAmount,
+          quoteNumber: quoteNumber || `AH-${Date.now().toString().slice(-6)}`,
+          customerInfo,
+          isDeposit: depositAmount && parseFloat(depositAmount) > 0
+        }),
+      });
+      
+      const { clientSecret } = await response.json();
+      
+      // Redirect to Stripe checkout or handle payment
+      window.open(`/checkout?client_secret=${clientSecret}`, '_blank');
+      
+    } catch (error) {
+      console.error('Error processing payment:', error);
+      alert('Error processing payment. Please try again.');
+    } finally {
+      setIsProcessingPayment(false);
+    }
   };
 
   return (
