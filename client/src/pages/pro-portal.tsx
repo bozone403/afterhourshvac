@@ -304,7 +304,6 @@ const ProPortal = () => {
             </p>
           </div>
 
-          {/* Main Content */}
           <div className="max-w-6xl mx-auto space-y-8">
             {/* Earl AI Assistant */}
             <Card>
@@ -314,7 +313,7 @@ const ProPortal = () => {
                   Earl - Professional HVAC Expert Assistant
                 </CardTitle>
                 <CardDescription>
-                  Your gruff but knowledgeable HVAC expert. Earl specializes in Alberta/BC codes, installation best practices, troubleshooting, and professional guidance. He's your go-to for technical questions and industry expertise.
+                  Your gruff but knowledgeable HVAC expert. Earl specializes in Alberta/BC codes, installation best practices, troubleshooting, and professional guidance.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -383,7 +382,7 @@ const ProPortal = () => {
               </CardContent>
             </Card>
 
-            {/* Calculators Carousel */}
+            {/* Professional Calculators Carousel */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -444,7 +443,7 @@ const ProPortal = () => {
               </CardContent>
             </Card>
 
-            {/* Literature & Codes Carousel */}
+            {/* Professional Literature & Codes Carousel */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
