@@ -51,7 +51,7 @@ export default function AISymptomDiagnoser() {
   const [currentDiagnosis, setCurrentDiagnosis] = useState<Diagnosis[]>([]);
   const { toast } = useToast();
 
-  // AI logic for diagnosing HVAC issues
+  // AI logic for basic homeowner troubleshooting
   const analyzeSymptoms = (userInput: string): { response: ChatMessage, diagnoses: Diagnosis[] } => {
     const input = userInput.toLowerCase();
     
@@ -61,79 +61,83 @@ export default function AISymptomDiagnoser() {
         response: {
           id: Date.now().toString(),
           type: 'earl',
-          content: "I see your AC is running but not cooling properly. Let me ask a few quick questions to narrow this down:",
+          content: "Let's check the basic things first before calling for service. Here's what you can safely check yourself:",
           timestamp: new Date(),
           nextQuestions: [
-            "Is the outdoor unit running and making noise?",
-            "Are you getting any airflow from the vents?",
-            "When did you last change your air filter?",
-            "Is the large copper pipe going to the outdoor unit cold and sweating?"
+            "Check your thermostat - is it set to COOL and below room temperature?",
+            "Check your air filter - when did you last replace it?",
+            "Check your electrical panel - are all breakers on?",
+            "Look at your outdoor unit - is it running and free of debris?"
           ]
         },
         diagnoses: [
           {
+            issue: "Thermostat Settings",
+            probability: 40,
+            severity: 'low',
+            description: "Thermostat may be set incorrectly or batteries are dead",
+            diyFix: "Set thermostat to COOL, lower temperature by 5 degrees, replace batteries if display is dim.",
+            whenToCallPro: "If thermostat doesn't respond or display stays blank after battery replacement"
+          },
+          {
             issue: "Dirty Air Filter",
             probability: 85,
             severity: 'low',
-            description: "A clogged filter restricts airflow and reduces cooling efficiency",
-            diyFix: "Replace your air filter with a new one. Check monthly during peak season.",
-            whenToCallPro: "If replacing the filter doesn't solve the issue within 2 hours"
+            description: "A clogged filter stops airflow and can freeze the system",
+            diyFix: "Turn off system, replace air filter, wait 2 hours, then turn back on.",
+            whenToCallPro: "If no improvement after filter replacement and 2-hour wait"
           },
           {
-            issue: "Low Refrigerant",
-            probability: 70,
-            severity: 'high',
-            description: "Refrigerant leak causes poor cooling and can damage the compressor",
-            whenToCallPro: "This requires professional diagnosis and repair. Continuing to run the system could cause expensive compressor damage."
-          },
-          {
-            issue: "Dirty Evaporator Coil",
-            probability: 60,
+            issue: "Electrical Issue",
+            probability: 30,
             severity: 'medium',
-            description: "Ice buildup or dirt on indoor coil reduces heat transfer",
-            whenToCallPro: "Professional cleaning required. This is part of regular maintenance."
+            description: "Tripped breaker or blown fuse stops the system",
+            diyFix: "Check electrical panel, flip any tripped breakers OFF then ON. Check outdoor disconnect switch.",
+            whenToCallPro: "If breakers keep tripping or system still won't start"
           }
         ]
       };
     }
 
-    // Furnace noise issues
+    // Furnace noise issues - safety focused
     if ((input.includes('furnace') || input.includes('heater')) && (input.includes('noise') || input.includes('loud') || input.includes('bang') || input.includes('rattle'))) {
       return {
         response: {
           id: Date.now().toString(),
           type: 'earl',
-          content: "Furnace noises can range from normal to concerning. Help me understand what you're hearing:",
+          content: "Furnace noises can be serious safety issues. Let's check the basics first, but some sounds mean you need to call us immediately:",
           timestamp: new Date(),
           nextQuestions: [
-            "Is it a banging sound when it first starts up?",
-            "Does it rattle continuously while running?",
-            "Is it a high-pitched squealing or screeching?",
-            "Is it coming from the ductwork or the furnace itself?"
+            "Is it a loud BANG when starting? If yes, turn off your furnace NOW",
+            "Check your filter - is it dirty or clogged?",
+            "Check your thermostat fan setting - is it on AUTO or ON?",
+            "Are there any burning smells with the noise?"
           ]
         },
         diagnoses: [
           {
-            issue: "Delayed Ignition",
-            probability: 75,
+            issue: "Loud Banging - SAFETY ISSUE",
+            probability: 30,
             severity: 'high',
-            description: "Gas buildup causes loud bang when it finally ignites",
-            whenToCallPro: "This is a safety issue that requires immediate professional attention. Stop using the system."
+            description: "Loud banging during startup can indicate dangerous gas buildup",
+            diyFix: "TURN OFF YOUR FURNACE IMMEDIATELY at the thermostat and at the emergency switch. Do not use until repaired.",
+            whenToCallPro: "Call immediately for emergency service. This is a safety hazard."
           },
           {
-            issue: "Loose Ductwork",
-            probability: 60,
-            severity: 'low',
-            description: "Metal ducts expand and contract, causing popping sounds",
-            diyFix: "Check visible ductwork for loose joints. Secure with metal tape if accessible.",
-            whenToCallPro: "If noise persists or you can't locate the source"
-          },
-          {
-            issue: "Worn Blower Motor Bearings",
-            probability: 55,
+            issue: "Dirty Filter Restricting Airflow",
+            probability: 70,
             severity: 'medium',
-            description: "Squealing or grinding indicates motor bearing wear",
-            whenToCallPro: "Requires professional motor service or replacement"
+            description: "Dirty filter makes the blower work harder and creates noise",
+            diyFix: "Turn off furnace, replace air filter, check that return vents aren't blocked.",
+            whenToCallPro: "If noise continues after filter replacement"
+          },
+          {
+            issue: "Thermostat Fan Setting",
+            probability: 50,
+            severity: 'low',
+            description: "Fan set to ON runs continuously and may seem louder than normal",
+            diyFix: "Set thermostat fan to AUTO instead of ON. This runs the fan only when heating.",
+            whenToCallPro: "If noise persists with fan on AUTO setting"
           }
         ]
       };
@@ -181,43 +185,89 @@ export default function AISymptomDiagnoser() {
       };
     }
 
-    // High energy bills
+    // High energy bills - basic checks
     if (input.includes('high bill') || input.includes('expensive') || input.includes('energy cost')) {
       return {
         response: {
           id: Date.now().toString(),
           type: 'earl',
-          content: "High energy bills usually indicate your system is working harder than it should. Let's find out why:",
+          content: "High energy bills mean your system is working too hard. Here are the basic things you can check yourself:",
           timestamp: new Date(),
           nextQuestions: [
-            "How old is your current system?",
-            "When was the last time you had maintenance done?",
-            "Have you noticed the system running more often?",
-            "Are there any comfort issues with temperature?"
+            "Check your air filter - when did you last replace it?",
+            "Check your thermostat settings - are you heating/cooling unnecessarily?",
+            "Walk around your home - do you feel any drafts near windows/doors?",
+            "Check that all vents are open and unblocked by furniture"
           ]
         },
         diagnoses: [
           {
             issue: "Dirty Air Filter",
             probability: 90,
-            severity: 'low',
-            description: "Clogged filter forces system to work harder",
-            diyFix: "Replace air filter immediately. Check monthly during heating/cooling season.",
-            whenToCallPro: "If bills remain high after filter replacement"
-          },
-          {
-            issue: "Lack of Maintenance",
-            probability: 75,
             severity: 'medium',
-            description: "Dirty coils and worn parts reduce efficiency",
-            whenToCallPro: "Annual maintenance prevents most efficiency issues and extends equipment life"
+            description: "Dirty filter makes your system work 3x harder and costs more money",
+            diyFix: "Replace air filter immediately. Set phone reminder to check monthly.",
+            whenToCallPro: "If bills stay high after replacing filter and waiting one month"
           },
           {
-            issue: "Aging Equipment",
-            probability: 60,
+            issue: "Inefficient Thermostat Settings",
+            probability: 70,
+            severity: 'low',
+            description: "Heating too high or cooling too low wastes energy",
+            diyFix: "Set thermostat to 68°F in winter, 76°F in summer. Use AUTO fan setting, not ON.",
+            whenToCallPro: "If you want a programmable or smart thermostat installed"
+          },
+          {
+            issue: "Air Leaks and Blocked Vents",
+            probability: 80,
+            severity: 'low',
+            description: "Drafts and blocked vents force your system to run longer",
+            diyFix: "Feel around windows/doors for drafts. Move furniture away from vents. Close curtains on sunny days.",
+            whenToCallPro: "For professional weatherization and duct sealing"
+          }
+        ]
+      };
+    }
+
+    // No heat emergency
+    if (input.includes('no heat') || (input.includes('furnace') && input.includes('not working'))) {
+      return {
+        response: {
+          id: Date.now().toString(),
+          type: 'earl',
+          content: "No heat can be an emergency in winter. Let's check the most common causes first - many are simple fixes:",
+          timestamp: new Date(),
+          nextQuestions: [
+            "Check your thermostat - is it set to HEAT and above current temperature?",
+            "Check your electrical panel - are any breakers tripped?",
+            "Check your furnace area - is the emergency switch ON?",
+            "Do you smell gas? If YES, leave the house and call us immediately!"
+          ]
+        },
+        diagnoses: [
+          {
+            issue: "GAS SMELL - EMERGENCY",
+            probability: 5,
             severity: 'high',
-            description: "Systems over 15 years old lose efficiency significantly",
-            whenToCallPro: "Professional efficiency evaluation and replacement options discussion"
+            description: "Gas smell means dangerous leak - immediate evacuation required",
+            diyFix: "LEAVE THE HOUSE IMMEDIATELY. Do not turn on lights or use phones inside. Call 911 and gas company from outside.",
+            whenToCallPro: "CALL IMMEDIATELY from outside the house: (403) 613-6014"
+          },
+          {
+            issue: "Thermostat Issue",
+            probability: 60,
+            severity: 'low',
+            description: "Wrong settings or dead batteries prevent heating",
+            diyFix: "Set to HEAT, raise temperature 5 degrees above room temp, replace batteries if display is dim.",
+            whenToCallPro: "If thermostat doesn't respond after battery replacement"
+          },
+          {
+            issue: "Electrical Problem",
+            probability: 40,
+            severity: 'medium',
+            description: "Tripped breaker or emergency switch stops furnace",
+            diyFix: "Check electrical panel - flip any tripped breakers OFF then ON. Check emergency switch near furnace is ON.",
+            whenToCallPro: "If breakers keep tripping or furnace won't start after reset"
           }
         ]
       };

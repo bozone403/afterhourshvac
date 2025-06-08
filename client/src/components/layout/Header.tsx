@@ -54,7 +54,8 @@ const Header = () => {
       icon: Settings,
       subItems: [
         { name: "AI Symptom Diagnoser", href: "/tools/ai-symptom-diagnoser" },
-        { name: "Alberta Rebate Calculator", href: "/tools/alberta-rebate-calculator" }
+        { name: "Alberta Rebate Calculator", href: "/tools/alberta-rebate-calculator" },
+        { name: "Pro Diagnostic Assistant", href: "/tools/pro-diagnostic-assistant" }
       ]
     },
     { name: "Corporate", href: "/corporate-membership", icon: Crown },
