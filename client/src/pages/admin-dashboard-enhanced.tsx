@@ -327,6 +327,115 @@ export default function AdminDashboardEnhanced() {
     updateApplicationMutation.mutate({ id, data: { status } });
   };
 
+  // Service booking update mutation
+  const updateServiceBookingMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+      return await apiRequest("PUT", `/api/admin/bookings/${id}`, data);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Booking Updated",
+        description: "Service booking has been updated successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/bookings"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Failed to update service booking.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Delete service booking mutation
+  const deleteServiceBookingMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest("DELETE", `/api/admin/bookings/${id}`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Booking Deleted",
+        description: "Service booking has been deleted successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/bookings"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Failed to delete service booking.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Send invoice mutation
+  const sendInvoiceMutation = useMutation({
+    mutationFn: async ({ id, amount, description }: { id: number; amount: number; description?: string }) => {
+      return await apiRequest("POST", `/api/admin/bookings/${id}/send-invoice`, { amount, description });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Invoice Sent",
+        description: "Invoice has been sent to the customer successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/bookings"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Invoice Failed",
+        description: error.message || "Failed to send invoice.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Emergency invoice mutation
+  const sendEmergencyInvoiceMutation = useMutation({
+    mutationFn: async ({ id, amount, description }: { id: number; amount: number; description?: string }) => {
+      return await apiRequest("POST", `/api/admin/emergency-requests/${id}/send-invoice`, { amount, description });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Emergency Invoice Sent",
+        description: "Emergency service invoice has been sent successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/emergency-requests"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Invoice Failed",
+        description: error.message || "Failed to send emergency invoice.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Service booking handlers
+  const updateServiceBooking = (id: number, data: any) => {
+    updateServiceBookingMutation.mutate({ id, data });
+  };
+
+  const deleteServiceBooking = (id: number) => {
+    if (confirm("Are you sure you want to delete this service booking?")) {
+      deleteServiceBookingMutation.mutate(id);
+    }
+  };
+
+  const sendBookingInvoice = (id: number) => {
+    const amount = prompt("Enter invoice amount (CAD):");
+    if (amount && !isNaN(Number(amount))) {
+      sendInvoiceMutation.mutate({ id, amount: Number(amount) });
+    }
+  };
+
+  const sendEmergencyInvoice = (id: number) => {
+    const amount = prompt("Enter invoice amount (CAD):");
+    if (amount && !isNaN(Number(amount))) {
+      sendEmergencyInvoiceMutation.mutate({ id, amount: Number(amount) });
+    }
+  };
+
   const getUserTypeColor = (userType: string) => {
     switch (userType) {
       case 'admin': return 'bg-red-100 text-red-800';
@@ -921,18 +1030,30 @@ export default function AdminDashboardEnhanced() {
                         <div className="flex flex-col gap-2">
                           <Select
                             value={request.status}
-                            onValueChange={(newStatus) => updateEmergencyRequest(request.id, { status: newStatus })}
+                            onValueChange={(newStatus) => updateEmergencyRequest(request.id, newStatus)}
                           >
                             <SelectTrigger className="w-32">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="dispatched">Dispatched</SelectItem>
                               <SelectItem value="in-progress">In Progress</SelectItem>
                               <SelectItem value="completed">Completed</SelectItem>
+                              <SelectItem value="invoiced">Invoiced</SelectItem>
                               <SelectItem value="cancelled">Cancelled</SelectItem>
                             </SelectContent>
                           </Select>
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => sendEmergencyInvoice(request.id)}
+                              disabled={request.status === 'invoiced'}
+                            >
+                              {request.status === 'invoiced' ? 'Sent' : 'Invoice'}
+                            </Button>
+                          </div>
                           <span className="text-xs text-muted-foreground">
                             {new Date(request.createdAt).toLocaleDateString()}
                           </span>
@@ -941,6 +1062,82 @@ export default function AdminDashboardEnhanced() {
                     ))
                   ) : (
                     <p className="text-center text-muted-foreground py-8">No emergency requests found</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Service Bookings Tab */}
+        <TabsContent value="bookings" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Service Bookings</CardTitle>
+              <CardDescription>Manage scheduled service appointments</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {bookingsLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {bookings && bookings.length > 0 ? (
+                    bookings.map((booking: any) => (
+                      <div key={booking.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex-1">
+                          <h4 className="font-semibold">{booking.name}</h4>
+                          <p className="text-sm text-muted-foreground">{booking.phone} • {booking.email}</p>
+                          <p className="text-sm">{booking.serviceType} - {booking.address}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Date: {booking.preferredDate ? new Date(booking.preferredDate).toLocaleDateString() : 'Not scheduled'} {booking.preferredTime ? `at ${booking.preferredTime}` : ''}
+                          </p>
+                          {booking.invoiceSent && (
+                            <p className="text-xs text-green-600 mt-1">✓ Invoice sent - Payment: {booking.paymentStatus}</p>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Select
+                            value={booking.status || 'pending'}
+                            onValueChange={(newStatus) => updateServiceBooking(booking.id, { status: newStatus })}
+                          >
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="confirmed">Confirmed</SelectItem>
+                              <SelectItem value="in_progress">In Progress</SelectItem>
+                              <SelectItem value="completed">Completed</SelectItem>
+                              <SelectItem value="cancelled">Cancelled</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => sendBookingInvoice(booking.id)}
+                              disabled={booking.invoiceSent}
+                            >
+                              {booking.invoiceSent ? 'Sent' : 'Invoice'}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => deleteServiceBooking(booking.id)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            ${booking.totalCost || '0'}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-muted-foreground py-8">No service bookings found</p>
                   )}
                 </div>
               )}
