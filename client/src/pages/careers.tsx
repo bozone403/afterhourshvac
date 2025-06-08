@@ -73,6 +73,7 @@ const Careers = () => {
   const [selectedPosition, setSelectedPosition] = useState<string>("");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [showApplication, setShowApplication] = useState(false);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   const form = useForm<ApplicationForm>({
     resolver: zodResolver(applicationSchema),
@@ -89,18 +90,18 @@ const Careers = () => {
 
   const submitApplication = useMutation({
     mutationFn: async (data: ApplicationForm & { resumeFile?: File }) => {
-      const formData = new FormData();
-      Object.entries(data).forEach(([key, value]) => {
-        if (key !== 'resumeFile' && value !== undefined) {
-          formData.append(key, value.toString());
-        }
-      });
-      
-      if (data.resumeFile) {
-        formData.append('resume', data.resumeFile);
-      }
+      // For now, submit without file upload - just the form data
+      const applicationData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        position: data.position,
+        experience: data.experience,
+        coverLetter: data.coverLetter
+      };
 
-      return await apiRequest("POST", "/api/job-applications", formData);
+      return await apiRequest("POST", "/api/job-applications", applicationData);
     },
     onSuccess: () => {
       toast({
@@ -375,6 +376,34 @@ const Careers = () => {
                     </ul>
                   </div>
 
+                  {expandedCard === position.id && (
+                    <div className="space-y-4 border-t pt-4 mt-4">
+                      <div>
+                        <h4 className="font-semibold mb-2">Complete Requirements:</h4>
+                        <ul className="text-sm text-gray-600 space-y-1">
+                          {position.requirements.map((req, index) => (
+                            <li key={index} className="flex items-start gap-2">
+                              <span className="text-blue-600 mt-1">•</span>
+                              {req}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold mb-2">Benefits & Perks:</h4>
+                        <ul className="text-sm text-gray-600 space-y-1">
+                          {position.benefits.map((benefit, index) => (
+                            <li key={index} className="flex items-start gap-2">
+                              <span className="text-green-600 mt-1">•</span>
+                              {benefit}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex gap-2">
                     <Button 
                       className="flex-1"
@@ -386,8 +415,13 @@ const Careers = () => {
                     >
                       Apply Now
                     </Button>
-                    <Button variant="outline">
-                      View Details
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setExpandedCard(expandedCard === position.id ? null : position.id);
+                      }}
+                    >
+                      {expandedCard === position.id ? "Hide Details" : "View Details"}
                     </Button>
                   </div>
                 </CardContent>
