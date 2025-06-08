@@ -22,19 +22,19 @@ export default function ACRepair() {
       title: "AC Repair & Diagnostics",
       description: "Complete diagnosis and repair of all AC system issues",
       features: ["System Diagnostics", "Refrigerant Leak Repair", "Compressor Service", "Electrical Repairs"],
-      price: "Starting at $150"
+      price: "Service Call: $149"
     },
     {
       title: "AC Installation",
       description: "Professional installation of new air conditioning systems",
-      features: ["Central Air Systems", "Ductless Mini-Splits", "Heat Pumps", "Smart Thermostats"],
-      price: "Starting at $2,800"
+      features: ["1-Stage (16 SEER)", "2-Stage (18 SEER)", "Variable Speed (26 SEER)", "10-Year Warranty"],
+      price: "Starting at $6,499"
     },
     {
       title: "AC Maintenance",
       description: "Regular maintenance to keep your AC running efficiently",
       features: ["Filter Replacement", "Coil Cleaning", "System Tune-up", "Preventive Inspection"],
-      price: "Starting at $120"
+      price: "Starting at $299/year"
     }
   ];
 

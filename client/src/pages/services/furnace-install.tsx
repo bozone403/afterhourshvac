@@ -19,22 +19,22 @@ import { Link } from "wouter";
 export default function FurnaceInstallation() {
   const furnaceTypes = [
     {
-      name: "High-Efficiency Gas Furnaces",
-      efficiency: "90-98% AFUE",
-      features: ["Variable Speed Blowers", "Modulating Gas Valves", "Smart Thermostat Compatible", "10-Year Warranty"],
-      startingPrice: "$3,500"
+      name: "1-Stage Gas Furnaces",
+      efficiency: "92% AFUE",
+      features: ["Single-stage heating", "Stainless steel heat exchanger", "10-year parts warranty", "Reliable operation"],
+      startingPrice: "$6,999"
     },
     {
-      name: "Electric Furnaces",
-      efficiency: "95-100% AFUE",
-      features: ["Quiet Operation", "Compact Design", "Easy Maintenance", "Environmentally Clean"],
-      startingPrice: "$2,800"
+      name: "2-Stage Gas Furnaces",
+      efficiency: "96% AFUE",
+      features: ["Two-stage heating", "Variable speed blower", "Enhanced comfort control", "15-year parts warranty"],
+      startingPrice: "$8,499"
     },
     {
-      name: "Oil Furnaces",
-      efficiency: "80-90% AFUE",
-      features: ["Reliable Heat Source", "Long Lifespan", "Cost-Effective", "Rural Area Friendly"],
-      startingPrice: "$4,200"
+      name: "Variable/Modulating Furnaces",
+      efficiency: "98% AFUE",
+      features: ["Variable-speed blower", "Modulating gas valve", "Precise Comfort technology", "20-year heat exchanger warranty"],
+      startingPrice: "$11,999"
     }
   ];
 

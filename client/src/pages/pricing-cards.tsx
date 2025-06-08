@@ -120,8 +120,8 @@ const serviceCards = [
   },
   {
     name: "Duct Cleaning",
-    price: 499,
-    description: "Comprehensive air duct cleaning service", 
+    price: 3199,
+    description: "Premium air duct cleaning service", 
     features: ["Complete duct system cleaning", "Sanitization treatment", "Before/after photos", "Improved air quality"]
   },
   {

@@ -204,7 +204,7 @@ export default function DuctCleaning() {
                   grilles, registers, and HVAC unit cleaning.
                 </p>
                 <div className="text-3xl font-bold text-green-800 mb-4">
-                  Starting at $6,399
+                  Starting at $3,199
                 </div>
                 <Button className="bg-green-600 hover:bg-green-700" asChild>
                   <Link href="/quote">Schedule Service</Link>

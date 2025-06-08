@@ -112,8 +112,8 @@ function Router() {
         <Route path="/blog/prepare-furnace-winter" component={BlogFurnaceWinter} />
         <Route path="/blog/commercial-vs-residential-hvac" component={BlogCommercialVsResidential} />
         <Route path="/service-areas" component={ServiceAreas} />
-        <Route path="/careers" component={About} />
-        <Route path="/reviews" component={About} />
+        <Route path="/careers" component={Careers} />
+        <Route path="/reviews" component={Reviews} />
         <Route path="/auth" component={AuthPage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/register" component={RegisterPage} />
