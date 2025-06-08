@@ -416,13 +416,24 @@ export default function CorporateMembership() {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full bg-green-600 hover:bg-green-700 text-white text-lg py-3"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Submitting..." : "Submit Corporate Inquiry"}
-                </Button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Button 
+                    type="submit" 
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-lg py-3"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit Inquiry"}
+                  </Button>
+                  
+                  <Button 
+                    type="button"
+                    onClick={handleCorporatePayment}
+                    className="bg-green-600 hover:bg-green-700 text-white text-lg py-3"
+                    disabled={isSubmitting || !inquiry.companyName || !inquiry.email}
+                  >
+                    {isSubmitting ? "Processing..." : "Subscribe Now - $5,000 CAD/year"}
+                  </Button>
+                </div>
               </form>
 
               <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">

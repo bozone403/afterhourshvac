@@ -70,6 +70,9 @@ import FurnacesShop from "@/pages/shop/furnaces";
 import MaintenancePlansShop from "@/pages/shop/maintenance-plans";
 import AirConditioningShop from "@/pages/shop/air-conditioning";
 import WaterHeatersShop from "@/pages/shop/water-heaters";
+import TermsOfService from "@/pages/terms-of-service";
+import PrivacyPolicy from "@/pages/privacy-policy";
+import Sitemap from "@/pages/sitemap";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -128,6 +131,11 @@ function Router() {
         <Route path="/auth" component={AuthPage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/register" component={RegisterPage} />
+        
+        {/* Legal pages */}
+        <Route path="/terms-of-service" component={TermsOfService} />
+        <Route path="/privacy-policy" component={PrivacyPolicy} />
+        <Route path="/sitemap" component={Sitemap} />
         
         {/* Membership and Pro routes */}
         <Route path="/membership" component={MembershipSimple} />
