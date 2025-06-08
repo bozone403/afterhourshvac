@@ -152,17 +152,17 @@ const MaintenancePlansShop = () => {
   const addOns = [
     {
       name: "Duct Cleaning Service",
-      price: 199,
+      price: 3199,
       description: "Professional ductwork cleaning and sanitization"
     },
     {
       name: "Indoor Air Quality Package",
-      price: 149,
+      price: 2399,
       description: "UV lights, air purification, and humidity control"
     },
     {
       name: "Smart Thermostat Upgrade",
-      price: 299,
+      price: 479,
       description: "Professional installation of WiFi-enabled smart thermostat"
     }
   ];

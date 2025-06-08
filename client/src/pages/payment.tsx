@@ -46,13 +46,13 @@ const productConfigs = {
   },
   'maintenance-quickshot': {
     name: 'QuickShot Diagnostic',
-    price: 199,
+    price: 319,
     description: '20-point comprehensive HVAC system inspection',
     category: 'Maintenance'
   },
   'maintenance-dominion': {
     name: 'Dominion Annual Plan',
-    price: 659,
+    price: 1055,
     description: 'Comprehensive yearly maintenance coverage',
     category: 'Maintenance'
   }
@@ -62,12 +62,12 @@ const maintenanceAddOns = [
   {
     id: 'quickshot',
     name: 'QuickShot Diagnostic',
-    price: 199,
+    price: 319,
   },
   {
     id: 'dominion',
     name: 'Annual Maintenance Plan',
-    price: 659,
+    price: 1055,
   }
 ];
 
