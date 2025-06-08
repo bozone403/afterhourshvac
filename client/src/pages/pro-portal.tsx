@@ -18,7 +18,11 @@ import {
   Thermometer,
   Settings,
   FileCheck,
-  MessageSquare
+  MessageSquare,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 
 const EarlChatbot = () => {
@@ -31,6 +35,57 @@ const EarlChatbot = () => {
   ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+
+  const startListening = () => {
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      alert('Speech recognition not supported in this browser');
+      return;
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInputText(transcript);
+      setIsListening(false);
+    };
+
+    recognition.onerror = () => {
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
+
+  const speakText = (text: string) => {
+    if (!voiceEnabled) return;
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.9;
+    utterance.pitch = 0.8;
+    utterance.volume = 0.8;
+    
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    
+    speechSynthesis.speak(utterance);
+  };
 
   const sendMessage = async () => {
     if (!inputText.trim()) return;
@@ -47,13 +102,19 @@ const EarlChatbot = () => {
 
     // Simulate Earl's response (in production, this would call the AI API)
     setTimeout(() => {
+      const responseText = generateEarlResponse(inputText);
       const earlResponse = {
         id: Date.now() + 1,
-        text: generateEarlResponse(inputText),
+        text: responseText,
         sender: 'earl' as const
       };
       setMessages(prev => [...prev, earlResponse]);
       setIsTyping(false);
+      
+      // Speak Earl's response if voice is enabled
+      if (voiceEnabled) {
+        speakText(responseText);
+      }
     }, 1500);
   };
 
@@ -82,12 +143,25 @@ const EarlChatbot = () => {
   return (
     <div className="flex flex-col h-[600px] bg-white border rounded-lg">
       <div className="bg-orange-600 text-white p-4 rounded-t-lg">
-        <div className="flex items-center gap-2">
-          <Bot className="h-5 w-5" />
-          <h3 className="font-bold">Earl - HVAC Expert Assistant</h3>
-          <Badge variant="secondary" className="bg-orange-700 text-white">Pro Only</Badge>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Bot className="h-5 w-5" />
+            <h3 className="font-bold">Earl - HVAC Expert Assistant</h3>
+            <Badge variant="secondary" className="bg-orange-700 text-white">Pro Only</Badge>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setVoiceEnabled(!voiceEnabled)}
+              className="text-white hover:bg-orange-700"
+            >
+              {voiceEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+            </Button>
+            {isSpeaking && <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />}
+          </div>
         </div>
-        <p className="text-sm opacity-90 mt-1">Your gruff but knowledgeable HVAC expert</p>
+        <p className="text-sm opacity-90 mt-1">Voice-enabled professional HVAC expert with Alberta/BC expertise</p>
       </div>
       
       <ScrollArea className="flex-1 p-4">
@@ -128,10 +202,25 @@ const EarlChatbot = () => {
             placeholder="Ask Earl about HVAC codes, installation, troubleshooting..."
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
+          <Button
+            onClick={startListening}
+            disabled={isListening}
+            variant="outline"
+            size="sm"
+            className={`${isListening ? 'bg-red-100 text-red-600' : 'hover:bg-gray-100'}`}
+          >
+            {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+          </Button>
           <Button onClick={sendMessage} className="bg-orange-600 hover:bg-orange-700">
             Send
           </Button>
         </div>
+        {isListening && (
+          <div className="mt-2 text-sm text-red-600 flex items-center gap-2">
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+            Listening for voice input...
+          </div>
+        )}
       </div>
     </div>
   );
@@ -375,20 +464,127 @@ For complete terms, consult full legal document.`;
             </TabsList>
 
             <TabsContent value="earl">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MessageSquare className="h-5 w-5 text-orange-600" />
-                    Earl - Professional HVAC Expert Assistant
-                  </CardTitle>
-                  <CardDescription>
-                    Voice-enabled AI assistant for HVAC professionals. Earl provides expert guidance on diagnostics, installations, codes, and troubleshooting with decades of Alberta/BC experience.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <EarlChatbot />
-                </CardContent>
-              </Card>
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <MessageSquare className="h-5 w-5 text-orange-600" />
+                      Earl - Professional HVAC Expert Assistant
+                    </CardTitle>
+                    <CardDescription>
+                      Your gruff but knowledgeable HVAC expert. Earl specializes in Alberta/BC codes, installation best practices, troubleshooting, and professional guidance. He's your go-to for technical questions and industry expertise.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <EarlChatbot />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Settings className="h-5 w-5 text-blue-600" />
+                      Professional Tools Carousel
+                    </CardTitle>
+                    <CardDescription>
+                      Quick access to all professional HVAC tools and calculators
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-orange-50 to-orange-100">
+                        <CardHeader className="pb-3">
+                          <Bot className="h-8 w-8 text-orange-600 mb-2" />
+                          <CardTitle className="text-lg">Pro Diagnostic Assistant</CardTitle>
+                          <CardDescription className="text-sm">Advanced AI-powered technical diagnostics</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Link href="/tools/pro-diagnostic-assistant">
+                            <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                              Launch Diagnostics
+                            </Button>
+                          </Link>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-blue-50 to-blue-100">
+                        <CardHeader className="pb-3">
+                          <MessageSquare className="h-8 w-8 text-blue-600 mb-2" />
+                          <CardTitle className="text-lg">Voice Diagnostics</CardTitle>
+                          <CardDescription className="text-sm">Hands-free diagnostic assistant with voice guidance</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Link href="/tools/ai-symptom-diagnoser">
+                            <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                              Start Voice Mode
+                            </Button>
+                          </Link>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-green-50 to-green-100">
+                        <CardHeader className="pb-3">
+                          <Calculator className="h-8 w-8 text-green-600 mb-2" />
+                          <CardTitle className="text-lg">Alberta Rebates</CardTitle>
+                          <CardDescription className="text-sm">Calculate available rebates and incentives</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Link href="/tools/alberta-rebate-calculator">
+                            <Button className="w-full bg-green-600 hover:bg-green-700">
+                              Calculate Rebates
+                            </Button>
+                          </Link>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-purple-50 to-purple-100">
+                        <CardHeader className="pb-3">
+                          <Thermometer className="h-8 w-8 text-purple-600 mb-2" />
+                          <CardTitle className="text-lg">Load Calculator</CardTitle>
+                          <CardDescription className="text-sm">Manual J load calculations</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Link href="/calculators/pro-btu">
+                            <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                              Open Calculator
+                            </Button>
+                          </Link>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-indigo-50 to-indigo-100">
+                        <CardHeader className="pb-3">
+                          <FileCheck className="h-8 w-8 text-indigo-600 mb-2" />
+                          <CardTitle className="text-lg">Quote Builder</CardTitle>
+                          <CardDescription className="text-sm">Professional job estimating with Alggin pricing</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Link href="/calculators/enhanced-quote-builder">
+                            <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
+                              Build Quote
+                            </Button>
+                          </Link>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-teal-50 to-teal-100">
+                        <CardHeader className="pb-3">
+                          <BookOpen className="h-8 w-8 text-teal-600 mb-2" />
+                          <CardTitle className="text-lg">Literature Library</CardTitle>
+                          <CardDescription className="text-sm">Codes, manuals, and documentation</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Link href="/tools/hvac-literature">
+                            <Button className="w-full bg-teal-600 hover:bg-teal-700">
+                              Access Library
+                            </Button>
+                          </Link>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             <TabsContent value="diagnostics">
