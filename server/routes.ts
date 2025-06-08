@@ -3736,7 +3736,7 @@ Login to manage: afterhourshvac.ca/admin`;
         description: description || `Emergency HVAC Service - ${emergencyRequest.issueDescription}`,
       });
 
-      if (invoice.id) {
+      if (invoice.id && typeof invoice.id === 'string') {
         await stripe.invoices.finalizeInvoice(invoice.id);
         await stripe.invoices.sendInvoice(invoice.id);
       }
@@ -3849,7 +3849,7 @@ Login to manage: afterhourshvac.ca/admin`;
         description: description || `HVAC Service - ${booking.serviceType}`,
       });
 
-      if (invoice.id) {
+      if (invoice.id && typeof invoice.id === 'string') {
         await stripe.invoices.finalizeInvoice(invoice.id);
         await stripe.invoices.sendInvoice(invoice.id);
       }
