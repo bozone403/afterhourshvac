@@ -497,8 +497,9 @@ function EnhancedQuoteBuilderContent() {
       item.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
-  const [laborRate] = useState<number>(95); // $95/hour Calgary rate
-  const [markupPercentage, setMarkupPercentage] = useState<number>(40); // 40% markup
+  const [laborRate, setLaborRate] = useState<number>(95); // $95/hour Calgary rate
+  const [priceMultiplier, setPriceMultiplier] = useState<number>(1.0); // 1.0 = full price, 0.343 = 34.3% of full price
+  const [markupPercentage, setMarkupPercentage] = useState<number>(40); // 40% markup on final price
   const [taxRate] = useState<number>(5); // 5% GST
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
@@ -507,6 +508,8 @@ function EnhancedQuoteBuilderContent() {
     email: "",
     jobDescription: ""
   });
+  
+  const [laborHours, setLaborHours] = useState<number>(0);
 
   const categories = Object.keys(algginPricing);
   const availableItems = selectedCategory ? Object.keys(algginPricing[selectedCategory as keyof typeof algginPricing]) : [];
@@ -526,15 +529,17 @@ function EnhancedQuoteBuilderContent() {
     if (!itemData) return;
     
     const qty = parseFloat(quantity);
+    const discountedPrice = itemData.price * priceMultiplier; // Apply multiplier as discount
     
     const newItem: QuoteItem = {
       id: `${Date.now()}-${Math.random()}`,
+      name: selectedItem,
       category: selectedCategory,
       item: selectedItem,
       quantity: qty,
-      unitPrice: itemData.price,
-      laborHours: itemData.laborHours * qty,
-      total: itemData.price * qty
+      unitPrice: discountedPrice,
+      laborHours: 0, // Remove labor hours from materials
+      total: discountedPrice * qty
     };
 
     setQuote(prev => ({
@@ -722,6 +727,34 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                   className="mt-1 text-gray-900"
                 />
               </div>
+              
+              {/* Pricing Controls */}
+              <div className="grid grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div>
+                  <Label htmlFor="laborRate" className="text-gray-800 font-semibold">Labor Rate ($/hr)</Label>
+                  <Input
+                    id="laborRate"
+                    type="number"
+                    value={laborRate}
+                    onChange={(e) => setLaborRate(parseFloat(e.target.value) || 0)}
+                    placeholder="95"
+                    className="mt-1 text-gray-900"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="priceMultiplier" className="text-gray-800 font-semibold">Price Multiplier</Label>
+                  <Input
+                    id="priceMultiplier"
+                    type="number"
+                    step="0.001"
+                    value={priceMultiplier}
+                    onChange={(e) => setPriceMultiplier(parseFloat(e.target.value) || 1.0)}
+                    placeholder="1.0"
+                    className="mt-1 text-gray-900"
+                  />
+                  <div className="text-xs text-gray-600 mt-1">1.0 = full price, 0.343 = 34.3% of retail</div>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -747,15 +780,16 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                         onClick={() => {
                           const categoryData = algginPricing[itemData.category as keyof typeof algginPricing];
                           if (categoryData && itemName in categoryData) {
+                            const discountedPrice = itemData.price * priceMultiplier;
                             const item: QuoteItem = {
                               id: Date.now().toString(),
                               name: itemName,
                               category: itemData.category,
                               item: itemName,
-                              unitPrice: itemData.price,
+                              unitPrice: discountedPrice,
                               quantity: 1,
-                              total: itemData.price,
-                              laborHours: itemData.laborHours
+                              total: discountedPrice,
+                              laborHours: 0
                             };
                             setQuote(prev => ({
                               ...prev,
@@ -766,7 +800,7 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                       >
                         <div className="flex-1">
                           <div className="font-medium text-gray-900 text-sm">{itemName.replace(/"/g, '"')}</div>
-                          <div className="text-green-600 font-bold text-xs">${itemData.price.toFixed(2)} • {itemData.laborHours}h labor</div>
+                          <div className="text-green-600 font-bold text-xs">${(itemData.price * priceMultiplier).toFixed(2)}</div>
                         </div>
                         <Plus className="h-4 w-4 text-green-600" />
                       </Button>
