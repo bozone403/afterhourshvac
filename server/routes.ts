@@ -3664,7 +3664,6 @@ Login to manage: afterhourshvac.ca/admin`;
 
       const updatedRequest = await storage.updateEmergencyRequest(parseInt(id), {
         status,
-        notes,
         estimatedArrival: estimatedArrival ? new Date(estimatedArrival) : undefined,
         assignedTechnician,
         totalCost
@@ -3693,10 +3692,14 @@ Login to manage: afterhourshvac.ca/admin`;
       }
 
       // Create or find customer
+      if (!stripe) {
+        return res.status(500).json({ error: "Payment processing not available" });
+      }
+
       let customer;
       try {
         const customers = await stripe.customers.list({
-          email: emergencyRequest.email,
+          email: emergencyRequest.email || undefined,
           limit: 1
         });
         
@@ -3704,9 +3707,9 @@ Login to manage: afterhourshvac.ca/admin`;
           customer = customers.data[0];
         } else {
           customer = await stripe.customers.create({
-            email: emergencyRequest.email,
+            email: emergencyRequest.email || undefined,
             name: emergencyRequest.name,
-            phone: emergencyRequest.phone,
+            phone: emergencyRequest.phone || undefined,
           });
         }
       } catch (error) {
@@ -3733,8 +3736,10 @@ Login to manage: afterhourshvac.ca/admin`;
         description: description || `Emergency HVAC Service - ${emergencyRequest.issueDescription}`,
       });
 
-      await stripe.invoices.finalizeInvoice(invoice.id);
-      await stripe.invoices.sendInvoice(invoice.id);
+      if (invoice.id) {
+        await stripe.invoices.finalizeInvoice(invoice.id);
+        await stripe.invoices.sendInvoice(invoice.id);
+      }
 
       // Update emergency request with invoice info
       await storage.updateEmergencyRequest(parseInt(id), {
@@ -3844,8 +3849,10 @@ Login to manage: afterhourshvac.ca/admin`;
         description: description || `HVAC Service - ${booking.serviceType}`,
       });
 
-      await stripe.invoices.finalizeInvoice(invoice.id);
-      await stripe.invoices.sendInvoice(invoice.id);
+      if (invoice.id) {
+        await stripe.invoices.finalizeInvoice(invoice.id);
+        await stripe.invoices.sendInvoice(invoice.id);
+      }
 
       // Update booking with invoice info
       await storage.updateServiceBooking(parseInt(id), {
@@ -4268,7 +4275,6 @@ Login to manage: afterhourshvac.ca/admin`;
 
           // Update emergency request with payment intent
           await storage.updateEmergencyRequest(emergencyRequest.id, {
-            stripePaymentIntentId: paymentIntent.id,
             status: 'pending_payment'
           });
 
@@ -4419,7 +4425,7 @@ Immediate response required!`;
         return res.status(400).json({ error: "User ID is required" });
       }
 
-      const updatedUser = await storage.updateUserProAccess(userId, updates.hasProAccess);
+      const updatedUser = await storage.updateUserProAccess(userId, updates.hasProAccess, new Date());
       res.json({
         ...updatedUser,
         password: undefined,
