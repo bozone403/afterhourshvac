@@ -621,6 +621,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid amount" });
       }
       
+      if (!stripe) {
+        return res.status(500).json({ error: "Payment processing not available" });
+      }
+      
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount * 100), // Convert to cents
         currency: "cad",
@@ -977,7 +981,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all bookings for admin dashboard
   app.get('/api/admin/bookings', requireAuth, async (req, res) => {
     try {
-      if (!req.user || !req.user.isAdmin) {
+      if (!req.user || !(req.user as any).isAdmin) {
         return res.status(403).json({ error: "Admin access required" });
       }
 
@@ -3542,13 +3546,7 @@ Login to manage: afterhourshvac.ca/admin`;
           position,
           experience,
           coverLetter: coverLetter || null,
-          status: 'pending',
-          // Additional fields for enhanced application
-          education: education || null,
-          certifications: certifications || null,
-          availability: availability || null,
-          salaryExpectation: salaryExpectation || null,
-          references: references || null
+          status: 'pending'
         };
       } else {
         // Handle regular JSON data
@@ -3562,13 +3560,7 @@ Login to manage: afterhourshvac.ca/admin`;
           position,
           experience,
           coverLetter: coverLetter || null,
-          status: 'pending',
-          yearsExperience: yearsExperience || null,
-          education: education || null,
-          certifications: certifications || null,
-          availability: availability || null,
-          salaryExpectation: salaryExpectation || null,
-          references: references || null
+          status: 'pending'
         };
       }
 
