@@ -24,7 +24,8 @@ import {
   Eye,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  DollarSign
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
