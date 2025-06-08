@@ -66,10 +66,10 @@ const Contact = () => {
                       <div>
                         <h4 className="font-semibold mb-1 text-gray-900">Email</h4>
                         <a 
-                          href="mailto:Jordan@AfterhoursHVAC.ca" 
+                          href="mailto:Jordan@Afterhourshvac.ca" 
                           className="text-gray-600 hover:text-blue-600 transition-colors"
                         >
-                          Jordan@AfterhoursHVAC.ca
+                          Jordan@Afterhourshvac.ca
                         </a>
                         <p className="text-sm text-gray-500 mt-1">We typically respond within 24 hours</p>
                       </div>

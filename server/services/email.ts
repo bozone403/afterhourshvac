@@ -30,7 +30,7 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
 }
 
 // Company email for sending and receiving
-const COMPANY_EMAIL = process.env.COMPANY_EMAIL || 'Jordan@AfterhoursHVAC.ca';
+const COMPANY_EMAIL = process.env.COMPANY_EMAIL || 'Jordan@Afterhourshvac.ca';
 const COMPANY_NAME = 'AfterHours HVAC';
 
 /**

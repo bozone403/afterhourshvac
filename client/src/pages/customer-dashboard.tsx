@@ -203,7 +203,7 @@ const CustomerDashboard = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-gray-900">
-                      {Array.isArray(maintenancePlans) ? maintenancePlans.length : 0}
+                      {Array.isArray(customerMaintenancePlans) ? customerMaintenancePlans.length : 0}
                     </div>
                   </CardContent>
                 </Card>
@@ -583,7 +583,7 @@ const CustomerDashboard = () => {
               </div>
               
               <div className="grid gap-6">
-                {Array.isArray(maintenancePlans) && maintenancePlans.length > 0 ? maintenancePlans.map((plan: any, index: number) => (
+                {Array.isArray(customerMaintenancePlans) && customerMaintenancePlans.length > 0 ? customerMaintenancePlans.map((plan: any, index: number) => (
                   <Card key={index}>
                     <CardHeader>
                       <div className="flex items-center justify-between">
