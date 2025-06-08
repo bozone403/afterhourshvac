@@ -1453,6 +1453,77 @@ export class DatabaseStorage implements IStorage {
       }
     }
   }
+
+  // Emergency Request methods
+  async getAllEmergencyRequests(): Promise<EmergencyRequest[]> {
+    const results = await db.select().from(emergencyRequests).orderBy(desc(emergencyRequests.createdAt));
+    return results;
+  }
+
+  async getUserEmergencyRequests(userId: number): Promise<EmergencyRequest[]> {
+    const results = await db
+      .select()
+      .from(emergencyRequests)
+      .where(eq(emergencyRequests.userId, userId))
+      .orderBy(desc(emergencyRequests.createdAt));
+    return results;
+  }
+
+  async searchEmergencyRequests(query: string): Promise<EmergencyRequest[]> {
+    const { or, ilike } = await import("drizzle-orm");
+    const results = await db
+      .select()
+      .from(emergencyRequests)
+      .where(
+        or(
+          ilike(emergencyRequests.phone, `%${query}%`),
+          ilike(emergencyRequests.email, `%${query}%`),
+          eq(emergencyRequests.id, isNaN(parseInt(query)) ? -1 : parseInt(query))
+        )
+      )
+      .orderBy(desc(emergencyRequests.createdAt));
+    return results;
+  }
+
+  async updateEmergencyRequest(id: number, data: Partial<EmergencyRequest>): Promise<EmergencyRequest | undefined> {
+    const [request] = await db
+      .update(emergencyRequests)
+      .set(data)
+      .where(eq(emergencyRequests.id, id))
+      .returning();
+    return request;
+  }
+
+  // Job Application methods
+  async getAllJobApplications(): Promise<JobApplication[]> {
+    const results = await db.select().from(jobApplications).orderBy(desc(jobApplications.createdAt));
+    return results;
+  }
+
+  async getJobApplicationById(id: number): Promise<JobApplication | undefined> {
+    const [application] = await db
+      .select()
+      .from(jobApplications)
+      .where(eq(jobApplications.id, id));
+    return application;
+  }
+
+  async createJobApplication(application: InsertJobApplication): Promise<JobApplication> {
+    const [newApplication] = await db
+      .insert(jobApplications)
+      .values(application)
+      .returning();
+    return newApplication;
+  }
+
+  async updateJobApplication(id: number, data: Partial<JobApplication>): Promise<JobApplication | undefined> {
+    const [application] = await db
+      .update(jobApplications)
+      .set(data)
+      .where(eq(jobApplications.id, id))
+      .returning();
+    return application;
+  }
 }
 
 export const storage = new DatabaseStorage();

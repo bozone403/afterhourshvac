@@ -32,6 +32,7 @@ import QuoteBuilder from "@/pages/calculators/quote-builder";
 import EnhancedQuoteBuilder from "@/pages/calculators/enhanced-quote-builder";
 import ServiceTracking from "@/pages/service-tracking";
 import EmergencyTracker from "@/pages/emergency-tracker";
+import EmergencyService from "@/pages/emergency-service";
 import ProCalculator from "@/pages/pro-calculator";
 import ProCalculatorV2 from "@/pages/pro-calculator-v2";
 import ProPortal from "@/pages/pro-portal";
@@ -95,6 +96,7 @@ function Router() {
         <Route path="/calculators/energy-savings" component={EnergySavingsCalculator} />
         <Route path="/calculators/load-calculator" component={LoadCalculator} />
         <Route path="/service-tracking" component={ServiceTracking} />
+        <Route path="/emergency-service" component={EmergencyService} />
         <Route path="/services/furnace-install" component={FurnaceInstall} />
         <Route path="/services/ac-repair" component={ACRepair} />
         <Route path="/services/duct-cleaning" component={DuctCleaning} />

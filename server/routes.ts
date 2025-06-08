@@ -18,6 +18,8 @@ import {
   insertHvacEquipmentSchema,
   insertHvacMaterialsSchema,
   insertHvacAccessoriesSchema,
+  insertEmergencyRequestSchema,
+  insertJobApplicationSchema,
   users
 } from "@shared/schema";
 import { WebSocketServer } from 'ws';
