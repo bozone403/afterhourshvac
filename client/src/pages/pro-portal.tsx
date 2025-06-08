@@ -373,21 +373,7 @@ const ProPortal = () => {
           </div>
 
           <div className="max-w-6xl mx-auto space-y-8">
-            {/* Earl AI Assistant */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-orange-600" />
-                  Earl - Professional HVAC Expert Assistant
-                </CardTitle>
-                <CardDescription>
-                  Your gruff but knowledgeable HVAC expert. Earl specializes in Alberta/BC codes, installation best practices, troubleshooting, and professional guidance.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <EarlChatbot />
-              </CardContent>
-            </Card>
+
 
             {/* Diagnostic Tools Carousel */}
             <Card>

@@ -154,13 +154,16 @@ const ProVoiceAssistant = () => {
       utterance.pitch = 1.0;
       utterance.volume = 0.9;
       
-      // Try to use a more natural voice
+      // Try to use a male voice with natural quality
       const voices = speechSynthesis.getVoices();
       const preferredVoice = voices.find(voice => 
-        voice.name.includes('Google') || 
-        voice.name.includes('Microsoft') ||
-        voice.name.includes('Natural') ||
-        voice.name.includes('Premium')
+        voice.name.includes('Male') ||
+        voice.name.includes('David') ||
+        voice.name.includes('Mark') ||
+        voice.name.includes('Google US English Male')
+      ) || voices.find(voice => 
+        voice.lang.includes('en-US') && 
+        (voice.name.includes('Google') || voice.name.includes('Microsoft'))
       );
       
       if (preferredVoice) {
@@ -225,40 +228,48 @@ const ProVoiceAssistant = () => {
   const generateAdvancedResponse = (userInput: string): string => {
     const lowerInput = userInput.toLowerCase();
     
-    // Advanced diagnostic patterns
+    // Advanced diagnostic patterns with detailed technical responses
     if (lowerInput.includes('no heat') || lowerInput.includes('furnace not working')) {
-      return "Let me walk you through a systematic diagnostic approach. First, I need to understand your system better. Are you dealing with a forced air furnace, boiler, or heat pump? Once I know that, I'll guide you through checking the thermostat call, power supply, gas valve operation, and ignition sequence. Each step will help us isolate the problem efficiently.";
+      return "I'll guide you through a comprehensive no-heat diagnostic protocol. Start with thermostat verification - confirm it's calling for heat with 24VAC between R and W terminals. Next, check the primary power supply at the disconnect and verify proper voltage at the unit. For gas furnaces, inspect the gas valve - you should have 24VAC during a call for heat. Check the ignition sequence: induced draft motor energizes first, pressure switch closes, then ignition begins. Common failure points include failed pressure switches, cracked heat exchangers causing rollout switch trips, or faulty gas valves. Each component has specific testing procedures I can walk you through.";
     }
     
     if (lowerInput.includes('short cycling') || lowerInput.includes('keeps turning on and off')) {
-      return "Short cycling indicates the system is reaching its limit switch or safety control too quickly. This typically stems from airflow restrictions, oversized equipment, or faulty controls. Let's start by checking your filter - when was it last changed? Then we'll examine static pressure, heat exchanger condition, and limit switch operation. I'll guide you through each measurement.";
+      return "Short cycling is a critical efficiency and comfort issue requiring systematic analysis. First, measure static pressure - it should be below 0.5 inches WC total external static pressure for residential systems. High static pressure from dirty filters, closed dampers, or undersized ductwork forces the system to overheat and trip on limit switches. Check the heat exchanger for cracks using a combustible gas detector during operation. Verify the limit switch is properly calibrated and not nuisance tripping. For heat pumps, examine defrost cycle operation and refrigerant pressures. Oversized equipment also causes short cycling - proper Manual J load calculations prevent this issue.";
     }
     
     if (lowerInput.includes('strange noise') || lowerInput.includes('loud sound')) {
-      return "Unusual sounds are excellent diagnostic indicators. Can you describe the noise more specifically? Is it a grinding, squealing, rumbling, or clicking sound? The timing matters too - does it occur during startup, continuous operation, or shutdown? Based on your description, I'll help you pinpoint whether it's a blower motor, inducer fan, gas valve, or ductwork issue.";
+      return "Sound diagnosis is a precise diagnostic tool when done systematically. Grinding typically indicates worn blower motor bearings or damaged fan blades. Squealing suggests belt issues or motor bearing failure. Rumbling often points to burner problems, dirty heat exchangers, or ductwork vibration. Clicking sounds usually indicate relay cycling, gas valve operation, or ductwork expansion. Time the noise occurrence - startup noises differ from operational sounds. Use a digital sound meter to quantify decibel levels and frequency ranges. I can guide you through isolation techniques using circuit analysis to pinpoint the exact component causing the issue.";
     }
     
     if (lowerInput.includes('high bills') || lowerInput.includes('efficiency')) {
-      return "Elevated energy costs usually indicate reduced system efficiency. Let's analyze your system holistically. I'll guide you through checking combustion efficiency, heat exchanger performance, ductwork integrity, and control operation. We'll also review your maintenance history and discuss upgrade options that provide the best return on investment for your specific situation.";
+      return "Energy efficiency analysis requires comprehensive system evaluation using multiple measurement points. Start with combustion analysis - measure CO2, O2, and flue gas temperature to calculate combustion efficiency. It should exceed 80% for standard efficiency units, 90%+ for condensing equipment. Perform ductwork leakage testing using a duct blaster - leakage should be under 6% of system airflow. Measure temperature rise across the heat exchanger - it should match manufacturer specifications within 40-70°F typically. Check refrigerant subcooling and superheat for cooling systems. Use thermal imaging to identify envelope losses and ductwork issues. I'll help you calculate actual operating costs versus theoretical efficiency ratings.";
     }
     
     if (lowerInput.includes('code') || lowerInput.includes('permit') || lowerInput.includes('inspection')) {
-      return "Code compliance is critical for safety and legal operation. Which jurisdiction are we working in? Alberta Building Code 2019 has specific requirements for HVAC installations, including clearances, venting, combustion air, and electrical connections. I'll walk you through the relevant sections and ensure your installation meets all current standards before inspection.";
+      return "Code compliance requires detailed knowledge of current standards and local amendments. For Alberta installations, reference NBC 2015 with provincial modifications, CSA B149 gas codes, and local municipal requirements. Gas line sizing must follow CSA B149.1 tables for proper BTU delivery. Venting requirements vary by equipment category - Category I, II, III, or IV systems have specific clearances and materials. Combustion air calculations use CSA B149.1 methods - typically 1 cubic foot per 1000 BTU input for outdoor air. Electrical connections must meet CEC standards with proper disconnect placement and emergency shutoffs. I can walk you through specific code sections and calculation methods for your installation type.";
     }
     
     if (lowerInput.includes('sizing') || lowerInput.includes('load calculation')) {
-      return "Proper sizing is fundamental to system performance and efficiency. Manual J load calculations consider building envelope, orientation, windows, insulation, and occupancy. I'll guide you through the calculation process, including heating and cooling loads, equipment selection criteria, and ductwork design using Manual D principles. Oversizing is as problematic as undersizing.";
+      return "Proper equipment sizing uses ACCA Manual J methodology with precise heat loss and gain calculations. Start with building envelope analysis - measure wall, window, ceiling, and floor areas. Calculate U-values for each surface using construction details and insulation R-values. Factor in infiltration rates using ACH50 blower door results or estimate 0.35 ACH for average construction. Include internal heat gains from occupants, lighting, and appliances. Design temperatures use 99% heating and 1% cooling values for your location. Equipment selection uses Manual S guidelines - heating capacity should be 100-125% of calculated load, cooling capacity 95-115%. Ductwork design follows Manual D principles with proper friction rates and velocity limits. Oversizing reduces efficiency and comfort significantly.";
     }
     
     if (lowerInput.includes('refrigerant') || lowerInput.includes('charging')) {
-      return "Refrigerant charging requires precision and proper certification. I'll guide you through superheat and subcooling measurements, proper charging procedures, and leak detection techniques. Remember, improper charging reduces efficiency, shortens equipment life, and can damage compressors. Always use calibrated gauges and follow manufacturer specifications exactly.";
+      return "Refrigerant charging demands precision measurement and proper certification compliance. Start with system evacuation to 500 microns using a two-stage vacuum pump and micron gauge. Charge by weight when possible using manufacturer specifications on the unit nameplate. For field charging, measure suction line temperature and pressure to calculate superheat - typically 8-12°F for TXV systems, 10-15°F for fixed orifices. Subcooling should be 8-15°F measured at the liquid line near the condenser. Use calibrated digital manifolds for accuracy. Check for leaks using electronic leak detectors sensitive to 0.1 oz/year. Document pressures, temperatures, and ambient conditions. Improper charging reduces capacity by 10-20% and increases operating costs substantially. Always follow EPA Section 608 recovery requirements.";
     }
     
     if (lowerInput.includes('controls') || lowerInput.includes('thermostat')) {
-      return "Modern HVAC controls are sophisticated systems requiring systematic troubleshooting. I'll help you understand the control sequence, verify proper wiring, test voltage levels, and diagnose communication issues. Whether dealing with conventional thermostats, smart controls, or building automation systems, methodical testing is key to resolution.";
+      return "Modern control systems require understanding of both conventional and communicating protocols. For conventional systems, verify 24VAC transformer output under load - it should maintain 22-26VAC. Check thermostat wiring using proper color codes: R (power), W (heat), Y (cool), G (fan), C (common). Measure voltage drops across connections and verify proper wire sizing - 18 AWG minimum for most applications. For communicating systems, use manufacturer-specific diagnostic tools to check bus communication, address conflicts, and error codes. Smart thermostats require WiFi signal strength analysis and firmware updates. Zoning systems need proper bypass damper sizing and static pressure controls. I can guide you through specific troubleshooting sequences for any control system type.";
     }
     
-    return "I'm here to provide comprehensive technical guidance for any HVAC challenge you're facing. Whether it's installation, troubleshooting, code compliance, or system optimization, I can walk you through detailed procedures step-by-step. What specific aspect of your HVAC work would you like to explore in depth?";
+    if (lowerInput.includes('heat pump') || lowerInput.includes('defrost')) {
+      return "Heat pump diagnostics require understanding of refrigeration cycles and defrost controls. Check refrigerant pressures against manufacturer charts based on outdoor temperature - suction pressure drops significantly in cold weather. Defrost initiation typically occurs on time and temperature - outdoor coil temperature below 26°F for 30-90 minutes depending on system. Verify defrost termination using coil temperature sensors, typically 65-70°F. Check reversing valve operation using solenoid voltage and system pressures. Backup heat should energize during defrost and cold weather lockout, usually below 25-30°F outdoor temperature. Measure amp draw on compressor, outdoor fan, and auxiliary heat. Heat pump balance point calculations determine when backup heat becomes more economical than heat pump operation.";
+    }
+    
+    if (lowerInput.includes('combustion') || lowerInput.includes('gas') || lowerInput.includes('burner')) {
+      return "Combustion analysis ensures safe and efficient operation using precise measurements. Measure gas pressure at the manifold - natural gas should be 3.5 inches WC, propane 11 inches WC typically. Check gas valve operation through main and pilot valves. Perform combustion analysis measuring CO2 (8-10% for natural gas), O2 (3-5%), and CO (under 100 PPM air-free). Calculate combustion efficiency using flue gas temperature rise above combustion air temperature. Check burner flame characteristics - blue flames with minimal yellow tips indicate proper air-fuel mixture. Inspect heat exchanger using cameras or mirrors for cracks, especially near stress points. Verify proper venting using draft measurements and spillage testing. Document all readings for safety compliance and efficiency optimization.";
+    }
+    
+    return "I'm your advanced HVAC technical consultant ready to provide detailed diagnostic procedures, code interpretation, and system optimization guidance. My expertise covers installation protocols, troubleshooting methodologies, efficiency analysis, and safety compliance. What specific technical challenge would you like me to analyze with you today?";
   };
 
   return (
