@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Link, useLocation } from 'wouter';
@@ -29,65 +28,69 @@ const EarlChatbot = () => {
   const [messages, setMessages] = useState<Array<{id: number, text: string, sender: 'user' | 'earl'}>>([
     {
       id: 1,
-      text: "Hey there! I'm Earl, your expert HVAC assistant. I've got decades of experience with Alberta and BC codes, installation best practices, and troubleshooting. What can I help you with today?",
+      text: "Earl here. Been working HVAC for 30+ years in Alberta. What's your problem? Don't waste my time with the basics - give me the details and I'll tell you how to fix it right the first time.",
       sender: 'earl'
     }
   ]);
   const [inputText, setInputText] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [voiceEnabled, setVoiceEnabled] = useState(false);
 
   const startListening = () => {
-    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-      alert('Speech recognition not supported in this browser');
-      return;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+      
+      recognition.onstart = () => {
+        setIsListening(true);
+      };
+      
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInputText(transcript);
+        setIsListening(false);
+      };
+      
+      recognition.onerror = () => {
+        setIsListening(false);
+      };
+      
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+      
+      recognition.start();
     }
-
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
-
-    recognition.onstart = () => {
-      setIsListening(true);
-    };
-
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setInputText(transcript);
-      setIsListening(false);
-    };
-
-    recognition.onerror = () => {
-      setIsListening(false);
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognition.start();
   };
 
-  const speakText = (text: string) => {
-    if (!voiceEnabled) return;
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.9;
-    utterance.pitch = 0.8;
-    utterance.volume = 0.8;
-    
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    
-    speechSynthesis.speak(utterance);
+  const speakResponse = (text: string) => {
+    if ('speechSynthesis' in window) {
+      setIsSpeaking(true);
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 0.8;
+      utterance.volume = 0.8;
+      
+      utterance.onend = () => {
+        setIsSpeaking(false);
+      };
+      
+      speechSynthesis.speak(utterance);
+    }
   };
 
-  const sendMessage = async () => {
+  const stopSpeaking = () => {
+    if ('speechSynthesis' in window) {
+      speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+  };
+
+  const sendMessage = () => {
     if (!inputText.trim()) return;
 
     const userMessage = {
@@ -97,24 +100,18 @@ const EarlChatbot = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setInputText('');
-    setIsTyping(true);
-
-    // Simulate Earl's response (in production, this would call the AI API)
+    
     setTimeout(() => {
-      const responseText = generateEarlResponse(inputText);
-      const earlResponse = {
+      const response = generateEarlResponse(inputText);
+      const earlMessage = {
         id: Date.now() + 1,
-        text: responseText,
+        text: response,
         sender: 'earl' as const
       };
-      setMessages(prev => [...prev, earlResponse]);
-      setIsTyping(false);
       
-      // Speak Earl's response if voice is enabled
-      if (voiceEnabled) {
-        speakText(responseText);
-      }
+      setMessages(prev => [...prev, earlMessage]);
+      speakResponse(response);
+      setInputText('');
     }, 1500);
   };
 
@@ -157,23 +154,25 @@ const EarlChatbot = () => {
       <div className="bg-orange-600 text-white p-4 rounded-t-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Bot className="h-5 w-5" />
-            <h3 className="font-bold">Earl - HVAC Expert Assistant</h3>
-            <Badge variant="secondary" className="bg-orange-700 text-white">Pro Only</Badge>
+            <MessageSquare className="h-5 w-5" />
+            <span className="font-semibold">Earl</span>
+            <Badge variant="secondary" className="bg-orange-500 text-white">
+              Professional HVAC Expert
+            </Badge>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setVoiceEnabled(!voiceEnabled)}
-              className="text-white hover:bg-orange-700"
-            >
-              {voiceEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-            </Button>
-            {isSpeaking && <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />}
+            {isSpeaking && (
+              <Button
+                onClick={stopSpeaking}
+                variant="outline"
+                size="sm"
+                className="bg-red-100 text-red-600 hover:bg-red-200"
+              >
+                <VolumeX className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
-        <p className="text-sm opacity-90 mt-1">Voice-enabled professional HVAC expert with Alberta/BC expertise</p>
       </div>
       
       <ScrollArea className="flex-1 p-4">
@@ -186,18 +185,19 @@ const EarlChatbot = () => {
               <div
                 className={`max-w-[80%] p-3 rounded-lg ${
                   message.sender === 'user'
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-orange-600 text-white'
                     : 'bg-gray-100 text-gray-900'
                 }`}
               >
-                <p className="text-sm">{message.text}</p>
+                <p className="text-sm leading-relaxed">{message.text}</p>
               </div>
             </div>
           ))}
-          {isTyping && (
+          {isSpeaking && (
             <div className="flex justify-start">
-              <div className="bg-gray-100 text-gray-900 p-3 rounded-lg">
-                <p className="text-sm">Earl is typing...</p>
+              <div className="bg-orange-100 text-orange-600 p-3 rounded-lg flex items-center gap-2">
+                <Volume2 className="h-4 w-4 animate-pulse" />
+                <span className="text-sm">Earl is speaking...</span>
               </div>
             </div>
           )}
@@ -238,27 +238,6 @@ const EarlChatbot = () => {
   );
 };
 
-const DocumentViewer = ({ title, content }: { title: string; content: string }) => {
-  return (
-    <div className="bg-white border rounded-lg p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-        <Button variant="outline" size="sm">
-          <Download className="h-4 w-4 mr-2" />
-          Download PDF
-        </Button>
-      </div>
-      <ScrollArea className="h-[500px]">
-        <div className="prose prose-sm max-w-none">
-          <pre className="whitespace-pre-wrap text-sm text-gray-700 font-mono">
-            {content}
-          </pre>
-        </div>
-      </ScrollArea>
-    </div>
-  );
-};
-
 const ProPortal = () => {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
@@ -266,497 +245,299 @@ const ProPortal = () => {
   // Redirect if not pro user
   if (!user?.hasProAccess && !user?.hasPro) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 flex items-center justify-center">
-        <Card className="max-w-md">
-          <CardHeader className="text-center">
-            <AlertTriangle className="h-12 w-12 text-orange-600 mx-auto mb-4" />
-            <CardTitle>Pro Membership Required</CardTitle>
-            <CardDescription>
-              You need an active Pro membership to access these tools.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <Link href="/membership">
-              <Button className="bg-orange-600 hover:bg-orange-700">
-                <Crown className="h-4 w-4 mr-2" />
-                Upgrade to Pro
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
+      <>
+        <Helmet>
+          <title>Pro Portal Access Required - AfterHours HVAC</title>
+          <meta name="description" content="Professional HVAC tools and resources require Pro membership access." />
+        </Helmet>
+        
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl text-orange-600">Pro Access Required</CardTitle>
+              <CardDescription>
+                Professional HVAC tools and resources are available to Pro members only.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-gray-600 text-center">
+                Upgrade to Pro membership to access Earl AI, professional calculators, diagnostic tools, and Alberta/BC code documentation.
+              </p>
+              <div className="space-y-2">
+                <Button 
+                  onClick={() => setLocation('/membership')} 
+                  className="w-full bg-orange-600 hover:bg-orange-700"
+                >
+                  Upgrade to Pro
+                </Button>
+                <Button 
+                  onClick={() => setLocation('/')} 
+                  variant="outline" 
+                  className="w-full"
+                >
+                  Back to Home
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </>
     );
   }
-
-  const calgaryCheatSheet = `"Don't Be a Dumbass" - Calgary HVAC Rough-In Cheat Sheet
-
-IMPORTANT DISCLAIMERS:
-- This is NOT a substitute for the codes
-- This is for RESIDENTIAL rough-in ONLY
-- Always verify with current, official code documents
-- Check with City of Calgary building department for local amendments
-
-I. General Building Code (Alberta Building Code 2019):
-
-STANDATA - CRUCIAL:
-- Alberta Municipal Affairs publishes STANDATA (variations/interpretations of building code)
-- Search for "HVAC" and "Building Code STANDATA"
-- These take precedence over general code wording
-
-Load Calculations:
-- Use Manual J, CSA F280, or approved method
-- STANDATA often have specific requirements
-
-Ductwork Materials:
-- Galvanized steel (most common)
-- Aluminum (less common)  
-- Rigid fiberglass duct board (with limitations - check STANDATA)
-- Flexible duct (limited lengths, proper support)
-
-Ductwork Support:
-- Rigid Metal Duct: Every 8-10 feet
-- Flex Duct: Every 4 feet (support at connections)
-- Use metal hanger straps or wire and saddles
-
-Ductwork Sealing:
-- Mastic is primary sealant
-- Foil tape over zip ties for flex connections
-- ALL joints, seams, connections must be sealed
-
-II. Gas Code (CSA B149.1-20):
-
-High-Efficiency Furnace Venting (Category IV):
-- Material: System 636 certified PVC, CPVC, or polypropylene
-- Slope: Minimum 1/4" per foot downward (back towards furnace)
-- Support: Every 3-5 feet (follow manufacturer instructions)
-
-Termination Clearances:
-- From property lines: 3 feet or more (check local bylaws)
-- From windows/doors: 3 feet (>100k BTU), 1 foot (<100k BTU)
-- From air intakes: 6 feet minimum
-- Above grade/snow: 12 inches minimum
-- From gas meter: Check B149.1 and utility requirements
-
-Natural Draft Venting (B-Vent):
-- Material: B-vent (double-walled metal)
-- Slope: 1/4" per foot upward (away from appliance)
-- Must extend above roof with proper cap
-
-III. Electrical Code (CEC):
-- Disconnect within sight of furnace
-- Proper wire sizing for load
-- Grounding required
-- GFCI for condensate pumps
-- All connections in junction boxes
-
-IV. Plumbing Code (NPC):
-- Condensate drain: 1/4" per foot slope
-- P-trap may be required
-- Proper termination (floor drain, pump, indirect waste)
-
-V. HRV Specific:
-- Intake/exhaust separation: 6 feet minimum
-- Insulate intake duct
-- Follow manufacturer condensate drain instructions
-
-Earl's Key Points:
-- "Measure twice, cut once"
-- "Seal every joint with mastic"
-- "Support ductwork properly"  
-- "Slope vents correctly"
-- "Read the code book"
-- "When in doubt, ask"`;
-
-  const termsOfService = `AFTERHOURS HVAC - TERMS OF SERVICE
-
-These Terms of Service ("Terms"), together with the specific written Quotation ("Quote") 
-provided by AfterHours HVAC ("Company") constitute the binding legal agreement governing 
-the provision of HVAC and related services.
-
-I. AGREEMENT AND ACCEPTANCE
-Binding Effect: These Terms, with the accepted Quote, form the complete legal agreement. 
-Acceptance by written confirmation, electronic acceptance, or payment constitutes 
-unconditional acceptance of these Terms.
-
-II. SCOPE OF WORK
-Defined by Quote: Company's obligation is to perform Work detailed in the written Quote. 
-Standard inclusions cover supply/installation of itemized equipment and standard connections 
-to compatible utility points.
-
-Express Exclusions:
-- Thermostats (unless specified)
-- Existing system modifications beyond connection points
-- Structural alterations
-- Cosmetic restoration
-- Hazardous material handling
-- System balancing beyond standard startup
-- Existing equipment disposal
-
-III. PRICE AND PAYMENT
-Payment Schedule (unless otherwise specified):
-- First Payment: 40% before delivery/commencement
-- Second Payment: 40% at rough-in completion
-- Final Payment: 20% at substantial completion
-
-Methods: E-transfer or Credit Card (3.5% processing fee)
-Delinquent accounts accrue 2.5% monthly interest (30% annual)
-
-IV. CLIENT OBLIGATIONS
-- Provide safe, continuous site access (8 AM - 4 PM, M-F)
-- Ensure site safety and structural soundness
-- Guarantee utility availability
-- Protect/remove personal property
-- Mark property lines and private utilities
-
-V. WARRANTIES
-Equipment covered by manufacturer warranty only.
-Workmanship warranty: 1 year on installation labor.
-No warranty on pre-existing conditions or client-caused damage.
-
-VI. LIABILITY LIMITATIONS
-Company liability limited to contract amount.
-No liability for consequential, indirect, or special damages.
-Client assumes risk for undisclosed site conditions.
-
-For complete terms, consult full legal document.`;
 
   return (
     <>
       <Helmet>
-        <title>Pro Portal | AfterHours HVAC</title>
-        <meta name="description" content="Access professional HVAC tools, Earl AI assistant, and comprehensive documentation for contractors and engineers." />
+        <title>Pro Portal - Professional HVAC Tools | AfterHours HVAC</title>
+        <meta name="description" content="Professional HVAC tools, Earl AI assistant, diagnostic systems, calculators, and Alberta/BC building codes for certified technicians." />
+        <meta name="keywords" content="HVAC professional tools, Earl AI, Alberta building code, diagnostic tools, HVAC calculators, pro portal" />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
         <div className="container mx-auto px-4 py-8">
-          
-          {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center bg-orange-100 border border-orange-200 rounded-full px-4 py-2 mb-4">
-              <Crown className="h-4 w-4 text-orange-600 mr-2" />
-              <span className="text-orange-600 text-sm font-medium">Pro Member</span>
-            </div>
-            
-            <h1 className="text-4xl font-bold mb-4 text-gray-900">
-              Welcome to the <span className="text-orange-600">Pro Portal</span>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Professional HVAC Portal
             </h1>
-            
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Access professional HVAC tools, expert AI assistance, and comprehensive documentation
             </p>
           </div>
 
           {/* Main Content */}
-          <Tabs defaultValue="earl" className="max-w-6xl mx-auto">
-            <TabsList className="grid w-full grid-cols-6 mb-8">
-              <TabsTrigger value="earl" className="flex items-center gap-2">
-                <Bot className="h-4 w-4" />
-                Earl AI
-              </TabsTrigger>
-              <TabsTrigger value="diagnostics" className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4" />
-                Diagnostics
-              </TabsTrigger>
-              <TabsTrigger value="calculators" className="flex items-center gap-2">
-                <Calculator className="h-4 w-4" />
-                Calculators
-              </TabsTrigger>
-              <TabsTrigger value="literature" className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                Literature
-              </TabsTrigger>
-              <TabsTrigger value="cheatsheet" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Calgary Codes
-              </TabsTrigger>
-              <TabsTrigger value="docs" className="flex items-center gap-2">
-                <Download className="h-4 w-4" />
-                Documents
-              </TabsTrigger>
-            </TabsList>
+          <div className="max-w-6xl mx-auto space-y-8">
+            {/* Earl AI Assistant */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-orange-600" />
+                  Earl - Professional HVAC Expert Assistant
+                </CardTitle>
+                <CardDescription>
+                  Your gruff but knowledgeable HVAC expert. Earl specializes in Alberta/BC codes, installation best practices, troubleshooting, and professional guidance. He's your go-to for technical questions and industry expertise.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <EarlChatbot />
+              </CardContent>
+            </Card>
 
-            <TabsContent value="earl">
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <MessageSquare className="h-5 w-5 text-orange-600" />
-                      Earl - Professional HVAC Expert Assistant
-                    </CardTitle>
-                    <CardDescription>
-                      Your gruff but knowledgeable HVAC expert. Earl specializes in Alberta/BC codes, installation best practices, troubleshooting, and professional guidance. He's your go-to for technical questions and industry expertise.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <EarlChatbot />
-                  </CardContent>
-                </Card>
+            {/* Diagnostic Tools Carousel */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bot className="h-5 w-5 text-blue-600" />
+                  Diagnostic Tools
+                </CardTitle>
+                <CardDescription>
+                  AI-powered diagnostic assistants for field work and troubleshooting
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-orange-50 to-orange-100">
+                    <CardHeader className="pb-3">
+                      <Bot className="h-8 w-8 text-orange-600 mb-2" />
+                      <CardTitle className="text-lg">Pro Diagnostic Assistant</CardTitle>
+                      <CardDescription className="text-sm">Advanced AI technical diagnostics</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Link href="/tools/pro-diagnostic-assistant">
+                        <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                          Launch Diagnostics
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Settings className="h-5 w-5 text-blue-600" />
-                      Professional Tools Carousel
-                    </CardTitle>
-                    <CardDescription>
-                      Quick access to all professional HVAC tools and calculators
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-orange-50 to-orange-100">
-                        <CardHeader className="pb-3">
-                          <Bot className="h-8 w-8 text-orange-600 mb-2" />
-                          <CardTitle className="text-lg">Pro Diagnostic Assistant</CardTitle>
-                          <CardDescription className="text-sm">Advanced AI-powered technical diagnostics</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <Link href="/tools/pro-diagnostic-assistant">
-                            <Button className="w-full bg-orange-600 hover:bg-orange-700">
-                              Launch Diagnostics
-                            </Button>
-                          </Link>
-                        </CardContent>
-                      </Card>
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-blue-50 to-blue-100">
+                    <CardHeader className="pb-3">
+                      <MessageSquare className="h-8 w-8 text-blue-600 mb-2" />
+                      <CardTitle className="text-lg">Voice Diagnostics</CardTitle>
+                      <CardDescription className="text-sm">Hands-free diagnostic assistant</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Link href="/tools/ai-symptom-diagnoser">
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                          Start Voice Mode
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
 
-                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-blue-50 to-blue-100">
-                        <CardHeader className="pb-3">
-                          <MessageSquare className="h-8 w-8 text-blue-600 mb-2" />
-                          <CardTitle className="text-lg">Voice Diagnostics</CardTitle>
-                          <CardDescription className="text-sm">Hands-free diagnostic assistant with voice guidance</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <Link href="/tools/ai-symptom-diagnoser">
-                            <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                              Start Voice Mode
-                            </Button>
-                          </Link>
-                        </CardContent>
-                      </Card>
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-green-50 to-green-100">
+                    <CardHeader className="pb-3">
+                      <Calculator className="h-8 w-8 text-green-600 mb-2" />
+                      <CardTitle className="text-lg">Alberta Rebates</CardTitle>
+                      <CardDescription className="text-sm">Calculate rebates and incentives</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Link href="/tools/alberta-rebate-calculator">
+                        <Button className="w-full bg-green-600 hover:bg-green-700">
+                          Calculate Rebates
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
 
-                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-green-50 to-green-100">
-                        <CardHeader className="pb-3">
-                          <Calculator className="h-8 w-8 text-green-600 mb-2" />
-                          <CardTitle className="text-lg">Alberta Rebates</CardTitle>
-                          <CardDescription className="text-sm">Calculate available rebates and incentives</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <Link href="/tools/alberta-rebate-calculator">
-                            <Button className="w-full bg-green-600 hover:bg-green-700">
-                              Calculate Rebates
-                            </Button>
-                          </Link>
-                        </CardContent>
-                      </Card>
+            {/* Calculators Carousel */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calculator className="h-5 w-5 text-purple-600" />
+                  Professional Calculators
+                </CardTitle>
+                <CardDescription>
+                  Load calculations, sizing tools, and professional estimating
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-purple-50 to-purple-100">
+                    <CardHeader className="pb-3">
+                      <Thermometer className="h-8 w-8 text-purple-600 mb-2" />
+                      <CardTitle className="text-lg">Load Calculator</CardTitle>
+                      <CardDescription className="text-sm">Manual J load calculations</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Link href="/calculators/pro-btu">
+                        <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                          Open Calculator
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
 
-                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-purple-50 to-purple-100">
-                        <CardHeader className="pb-3">
-                          <Thermometer className="h-8 w-8 text-purple-600 mb-2" />
-                          <CardTitle className="text-lg">Load Calculator</CardTitle>
-                          <CardDescription className="text-sm">Manual J load calculations</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <Link href="/calculators/pro-btu">
-                            <Button className="w-full bg-purple-600 hover:bg-purple-700">
-                              Open Calculator
-                            </Button>
-                          </Link>
-                        </CardContent>
-                      </Card>
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-indigo-50 to-indigo-100">
+                    <CardHeader className="pb-3">
+                      <Settings className="h-8 w-8 text-indigo-600 mb-2" />
+                      <CardTitle className="text-lg">Duct Sizing</CardTitle>
+                      <CardDescription className="text-sm">Manual D ductwork design</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Link href="/calculators/duct-sizing">
+                        <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
+                          Size Ducts
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
 
-                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-indigo-50 to-indigo-100">
-                        <CardHeader className="pb-3">
-                          <FileCheck className="h-8 w-8 text-indigo-600 mb-2" />
-                          <CardTitle className="text-lg">Quote Builder</CardTitle>
-                          <CardDescription className="text-sm">Professional job estimating with Alggin pricing</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <Link href="/calculators/enhanced-quote-builder">
-                            <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
-                              Build Quote
-                            </Button>
-                          </Link>
-                        </CardContent>
-                      </Card>
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-emerald-50 to-emerald-100">
+                    <CardHeader className="pb-3">
+                      <FileCheck className="h-8 w-8 text-emerald-600 mb-2" />
+                      <CardTitle className="text-lg">Quote Builder</CardTitle>
+                      <CardDescription className="text-sm">Professional job estimating</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Link href="/calculators/enhanced-quote-builder">
+                        <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
+                          Build Quote
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
 
-                      <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-teal-50 to-teal-100">
-                        <CardHeader className="pb-3">
-                          <BookOpen className="h-8 w-8 text-teal-600 mb-2" />
-                          <CardTitle className="text-lg">Literature Library</CardTitle>
-                          <CardDescription className="text-sm">Codes, manuals, and documentation</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <Link href="/tools/hvac-literature">
-                            <Button className="w-full bg-teal-600 hover:bg-teal-700">
-                              Access Library
-                            </Button>
-                          </Link>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
+            {/* Literature & Codes Carousel */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-teal-600" />
+                  Professional Literature & Codes
+                </CardTitle>
+                <CardDescription>
+                  Alberta Building Code, Canadian Gas Code, and professional documentation
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-red-50 to-red-100">
+                    <CardHeader className="pb-3">
+                      <FileText className="h-8 w-8 text-red-600 mb-2" />
+                      <CardTitle className="text-lg">Alberta Building Code</CardTitle>
+                      <CardDescription className="text-sm">ABC 2019 with STANDATA updates</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button className="w-full bg-red-600 hover:bg-red-700">
+                        View ABC 2019
+                      </Button>
+                    </CardContent>
+                  </Card>
 
-            <TabsContent value="diagnostics">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <Bot className="h-8 w-8 text-orange-600 mb-2" />
-                    <CardTitle>Professional Diagnostic Assistant</CardTitle>
-                    <CardDescription>Advanced AI-powered diagnostic system for HVAC professionals with technical analysis</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Link href="/tools/pro-diagnostic-assistant">
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-orange-50 to-orange-100">
+                    <CardHeader className="pb-3">
+                      <AlertTriangle className="h-8 w-8 text-orange-600 mb-2" />
+                      <CardTitle className="text-lg">Canadian Gas Code</CardTitle>
+                      <CardDescription className="text-sm">CSA B149.1-20 Installation Code</CardDescription>
+                    </CardHeader>
+                    <CardContent>
                       <Button className="w-full bg-orange-600 hover:bg-orange-700">
-                        Launch Pro Diagnostics
+                        View B149.1
                       </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
 
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <MessageSquare className="h-8 w-8 text-blue-600 mb-2" />
-                    <CardTitle>Voice-Enabled Diagnostics</CardTitle>
-                    <CardDescription>Hands-free diagnostic assistant with step-by-step guidance and safety alerts</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Link href="/tools/ai-symptom-diagnoser">
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        Start Voice Diagnostics
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50 to-yellow-100">
+                    <CardHeader className="pb-3">
+                      <Crown className="h-8 w-8 text-yellow-600 mb-2" />
+                      <CardTitle className="text-lg">Calgary Cheat Sheet</CardTitle>
+                      <CardDescription className="text-sm">Earl's field reference guide</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button className="w-full bg-yellow-600 hover:bg-yellow-700">
+                        View Cheat Sheet
                       </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
 
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <Calculator className="h-8 w-8 text-green-600 mb-2" />
-                    <CardTitle>Alberta Rebate Calculator</CardTitle>
-                    <CardDescription>Calculate available rebates and incentives for HVAC installations in Alberta</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Link href="/tools/alberta-rebate-calculator">
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-green-50 to-green-100">
+                    <CardHeader className="pb-3">
+                      <Settings className="h-8 w-8 text-green-600 mb-2" />
+                      <CardTitle className="text-lg">HVAC Installation Guide</CardTitle>
+                      <CardDescription className="text-sm">Best practices and procedures</CardDescription>
+                    </CardHeader>
+                    <CardContent>
                       <Button className="w-full bg-green-600 hover:bg-green-700">
-                        Calculate Rebates
+                        View Guide
                       </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
+                    </CardContent>
+                  </Card>
 
-            <TabsContent value="calculators">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <Thermometer className="h-8 w-8 text-orange-600 mb-2" />
-                    <CardTitle>Load Calculator</CardTitle>
-                    <CardDescription>Manual J load calculations for residential systems</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Link href="/calculators/pro-btu">
-                      <Button className="w-full bg-orange-600 hover:bg-orange-700">
-                        Open Calculator
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <Settings className="h-8 w-8 text-blue-600 mb-2" />
-                    <CardTitle>Duct Sizing</CardTitle>
-                    <CardDescription>Manual D ductwork design and sizing tool</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Link href="/calculators/duct-sizing">
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-blue-50 to-blue-100">
+                    <CardHeader className="pb-3">
+                      <FileText className="h-8 w-8 text-blue-600 mb-2" />
+                      <CardTitle className="text-lg">Electrical Code</CardTitle>
+                      <CardDescription className="text-sm">Canadian Electrical Code (CEC)</CardDescription>
+                    </CardHeader>
+                    <CardContent>
                       <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        Open Calculator
+                        View CEC
                       </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
 
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <FileCheck className="h-8 w-8 text-green-600 mb-2" />
-                    <CardTitle>Professional Quote Builder</CardTitle>
-                    <CardDescription>Complete job estimating with comprehensive Alggin catalog pricing</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Link href="/calculators/enhanced-quote-builder">
-                      <Button className="w-full bg-green-600 hover:bg-green-700">
-                        Open Calculator
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-purple-50 to-purple-100">
+                    <CardHeader className="pb-3">
+                      <Download className="h-8 w-8 text-purple-600 mb-2" />
+                      <CardTitle className="text-lg">Pricing Guides</CardTitle>
+                      <CardDescription className="text-sm">Alberta HVAC pricing standards</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                        View Pricing
                       </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="literature">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BookOpen className="h-5 w-5 text-blue-600" />
-                    Professional HVAC Literature
-                  </CardTitle>
-                  <CardDescription>
-                    Comprehensive library of codes, manuals, pricing guides, and Calgary-specific documentation.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Link href="/tools/hvac-literature">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                      <BookOpen className="h-4 w-4 mr-2" />
-                      Access Literature Library
-                    </Button>
-                  </Link>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-gray-900 mb-2">Available Documents</h4>
-                      <ul className="text-sm text-gray-700 space-y-1">
-                        <li>• Calgary HVAC Installation Pricing Guide</li>
-                        <li>• Alberta Residential HVAC Codes</li>
-                        <li>• Furnace Installation Best Practices</li>
-                        <li>• Emergency Service Protocols</li>
-                        <li>• Safety Standards & Compliance</li>
-                      </ul>
-                    </div>
-                    
-                    <div className="bg-blue-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-blue-900 mb-2">Quick Reference</h4>
-                      <ul className="text-sm text-blue-800 space-y-1">
-                        <li>• Building codes & STANDATA</li>
-                        <li>• Installation procedures</li>
-                        <li>• Pricing & labor rates</li>
-                        <li>• Emergency protocols</li>
-                        <li>• Warranty information</li>
-                      </ul>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="cheatsheet">
-              <DocumentViewer 
-                title="Calgary HVAC Rough-In Cheat Sheet" 
-                content={calgaryCheatSheet}
-              />
-            </TabsContent>
-
-            <TabsContent value="docs">
-              <DocumentViewer 
-                title="AfterHours HVAC Terms of Service" 
-                content={termsOfService}
-              />
-            </TabsContent>
-          </Tabs>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </>
