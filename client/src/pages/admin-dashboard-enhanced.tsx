@@ -1,675 +1,893 @@
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/use-auth";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { Helmet } from 'react-helmet-async';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { 
-  Users, 
-  MessageSquare, 
-  AlertTriangle, 
-  FileText, 
-  TrendingUp, 
-  DollarSign,
-  Calendar,
-  Clock,
-  Phone,
-  Mail,
-  MapPin,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Plus,
-  Edit,
-  Trash2,
-  ImageIcon,
-  Camera,
-  Upload,
-  Save,
-  Eye,
-  Briefcase
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { Users, UserPlus, Settings, Shield, AlertTriangle, Eye, Edit, Trash2, RefreshCw, Lock, Unlock, FileText, Calendar, DollarSign, Activity } from "lucide-react";
 
-type DashboardStats = {
-  totalInquiries: number;
-  emergencyRequests: number;
-  pendingQuotes: number;
-  completedJobs: number;
-  revenue: number;
-  activeUsers: number;
-};
-
-type ContactSubmission = {
+interface User {
   id: number;
-  name: string;
+  username: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  role: string;
+  userType: string;
+  hasProAccess: boolean;
+  isAdmin: boolean;
+  accountLocked?: boolean;
+  createdAt: string;
+  lastLogin?: string;
+  lockedAt?: string;
+  lockReason?: string;
+}
+
+interface JobApplication {
+  id: number;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
-  message: string;
+  position: string;
+  experience: string;
+  coverLetter?: string;
   status: string;
-  createdAt: string;
-};
+  appliedAt: string;
+  yearsExperience?: string;
+  education?: string;
+  certifications?: string;
+  availability?: string;
+  salaryExpectation?: string;
+  references?: string;
+}
 
-type GalleryImage = {
-  id: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  category: string;
-  isActive: boolean;
-  createdAt: string;
-};
+interface CreateUserForm {
+  username: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  role: string;
+  userType: string;
+  hasProAccess: boolean;
+  isAdmin: boolean;
+}
 
-type ForumTopic = {
-  id: number;
-  title: string;
-  content: string;
-  author: string;
-  createdAt: string;
-  replies: number;
-  category: string;
-};
+interface SystemStats {
+  totalUsers: number;
+  activeUsers: number;
+  proUsers: number;
+  adminUsers: number;
+  pendingApplications: number;
+  totalRevenue: number;
+}
 
 export default function AdminDashboardEnhanced() {
-  const { user } = useAuth();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [selectedTab, setSelectedTab] = useState("overview");
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [createUserForm, setCreateUserForm] = useState<CreateUserForm>({
+    username: "",
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    role: "customer",
+    userType: "customer",
+    hasProAccess: false,
+    isAdmin: false
+  });
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
+  const [newPassword, setNewPassword] = useState("");
 
-
-  // Check admin access
-  if (!user || user.role !== 'admin' || user.username !== 'JordanBoz') {
-    return (
-      <>
-        <Helmet>
-          <title>Access Denied - AfterHours HVAC</title>
-        </Helmet>
-        <div className="container mx-auto py-24 px-4 min-h-screen">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl font-bold mb-6">Access Denied</h1>
-            <Card>
-              <CardHeader>
-                <CardTitle>Admin Access Required</CardTitle>
-                <CardDescription>
-                  You need administrator privileges to access this dashboard
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  This area is restricted to authorized administrators only.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // Fetch dashboard data
-  const { data: dashboardStats } = useQuery<DashboardStats>({
-    queryKey: ["/api/admin/dashboard-stats"],
+  // Fetch users
+  const { data: users = [], isLoading: usersLoading, refetch: refetchUsers } = useQuery({
+    queryKey: ["/api/admin/users"],
+    enabled: true
   });
 
-  const { data: contactSubmissions = [] } = useQuery<ContactSubmission[]>({
-    queryKey: ["/api/admin/contact-submissions"],
+  // Fetch job applications
+  const { data: applications = [], isLoading: applicationsLoading, refetch: refetchApplications } = useQuery({
+    queryKey: ["/api/admin/job-applications"],
+    enabled: true
   });
 
-
-
-  const { data: forumTopics = [] } = useQuery<ForumTopic[]>({
-    queryKey: ["/api/forum/topics"],
-  });
-
-  const { data: schedules = [] } = useQuery({
-    queryKey: ['/api/schedules'],
-  });
-
-  const { data: allQuotes = [] } = useQuery({
-    queryKey: ['/api/admin/quotes'],
-  });
-
-  const jobApplicationsQuery = useQuery({
-    queryKey: ['/api/admin/job-applications'],
-  });
-
-  // Delete forum topic mutation
-  const deleteTopicMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await apiRequest('DELETE', `/api/forum/topics/${id}`);
-      return response.json();
+  // Create user mutation
+  const createUserMutation = useMutation({
+    mutationFn: async (userData: CreateUserForm) => {
+      const res = await apiRequest("POST", "/api/admin/users", userData);
+      return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/forum/topics'] });
-      toast({ title: "Success", description: "Forum topic deleted" });
+      toast({
+        title: "Success",
+        description: "User created successfully"
+      });
+      setShowCreateDialog(false);
+      setCreateUserForm({
+        username: "",
+        email: "",
+        password: "",
+        firstName: "",
+        lastName: "",
+        phone: "",
+        role: "customer",
+        userType: "customer",
+        hasProAccess: false,
+        isAdmin: false
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
     },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create user",
+        variant: "destructive"
+      });
+    }
   });
 
+  // Update user mutation
+  const updateUserMutation = useMutation({
+    mutationFn: async ({ id, ...userData }: Partial<User> & { id: number }) => {
+      const res = await apiRequest("PUT", `/api/admin/users/${id}`, userData);
+      return await res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "User updated successfully"
+      });
+      setShowEditDialog(false);
+      setEditingUser(null);
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update user",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Delete user mutation
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      const res = await apiRequest("DELETE", `/api/admin/users/${userId}`);
+      return await res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "User deleted successfully"
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete user",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Reset password mutation
+  const resetPasswordMutation = useMutation({
+    mutationFn: async ({ userId, newPassword }: { userId: number; newPassword: string }) => {
+      const res = await apiRequest("POST", `/api/admin/users/${userId}/reset-password`, { newPassword });
+      return await res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Password reset successfully"
+      });
+      setNewPassword("");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to reset password",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Update application status mutation
+  const updateApplicationMutation = useMutation({
+    mutationFn: async ({ id, status, notes }: { id: number; status: string; notes?: string }) => {
+      const res = await apiRequest("PATCH", `/api/admin/job-applications/${id}`, { status, notes });
+      return await res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Application status updated successfully"
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/job-applications"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update application",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleCreateUser = () => {
+    if (!createUserForm.username || !createUserForm.email || !createUserForm.password) {
+      toast({
+        title: "Error",
+        description: "Username, email, and password are required",
+        variant: "destructive"
+      });
+      return;
+    }
+    createUserMutation.mutate(createUserForm);
+  };
+
+  const handleUpdateUser = () => {
+    if (!editingUser) return;
+    updateUserMutation.mutate(editingUser);
+  };
+
+  const handleDeleteUser = (userId: number) => {
+    deleteUserMutation.mutate(userId);
+  };
+
+  const handleResetPassword = (userId: number) => {
+    if (!newPassword || newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters",
+        variant: "destructive"
+      });
+      return;
+    }
+    resetPasswordMutation.mutate({ userId, newPassword });
+  };
+
+  const handleToggleUserLock = (user: User) => {
+    updateUserMutation.mutate({
+      id: user.id,
+      accountLocked: !user.accountLocked
+    });
+  };
+
+  const getUserTypeColor = (userType: string) => {
+    switch (userType) {
+      case 'admin': return 'bg-red-100 text-red-800';
+      case 'pro': return 'bg-purple-100 text-purple-800';
+      case 'corporate': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'reviewing': return 'bg-blue-100 text-blue-800';
+      case 'approved': return 'bg-green-100 text-green-800';
+      case 'rejected': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Calculate system statistics
+  const systemStats: SystemStats = {
+    totalUsers: users.length,
+    activeUsers: users.filter((u: User) => !u.accountLocked).length,
+    proUsers: users.filter((u: User) => u.hasProAccess).length,
+    adminUsers: users.filter((u: User) => u.isAdmin).length,
+    pendingApplications: applications.filter((a: JobApplication) => a.status === 'pending').length,
+    totalRevenue: users.filter((u: User) => u.hasProAccess).length * 49 // Estimate based on pro users
+  };
+
   return (
-    <>
-      <Helmet>
-        <title>Admin Dashboard - AfterHours HVAC</title>
-      </Helmet>
-
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-orange-600 bg-clip-text text-transparent">Admin Dashboard</h1>
-            <p className="text-xl text-gray-600">
-              Manage your HVAC business website content and customer interactions
-            </p>
-          </div>
-
-          <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-7 bg-white border border-gray-200">
-              <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Overview</TabsTrigger>
-              <TabsTrigger value="quotes" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Quotes</TabsTrigger>
-              <TabsTrigger value="calendar" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Calendar</TabsTrigger>
-              <TabsTrigger value="jobs" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Job Applications</TabsTrigger>
-              <TabsTrigger value="forum" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Forum</TabsTrigger>
-              <TabsTrigger value="customers" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Customers</TabsTrigger>
-              <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Analytics</TabsTrigger>
-            </TabsList>
-
-            {/* Overview Tab */}
-            <TabsContent value="overview" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="bg-white border-gray-200 shadow-sm">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-900">Total Inquiries</CardTitle>
-                    <Mail className="h-4 w-4 text-blue-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-gray-900">{dashboardStats?.totalInquiries || 0}</div>
-                    <p className="text-xs text-gray-600">Customer contacts</p>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-white border-gray-200 shadow-sm">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-900">Emergency Requests</CardTitle>
-                    <AlertTriangle className="h-4 w-4 text-orange-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-gray-900">{dashboardStats?.emergencyRequests || 0}</div>
-                    <p className="text-xs text-gray-600">Urgent service calls</p>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-white border-gray-200 shadow-sm">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-900">Pending Quotes</CardTitle>
-                    <FileText className="h-4 w-4 text-yellow-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-gray-900">{dashboardStats?.pendingQuotes || 0}</div>
-                    <p className="text-xs text-gray-600">Awaiting response</p>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-white border-gray-200 shadow-sm">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-900">Active Users</CardTitle>
-                    <Users className="h-4 w-4 text-green-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-gray-900">{dashboardStats?.activeUsers || 0}</div>
-                    <p className="text-xs text-gray-600">Registered users</p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Recent Activity */}
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-gray-900">Recent Customer Inquiries</CardTitle>
-                  <CardDescription className="text-gray-600">Latest contact form submissions</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {contactSubmissions.length === 0 ? (
-                    <p className="text-gray-500 text-center py-8">No recent inquiries</p>
-                  ) : (
-                    <div className="space-y-4">
-                      {contactSubmissions.slice(0, 5).map((submission) => (
-                        <div key={submission.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
-                          <div>
-                            <div className="font-medium text-gray-900">{submission.name}</div>
-                            <div className="text-sm text-gray-600">{submission.email}</div>
-                            <div className="text-sm text-gray-500">{submission.message.substring(0, 100)}...</div>
-                          </div>
-                          <div className="text-right">
-                            <Badge variant={submission.status === 'pending' ? 'destructive' : 'default'}>
-                              {submission.status}
-                            </Badge>
-                            <div className="text-xs text-slate-400 mt-1">
-                              {new Date(submission.createdAt).toLocaleDateString()}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Quotes Tab */}
-            <TabsContent value="quotes" className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-gray-900">Business Quotes Management</h2>
-                <Badge className="bg-blue-100 text-blue-800">
-                  {Array.isArray(allQuotes) ? allQuotes.length : 0} Total Quotes
-                </Badge>
-              </div>
-
-              <div className="grid gap-6">
-                {Array.isArray(allQuotes) && allQuotes.length === 0 ? (
-                  <Card>
-                    <CardContent className="p-8 text-center">
-                      <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Quotes Yet</h3>
-                      <p className="text-gray-600">Customer quotes will appear here when created through the enhanced quote builder.</p>
-                    </CardContent>
-                  </Card>
-                ) : Array.isArray(allQuotes) ? (
-                  allQuotes.map((quote: any) => (
-                    <Card key={quote.id} className="border border-gray-200">
-                      <CardHeader>
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <CardTitle className="text-lg text-gray-900">
-                              Quote #{quote.quoteNumber}
-                            </CardTitle>
-                            <CardDescription className="text-gray-600">
-                              {quote.customerName} • {quote.customerEmail}
-                            </CardDescription>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge 
-                              className={
-                                quote.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                quote.status === 'paid' ? 'bg-blue-100 text-blue-800' :
-                                quote.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-gray-100 text-gray-800'
-                              }
-                            >
-                              {quote.status}
-                            </Badge>
-                            <span className="text-xl font-bold text-orange-600">
-                              ${quote.totalCost?.toLocaleString() || '0'}
-                            </span>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                          <div>
-                            <p className="text-sm text-gray-600">Address</p>
-                            <p className="font-medium text-gray-900">{quote.serviceAddress}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-600">Phone</p>
-                            <p className="font-medium text-gray-900">{quote.customerPhone}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-600">Created</p>
-                            <p className="font-medium text-gray-900">
-                              {new Date(quote.createdAt).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        {quote.equipmentDetails && (
-                          <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                            <h4 className="font-medium text-gray-900 mb-2">Equipment Details</h4>
-                            <div className="grid grid-cols-2 gap-2 text-sm">
-                              {Object.entries(quote.equipmentDetails).map(([key, value]) => (
-                                <div key={key}>
-                                  <span className="text-gray-600">{key}:</span>
-                                  <span className="ml-2 text-gray-900">{String(value)}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-                          <div className="text-sm text-gray-600">
-                            Labor: ${quote.laborCost?.toLocaleString() || '0'} • 
-                            Materials: ${quote.materialCost?.toLocaleString() || '0'}
-                          </div>
-                          <div className="flex space-x-2">
-                            <Button variant="outline" size="sm">
-                              <FileText className="h-4 w-4 mr-1" />
-                              View Details
-                            </Button>
-                            <Button variant="outline" size="sm">
-                              <Phone className="h-4 w-4 mr-1" />
-                              Contact Customer
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : null}
-              </div>
-            </TabsContent>
-
-            {/* Calendar Tab */}
-            <TabsContent value="calendar" className="space-y-6">
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-gray-900 flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-blue-600" />
-                    Scheduled Jobs Calendar
-                  </CardTitle>
-                  <CardDescription className="text-gray-600">
-                    All upcoming installations and maintenance appointments from completed payments
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {Array.isArray(schedules) && schedules.length > 0 ? (
-                    <div className="space-y-4">
-                      {schedules.map((schedule: any) => {
-                        const scheduleDate = new Date(schedule.scheduledDate);
-                        const borderColor = schedule.jobType === 'installation' ? 'border-l-orange-500' : 
-                                          schedule.jobType === 'maintenance' ? 'border-l-blue-500' : 'border-l-green-500';
-                        
-                        return (
-                          <div key={schedule.id} className={`border-l-4 ${borderColor} pl-4 p-4 bg-gray-50 rounded-lg`}>
-                            <div className="flex items-center justify-between mb-2">
-                              <div>
-                                <h4 className="font-semibold text-gray-900 capitalize">
-                                  {schedule.serviceType} {schedule.jobType}
-                                </h4>
-                                <p className="text-sm text-gray-600">{schedule.customerName}</p>
-                                <p className="text-xs text-gray-500">{schedule.customerEmail}</p>
-                              </div>
-                              <div className="text-right">
-                                <Badge variant={schedule.status === 'completed' ? 'default' : 'secondary'}>
-                                  {schedule.status}
-                                </Badge>
-                                <p className="text-sm font-medium text-gray-900 mt-1">
-                                  {scheduleDate.toLocaleDateString('en-US', { 
-                                    weekday: 'long',
-                                    month: 'short', 
-                                    day: 'numeric',
-                                    year: 'numeric'
-                                  })}
-                                </p>
-                                <p className="text-xs text-gray-600">
-                                  {schedule.startTime} - {schedule.endTime}
-                                </p>
-                              </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-200">
-                              <div>
-                                <p className="text-sm text-gray-600">
-                                  <strong>Address:</strong> {schedule.address}
-                                </p>
-                                <p className="text-sm text-gray-600">
-                                  <strong>Phone:</strong> {schedule.customerPhone}
-                                </p>
-                                {schedule.quoteId && (
-                                  <p className="text-sm text-gray-600">
-                                    <strong>Quote:</strong> AH-{schedule.quoteId}
-                                  </p>
-                                )}
-                              </div>
-                              <div>
-                                {schedule.notes && (
-                                  <p className="text-sm text-gray-600">
-                                    <strong>Notes:</strong> {schedule.notes}
-                                  </p>
-                                )}
-                                {schedule.estimatedDuration && (
-                                  <p className="text-sm text-gray-600">
-                                    <strong>Duration:</strong> {schedule.estimatedDuration} hours
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <Calendar className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Scheduled Jobs</h3>
-                      <p className="text-gray-600">
-                        Jobs will appear here automatically when customers complete payments for quotes
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Job Applications Management Tab */}
-            <TabsContent value="jobs" className="space-y-6">
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-gray-900 flex items-center gap-2">
-                    <Briefcase className="h-5 w-5 text-blue-600" />
-                    Job Applications Management
-                  </CardTitle>
-                  <CardDescription className="text-gray-600">
-                    Review and manage job applications submitted through the careers page
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {jobApplicationsQuery.isLoading ? (
-                    <div className="text-center py-12">
-                      <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-                      <p className="text-gray-600">Loading job applications...</p>
-                    </div>
-                  ) : Array.isArray(jobApplicationsQuery.data) && jobApplicationsQuery.data.length > 0 ? (
-                    <div className="space-y-4">
-                      {jobApplicationsQuery.data.map((application: any) => (
-                        <div key={application.id} className="border border-gray-200 rounded-lg p-6 bg-gray-50">
-                          <div className="flex items-start justify-between mb-4">
-                            <div>
-                              <h3 className="text-lg font-semibold text-gray-900">{application.fullName}</h3>
-                              <p className="text-sm text-gray-600">{application.email}</p>
-                              <p className="text-sm text-gray-600">{application.phone}</p>
-                            </div>
-                            <div className="text-right">
-                              <Badge variant={application.status === 'pending' ? 'secondary' : 'default'}>
-                                {application.status || 'pending'}
-                              </Badge>
-                              <p className="text-xs text-gray-500 mt-1">
-                                Applied: {new Date(application.createdAt || Date.now()).toLocaleDateString()}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                              <p className="text-sm text-gray-600">
-                                <strong>Position:</strong> {application.position}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                <strong>Experience:</strong> {application.yearsExperience} years
-                              </p>
-                              {application.currentEmployer && (
-                                <p className="text-sm text-gray-600">
-                                  <strong>Current Employer:</strong> {application.currentEmployer}
-                                </p>
-                              )}
-                            </div>
-                            <div>
-                              {application.expectedSalary && (
-                                <p className="text-sm text-gray-600">
-                                  <strong>Expected Salary:</strong> ${application.expectedSalary}
-                                </p>
-                              )}
-                              {application.availability && (
-                                <p className="text-sm text-gray-600">
-                                  <strong>Availability:</strong> {application.availability}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          
-                          {application.coverLetter && (
-                            <div className="mb-4">
-                              <p className="text-sm font-medium text-gray-900 mb-2">Cover Letter:</p>
-                              <p className="text-sm text-gray-700 bg-white p-3 rounded border">
-                                {application.coverLetter}
-                              </p>
-                            </div>
-                          )}
-                          
-                          <div className="flex flex-wrap gap-2">
-                            {application.resumeUrl && (
-                              <Button variant="outline" size="sm" asChild>
-                                <a href={application.resumeUrl} target="_blank" rel="noopener noreferrer">
-                                  <FileText className="h-4 w-4 mr-1" />
-                                  View Resume
-                                </a>
-                              </Button>
-                            )}
-                            <Button variant="outline" size="sm">
-                              <Mail className="h-4 w-4 mr-1" />
-                              Contact Applicant
-                            </Button>
-                            <Button variant="outline" size="sm">
-                              <Phone className="h-4 w-4 mr-1" />
-                              Schedule Interview
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <Briefcase className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Job Applications</h3>
-                      <p className="text-gray-600">
-                        Job applications will appear here when candidates apply through the careers page
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Forum Management Tab */}
-            <TabsContent value="forum" className="space-y-6">
-              <Card className="bg-slate-800/50 border-slate-700">
-                <CardHeader>
-                  <CardTitle className="text-white">Forum Topic Management</CardTitle>
-                  <CardDescription>Moderate forum discussions and posts</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {forumTopics.map((topic) => (
-                      <div key={topic.id} className="flex items-center justify-between p-4 bg-slate-900/50 rounded-lg">
-                        <div>
-                          <h4 className="font-medium text-white">{topic.title}</h4>
-                          <p className="text-sm text-slate-300">{topic.content.substring(0, 150)}...</p>
-                          <div className="flex items-center gap-4 mt-2">
-                            <span className="text-xs text-slate-400">By {topic.author}</span>
-                            <span className="text-xs text-slate-400">{topic.replies} replies</span>
-                            <Badge variant="outline">{topic.category}</Badge>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button 
-                            size="sm" 
-                            variant="destructive"
-                            onClick={() => deleteTopicMutation.mutate(topic.id)}
-                            disabled={deleteTopicMutation.isPending}
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Customers Tab */}
-            <TabsContent value="customers" className="space-y-6">
-              <Card className="bg-slate-800/50 border-slate-700">
-                <CardHeader>
-                  <CardTitle className="text-white">Customer Inquiries</CardTitle>
-                  <CardDescription>Manage customer contact form submissions</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {contactSubmissions.map((submission) => (
-                      <div key={submission.id} className="p-4 bg-slate-900/50 rounded-lg">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h4 className="font-medium text-white">{submission.name}</h4>
-                            <div className="flex items-center gap-4 text-sm text-slate-300">
-                              <span><Mail className="h-3 w-3 inline mr-1" />{submission.email}</span>
-                              <span><Phone className="h-3 w-3 inline mr-1" />{submission.phone}</span>
-                            </div>
-                          </div>
-                          <Badge variant={submission.status === 'pending' ? 'destructive' : 'default'}>
-                            {submission.status}
-                          </Badge>
-                        </div>
-                        <p className="text-slate-300 mb-3">{submission.message}</p>
-                        <div className="text-xs text-slate-400">
-                          Submitted {new Date(submission.createdAt).toLocaleString()}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Analytics Tab */}
-            <TabsContent value="analytics" className="space-y-6">
-              <Card className="bg-slate-800/50 border-slate-700">
-                <CardHeader>
-                  <CardTitle className="text-white">Business Analytics</CardTitle>
-                  <CardDescription>Track website performance and business metrics</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="text-center p-6 bg-slate-900/50 rounded-lg">
-                      <Briefcase className="h-8 w-8 text-green-400 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-white">
-                        {Array.isArray(jobApplicationsQuery.data) ? jobApplicationsQuery.data.length : 0}
-                      </div>
-                      <p className="text-slate-400">Job Applications</p>
-                    </div>
-                    <div className="text-center p-6 bg-slate-900/50 rounded-lg">
-                      <MessageSquare className="h-8 w-8 text-blue-400 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-white">
-                        {Array.isArray(forumTopics) ? forumTopics.length : 0}
-                      </div>
-                      <p className="text-slate-400">Forum Topics</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <p className="text-muted-foreground">Comprehensive user and system management</p>
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={() => refetchUsers()} variant="outline" size="sm">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
         </div>
       </div>
-    </>
+
+      {/* System Statistics */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{systemStats.totalUsers}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{systemStats.activeUsers}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pro Users</CardTitle>
+            <Shield className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{systemStats.proUsers}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Admin Users</CardTitle>
+            <Settings className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{systemStats.adminUsers}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Apps</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{systemStats.pendingApplications}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Est. Revenue</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${systemStats.totalRevenue}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs defaultValue="users" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="users">User Management</TabsTrigger>
+          <TabsTrigger value="applications">Job Applications</TabsTrigger>
+        </TabsList>
+
+        {/* User Management Tab */}
+        <TabsContent value="users" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>User Management</CardTitle>
+                  <CardDescription>Create, edit, and manage user accounts</CardDescription>
+                </div>
+                <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Create User
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle>Create New User</DialogTitle>
+                      <DialogDescription>
+                        Create a new user account with specified permissions
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="username">Username</Label>
+                          <Input
+                            id="username"
+                            value={createUserForm.username}
+                            onChange={(e) => setCreateUserForm({ ...createUserForm, username: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="email">Email</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={createUserForm.email}
+                            onChange={(e) => setCreateUserForm({ ...createUserForm, email: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                          id="password"
+                          type="password"
+                          value={createUserForm.password}
+                          onChange={(e) => setCreateUserForm({ ...createUserForm, password: e.target.value })}
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="firstName">First Name</Label>
+                          <Input
+                            id="firstName"
+                            value={createUserForm.firstName}
+                            onChange={(e) => setCreateUserForm({ ...createUserForm, firstName: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="lastName">Last Name</Label>
+                          <Input
+                            id="lastName"
+                            value={createUserForm.lastName}
+                            onChange={(e) => setCreateUserForm({ ...createUserForm, lastName: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">Phone</Label>
+                        <Input
+                          id="phone"
+                          value={createUserForm.phone}
+                          onChange={(e) => setCreateUserForm({ ...createUserForm, phone: e.target.value })}
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="role">Role</Label>
+                          <Select value={createUserForm.role} onValueChange={(value) => setCreateUserForm({ ...createUserForm, role: value })}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="customer">Customer</SelectItem>
+                              <SelectItem value="technician">Technician</SelectItem>
+                              <SelectItem value="admin">Admin</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label htmlFor="userType">User Type</Label>
+                          <Select value={createUserForm.userType} onValueChange={(value) => setCreateUserForm({ ...createUserForm, userType: value })}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="customer">Customer</SelectItem>
+                              <SelectItem value="pro">Pro</SelectItem>
+                              <SelectItem value="corporate">Corporate</SelectItem>
+                              <SelectItem value="admin">Admin</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id="hasProAccess"
+                            checked={createUserForm.hasProAccess}
+                            onCheckedChange={(checked) => setCreateUserForm({ ...createUserForm, hasProAccess: checked })}
+                          />
+                          <Label htmlFor="hasProAccess">Pro Access</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id="isAdmin"
+                            checked={createUserForm.isAdmin}
+                            onCheckedChange={(checked) => setCreateUserForm({ ...createUserForm, isAdmin: checked })}
+                          />
+                          <Label htmlFor="isAdmin">Admin Privileges</Label>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+                        Cancel
+                      </Button>
+                      <Button 
+                        onClick={handleCreateUser}
+                        disabled={createUserMutation.isPending}
+                      >
+                        {createUserMutation.isPending ? "Creating..." : "Create User"}
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {usersLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {users.map((user: User) => (
+                    <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center space-x-4">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold">{user.username}</h4>
+                            <Badge className={getUserTypeColor(user.userType)}>
+                              {user.userType}
+                            </Badge>
+                            {user.isAdmin && <Badge variant="destructive">Admin</Badge>}
+                            {user.hasProAccess && <Badge variant="secondary">Pro</Badge>}
+                            {user.accountLocked && <Badge variant="outline"><Lock className="h-3 w-3 mr-1" />Locked</Badge>}
+                          </div>
+                          <p className="text-sm text-muted-foreground">{user.email}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : "No name set"}
+                            {user.phone && ` • ${user.phone}`}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="ghost" size="sm" onClick={() => setSelectedUser(user)}>
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>User Details</DialogTitle>
+                            </DialogHeader>
+                            {selectedUser && (
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <Label>Username</Label>
+                                    <p className="font-mono text-sm">{selectedUser.username}</p>
+                                  </div>
+                                  <div>
+                                    <Label>Email</Label>
+                                    <p className="font-mono text-sm">{selectedUser.email}</p>
+                                  </div>
+                                  <div>
+                                    <Label>Role</Label>
+                                    <p className="font-mono text-sm">{selectedUser.role}</p>
+                                  </div>
+                                  <div>
+                                    <Label>User Type</Label>
+                                    <p className="font-mono text-sm">{selectedUser.userType}</p>
+                                  </div>
+                                  <div>
+                                    <Label>Created</Label>
+                                    <p className="font-mono text-sm">{new Date(selectedUser.createdAt).toLocaleDateString()}</p>
+                                  </div>
+                                  <div>
+                                    <Label>Last Login</Label>
+                                    <p className="font-mono text-sm">{selectedUser.lastLogin ? new Date(selectedUser.lastLogin).toLocaleDateString() : 'Never'}</p>
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Password Reset</Label>
+                                  <div className="flex gap-2">
+                                    <Input
+                                      type="password"
+                                      placeholder="New password (min 6 characters)"
+                                      value={newPassword}
+                                      onChange={(e) => setNewPassword(e.target.value)}
+                                    />
+                                    <Button 
+                                      onClick={() => handleResetPassword(selectedUser.id)}
+                                      disabled={resetPasswordMutation.isPending}
+                                      size="sm"
+                                    >
+                                      Reset
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </DialogContent>
+                        </Dialog>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => {
+                            setEditingUser(user);
+                            setShowEditDialog(true);
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleToggleUserLock(user)}
+                        >
+                          {user.accountLocked ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete User</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete {user.username}? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteUser(user.id)}>
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Job Applications Tab */}
+        <TabsContent value="applications" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Job Applications</CardTitle>
+              <CardDescription>Review and manage job applications</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {applicationsLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {applications.map((application: JobApplication) => (
+                    <div key={application.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center space-x-4">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold">{application.firstName} {application.lastName}</h4>
+                            <Badge className={getStatusColor(application.status)}>
+                              {application.status}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{application.email} • {application.phone}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Position: {application.position} • Applied: {new Date(application.appliedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="ghost" size="sm" onClick={() => setSelectedApplication(application)}>
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle>Application Details</DialogTitle>
+                            </DialogHeader>
+                            {selectedApplication && (
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <Label>Name</Label>
+                                    <p>{selectedApplication.firstName} {selectedApplication.lastName}</p>
+                                  </div>
+                                  <div>
+                                    <Label>Email</Label>
+                                    <p>{selectedApplication.email}</p>
+                                  </div>
+                                  <div>
+                                    <Label>Phone</Label>
+                                    <p>{selectedApplication.phone}</p>
+                                  </div>
+                                  <div>
+                                    <Label>Position</Label>
+                                    <p>{selectedApplication.position}</p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <Label>Experience</Label>
+                                  <p className="text-sm">{selectedApplication.experience}</p>
+                                </div>
+                                {selectedApplication.coverLetter && (
+                                  <div>
+                                    <Label>Cover Letter</Label>
+                                    <p className="text-sm">{selectedApplication.coverLetter}</p>
+                                  </div>
+                                )}
+                                <div className="flex gap-2">
+                                  <Select 
+                                    value={selectedApplication.status} 
+                                    onValueChange={(status) => 
+                                      updateApplicationMutation.mutate({ 
+                                        id: selectedApplication.id, 
+                                        status 
+                                      })
+                                    }
+                                  >
+                                    <SelectTrigger className="w-40">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="pending">Pending</SelectItem>
+                                      <SelectItem value="reviewing">Reviewing</SelectItem>
+                                      <SelectItem value="approved">Approved</SelectItem>
+                                      <SelectItem value="rejected">Rejected</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                            )}
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Edit User Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+            <DialogDescription>
+              Update user information and permissions
+            </DialogDescription>
+          </DialogHeader>
+          {editingUser && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="edit-username">Username</Label>
+                  <Input
+                    id="edit-username"
+                    value={editingUser.username}
+                    onChange={(e) => setEditingUser({ ...editingUser, username: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-email">Email</Label>
+                  <Input
+                    id="edit-email"
+                    type="email"
+                    value={editingUser.email}
+                    onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="edit-firstName">First Name</Label>
+                  <Input
+                    id="edit-firstName"
+                    value={editingUser.firstName || ""}
+                    onChange={(e) => setEditingUser({ ...editingUser, firstName: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-lastName">Last Name</Label>
+                  <Input
+                    id="edit-lastName"
+                    value={editingUser.lastName || ""}
+                    onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="edit-phone">Phone</Label>
+                <Input
+                  id="edit-phone"
+                  value={editingUser.phone || ""}
+                  onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="edit-role">Role</Label>
+                  <Select value={editingUser.role} onValueChange={(value) => setEditingUser({ ...editingUser, role: value })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="customer">Customer</SelectItem>
+                      <SelectItem value="technician">Technician</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="edit-userType">User Type</Label>
+                  <Select value={editingUser.userType} onValueChange={(value) => setEditingUser({ ...editingUser, userType: value })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="customer">Customer</SelectItem>
+                      <SelectItem value="pro">Pro</SelectItem>
+                      <SelectItem value="corporate">Corporate</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="edit-hasProAccess"
+                    checked={editingUser.hasProAccess}
+                    onCheckedChange={(checked) => setEditingUser({ ...editingUser, hasProAccess: checked })}
+                  />
+                  <Label htmlFor="edit-hasProAccess">Pro Access</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="edit-isAdmin"
+                    checked={editingUser.isAdmin}
+                    onCheckedChange={(checked) => setEditingUser({ ...editingUser, isAdmin: checked })}
+                  />
+                  <Label htmlFor="edit-isAdmin">Admin Privileges</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="edit-accountLocked"
+                    checked={editingUser.accountLocked || false}
+                    onCheckedChange={(checked) => setEditingUser({ ...editingUser, accountLocked: checked })}
+                  />
+                  <Label htmlFor="edit-accountLocked">Account Locked</Label>
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setShowEditDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleUpdateUser}
+              disabled={updateUserMutation.isPending}
+            >
+              {updateUserMutation.isPending ? "Updating..." : "Update User"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

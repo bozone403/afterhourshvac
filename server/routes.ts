@@ -3524,25 +3524,58 @@ Login to manage: afterhourshvac.ca/admin`;
 
   // JOB APPLICATION ENDPOINTS
   
-  // Submit job application
+  // Submit job application with file uploads
   app.post("/api/job-applications", async (req, res) => {
     try {
-      const { firstName, lastName, email, phone, position, experience, coverLetter } = req.body;
+      // Handle both FormData (with files) and regular JSON
+      let applicationData;
       
-      if (!firstName || !lastName || !email || !phone || !position || !experience) {
-        return res.status(400).json({ error: "All required fields must be filled" });
+      if (req.is('multipart/form-data')) {
+        // Handle file uploads - for now just extract the text data
+        const { firstName, lastName, email, phone, position, experience, coverLetter, yearsExperience, education, certifications, availability, salaryExpectation, references } = req.body;
+        
+        applicationData = {
+          firstName,
+          lastName,
+          email,
+          phone,
+          position,
+          experience,
+          coverLetter: coverLetter || null,
+          status: 'pending',
+          // Additional fields for enhanced application
+          yearsExperience: yearsExperience || null,
+          education: education || null,
+          certifications: certifications || null,
+          availability: availability || null,
+          salaryExpectation: salaryExpectation || null,
+          references: references || null
+        };
+      } else {
+        // Handle regular JSON data
+        const { firstName, lastName, email, phone, position, experience, coverLetter, yearsExperience, education, certifications, availability, salaryExpectation, references } = req.body;
+        
+        applicationData = {
+          firstName,
+          lastName,
+          email,
+          phone,
+          position,
+          experience,
+          coverLetter: coverLetter || null,
+          status: 'pending',
+          yearsExperience: yearsExperience || null,
+          education: education || null,
+          certifications: certifications || null,
+          availability: availability || null,
+          salaryExpectation: salaryExpectation || null,
+          references: references || null
+        };
       }
 
-      const applicationData = {
-        firstName,
-        lastName,
-        email,
-        phone,
-        position,
-        experience,
-        coverLetter: coverLetter || null,
-        status: 'pending'
-      };
+      if (!applicationData.firstName || !applicationData.lastName || !applicationData.email || !applicationData.phone || !applicationData.position || !applicationData.experience) {
+        return res.status(400).json({ error: "All required fields must be filled" });
+      }
 
       const application = await storage.createJobApplication(applicationData);
       
@@ -4303,6 +4336,208 @@ Immediate response required!`;
     } catch (error: any) {
       console.error("Error fetching job applications:", error);
       res.status(500).json({ error: "Failed to fetch job applications" });
+    }
+  });
+
+  // USER MANAGEMENT ENDPOINTS (Admin only)
+  
+  // Get all users
+  app.get("/api/admin/users", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error: any) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ 
+        error: "Error fetching users", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Create new user
+  app.post("/api/admin/users", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { username, email, password, firstName, lastName, phone, role, userType, hasProAccess, isAdmin } = req.body;
+      
+      if (!username || !email || !password) {
+        return res.status(400).json({ error: "Username, email, and password are required" });
+      }
+
+      // Check if user already exists
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(400).json({ error: "Username already exists" });
+      }
+
+      const existingEmailUser = await storage.getUserByEmail(email);
+      if (existingEmailUser) {
+        return res.status(400).json({ error: "Email already exists" });
+      }
+
+      // Hash password
+      const hashedPassword = await hashPassword(password);
+
+      const userData = {
+        username,
+        email,
+        password: hashedPassword,
+        firstName: firstName || null,
+        lastName: lastName || null,
+        phone: phone || null,
+        role: role || 'customer',
+        userType: userType || 'customer',
+        hasProAccess: hasProAccess || false,
+        isAdmin: isAdmin || false,
+        hasPro: hasProAccess || false
+      };
+
+      const newUser = await storage.createUser(userData);
+      
+      // Remove password from response
+      const { password: _, ...userResponse } = newUser;
+      
+      res.status(201).json({
+        success: true,
+        message: "User created successfully",
+        user: userResponse
+      });
+    } catch (error: any) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ 
+        error: "Failed to create user", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Update user
+  app.put("/api/admin/users/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const { username, email, firstName, lastName, phone, role, userType, hasProAccess, isAdmin, accountLocked } = req.body;
+      
+      if (!userId || isNaN(userId)) {
+        return res.status(400).json({ error: "Valid user ID is required" });
+      }
+
+      const updateData: any = {};
+      
+      if (username !== undefined) updateData.username = username;
+      if (email !== undefined) updateData.email = email;
+      if (firstName !== undefined) updateData.firstName = firstName;
+      if (lastName !== undefined) updateData.lastName = lastName;
+      if (phone !== undefined) updateData.phone = phone;
+      if (role !== undefined) updateData.role = role;
+      if (userType !== undefined) updateData.userType = userType;
+      if (hasProAccess !== undefined) {
+        updateData.hasProAccess = hasProAccess;
+        updateData.hasPro = hasProAccess;
+        if (hasProAccess) {
+          updateData.proAccessGrantedAt = new Date();
+        }
+      }
+      if (isAdmin !== undefined) updateData.isAdmin = isAdmin;
+      if (accountLocked !== undefined) {
+        updateData.accountLocked = accountLocked;
+        if (accountLocked) {
+          updateData.lockedAt = new Date();
+          updateData.lockReason = "Locked by administrator";
+        } else {
+          updateData.lockedAt = null;
+          updateData.lockReason = null;
+        }
+      }
+
+      const updatedUser = await storage.updateUser(userId, updateData);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Remove password from response
+      const { password: _, ...userResponse } = updatedUser;
+      
+      res.json({
+        success: true,
+        message: "User updated successfully",
+        user: userResponse
+      });
+    } catch (error: any) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ 
+        error: "Failed to update user", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Delete user
+  app.delete("/api/admin/users/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const currentUserId = req.user?.id;
+      
+      if (!userId || isNaN(userId)) {
+        return res.status(400).json({ error: "Valid user ID is required" });
+      }
+
+      // Prevent admin from deleting themselves
+      if (userId === currentUserId) {
+        return res.status(400).json({ error: "Cannot delete your own account" });
+      }
+
+      const deletedUser = await storage.deleteUser(userId);
+      
+      if (!deletedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      res.json({
+        success: true,
+        message: "User deleted successfully"
+      });
+    } catch (error: any) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ 
+        error: "Failed to delete user", 
+        message: error.message 
+      });
+    }
+  });
+
+  // Reset user password
+  app.post("/api/admin/users/:id/reset-password", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const { newPassword } = req.body;
+      
+      if (!userId || isNaN(userId)) {
+        return res.status(400).json({ error: "Valid user ID is required" });
+      }
+
+      if (!newPassword || newPassword.length < 6) {
+        return res.status(400).json({ error: "Password must be at least 6 characters" });
+      }
+
+      const hashedPassword = await hashPassword(newPassword);
+      
+      const updatedUser = await storage.updateUser(userId, { password: hashedPassword });
+      
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      res.json({
+        success: true,
+        message: "Password reset successfully"
+      });
+    } catch (error: any) {
+      console.error("Error resetting password:", error);
+      res.status(500).json({ 
+        error: "Failed to reset password", 
+        message: error.message 
+      });
     }
   });
 
