@@ -399,6 +399,148 @@ const AdminPanel = () => {
             </Card>
           </TabsContent>
 
+          {/* Consultation Bookings Tab */}
+          <TabsContent value="bookings" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Consultation Bookings
+                </CardTitle>
+                <CardDescription>
+                  Manage commercial and residential consultation requests from customers
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {bookingsLoading ? (
+                    <div className="text-center py-8">Loading consultation bookings...</div>
+                  ) : bookings.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">No consultation bookings found</div>
+                  ) : (
+                    bookings.map((booking: ServiceBooking) => (
+                      <Card key={booking.id} className="border-l-4 border-l-green-500">
+                        <CardContent className="p-6">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <h3 className="text-lg font-semibold">
+                                  {booking.customerName}
+                                </h3>
+                                <Badge className={`flex items-center gap-1 ${
+                                  booking.serviceType === 'commercial_consultation' 
+                                    ? 'bg-blue-100 text-blue-800' 
+                                    : 'bg-green-100 text-green-800'
+                                }`}>
+                                  {booking.serviceType === 'commercial_consultation' ? 'Commercial' : 'Residential'}
+                                </Badge>
+                                <Badge className={`${getStatusColor(booking.status)}`}>
+                                  {booking.status}
+                                </Badge>
+                              </div>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div className="flex items-center gap-2 text-sm text-gray-600">
+                                  <Phone className="h-4 w-4" />
+                                  {booking.customerPhone}
+                                </div>
+                                {booking.customerEmail && (
+                                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                                    <Mail className="h-4 w-4" />
+                                    {booking.customerEmail}
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-2 text-sm text-gray-600">
+                                  <Calendar className="h-4 w-4" />
+                                  {new Date(booking.bookingDate).toLocaleDateString()} at {booking.bookingTime}
+                                </div>
+                                <div className="flex items-center gap-2 text-sm text-gray-600">
+                                  <DollarSign className="h-4 w-4" />
+                                  ${booking.amount}
+                                </div>
+                              </div>
+
+                              <div className="mb-4">
+                                <h4 className="font-medium mb-2">Service Address:</h4>
+                                <p className="text-sm text-gray-600">{booking.serviceAddress}</p>
+                              </div>
+
+                              {booking.notes && (
+                                <div className="mb-4">
+                                  <h4 className="font-medium mb-2">Notes:</h4>
+                                  <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                                    {booking.notes}
+                                  </p>
+                                </div>
+                              )}
+
+                              <div className="flex gap-2">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => window.open(`tel:${booking.customerPhone}`, '_self')}
+                                >
+                                  <Phone className="h-4 w-4 mr-2" />
+                                  Call Customer
+                                </Button>
+                                {booking.customerEmail && (
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => window.open(`mailto:${booking.customerEmail}`, '_blank')}
+                                  >
+                                    <Mail className="h-4 w-4 mr-2" />
+                                    Email Customer
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="ml-4">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm">
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      // Update booking status functionality
+                                      console.log('Mark as confirmed:', booking.id);
+                                    }}
+                                  >
+                                    Mark as Confirmed
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      // Update booking status functionality
+                                      console.log('Mark as completed:', booking.id);
+                                    }}
+                                  >
+                                    Mark as Completed
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      // Update booking status functionality
+                                      console.log('Cancel booking:', booking.id);
+                                    }}
+                                  >
+                                    Cancel Booking
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* User Management Tab */}
           <TabsContent value="users" className="space-y-6">
             <Card>

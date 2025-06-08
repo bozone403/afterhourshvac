@@ -71,6 +71,7 @@ import UserSettings from "@/pages/user-settings";
 import CustomerDashboard from "@/pages/customer-dashboard";
 import ResidentialServices from "@/pages/shop/residential";
 import CommercialServices from "@/pages/shop/commercial";
+import AddOnsExtras from "@/pages/shop/addons-extras";
 import FurnacesShop from "@/pages/shop/furnaces";
 import MaintenancePlansShop from "@/pages/shop/maintenance-plans";
 import AirConditioningShop from "@/pages/shop/air-conditioning";
@@ -127,6 +128,7 @@ function Router() {
         {/* Shop routes */}
         <Route path="/shop/residential" component={ResidentialServices} />
         <Route path="/shop/commercial" component={CommercialServices} />
+        <Route path="/shop/addons" component={AddOnsExtras} />
         <Route path="/shop/furnaces" component={FurnacesShop} />
         <Route path="/shop/air-conditioning" component={AirConditioningShop} />
         <Route path="/shop/water-heaters" component={WaterHeatersShop} />

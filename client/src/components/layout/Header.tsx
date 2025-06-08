@@ -47,6 +47,7 @@ const Header = () => {
       submenu: [
         { name: "Residential Custom & New Builds", href: "/shop/residential", isPro: false },
         { name: "Commercial & Multi-Family", href: "/shop/commercial", isPro: false },
+        { name: "HVAC Add-Ons & Extras", href: "/shop/addons", isPro: false },
         { name: "Equipment & Products", href: "/shop/furnaces", isPro: false },
         { name: "Maintenance Plans", href: "/shop/maintenance-plans", isPro: false }
       ]
