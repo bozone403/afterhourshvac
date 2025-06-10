@@ -1,6 +1,6 @@
 import { users, productAccess, products, galleryImages, carouselImages, blogPosts, forumCategories, forumTopics, forumPosts, forumLikes, customerReviews, blogCategories, hvacEquipment, hvacMaterials, hvacAccessories, customers, contactSubmissions, emergencyRequests, quoteRequests, jobApplications, userSessions, pageViews, calculatorUsage, systemMetrics, serviceRequests, serviceJourneyStages, serviceUpdates, technicianLocations, enhancedQuotes, jobSchedules, maintenancePlans, corporateAccounts, phoneVerificationAttempts, securityLogs, serviceBookings, type User, type InsertUser, type Product, type InsertProduct, type ProductAccess, type InsertProductAccess, type GalleryImage, type InsertGalleryImage, type CarouselImage, type InsertCarouselImage, type BlogPost, type InsertBlogPost, type ForumCategory, type InsertForumCategory, type ForumTopic, type InsertForumTopic, type ForumPost, type InsertForumPost, type ForumLike, type InsertForumLike, type CustomerReview, type InsertCustomerReview, type BlogCategory, type InsertBlogCategory, type HvacEquipment, type InsertHvacEquipment, type HvacMaterial, type InsertHvacMaterial, type HvacAccessory, type InsertHvacAccessory, type Customer, type InsertCustomer, type ContactSubmission, type InsertContactSubmission, type EmergencyRequest, type InsertEmergencyRequest, type QuoteRequest, type InsertQuoteRequest, type JobApplication, type InsertJobApplication, type UserSession, type InsertUserSession, type PageView, type InsertPageView, type CalculatorUsage, type InsertCalculatorUsage, type SystemMetric, type InsertSystemMetric, type ServiceRequest, type InsertServiceRequest, type ServiceJourneyStage, type InsertServiceJourneyStage, type ServiceUpdate, type InsertServiceUpdate, type TechnicianLocation, type InsertTechnicianLocation, type ServiceBooking, type InsertServiceBooking } from "@shared/schema";
 import { eq, and, gte, lte, desc, count } from "drizzle-orm";
-import { db, pool } from "./db";
+import { db } from "./db";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 
@@ -226,7 +226,7 @@ export class DatabaseStorage implements IStorage {
 
   constructor() {
     this.sessionStore = new PostgresSessionStore({
-      pool: pool,
+      connectionString: process.env.DATABASE_URL,
       createTableIfMissing: true,
       tableName: 'sessions'
     });
