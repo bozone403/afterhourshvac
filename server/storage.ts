@@ -226,7 +226,7 @@ export class DatabaseStorage implements IStorage {
 
   constructor() {
     this.sessionStore = new PostgresSessionStore({
-      connectionString: process.env.DATABASE_URL,
+      pgPromise: require('pg-promise')()(process.env.DATABASE_URL),
       createTableIfMissing: true,
       tableName: 'sessions'
     });
