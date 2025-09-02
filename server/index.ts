@@ -1,8 +1,16 @@
+import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
+import cors from 'cors';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+app.use(cors({
+  origin: (process.env.CORS_ORIGIN || "").split(',').filter(Boolean).length > 0
+    ? (process.env.CORS_ORIGIN as string).split(',').map(o => o.trim())
+    : true,
+  credentials: true,
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 

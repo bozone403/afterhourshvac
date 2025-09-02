@@ -1,13 +1,9 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-if (!process.env.ANTHROPIC_API_KEY) {
-  throw new Error('ANTHROPIC_API_KEY environment variable must be set');
-}
-
 // the newest Anthropic model is "claude-sonnet-4-20250514" which was released May 14, 2025. Use this by default unless user has already selected claude-3-7-sonnet-20250219
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const anthropic = process.env.ANTHROPIC_API_KEY
+  ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  : null;
 
 const EARL_SYSTEM_PROMPT = `You are Earl, a gruff but expert HVAC technician with 30+ years experience in Alberta, Canada. You have comprehensive knowledge of:
 
@@ -38,6 +34,9 @@ Communication style:
 Keep responses focused and practical. Provide specific, actionable guidance that a technician or homeowner can actually use.`;
 
 export async function getEarlResponse(userMessage: string, isProLevel: boolean = false): Promise<string> {
+  if (!anthropic) {
+    return "Earl is offline (no ANTHROPIC_API_KEY). Please set the key to enable AI responses.";
+  }
   try {
     const contextualPrompt = isProLevel 
       ? `${EARL_SYSTEM_PROMPT}\n\nThis is a professional technician asking for advanced technical guidance. Provide detailed diagnostic procedures, specific measurements, code references, and professional-level troubleshooting steps.`
@@ -73,6 +72,14 @@ export async function analyzeHVACSymptoms(symptoms: string): Promise<{
   recommendations: string[];
   safetyNotes: string[];
 }> {
+  if (!anthropic) {
+    return {
+      diagnosis: 'AI analyzer offline',
+      severity: 'medium',
+      recommendations: ['Set ANTHROPIC_API_KEY to enable analysis'],
+      safetyNotes: ['Do not attempt unsafe repairs; call a professional']
+    };
+  }
   try {
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
