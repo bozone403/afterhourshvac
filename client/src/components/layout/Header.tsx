@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import afterHoursLogo from "@assets/480470353_1163607998481068_1052733637415814615_n (1).jpg";
+import afterHoursLogo from "/assets/logo.jpg";
 import { 
   Menu, 
   X, 
