@@ -567,7 +567,30 @@ export class DatabaseStorage implements IStorage {
     }));
   }
   
-  async getForumPosts(topicId: number): Promise<(ForumPost & { username: string })[]> {
+  async getForumPosts(topicId?: number): Promise<(ForumPost & { username: string })[]> {
+    if (topicId === 0) {
+      // Get all forum posts for admin
+      const results = await db
+        .select({
+          id: forumPosts.id,
+          topicId: forumPosts.topicId,
+          userId: forumPosts.userId,
+          content: forumPosts.content,
+          displayName: forumPosts.displayName,
+          isEdited: forumPosts.isEdited,
+          createdAt: forumPosts.createdAt,
+          updatedAt: forumPosts.updatedAt,
+          username: users.username
+        })
+        .from(forumPosts)
+        .leftJoin(users, eq(forumPosts.userId, users.id))
+        .orderBy(desc(forumPosts.createdAt));
+      
+      return results.map(result => ({
+        ...result,
+        username: result.displayName || result.username || 'Unknown User'
+      }));
+    }
     const results = await db
       .select({
         id: forumPosts.id,

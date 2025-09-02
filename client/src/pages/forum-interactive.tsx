@@ -27,7 +27,7 @@ import {
   Trash2,
   MoreVertical
 } from "lucide-react";
-import type { ForumTopic, ForumPost, ForumCategory, ForumLike, User as UserType } from "@shared/schema";
+import type { ForumTopic, ForumPost, ForumCategory, ForumLike, User as UserType } from "@/types/shared";
 
 interface ExtendedForumTopic extends ForumTopic {
   likeCount?: number;

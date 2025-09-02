@@ -3066,6 +3066,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Missing admin endpoints that frontend expects
+  app.get("/api/admin/bookings", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const bookings = await storage.getAllServiceBookings();
+      res.json(bookings);
+    } catch (error: any) {
+      console.error("Error fetching bookings:", error);
+      res.status(500).json({ error: "Failed to fetch bookings" });
+    }
+  });
+
+  app.get("/api/admin/contacts", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const contacts = await storage.getContactSubmissions();
+      res.json(contacts);
+    } catch (error: any) {
+      console.error("Error fetching contacts:", error);
+      res.status(500).json({ error: "Failed to fetch contacts" });
+    }
+  });
+
+  app.get("/api/admin/forum-posts", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      // Get all forum posts for admin review
+      const posts = await storage.getForumPosts(0); // 0 means get all
+      res.json(posts);
+    } catch (error: any) {
+      console.error("Error fetching forum posts:", error);
+      res.status(500).json({ error: "Failed to fetch forum posts" });
+    }
+  });
+
+  app.get("/api/gallery/services", async (req, res) => {
+    try {
+      const galleryImages = await storage.getGalleryImages();
+      res.json(galleryImages);
+    } catch (error: any) {
+      console.error("Error fetching gallery images:", error);
+      res.status(500).json({ error: "Failed to fetch gallery images" });
+    }
+  });
+
   // Create HTTP server
   const httpServer = createServer(app);
   
