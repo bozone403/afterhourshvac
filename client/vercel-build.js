@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import fs from 'fs-extra';
-const { copySync, existsSync, readdirSync, removeSync } = fs;
+const { copySync, existsSync, readdirSync, removeSync, ensureDirSync } = fs;
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -12,6 +12,16 @@ console.log('Running vercel-build script...');
 // Ensure shared directory exists
 const sharedDir = resolve(__dirname, 'shared');
 const srcSharedDir = resolve(__dirname, '../shared');
+const distDir = resolve(__dirname, 'dist');
+
+// Clean dist directory
+if (existsSync(distDir)) {
+  console.log('Cleaning dist directory...');
+  removeSync(distDir);
+}
+
+// Ensure dist directory exists
+ensureDirSync(distDir);
 
 // Run the copy-shared script
 console.log('Copying shared files...');
@@ -37,7 +47,26 @@ try {
 // Run the build
 console.log('Running build...');
 try {
+  // Install dependencies
+  console.log('Installing dependencies...');
+  execSync('npm install', { stdio: 'inherit' });
+  
+  // Run the build
+  console.log('Building application...');
   execSync('npm run build', { stdio: 'inherit' });
+  
+  // Verify build output
+  if (!existsSync(distDir)) {
+    throw new Error(`Build failed: ${distDir} directory not found`);
+  }
+  
+  const distFiles = readdirSync(distDir);
+  console.log('Build output files:', distFiles);
+  
+  if (distFiles.length === 0) {
+    throw new Error('Build failed: No files were generated in the dist directory');
+  }
+  
   console.log('Build completed successfully');
 } catch (error) {
   console.error('Build failed:', error);

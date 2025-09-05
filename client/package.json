@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "node copy-shared.js",
-    "build": "vite build",
+    "build": "vite build --outDir dist",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
-    "build:static": "vite build --mode static",
+    "build:static": "vite build --mode static --outDir dist",
     "vercel-build": "node vercel-build.js"
   },
   "dependencies": {
