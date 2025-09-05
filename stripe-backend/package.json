@@ -1,0 +1,54 @@
+{
+  "name": "afterhours-stripe-backend",
+  "version": "1.0.0",
+  "description": "Stripe backend for Afterhours HVAC",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.15.11",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "stripe": "^13.3.0",
+    "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "eslint": "^8.37.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.7",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bozone403/afterhourshvac.git"
+  },
+  "keywords": [
+    "stripe",
+    "payments",
+    "hvac",
+    "afterhours"
+  ],
+  "author": "Afterhours HVAC",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bozone403/afterhourshvac/issues"
+  },
+  "homepage": "https://github.com/bozone403/afterhourshvac#readme"
+}

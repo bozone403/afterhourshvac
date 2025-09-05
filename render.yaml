@@ -1,0 +1,34 @@
+# Render Blueprint for AfterHours HVAC Backend
+# Reference: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: afterhourshvac-backend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        value: file:./data/prod.db
+      - key: STRIPE_SECRET_KEY
+        sync: false  # Will be set in Render dashboard
+      - key: VITE_STRIPE_PUBLIC_KEY
+        sync: false  # Will be set in Render dashboard
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false  # Will be set in Render dashboard
+      - key: COMPANY_EMAIL
+        value: Jordan@Afterhourshvac.ca
+    plan: free  # Start with free tier, can upgrade later
+    disk:
+      name: data
+      mountPath: /opt/render/project/data
+      sizeGB: 1  # 1GB should be sufficient for SQLite database
+    healthCheckPath: /health
+    autoDeploy: true
+    region: oregon  # Choose closest to your location
