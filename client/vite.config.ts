@@ -12,23 +12,50 @@ const __dirname = path.dirname(__filename);
 const sharedPath = path.resolve(__dirname, 'shared');
 const srcSharedPath = path.resolve(__dirname, '../shared');
 
-// Import fs-extra for file operations
-import fs from 'fs-extra';
+// Ensure shared directory exists and copy files if needed
+const fs = require('fs-extra');
 
-// Ensure shared directory exists
-if (!fs.existsSync(sharedPath)) {
-  console.log('Shared directory not found, creating...');
-  fs.mkdirSync(sharedPath, { recursive: true });
-}
-
-// Log shared directory contents for debugging
+console.log('Ensuring shared files are available...');
 try {
+  // Always copy shared files to ensure they're up to date
+  if (!fs.existsSync(sharedPath)) {
+    console.log('Creating shared directory:', sharedPath);
+    fs.mkdirSync(sharedPath, { recursive: true });
+  }
+  
+  console.log('Copying shared files from:', srcSharedPath);
+  fs.copySync(srcSharedPath, sharedPath, { 
+    overwrite: true,
+    errorOnExist: false,
+    preserveTimestamps: true,
+    recursive: true
+  });
+  
+  console.log('Successfully synchronized shared files');
   console.log('Shared directory contents:', fs.readdirSync(sharedPath));
 } catch (error) {
-  console.warn('Could not read shared directory:', error);
+  console.error('Failed to synchronize shared files:', error);
+  process.exit(1);
 }
 
 export default defineConfig(({ mode }) => ({
+  resolve: {
+    alias: [
+      {
+        find: '@',
+        replacement: path.resolve(__dirname, 'src'),
+      },
+      {
+        find: '@shared',
+        replacement: sharedPath
+      },
+      {
+        find: /^@shared\/(.*)/,
+        replacement: `${sharedPath}/$1`
+      }
+    ],
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
+  },
   plugins: [
     react(),
     mode === 'analyze' && visualizer({
@@ -60,25 +87,6 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ],
-  resolve: {
-    alias: [
-      {
-        find: '@',
-        replacement: path.resolve(__dirname, 'src'),
-      },
-      // Handle @shared imports with explicit file extensions
-      {
-        find: /^@shared\/(.*)$/,
-        replacement: `${sharedPath}/$1`,
-      },
-      // Fallback for @shared root
-      {
-        find: '@shared',
-        replacement: sharedPath,
-      },
-    ],
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
-  },
   build: {
     outDir: '../dist/public',
     emptyOutDir: true,
