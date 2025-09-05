@@ -53,7 +53,7 @@ export default defineConfig(({ mode }) => ({
       },
       {
         find: /^@shared\/(.*)/,
-        replacement: `${sharedPath}/$1`
+        replacement: path.join(sharedPath, '/$1')
       }
     ],
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
@@ -94,11 +94,16 @@ export default defineConfig(({ mode }) => ({
     emptyOutDir: true,
     sourcemap: mode === 'development',
     rollupOptions: {
-      // Don't externalize any modules to ensure everything is bundled
+      // Handle @shared imports
       external: (id) => {
+        // Don't externalize @shared imports
+        if (id.startsWith('@shared/') || id === '@shared') {
+          return false;
+        }
         // Only externalize node_modules that shouldn't be bundled
-        return /node_modules/.test(id) && !id.includes('@shared');
+        return /node_modules/.test(id);
       },
+      preserveEntrySignatures: 'strict',
       output: {
         manualChunks: (id) => {
           // Put shared code in a separate chunk
