@@ -13,18 +13,20 @@ const sharedPath = path.resolve(__dirname, 'shared');
 const srcSharedPath = path.resolve(__dirname, '../shared');
 
 // Ensure shared directory exists and copy files if needed
-const fs = require('fs-extra');
+import { existsSync, mkdirSync, readdirSync } from 'node:fs';
+import fsExtra from 'fs-extra';
+const { copySync } = fsExtra;
 
 console.log('Ensuring shared files are available...');
 try {
   // Always copy shared files to ensure they're up to date
-  if (!fs.existsSync(sharedPath)) {
+  if (!existsSync(sharedPath)) {
     console.log('Creating shared directory:', sharedPath);
-    fs.mkdirSync(sharedPath, { recursive: true });
+    mkdirSync(sharedPath, { recursive: true });
   }
   
   console.log('Copying shared files from:', srcSharedPath);
-  fs.copySync(srcSharedPath, sharedPath, { 
+  copySync(srcSharedPath, sharedPath, { 
     overwrite: true,
     errorOnExist: false,
     preserveTimestamps: true,
@@ -32,7 +34,7 @@ try {
   });
   
   console.log('Successfully synchronized shared files');
-  console.log('Shared directory contents:', fs.readdirSync(sharedPath));
+  console.log('Shared directory contents:', readdirSync(sharedPath));
 } catch (error) {
   console.error('Failed to synchronize shared files:', error);
   process.exit(1);
