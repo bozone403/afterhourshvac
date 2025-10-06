@@ -17,6 +17,7 @@ import WelcomeModal from "@/components/modals/WelcomeModal";
 // Pages
 import Home from "@/pages/home";
 import HomeV2 from "@/pages/home-v2";
+import HomeLuxury from "@/pages/home-luxury";
 import About from "@/pages/about";
 
 import Pricing from "@/pages/pricing-cards";
@@ -101,7 +102,7 @@ function Router() {
       <ScrollToTop />
       <Switch>
         {/* Public routes */}
-        <Route path="/" component={HomeV2} />
+        <Route path="/" component={HomeLuxury} />
         <Route path="/about" component={About} />
         <Route path="/services" component={ResidentialServices} />
         <Route path="/gallery" component={Gallery} />
