@@ -1,60 +1,14 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  CheckCircle, 
-  Building2, 
-  Wrench, 
-  Clock, 
-  Shield, 
-  FileText, 
-  Calendar,
-  Phone,
-  Mail,
-  ChefHat,
-  Briefcase,
-  Home,
-  Warehouse,
-  TrendingDown,
-  DollarSign,
-  Settings,
-  Wind,
-  Thermometer,
-  Star
-} from "lucide-react";
-import { Link } from "wouter";
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Building2, Star, Award, Shield, Zap, CheckCircle, ArrowRight, Phone, ChefHat, Briefcase, Home, Warehouse, Calendar, Mail, Sparkles } from 'lucide-react';
+import { Link } from 'wouter';
 
-const CommercialServices = () => {
-  const [activeTab, setActiveTab] = useState("restaurants");
-
-  const valueProps = [
-    {
-      icon: Shield,
-      title: "Protecting Their Asset",
-      description: "We're not just fixing a heater; we're maintaining a critical piece of your business infrastructure. Our service protects your asset, keeps tenants happy, and ensures business continuity."
-    },
-    {
-      icon: DollarSign,
-      title: "Total Cost of Ownership (TCO)", 
-      description: "Commercial clients think long-term. Our solutions focus on lower energy bills, fewer breakdowns, and longer equipment lifespan, saving you money over the long run."
-    },
-    {
-      icon: Calendar,
-      title: "Preventive Maintenance is King",
-      description: "A signed Preventive Maintenance contract is predictable, recurring revenue for us and peace of mind for you. We're not just a repairman; we're your dedicated HVAC service provider."
-    }
-  ];
-
-  const maintenanceBenefits = [
-    "Reduce the risk of costly, unexpected breakdowns",
-    "Lower energy consumption through peak efficiency tuning", 
-    "Extend the operational lifespan of your equipment",
-    "Ensure tenant and employee comfort and safety",
-    "Provide detailed service reports for your records",
-    "Preferred pricing on all repairs and future installations"
-  ];
+const CommercialShop = () => {
+  const [activeTab, setActiveTab] = useState('restaurants');
 
   const niches = {
     restaurants: {
@@ -112,92 +66,166 @@ const CommercialServices = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Hero Section */}
-      <section className="relative py-20 px-4 text-center bg-gradient-to-r from-blue-800 via-indigo-800 to-purple-800">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-6xl mx-auto">
-          <div className="flex items-center justify-center mb-6">
-            <Building2 className="h-12 w-12 text-white mr-4" />
-            <h1 className="text-4xl md:text-6xl font-bold text-white">
-              Commercial & Multi-Family HVAC Solutions
-            </h1>
+    <>
+      <Helmet>
+        <title>Commercial HVAC Solutions - Calgary Commercial Heating & Cooling | AfterHours HVAC</title>
+        <meta name="description" content="Professional commercial HVAC solutions for restaurants, offices, multi-family buildings, and warehouses. Expert installation and maintenance services." />
+      </Helmet>
+
+      {/* Hero Section - Premium Blue/Slate Gradient */}
+      <section className="relative min-h-[80vh] bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-slate-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '700ms' }}></div>
+        </div>
+
+        {/* Premium Badge */}
+        <div className="absolute top-8 right-8 z-20">
+          <div className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-2 rounded-full shadow-xl flex items-center gap-2">
+            <Award className="w-4 h-4" />
+            <span className="font-semibold text-sm">Commercial HVAC Experts</span>
           </div>
-          <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-4xl mx-auto leading-relaxed">
-            Reliable HVAC Solutions That Protect Your Business and Bottom Line
-          </p>
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 max-w-4xl mx-auto">
-            <p className="text-lg text-white leading-relaxed">
-              For businesses and property managers in Calgary, HVAC system failure means lost revenue and unhappy tenants. AfterHours HVAC provides reliable commercial service, planned retrofits, and comprehensive maintenance contracts designed to maximize uptime and protect your investment.
+        </div>
+
+        <div className="relative z-10 container mx-auto px-6 pt-24 pb-16">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
+                <Building2 className="w-4 h-4 text-blue-400" />
+                <span className="text-white/90 text-sm font-medium">Professional Commercial Solutions</span>
+              </div>
+              
+              <h1 className="text-5xl lg:text-7xl font-black text-white leading-tight">
+                Commercial
+                <br />
+                <span className="bg-gradient-to-r from-blue-400 to-slate-500 bg-clip-text text-transparent">
+                  HVAC Solutions
+                </span>
+              </h1>
+              
+              <p className="text-xl text-blue-100 max-w-xl leading-relaxed">
+                Reliable HVAC solutions that protect your business and bottom line. Specialized services for restaurants, offices, multi-family buildings, and warehouses.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+                  data-testid="button-view-services"
+                  asChild
+                >
+                  <a href="#commercial-services">
+                    View Services
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </a>
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-2 border-white/20 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all"
+                  data-testid="button-call-now"
+                  asChild
+                >
+                  <Link href="/contact">
+                    <Phone className="w-5 h-5 mr-2" />
+                    (403) 613-6014
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="flex flex-wrap gap-6 pt-4">
+                <div className="flex items-center gap-2 text-white/90">
+                  <Shield className="w-5 h-5 text-blue-400" />
+                  <span className="text-sm font-medium">Licensed & Insured</span>
+                </div>
+                <div className="flex items-center gap-2 text-white/90">
+                  <Award className="w-5 h-5 text-blue-400" />
+                  <span className="text-sm font-medium">24/7 Emergency Service</span>
+                </div>
+                <div className="flex items-center gap-2 text-white/90">
+                  <Star className="w-5 h-5 text-blue-400" />
+                  <span className="text-sm font-medium">Commercial Certified</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Stats */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
+                <div className="text-4xl font-black text-white mb-2">24/7</div>
+                <div className="text-blue-200 text-sm">Emergency Service</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
+                <div className="text-4xl font-black text-white mb-2">100+</div>
+                <div className="text-blue-200 text-sm">Commercial Clients</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
+                <div className="text-4xl font-black text-white mb-2">15+</div>
+                <div className="text-blue-200 text-sm">Years Experience</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
+                <div className="text-4xl font-black text-white mb-2">4hr</div>
+                <div className="text-blue-200 text-sm">Response Time</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Industry Niches Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50" id="commercial-services">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-gray-900 mb-4">
+              Specialized Solutions for <span className="bg-gradient-to-r from-blue-500 to-slate-600 bg-clip-text text-transparent">Every Industry</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Expert HVAC services tailored to your specific commercial needs
             </p>
           </div>
-        </div>
-      </section>
 
-      {/* Value Propositions */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Why Commercial Clients Choose AfterHours HVAC
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {valueProps.map((prop, index) => (
-              <Card key={index} className="bg-white shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-blue-600">
-                <CardHeader>
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="p-3 bg-blue-100 rounded-lg">
-                      <prop.icon className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <CardTitle className="text-xl text-gray-900">{prop.title}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 leading-relaxed">{prop.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Industry Niches */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Specialized Solutions for Every Industry
-          </h2>
-          
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
-              {Object.entries(niches).map(([key, niche]) => (
-                <TabsTrigger key={key} value={key} className="flex items-center space-x-2">
-                  <niche.icon className="h-4 w-4" />
-                  <span className="hidden sm:inline">{niche.title.split(' ')[0]}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-6xl mx-auto">
+            <div className="flex justify-center mb-8">
+              <TabsList className="inline-flex bg-white rounded-2xl shadow-xl p-2 gap-2">
+                {Object.entries(niches).map(([key, niche]) => (
+                  <TabsTrigger 
+                    key={key} 
+                    value={key} 
+                    className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-slate-600 data-[state=active]:text-white"
+                    data-testid={`tab-${key}`}
+                  >
+                    <niche.icon className="h-4 w-4" />
+                    <span className="hidden sm:inline">{niche.title.split(' ')[0]}</span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
 
             {Object.entries(niches).map(([key, niche]) => (
               <TabsContent key={key} value={key}>
-                <Card className="bg-gradient-to-br from-blue-50 to-indigo-50">
-                  <CardHeader>
-                    <div className="flex items-center space-x-4 mb-4">
-                      <div className="p-4 bg-blue-600 rounded-lg">
+                <Card className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                  <CardHeader className="bg-gradient-to-br from-blue-50 to-slate-50 pb-8">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="p-4 bg-gradient-to-r from-blue-500 to-slate-600 rounded-xl">
                         <niche.icon className="h-8 w-8 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-2xl text-gray-900">{niche.title}</CardTitle>
-                        <CardDescription className="text-lg text-gray-600 mt-2">
+                        <CardTitle className="text-3xl font-black text-gray-900" data-testid={`title-${key}`}>
+                          {niche.title}
+                        </CardTitle>
+                        <CardDescription className="text-lg text-gray-600 mt-2" data-testid={`description-${key}`}>
                           {niche.description}
                         </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="pt-8">
                     <div className="grid md:grid-cols-2 gap-4">
                       {niche.services.map((service, index) => (
-                        <div key={index} className="flex items-center space-x-3">
-                          <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                        <div key={index} className="flex items-center gap-3" data-testid={`service-${key}-${index}`}>
+                          <CheckCircle className="h-5 h-5 text-green-500 flex-shrink-0" />
                           <span className="text-gray-700">{service}</span>
                         </div>
                       ))}
@@ -210,132 +238,179 @@ const CommercialServices = () => {
         </div>
       </section>
 
-      {/* Maintenance Program */}
-      <section className="py-16 px-4 bg-gradient-to-r from-green-600 to-blue-600">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              The Commercial Advantage Maintenance Program
+      {/* Value Props Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-black text-gray-900 mb-4">
+                Why Commercial Clients <span className="bg-gradient-to-r from-blue-500 to-slate-600 bg-clip-text text-transparent">Choose Us</span>
+              </h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Professional HVAC service that protects your business
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: Shield,
+                  title: "Protecting Your Asset",
+                  description: "We're maintaining critical business infrastructure, keeping tenants happy and ensuring business continuity."
+                },
+                {
+                  icon: Zap,
+                  title: "Total Cost of Ownership",
+                  description: "Long-term solutions focused on lower energy bills, fewer breakdowns, and longer equipment lifespan."
+                },
+                {
+                  icon: Calendar,
+                  title: "Preventive Maintenance",
+                  description: "Comprehensive maintenance contracts providing predictable service and peace of mind."
+                }
+              ].map((item, index) => (
+                <Card key={index} className="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                  <CardHeader>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 bg-gradient-to-r from-blue-500 to-slate-600 rounded-xl">
+                        <item.icon className="h-6 w-6 text-white" />
+                      </div>
+                      <CardTitle className="text-xl text-gray-900">{item.title}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600 leading-relaxed">{item.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Maintenance Program Section */}
+      <section className="py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-black text-white mb-4">
+              Commercial Maintenance Program
             </h2>
-            <p className="text-xl text-green-100 max-w-3xl mx-auto">
-              Predictable, proactive maintenance that protects your investment and ensures business continuity.
+            <p className="text-xl text-blue-100 max-w-2xl mx-auto">
+              Predictable, proactive maintenance that protects your investment
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-white flex items-center">
-                    <Star className="h-6 w-6 mr-3 text-yellow-300" />
-                    Program Benefits
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {maintenanceBenefits.map((benefit, index) => (
-                      <div key={index} className="flex items-start space-x-3">
-                        <CheckCircle className="h-5 w-5 text-green-300 flex-shrink-0 mt-0.5" />
-                        <span className="text-white">{benefit}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="space-y-6">
-              <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                <CardContent className="p-6 text-center">
-                  <TrendingDown className="h-12 w-12 text-green-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">Reduce Operating Costs</h3>
-                  <p className="text-green-100">Preventive maintenance can reduce energy costs by up to 15% and prevent costly emergency repairs.</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                <CardContent className="p-6 text-center">
-                  <Clock className="h-12 w-12 text-blue-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">Maximize Uptime</h3>
-                  <p className="text-blue-100">Regular maintenance prevents 85% of equipment failures, keeping your business running smoothly.</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                <CardContent className="p-6 text-center">
-                  <Shield className="h-12 w-12 text-purple-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">Peace of Mind</h3>
-                  <p className="text-purple-100">Priority service, detailed reporting, and preferred pricing on all additional work.</p>
-                </CardContent>
-              </Card>
-            </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {[
+              "Reduce the risk of costly, unexpected breakdowns",
+              "Lower energy consumption through peak efficiency tuning",
+              "Extend the operational lifespan of your equipment",
+              "Ensure tenant and employee comfort and safety",
+              "Provide detailed service reports for your records",
+              "Preferred pricing on all repairs and future installations"
+            ].map((benefit, index) => (
+              <div key={index} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-white text-lg">{benefit}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900">
-            Protect Your Investment
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Schedule a free site assessment to receive a customized maintenance proposal for your property.
-          </p>
-          
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-blue-50 border-2 border-blue-200">
-              <CardContent className="p-6 text-center">
-                <Phone className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Emergency Service</h3>
-                <p className="text-gray-600 mb-4">24/7 emergency response</p>
-                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <a href="tel:4036136014">(403) 613-6014</a>
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-green-50 border-2 border-green-200">
-              <CardContent className="p-6 text-center">
-                <Calendar className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Schedule Assessment</h3>
-                <p className="text-gray-600 mb-4">Free on-site evaluation</p>
-                <Button asChild className="bg-green-600 hover:bg-green-700 text-white">
-                  <Link href="/calendar-booking">Book Assessment</Link>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-purple-50 border-2 border-purple-200">
-              <CardContent className="p-6 text-center">
-                <Mail className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Get Quote</h3>
-                <p className="text-gray-600 mb-4">Custom maintenance proposal</p>
-                <Button asChild className="bg-purple-600 hover:bg-purple-700 text-white">
-                  <a href="mailto:Jordan@Afterhourshvac.ca">Email Jordan</a>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Ready to Protect Your Business?</h3>
-            <p className="text-gray-600 mb-6">
-              Join hundreds of Calgary businesses who trust AfterHours HVAC for reliable commercial service and maintenance.
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-slate-50">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+              Protect Your <span className="bg-gradient-to-r from-blue-500 to-slate-600 bg-clip-text text-transparent">Business Investment</span>
+            </h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Schedule a free site assessment to receive a customized maintenance proposal for your property.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
-                <Link href="/contact">Request Site Assessment</Link>
-              </Button>
-              <Button asChild variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3">
-                <Link href="/shop/maintenance-plans">View Maintenance Plans</Link>
-              </Button>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              <Card className="bg-white border-2 border-blue-200">
+                <CardContent className="p-6 text-center">
+                  <Phone className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Emergency Service</h3>
+                  <p className="text-gray-600 mb-4">24/7 emergency response</p>
+                  <Button 
+                    asChild 
+                    className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"
+                    data-testid="button-emergency-call"
+                  >
+                    <a href="tel:4036136014">(403) 613-6014</a>
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white border-2 border-green-200">
+                <CardContent className="p-6 text-center">
+                  <Calendar className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Schedule Assessment</h3>
+                  <p className="text-gray-600 mb-4">Free on-site evaluation</p>
+                  <Button 
+                    asChild 
+                    className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+                    data-testid="button-schedule"
+                  >
+                    <Link href="/calendar-booking">Book Assessment</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white border-2 border-purple-200">
+                <CardContent className="p-6 text-center">
+                  <Mail className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Get Quote</h3>
+                  <p className="text-gray-600 mb-4">Custom maintenance proposal</p>
+                  <Button 
+                    asChild 
+                    className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
+                    data-testid="button-email"
+                  >
+                    <a href="mailto:Jordan@Afterhourshvac.ca">Email Jordan</a>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="bg-white rounded-2xl p-8 shadow-xl">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Ready to Protect Your Business?</h3>
+              <p className="text-gray-600 mb-6">
+                Join hundreds of Calgary businesses who trust AfterHours HVAC for reliable commercial service and maintenance.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg hover:scale-105 transition-all text-lg px-8"
+                  data-testid="button-cta-contact"
+                  asChild
+                >
+                  <Link href="/contact">
+                    Request Site Assessment
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Link>
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-lg px-8"
+                  data-testid="button-cta-plans"
+                  asChild
+                >
+                  <Link href="/shop/maintenance-plans">View Maintenance Plans</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </section>
-    </div>
+    </>
   );
 };
 
-export default CommercialServices;
+export default CommercialShop;

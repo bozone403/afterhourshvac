@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Settings, Shield, Clock, Wrench, CheckCircle, Star, Phone, Calendar, ArrowRight } from 'lucide-react';
+import { Settings, Shield, Clock, Wrench, CheckCircle, Star, Phone, Calendar, ArrowRight, Award, Sparkles, Zap } from 'lucide-react';
 import { Link } from 'wouter';
 
 const MaintenancePlansShop = () => {
@@ -172,242 +172,342 @@ const MaintenancePlansShop = () => {
         <meta name="description" content="Protect your HVAC investment with our comprehensive maintenance plans. Annual service, priority repairs, and extended warranties available." />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
+      {/* Hero Section - Premium Emerald/Teal Gradient */}
+      <section className="relative min-h-[80vh] bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '700ms' }}></div>
+        </div>
+
+        {/* Premium Badge */}
+        <div className="absolute top-8 right-8 z-20">
+          <div className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-2 rounded-full shadow-xl flex items-center gap-2">
+            <Award className="w-4 h-4" />
+            <span className="font-semibold text-sm">Premium Care Plans</span>
+          </div>
+        </div>
+
+        <div className="relative z-10 container mx-auto px-6 pt-24 pb-16">
+          <div className="max-w-5xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 mb-8">
+              <Settings className="w-4 h-4 text-emerald-400" />
+              <span className="text-white/90 text-sm font-medium">Professional Maintenance Solutions</span>
+            </div>
             
-            {/* Header */}
-            <div className="text-center mb-12">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="p-3 bg-gradient-to-r from-blue-600 to-orange-500 rounded-2xl">
-                  <Settings className="w-8 h-8 text-white" />
-                </div>
-                <h1 className="text-4xl lg:text-5xl font-black text-gray-900">
-                  AfterHours HVAC Premium Packages
-                </h1>
-              </div>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                Professional maintenance plans for residential and commercial properties. 
-                From quick diagnostics to comprehensive care plans with emergency coverage.
-              </p>
-            </div>
+            <h1 className="text-5xl lg:text-7xl font-black text-white leading-tight mb-8">
+              Premium
+              <br />
+              <span className="bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">
+                Maintenance Plans
+              </span>
+            </h1>
+            
+            <p className="text-xl text-emerald-100 max-w-2xl mx-auto mb-8 leading-relaxed">
+              Professional maintenance plans for residential and commercial properties. From quick diagnostics to comprehensive care with emergency coverage.
+            </p>
 
-            {/* Residential Plans */}
-            <div className="mb-16">
-              <h2 className="text-3xl font-bold text-center mb-8">Residential Maintenance Plans</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {residentialPlans.map((plan) => (
-                  <Card key={plan.id} className={`relative bg-white shadow-lg transition-all duration-300 overflow-hidden ${plan.popular ? 'ring-2 ring-blue-500 scale-105' : 'hover:shadow-xl'}`}>
-                    {plan.badge && (
-                      <div className="absolute top-4 right-4 z-10">
-                        <Badge className={`${plan.popular ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gradient-to-r from-blue-500 to-purple-500'} text-white font-bold text-xs`}>
-                          {plan.badge}
-                        </Badge>
-                      </div>
-                    )}
-                    
-                    <CardHeader className="text-center pb-4">
-                      <CardTitle className="text-lg font-bold text-gray-900 mb-2">{plan.name}</CardTitle>
-                      <div className="mb-4">
-                        {plan.oneTimePrice && (
-                          <div className="text-3xl font-black text-blue-600">${plan.oneTimePrice}</div>
-                        )}
-                        {plan.visitPrice && (
-                          <div className="text-3xl font-black text-blue-600">${plan.visitPrice}/visit</div>
-                        )}
-                        {plan.monthlyPrice && plan.annualPrice && (
-                          <>
-                            <div className="text-3xl font-black text-blue-600">
-                              ${isAnnual ? plan.annualPrice : plan.monthlyPrice}
-                            </div>
-                            <div className="text-gray-500">
-                              {isAnnual ? '/year' : '/month'}
-                            </div>
-                            {isAnnual && plan.savings > 0 && (
-                              <div className="text-green-600 font-semibold text-sm">
-                                Save ${plan.savings}/year
-                              </div>
-                            )}
-                          </>
-                        )}
-                        {plan.duration && (
-                          <div className="text-gray-500 text-sm">{plan.duration}</div>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-600">{plan.description}</p>
-                    </CardHeader>
-                    
-                    <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                        {plan.features.slice(0, 6).map((feature, idx) => (
-                          <div key={idx} className="flex items-start gap-2 text-xs text-gray-700">
-                            <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0 mt-0.5" />
-                            {feature}
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <Button 
-                        asChild
-                        className={`w-full ${plan.popular ? 'bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
-                        size="sm"
-                      >
-                        <Link href={`/checkout/${plan.name === 'QuickShot Diagnostic' ? 'maintenance-quickshot' : 'maintenance-dominion'}`}>Choose Plan</Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Commercial Plans */}
-            <div className="mb-16">
-              <h2 className="text-3xl font-bold text-center mb-8">Commercial HVAC Contracts</h2>
-              <div className="grid md:grid-cols-3 gap-8">
-                {commercialPlans.map((plan) => (
-                  <Card key={plan.id} className={`relative bg-white shadow-lg transition-all duration-300 overflow-hidden ${plan.popular ? 'ring-2 ring-blue-500 scale-105' : 'hover:shadow-xl'}`}>
-                    {plan.badge && (
-                      <div className="absolute top-4 right-4 z-10">
-                        <Badge className={`${plan.popular ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gradient-to-r from-blue-500 to-purple-500'} text-white font-bold`}>
-                          {plan.badge}
-                        </Badge>
-                      </div>
-                    )}
-                    
-                    <CardHeader className="text-center pb-4">
-                      <CardTitle className="text-xl font-bold text-gray-900 mb-2">{plan.name}</CardTitle>
-                      <div className="mb-4">
-                        <div className="text-3xl font-black text-blue-600">
-                          {plan.priceNote && <span className="text-lg font-normal">{plan.priceNote} </span>}
-                          ${plan.annualPrice.toLocaleString()}
-                        </div>
-                        <div className="text-gray-500">/year</div>
-                      </div>
-                      <p className="text-sm text-gray-600">{plan.description}</p>
-                    </CardHeader>
-                    
-                    <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                        {plan.features.map((feature, idx) => (
-                          <div key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-                            <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                            {feature}
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <Button 
-                        asChild
-                        className={`w-full ${plan.popular ? 'bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
-                        size="lg"
-                      >
-                        <Link href="/membership">Get Quote</Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-
-
-            {/* Add-Ons Section */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 mb-12">
-              <h2 className="text-3xl font-bold text-center mb-8">Optional Add-Ons</h2>
-              <div className="grid md:grid-cols-3 gap-6">
-                {addOns.map((addon, idx) => (
-                  <div key={idx} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-bold text-lg">{addon.name}</h3>
-                      <span className="text-xl font-bold text-blue-600">${addon.price}</span>
-                    </div>
-                    <p className="text-gray-600 text-sm mb-4">{addon.description}</p>
-                    <Button variant="outline" size="sm" className="w-full">
-                      Add to Plan
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Benefits Section */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 mb-12">
-              <h2 className="text-3xl font-bold text-center mb-8">Why Choose Our Maintenance Plans?</h2>
-              <div className="grid md:grid-cols-4 gap-6">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Shield className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-2">Extended Equipment Life</h3>
-                  <p className="text-gray-600 text-sm">Regular maintenance can extend your system's life by 5-10 years</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Clock className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-2">Priority Service</h3>
-                  <p className="text-gray-600 text-sm">Skip the line with priority scheduling for repairs and emergencies</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Wrench className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-2">Repair Discounts</h3>
-                  <p className="text-gray-600 text-sm">Save 10-20% on all repair services and replacement parts</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Star className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-2">Energy Savings</h3>
-                  <p className="text-gray-600 text-sm">Well-maintained systems use up to 15% less energy</p>
-                </div>
-              </div>
-            </div>
-
-            {/* FAQ Section */}
-            <div className="bg-gray-50 rounded-2xl p-8 mb-12">
-              <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="font-bold mb-2">What's included in a maintenance visit?</h3>
-                  <p className="text-gray-600 text-sm mb-4">Complete system inspection, cleaning, filter replacement, safety checks, and performance optimization.</p>
-                  
-                  <h3 className="font-bold mb-2">Can I cancel my plan anytime?</h3>
-                  <p className="text-gray-600 text-sm">Yes, you can cancel with 30 days notice. Annual plans are pro-rated for refunds.</p>
-                </div>
-                <div>
-                  <h3 className="font-bold mb-2">Do you service all HVAC brands?</h3>
-                  <p className="text-gray-600 text-sm mb-4">Yes, we service all major HVAC brands including Ducane, Carrier, Trane, Lennox, and more.</p>
-                  
-                  <h3 className="font-bold mb-2">What if I need emergency service?</h3>
-                  <p className="text-gray-600 text-sm">Maintenance plan members get priority emergency service with reduced rates.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Section */}
-            <div className="text-center bg-gradient-to-r from-blue-600 to-orange-500 rounded-2xl p-8 text-white">
-              <h2 className="text-3xl font-bold mb-4">Ready to Protect Your Investment?</h2>
-              <p className="text-xl mb-6 opacity-90">
-                Join thousands of satisfied customers who trust us with their HVAC maintenance.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" variant="secondary" className="text-lg px-8">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+                data-testid="button-view-plans"
+                asChild
+              >
+                <a href="#maintenance-plans">
+                  View Plans
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </a>
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-2 border-white/20 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all"
+                data-testid="button-call-now"
+                asChild
+              >
+                <Link href="/contact">
                   <Phone className="w-5 h-5 mr-2" />
-                  Call (403) 613-6014
-                </Button>
-                <Button asChild size="lg" variant="outline" className="text-lg px-8 bg-white text-blue-600 hover:bg-gray-100">
-                  <Link href="/quote">
-                    <Calendar className="w-5 h-5 mr-2" />
-                    Schedule Service
-                  </Link>
-                </Button>
+                  (403) 613-6014
+                </Link>
+              </Button>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap justify-center gap-6 pt-4">
+              <div className="flex items-center gap-2 text-white/90">
+                <Shield className="w-5 h-5 text-emerald-400" />
+                <span className="text-sm font-medium">Licensed Professionals</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/90">
+                <Clock className="w-5 h-5 text-emerald-400" />
+                <span className="text-sm font-medium">Priority Service</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/90">
+                <Star className="w-5 h-5 text-emerald-400" />
+                <span className="text-sm font-medium">5-Star Rated</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Residential Plans Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-emerald-50" id="maintenance-plans">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-gray-900 mb-4">
+              Residential <span className="bg-gradient-to-r from-emerald-500 to-teal-600 bg-clip-text text-transparent">Maintenance Plans</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Professional maintenance to protect your home comfort investment
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {residentialPlans.map((plan) => (
+              <Card 
+                key={plan.id} 
+                className={`relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 ${
+                  plan.popular ? 'ring-2 ring-amber-500' : ''
+                }`}
+                data-testid={`card-plan-${plan.id}`}
+              >
+                {plan.popular && (
+                  <div className="absolute top-4 right-4 z-10">
+                    <Badge className="bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 shadow-lg">
+                      <Sparkles className="w-3 h-3 mr-1" />
+                      {plan.badge}
+                    </Badge>
+                  </div>
+                )}
+                {!plan.popular && plan.badge && (
+                  <div className="absolute top-4 right-4 z-10">
+                    <Badge variant="secondary" className="shadow-md" data-testid={`badge-${plan.id}`}>
+                      {plan.badge}
+                    </Badge>
+                  </div>
+                )}
+                
+                <CardHeader className="bg-gradient-to-br from-emerald-50 to-teal-50 pb-6">
+                  <CardTitle className="text-lg font-bold text-gray-900 mb-2" data-testid={`title-${plan.id}`}>
+                    {plan.name}
+                  </CardTitle>
+                  <div className="mb-4">
+                    {plan.oneTimePrice && (
+                      <div className="text-3xl font-black text-emerald-600" data-testid={`price-${plan.id}`}>${plan.oneTimePrice}</div>
+                    )}
+                    {plan.visitPrice && (
+                      <div className="text-3xl font-black text-emerald-600" data-testid={`price-${plan.id}`}>${plan.visitPrice}/visit</div>
+                    )}
+                    {plan.monthlyPrice && plan.annualPrice && (
+                      <>
+                        <div className="text-3xl font-black text-emerald-600" data-testid={`price-${plan.id}`}>
+                          ${isAnnual ? plan.annualPrice : plan.monthlyPrice}
+                        </div>
+                        <div className="text-gray-500 text-sm">
+                          {isAnnual ? '/year' : '/month'}
+                        </div>
+                        {isAnnual && plan.savings > 0 && (
+                          <div className="text-green-600 font-semibold text-sm">
+                            Save ${plan.savings}/year
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {plan.duration && (
+                      <div className="text-gray-500 text-sm">{plan.duration}</div>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600" data-testid={`description-${plan.id}`}>{plan.description}</p>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    {plan.features.slice(0, 6).map((feature, idx) => (
+                      <div key={idx} className="flex items-start gap-2 text-xs text-gray-700" data-testid={`feature-${plan.id}-${idx}`}>
+                        <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0 mt-0.5" />
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <Button 
+                    asChild
+                    className={`w-full ${plan.popular ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700' : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700'} text-white shadow-lg`}
+                    size="sm"
+                    data-testid={`button-choose-${plan.id}`}
+                  >
+                    <Link href={`/checkout/${plan.name === 'QuickShot Diagnostic' ? 'maintenance-quickshot' : 'maintenance-dominion'}`}>Choose Plan</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Commercial Plans Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-gray-900 mb-4">
+              Commercial <span className="bg-gradient-to-r from-emerald-500 to-teal-600 bg-clip-text text-transparent">HVAC Contracts</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Comprehensive maintenance plans for business properties
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {commercialPlans.map((plan) => (
+              <Card 
+                key={plan.id} 
+                className={`relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 ${
+                  plan.popular ? 'ring-2 ring-amber-500' : ''
+                }`}
+                data-testid={`card-commercial-${plan.id}`}
+              >
+                {plan.popular && (
+                  <div className="absolute top-4 right-4 z-10">
+                    <Badge className="bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 shadow-lg">
+                      <Sparkles className="w-3 h-3 mr-1" />
+                      {plan.badge}
+                    </Badge>
+                  </div>
+                )}
+                {!plan.popular && plan.badge && (
+                  <div className="absolute top-4 right-4 z-10">
+                    <Badge variant="secondary" className="shadow-md" data-testid={`badge-commercial-${plan.id}`}>
+                      {plan.badge}
+                    </Badge>
+                  </div>
+                )}
+                
+                <CardHeader className="bg-gradient-to-br from-emerald-50 to-teal-50 pb-6">
+                  <CardTitle className="text-xl font-bold text-gray-900 mb-2" data-testid={`title-commercial-${plan.id}`}>
+                    {plan.name}
+                  </CardTitle>
+                  <div className="mb-4">
+                    <div className="text-3xl font-black text-emerald-600" data-testid={`price-commercial-${plan.id}`}>
+                      {plan.priceNote && <span className="text-lg font-normal">{plan.priceNote} </span>}
+                      ${plan.annualPrice.toLocaleString()}
+                    </div>
+                    <div className="text-gray-500 text-sm">/year</div>
+                  </div>
+                  <p className="text-sm text-gray-600" data-testid={`description-commercial-${plan.id}`}>{plan.description}</p>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    {plan.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-start gap-2 text-sm text-gray-700" data-testid={`feature-commercial-${plan.id}-${idx}`}>
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <Button 
+                    asChild
+                    className={`w-full ${plan.popular ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700' : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700'} text-white shadow-lg`}
+                    size="lg"
+                    data-testid={`button-choose-commercial-${plan.id}`}
+                  >
+                    <Link href="/membership">Get Quote</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-20 bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-black text-white mb-4">
+              Why Choose Our Maintenance Plans?
+            </h2>
+            <p className="text-xl text-emerald-100 max-w-2xl mx-auto">
+              Professional care that protects and extends your HVAC investment
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+            {[
+              {
+                icon: Shield,
+                title: "Extended Equipment Life",
+                description: "Regular maintenance can extend your system's life by 5-10 years"
+              },
+              {
+                icon: Clock,
+                title: "Priority Service",
+                description: "Skip the line with priority scheduling for repairs and emergencies"
+              },
+              {
+                icon: Wrench,
+                title: "Repair Discounts",
+                description: "Save 10-20% on all repair services and replacement parts"
+              },
+              {
+                icon: Star,
+                title: "Energy Savings",
+                description: "Well-maintained systems use up to 15% less energy"
+              }
+            ].map((item, index) => (
+              <div key={index} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center hover:bg-white/15 transition-all">
+                <div className="inline-flex p-4 bg-gradient-to-r from-amber-500 to-amber-600 rounded-xl mb-4">
+                  <item.icon className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-emerald-100">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-emerald-50 to-teal-50">
+        <div className="container mx-auto px-6 text-center">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+              Ready to Protect <span className="bg-gradient-to-r from-emerald-500 to-teal-600 bg-clip-text text-transparent">Your Investment?</span>
+            </h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Join thousands of satisfied customers who trust us with their HVAC maintenance.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl hover:scale-105 transition-all text-lg px-8"
+                data-testid="button-cta-call"
+                asChild
+              >
+                <a href="tel:4036136014">
+                  <Phone className="w-5 h-5 mr-2" />
+                  (403) 613-6014
+                </a>
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 text-lg px-8"
+                data-testid="button-cta-schedule"
+                asChild
+              >
+                <Link href="/quote">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Schedule Service
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 };

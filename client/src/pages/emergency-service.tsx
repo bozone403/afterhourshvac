@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,10 @@ import {
   User,
   MessageSquare,
   CreditCard,
-  CheckCircle
+  CheckCircle,
+  Sparkles,
+  Award,
+  Mail
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -163,279 +167,350 @@ const EmergencyServicePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4 max-w-4xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <AlertTriangle className="h-8 w-8 text-red-600" />
-            <h1 className="text-3xl font-bold text-gray-900">24/7 Emergency HVAC Service</h1>
-          </div>
-          <p className="text-gray-600 text-lg">
-            Immediate response for urgent heating, cooling, and ventilation emergencies in Calgary
-          </p>
+    <>
+      <Helmet>
+        <title>24/7 Emergency HVAC Service - AfterHours HVAC Calgary</title>
+        <meta name="description" content="Emergency HVAC service available 24/7 in Calgary. Fast response for urgent heating, cooling, and ventilation emergencies. Call (403) 613-6014" />
+      </Helmet>
+
+      {/* Premium Hero Section with Urgency */}
+      <section className="relative min-h-[50vh] bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-red-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl animate-pulse delay-700"></div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Pricing Card */}
-          <div className="lg:col-span-1">
-            <Card className="border-red-200 bg-red-50">
-              <CardHeader>
-                <CardTitle className="text-red-800 flex items-center gap-2">
-                  <DollarSign className="h-5 w-5" />
-                  Current Emergency Pricing
-                </CardTitle>
-                <CardDescription className="text-red-600">
-                  Pricing automatically calculated based on current time
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {currentPricing && (
-                  <>
-                    <div className="bg-white rounded-lg p-4 border border-red-200">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Clock className="h-4 w-4 text-red-600" />
-                        <span className="font-medium text-red-800">Time Slot</span>
-                      </div>
-                      <p className="text-sm text-gray-700">{currentPricing.timeSlot}</p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Base Rate:</span>
-                        <span className="font-medium">${currentPricing.baseRate}/hour</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Minimum Hours:</span>
-                        <span className="font-medium">{currentPricing.minimumHours} hours</span>
-                      </div>
-                      <Separator />
-                      <div className="flex justify-between text-lg font-bold text-red-600">
-                        <span>Total Minimum:</span>
-                        <span>${currentPricing.totalCost}</span>
-                      </div>
-                    </div>
-                    
-                    <p className="text-xs text-gray-600 bg-white p-2 rounded border border-red-200">
-                      {currentPricing.description}
-                    </p>
-                  </>
-                )}
-              </CardContent>
-            </Card>
+        <div className="relative z-10 container mx-auto px-6 pt-24 pb-16">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 bg-red-500/20 backdrop-blur-sm px-4 py-2 rounded-full border border-red-500/30 mb-6 animate-pulse">
+              <AlertTriangle className="w-5 h-5 text-red-400" />
+              <span className="text-red-200 text-sm font-bold">EMERGENCY SERVICE AVAILABLE</span>
+            </div>
+            
+            <h1 className="text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
+              24/7 Emergency <span className="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">HVAC Service</span>
+            </h1>
+            <p className="text-xl text-blue-100 max-w-3xl mx-auto mb-8">
+              Immediate response for urgent heating, cooling, and ventilation emergencies in Calgary
+            </p>
+            
+            <Button 
+              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xl px-10 py-7 rounded-xl shadow-2xl shadow-amber-500/50 transition-all hover:scale-105"
+              asChild
+              data-testid="button-emergency-call"
+            >
+              <a href="tel:4036136014">
+                <Phone className="w-6 h-6 mr-3" />
+                Call Now: (403) 613-6014
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
 
-            {/* Contact Info */}
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Phone className="h-5 w-5" />
-                  Emergency Contact
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="text-center">
-                    <p className="text-sm text-gray-600 mb-1">24/7 Emergency Hotline</p>
-                    <p className="text-2xl font-bold text-blue-600">(403) 613-6014</p>
+      <div className="min-h-screen bg-slate-50 py-12">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Pricing Card */}
+            <div className="lg:col-span-1">
+              <Card className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 border-0 shadow-2xl overflow-hidden relative mb-6">
+                <div className="absolute inset-0">
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl animate-pulse"></div>
+                </div>
+                
+                <CardHeader className="relative z-10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-2 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg">
+                      <DollarSign className="h-5 w-5 text-white" />
+                    </div>
+                    <CardTitle className="text-white font-black">Current Emergency Pricing</CardTitle>
                   </div>
-                  <Separator />
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Service Area</p>
-                    <p className="font-medium">Calgary & Surrounding Areas</p>
+                  <CardDescription className="text-blue-200">
+                    Pricing automatically calculated based on current time
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 relative z-10">
+                  {currentPricing && (
+                    <>
+                      <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Clock className="h-4 w-4 text-amber-400" />
+                          <span className="font-bold text-white">Time Slot</span>
+                        </div>
+                        <p className="text-blue-100" data-testid="text-time-slot">{currentPricing.timeSlot}</p>
+                      </div>
+                      
+                      <div className="space-y-2 bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-blue-200">Base Rate:</span>
+                          <span className="font-bold text-white" data-testid="text-base-rate">${currentPricing.baseRate}/hour</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-blue-200">Minimum Hours:</span>
+                          <span className="font-bold text-white" data-testid="text-minimum-hours">{currentPricing.minimumHours} hours</span>
+                        </div>
+                        <Separator className="bg-white/20" />
+                        <div className="flex justify-between text-lg font-black">
+                          <span className="text-amber-400">Total Minimum:</span>
+                          <span className="text-amber-400" data-testid="text-total-cost">${currentPricing.totalCost}</span>
+                        </div>
+                      </div>
+                      
+                      <p className="text-xs text-blue-100 bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20">
+                        {currentPricing.description}
+                      </p>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Contact Info */}
+              <Card className="bg-white rounded-2xl shadow-xl border border-slate-200">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg">
+                      <Phone className="h-5 w-5 text-white" />
+                    </div>
+                    <CardTitle className="font-black text-slate-900">Emergency Contact</CardTitle>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Response Time</p>
-                    <p className="font-medium text-green-600">Within 2 hours</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="text-center bg-slate-50 rounded-xl p-4">
+                      <p className="text-sm text-slate-600 mb-1 font-medium">24/7 Emergency Hotline</p>
+                      <a href="tel:4036136014" className="text-3xl font-black bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent" data-testid="link-emergency-phone">(403) 613-6014</a>
+                    </div>
+                    <Separator />
+                    <div className="bg-slate-50 rounded-xl p-3">
+                      <p className="text-sm text-slate-600 mb-1 font-medium">Service Area</p>
+                      <p className="font-bold text-slate-900">Calgary & Surrounding Areas</p>
+                    </div>
+                    <div className="bg-green-50 rounded-xl p-3 border border-green-200">
+                      <p className="text-sm text-green-700 mb-1 font-medium">Response Time</p>
+                      <p className="font-bold text-green-600">Within 2 hours</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Emergency Service Form */}
+            <div className="lg:col-span-2">
+              <Card className="bg-white rounded-2xl shadow-xl border border-slate-200">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg">
+                      <AlertTriangle className="h-6 w-6 text-white" />
+                    </div>
+                    <CardTitle className="font-black text-slate-900 text-2xl">Emergency Service Request</CardTitle>
+                  </div>
+                  <CardDescription className="text-slate-600">
+                    Fill out this form for immediate emergency service. Jordan will receive an instant notification.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Contact Information */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="name" className="flex items-center gap-2 font-semibold text-slate-700">
+                          <User className="h-4 w-4" />
+                          Full Name *
+                        </Label>
+                        <Input
+                          id="name"
+                          value={formData.name}
+                          onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          placeholder="Your full name"
+                          required
+                          className="mt-1"
+                          data-testid="input-name"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="phone" className="flex items-center gap-2 font-semibold text-slate-700">
+                          <Phone className="h-4 w-4" />
+                          Phone Number *
+                        </Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                          placeholder="(403) 555-0123"
+                          required
+                          className="mt-1"
+                          data-testid="input-phone"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="email" className="flex items-center gap-2 font-semibold text-slate-700">
+                        <Mail className="h-4 w-4" />
+                        Email Address
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        placeholder="your.email@example.com"
+                        className="mt-1"
+                        data-testid="input-email"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="address" className="flex items-center gap-2 font-semibold text-slate-700">
+                        <MapPin className="h-4 w-4" />
+                        Service Address *
+                      </Label>
+                      <Input
+                        id="address"
+                        value={formData.address}
+                        onChange={(e) => setFormData({...formData, address: e.target.value})}
+                        placeholder="123 Main Street, Calgary, AB"
+                        required
+                        className="mt-1"
+                        data-testid="input-address"
+                      />
+                    </div>
+
+                    {/* Emergency Details */}
+                    <div>
+                      <Label htmlFor="emergencyType" className="font-semibold text-slate-700">Type of Emergency *</Label>
+                      <select
+                        id="emergencyType"
+                        value={formData.emergencyType}
+                        onChange={(e) => setFormData({...formData, emergencyType: e.target.value})}
+                        className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        required
+                        data-testid="select-emergency-type"
+                      >
+                        <option value="">Select emergency type</option>
+                        {emergencyTypes.map((type) => (
+                          <option key={type} value={type}>{type}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="description" className="flex items-center gap-2 font-semibold text-slate-700">
+                        <MessageSquare className="h-4 w-4" />
+                        Detailed Description *
+                      </Label>
+                      <Textarea
+                        id="description"
+                        value={formData.description}
+                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        placeholder="Please describe the emergency situation in detail. Include any symptoms, when it started, and any safety concerns..."
+                        rows={4}
+                        required
+                        className="mt-1"
+                        data-testid="textarea-description"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="urgencyLevel" className="font-semibold text-slate-700">Urgency Level</Label>
+                      <select
+                        id="urgencyLevel"
+                        value={formData.urgencyLevel}
+                        onChange={(e) => setFormData({...formData, urgencyLevel: e.target.value})}
+                        className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        data-testid="select-urgency"
+                      >
+                        <option value="high">High - Immediate attention needed</option>
+                        <option value="critical">Critical - Safety hazard</option>
+                        <option value="moderate">Moderate - Can wait a few hours</option>
+                      </select>
+                    </div>
+
+                    {/* Pricing Summary */}
+                    {currentPricing && (
+                      <Alert className="bg-amber-50 border-amber-200">
+                        <CreditCard className="h-4 w-4 text-amber-600" />
+                        <AlertDescription>
+                          <div className="space-y-2">
+                            <p className="font-bold text-amber-900">Service Call Minimum: ${currentPricing.totalCost}</p>
+                            <p className="text-sm text-amber-700">
+                              This covers the {currentPricing.minimumHours} hour minimum at ${currentPricing.baseRate}/hour for {currentPricing.timeSlot} service calls. Additional time will be billed at the same hourly rate.
+                            </p>
+                          </div>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    {/* Submit Button */}
+                    <div className="space-y-4">
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold py-6 text-lg rounded-xl shadow-2xl shadow-amber-500/50 transition-all hover:scale-105"
+                        disabled={emergencyMutation.isPending}
+                        data-testid="button-submit-emergency"
+                      >
+                        {emergencyMutation.isPending ? (
+                          <>
+                            <Clock className="h-5 w-5 mr-2 animate-spin" />
+                            Submitting Emergency Request...
+                          </>
+                        ) : (
+                          <>
+                            <AlertTriangle className="h-5 w-5 mr-2" />
+                            Submit Emergency Service Request
+                          </>
+                        )}
+                      </Button>
+                      
+                      <div className="text-center">
+                        <p className="text-sm text-slate-600">
+                          By submitting this request, you agree to the minimum service charge and authorize payment processing.
+                        </p>
+                      </div>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Footer Info */}
+          <Card className="mt-8 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 border-0 shadow-2xl overflow-hidden relative">
+            <div className="absolute inset-0">
+              <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl animate-pulse"></div>
+            </div>
+            
+            <CardContent className="p-8 relative z-10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                    <CheckCircle className="h-12 w-12 text-amber-400 mx-auto mb-3" />
+                    <h3 className="font-black text-white text-lg mb-2">Licensed & Insured</h3>
+                    <p className="text-sm text-blue-100">Fully licensed HVAC technicians</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Emergency Service Form */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Emergency Service Request</CardTitle>
-                <CardDescription>
-                  Fill out this form for immediate emergency service. Jordan will receive an instant notification.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Contact Information */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="name" className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        Full Name *
-                      </Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        placeholder="Your full name"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="phone" className="flex items-center gap-2">
-                        <Phone className="h-4 w-4" />
-                        Phone Number *
-                      </Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        placeholder="(403) 555-0123"
-                        required
-                      />
-                    </div>
+                <div className="text-center">
+                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                    <Clock className="h-12 w-12 text-amber-400 mx-auto mb-3" />
+                    <h3 className="font-black text-white text-lg mb-2">Fast Response</h3>
+                    <p className="text-sm text-blue-100">Within 2 hours emergency response</p>
                   </div>
-
-                  <div>
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      placeholder="your.email@example.com"
-                    />
+                </div>
+                <div className="text-center">
+                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                    <Phone className="h-12 w-12 text-amber-400 mx-auto mb-3" />
+                    <h3 className="font-black text-white text-lg mb-2">24/7 Availability</h3>
+                    <p className="text-sm text-blue-100">Always available for emergencies</p>
                   </div>
-
-                  <div>
-                    <Label htmlFor="address" className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      Service Address *
-                    </Label>
-                    <Input
-                      id="address"
-                      value={formData.address}
-                      onChange={(e) => setFormData({...formData, address: e.target.value})}
-                      placeholder="123 Main Street, Calgary, AB"
-                      required
-                    />
-                  </div>
-
-                  {/* Emergency Details */}
-                  <div>
-                    <Label htmlFor="emergencyType">Type of Emergency *</Label>
-                    <select
-                      id="emergencyType"
-                      value={formData.emergencyType}
-                      onChange={(e) => setFormData({...formData, emergencyType: e.target.value})}
-                      className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    >
-                      <option value="">Select emergency type</option>
-                      {emergencyTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="description" className="flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4" />
-                      Detailed Description *
-                    </Label>
-                    <Textarea
-                      id="description"
-                      value={formData.description}
-                      onChange={(e) => setFormData({...formData, description: e.target.value})}
-                      placeholder="Please describe the emergency situation in detail. Include any symptoms, when it started, and any safety concerns..."
-                      rows={4}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="urgencyLevel">Urgency Level</Label>
-                    <select
-                      id="urgencyLevel"
-                      value={formData.urgencyLevel}
-                      onChange={(e) => setFormData({...formData, urgencyLevel: e.target.value})}
-                      className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="high">High - Immediate attention needed</option>
-                      <option value="critical">Critical - Safety hazard</option>
-                      <option value="moderate">Moderate - Can wait a few hours</option>
-                    </select>
-                  </div>
-
-                  {/* Pricing Summary */}
-                  {currentPricing && (
-                    <Alert>
-                      <CreditCard className="h-4 w-4" />
-                      <AlertDescription>
-                        <div className="space-y-2">
-                          <p className="font-medium">Service Call Minimum: ${currentPricing.totalCost}</p>
-                          <p className="text-sm text-gray-600">
-                            This covers the {currentPricing.minimumHours} hour minimum at ${currentPricing.baseRate}/hour for {currentPricing.timeSlot} service calls. Additional time will be billed at the same hourly rate.
-                          </p>
-                        </div>
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  {/* Submit Button */}
-                  <div className="space-y-4">
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-red-600 hover:bg-red-700 text-white py-3 text-lg"
-                      disabled={emergencyMutation.isPending}
-                    >
-                      {emergencyMutation.isPending ? (
-                        <>
-                          <Clock className="h-5 w-5 mr-2 animate-spin" />
-                          Submitting Emergency Request...
-                        </>
-                      ) : (
-                        <>
-                          <AlertTriangle className="h-5 w-5 mr-2" />
-                          Submit Emergency Service Request
-                        </>
-                      )}
-                    </Button>
-                    
-                    <div className="text-center">
-                      <p className="text-sm text-gray-600">
-                        By submitting this request, you agree to the minimum service charge and authorize payment processing.
-                      </p>
-                    </div>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-
-        {/* Footer Info */}
-        <Card className="mt-8 bg-blue-50 border-blue-200">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <CheckCircle className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-blue-800">Licensed & Insured</h3>
-                <p className="text-sm text-blue-600">Fully licensed HVAC technicians</p>
-              </div>
-              <div className="text-center">
-                <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-blue-800">Fast Response</h3>
-                <p className="text-sm text-blue-600">Within 2 hours emergency response</p>
-              </div>
-              <div className="text-center">
-                <Phone className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-blue-800">24/7 Availability</h3>
-                <p className="text-sm text-blue-600">Always available for emergencies</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-    </div>
+    </>
   );
 };
 

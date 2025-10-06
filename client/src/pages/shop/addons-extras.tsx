@@ -1,24 +1,10 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link } from "wouter";
-import { 
-  Wind, 
-  Wrench, 
-  Fan, 
-  Thermometer, 
-  Shield, 
-  Zap, 
-  Home, 
-  Factory, 
-  Phone,
-  CheckCircle,
-  Star,
-  Clock,
-  DollarSign
-} from "lucide-react";
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Wind, Wrench, Fan, Thermometer, Shield, Zap, Home, Factory, Phone, CheckCircle, Star, Clock, DollarSign, ArrowRight, Award, Sparkles } from 'lucide-react';
+import { Link } from 'wouter';
 
 interface AddOnItem {
   id: string;
@@ -34,7 +20,6 @@ interface AddOnItem {
 }
 
 const addOnItems: AddOnItem[] = [
-  // Air Quality & Ventilation
   {
     id: "hrv-installation",
     name: "Heat Recovery Ventilator (HRV)",
@@ -99,8 +84,6 @@ const addOnItems: AddOnItem[] = [
     warranty: "2 years parts, 1 year labor",
     availability: "Same week installation"
   },
-
-  // Cleaning & Maintenance Services
   {
     id: "ac-coil-cleaning",
     name: "AC Coil Deep Cleaning",
@@ -133,8 +116,6 @@ const addOnItems: AddOnItem[] = [
     warranty: "1 year sanitization guarantee",
     availability: "1 week scheduling"
   },
-
-  // Controls & Automation
   {
     id: "smart-thermostat",
     name: "Smart Thermostat Installation",
@@ -167,8 +148,6 @@ const addOnItems: AddOnItem[] = [
     warranty: "5 years parts, 2 years labor",
     availability: "2-3 weeks lead time"
   },
-
-  // Air Quality Enhancement
   {
     id: "uv-light-system",
     name: "UV Light Air Purification",
@@ -201,8 +180,6 @@ const addOnItems: AddOnItem[] = [
     warranty: "5 years parts, 2 years labor",
     availability: "1 week installation"
   },
-
-  // Custom & Specialty Work
   {
     id: "custom-sheet-metal",
     name: "Custom Sheet Metal Fabrication",
@@ -237,8 +214,6 @@ const addOnItems: AddOnItem[] = [
     availability: "3-6 weeks lead time",
     contactRequired: true
   },
-
-  // Gas Line & Connections
   {
     id: "gas-line-installation",
     name: "Gas Line Installation & Repair",
@@ -255,8 +230,6 @@ const addOnItems: AddOnItem[] = [
     warranty: "5 years installation",
     availability: "Same week service"
   },
-
-  // Electrical Services
   {
     id: "electrical-upgrades",
     name: "HVAC Electrical Upgrades",
@@ -276,15 +249,15 @@ const addOnItems: AddOnItem[] = [
 ];
 
 const categories = [
-  { id: "all", name: "All Add-Ons", icon: <Star className="h-4 w-4" /> },
-  { id: "ventilation", name: "Ventilation", icon: <Wind className="h-4 w-4" /> },
-  { id: "maintenance", name: "Cleaning & Maintenance", icon: <Wrench className="h-4 w-4" /> },
-  { id: "controls", name: "Controls & Automation", icon: <Thermometer className="h-4 w-4" /> },
-  { id: "air-quality", name: "Air Quality", icon: <Shield className="h-4 w-4" /> },
-  { id: "custom", name: "Custom Work", icon: <Factory className="h-4 w-4" /> },
-  { id: "commercial", name: "Commercial", icon: <Factory className="h-4 w-4" /> },
-  { id: "gas-services", name: "Gas Services", icon: <Zap className="h-4 w-4" /> },
-  { id: "electrical", name: "Electrical", icon: <Zap className="h-4 w-4" /> }
+  { id: "all", name: "All Add-Ons", icon: Star },
+  { id: "ventilation", name: "Ventilation", icon: Wind },
+  { id: "maintenance", name: "Cleaning & Maintenance", icon: Wrench },
+  { id: "controls", name: "Controls & Automation", icon: Thermometer },
+  { id: "air-quality", name: "Air Quality", icon: Shield },
+  { id: "custom", name: "Custom Work", icon: Factory },
+  { id: "commercial", name: "Commercial", icon: Factory },
+  { id: "gas-services", name: "Gas Services", icon: Zap },
+  { id: "electrical", name: "Electrical", icon: Zap }
 ];
 
 const AddOnsExtrasPage = () => {
@@ -309,195 +282,295 @@ const AddOnsExtrasPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-orange-50">
-      <div className="hvac-container">
-        <div className="hvac-section">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300 rounded-full px-8 py-4 mb-8 shadow-lg">
-              <Wrench className="h-6 w-6 text-orange-700 mr-3" />
-              <span className="text-orange-800 hvac-text-lg font-bold">HVAC Add-Ons & Extras</span>
+    <>
+      <Helmet>
+        <title>HVAC Add-Ons & Extras - Professional Enhancements | AfterHours HVAC</title>
+        <meta name="description" content="Professional HVAC add-on services including air quality improvements, smart controls, ventilation, and custom fabrication. Expert installation." />
+      </Helmet>
+
+      {/* Hero Section - Premium Amber/Gold Gradient */}
+      <section className="relative min-h-[80vh] bg-gradient-to-br from-slate-900 via-amber-900 to-slate-900 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '700ms' }}></div>
+        </div>
+
+        {/* Premium Badge */}
+        <div className="absolute top-8 right-8 z-20">
+          <div className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-2 rounded-full shadow-xl flex items-center gap-2">
+            <Award className="w-4 h-4" />
+            <span className="font-semibold text-sm">Professional Enhancements</span>
+          </div>
+        </div>
+
+        <div className="relative z-10 container mx-auto px-6 pt-24 pb-16">
+          <div className="max-w-5xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 mb-8">
+              <Wrench className="w-4 h-4 text-amber-400" />
+              <span className="text-white/90 text-sm font-medium">HVAC Add-Ons & Extras</span>
             </div>
-            <h1 className="hvac-heading-xl mb-6 bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
-              Professional HVAC Enhancements
-            </h1>
-            <p className="hvac-text-lg max-w-4xl mx-auto mb-10 text-gray-700">
-              Upgrade your HVAC system with our professional add-on services. From air quality improvements 
-              to smart controls, we offer everything you need for optimal comfort and efficiency.
-            </p>
             
-            {/* Contact Info */}
-            <div className="hvac-card max-w-2xl mx-auto">
-              <div className="flex items-center justify-center gap-8">
-                <div className="flex items-center gap-3">
-                  <Phone className="h-6 w-6 text-blue-600" />
-                  <span className="hvac-text-lg font-bold text-gray-900">(403) 613-6014</span>
-                </div>
-                <div className="text-gray-400 text-2xl">|</div>
-                <Link href="/contact">
-                  <Button className="hvac-button-primary">
-                    Get Quote
-                  </Button>
-                </Link>
+            <h1 className="text-5xl lg:text-7xl font-black text-white leading-tight mb-8">
+              Professional
+              <br />
+              <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+                HVAC Enhancements
+              </span>
+            </h1>
+            
+            <p className="text-xl text-amber-100 max-w-2xl mx-auto mb-8 leading-relaxed">
+              Upgrade your HVAC system with our professional add-on services. From air quality improvements to smart controls, we offer everything you need for optimal comfort and efficiency.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+                data-testid="button-view-services"
+                asChild
+              >
+                <a href="#addons-list">
+                  View Services
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </a>
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-2 border-white/20 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all"
+                data-testid="button-call-now"
+                asChild
+              >
+                <a href="tel:4036136014">
+                  <Phone className="w-5 h-5 mr-2" />
+                  (403) 613-6014
+                </a>
+              </Button>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap justify-center gap-6 pt-4">
+              <div className="flex items-center gap-2 text-white/90">
+                <Shield className="w-5 h-5 text-amber-400" />
+                <span className="text-sm font-medium">Licensed & Insured</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/90">
+                <Star className="w-5 h-5 text-amber-400" />
+                <span className="text-sm font-medium">Quality Guaranteed</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/90">
+                <Clock className="w-5 h-5 text-amber-400" />
+                <span className="text-sm font-medium">Flexible Scheduling</span>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Category Filter */}
-        <div className="mb-8">
-          <div className="flex flex-wrap justify-center gap-2">
-            {categories.map((category) => (
-              <Button
-                key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
-                onClick={() => setSelectedCategory(category.id)}
-                className="flex items-center gap-2"
-              >
-                {category.icon}
-                {category.name}
-              </Button>
-            ))}
+      {/* Category Filter Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-amber-50" id="addons-list">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-gray-900 mb-4">
+              Professional <span className="bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">HVAC Add-Ons</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Choose from our comprehensive range of professional HVAC enhancements
+            </p>
           </div>
-        </div>
 
-        {/* Add-Ons Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {filteredItems.map((item) => (
-            <Card key={item.id} className="h-full hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-start justify-between mb-2">
-                  <CardTitle className="text-lg">{item.name}</CardTitle>
-                  <Badge className={getCategoryBadgeColor(item.category)}>
+          {/* Category Filter */}
+          <div className="flex justify-center mb-12">
+            <div className="inline-flex flex-wrap bg-white rounded-2xl shadow-xl p-2 gap-2 max-w-4xl">
+              {categories.map((category) => (
+                <Button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={selectedCategory === category.id 
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg' 
+                    : 'bg-transparent text-gray-700 hover:bg-gray-100'}
+                  data-testid={`filter-${category.id}`}
+                >
+                  <category.icon className="w-4 h-4 mr-2" />
+                  {category.name}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {/* Add-Ons Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            {filteredItems.map((item) => (
+              <Card 
+                key={item.id} 
+                className="relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2"
+                data-testid={`card-addon-${item.id}`}
+              >
+                <div className="absolute top-4 right-4 z-10">
+                  <Badge className={getCategoryBadgeColor(item.category)} data-testid={`badge-${item.id}`}>
                     {categories.find(c => c.id === item.category)?.name}
                   </Badge>
                 </div>
-                <CardDescription className="text-sm">
-                  {item.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Pricing */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-green-600" />
-                    <span className="font-semibold text-green-700">{item.price}</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm text-gray-500">
-                    <Clock className="h-4 w-4" />
-                    {item.laborTime}
-                  </div>
-                </div>
 
-                {/* Features */}
-                <div>
-                  <h4 className="font-medium text-sm mb-2">Key Features:</h4>
-                  <ul className="space-y-1">
-                    {item.features.slice(0, 3).map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2 text-sm">
-                        <CheckCircle className="h-3 w-3 text-green-500 flex-shrink-0" />
-                        {feature}
-                      </li>
-                    ))}
-                    {item.features.length > 3 && (
-                      <li className="text-sm text-gray-500">
-                        +{item.features.length - 3} more features
-                      </li>
+                <CardHeader className="bg-gradient-to-br from-amber-50 to-orange-50 pb-6">
+                  <CardTitle className="text-lg font-black text-gray-900" data-testid={`title-${item.id}`}>
+                    {item.name}
+                  </CardTitle>
+                  <CardDescription className="text-sm text-gray-600" data-testid={`description-${item.id}`}>
+                    {item.description}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  {/* Pricing */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-amber-600" />
+                      <span className="font-semibold text-amber-700" data-testid={`price-${item.id}`}>{item.price}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm text-gray-500" data-testid={`time-${item.id}`}>
+                      <Clock className="h-4 w-4" />
+                      {item.laborTime}
+                    </div>
+                  </div>
+
+                  {/* Features */}
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Key Features:</h4>
+                    <ul className="space-y-1">
+                      {item.features.slice(0, 3).map((feature, index) => (
+                        <li key={index} className="flex items-center gap-2 text-sm" data-testid={`feature-${item.id}-${index}`}>
+                          <CheckCircle className="h-3 w-3 text-green-500 flex-shrink-0" />
+                          {feature}
+                        </li>
+                      ))}
+                      {item.features.length > 3 && (
+                        <li className="text-sm text-gray-500">
+                          +{item.features.length - 3} more features
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+
+                  {/* Warranty & Availability */}
+                  <div className="text-xs text-gray-500 space-y-1">
+                    <div><strong>Warranty:</strong> {item.warranty}</div>
+                    <div><strong>Availability:</strong> {item.availability}</div>
+                  </div>
+
+                  {/* Action Button */}
+                  <div className="pt-2">
+                    {item.contactRequired ? (
+                      <Button 
+                        className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg"
+                        data-testid={`button-contact-${item.id}`}
+                        asChild
+                      >
+                        <Link href="/contact">
+                          <Phone className="h-4 w-4 mr-2" />
+                          Contact for Quote
+                        </Link>
+                      </Button>
+                    ) : (
+                      <Button 
+                        variant="outline" 
+                        className="w-full border-2 border-amber-600 text-amber-600 hover:bg-amber-50"
+                        data-testid={`button-quote-${item.id}`}
+                        asChild
+                      >
+                        <Link href="/contact">Get Quote</Link>
+                      </Button>
                     )}
-                  </ul>
-                </div>
-
-                {/* Warranty & Availability */}
-                <div className="text-xs text-gray-500 space-y-1">
-                  <div><strong>Warranty:</strong> {item.warranty}</div>
-                  <div><strong>Availability:</strong> {item.availability}</div>
-                </div>
-
-                {/* Action Button */}
-                <div className="pt-2">
-                  {item.contactRequired ? (
-                    <Link href="/contact">
-                      <Button className="w-full">
-                        <Phone className="h-4 w-4 mr-2" />
-                        Contact for Quote
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Link href="/contact">
-                      <Button variant="outline" className="w-full">
-                        Get Quote
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Professional Notice */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-          <h3 className="text-lg font-semibold text-blue-900 mb-2">
-            Professional Installation & Licensing
-          </h3>
-          <p className="text-blue-800">
-            All HVAC add-on services are performed by licensed technicians in accordance with 
-            Alberta Building Code and local regulations. We carry full liability insurance and 
-            all work comes with comprehensive warranties. Gas fitting performed by licensed 
-            gas fitters only.
-          </p>
-        </div>
-
-        {/* Why Choose AfterHours */}
-        <div className="bg-white rounded-lg shadow-sm border p-8 mb-8">
-          <h3 className="text-2xl font-bold text-center mb-6">Why Choose AfterHours HVAC?</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
-              <h4 className="font-semibold mb-2">Licensed & Insured</h4>
-              <p className="text-sm text-gray-600">
-                Fully licensed technicians with comprehensive liability coverage
-              </p>
-            </div>
-            <div className="text-center">
-              <Star className="h-12 w-12 text-yellow-500 mx-auto mb-3" />
-              <h4 className="font-semibold mb-2">Quality Guaranteed</h4>
-              <p className="text-sm text-gray-600">
-                Premium components with extended warranties on all installations
-              </p>
-            </div>
-            <div className="text-center">
-              <Clock className="h-12 w-12 text-blue-500 mx-auto mb-3" />
-              <h4 className="font-semibold mb-2">Flexible Scheduling</h4>
-              <p className="text-sm text-gray-600">
-                Same-day service available for most add-on installations
-              </p>
-            </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
+      </section>
 
-        {/* Call to Action */}
-        <div className="text-center">
-          <div className="bg-red-600 text-white rounded-lg p-8">
-            <h3 className="text-2xl font-bold mb-4">Ready to Upgrade Your HVAC System?</h3>
-            <p className="text-lg mb-6 opacity-90">
+      {/* Why Choose Section */}
+      <section className="py-20 bg-gradient-to-br from-slate-900 via-amber-900 to-slate-900">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-black text-white mb-4">
+              Why Choose AfterHours HVAC?
+            </h2>
+            <p className="text-xl text-amber-100 max-w-2xl mx-auto">
+              Professional installation with quality guaranteed
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {[
+              {
+                icon: CheckCircle,
+                title: "Licensed & Insured",
+                description: "Fully licensed technicians with comprehensive liability coverage"
+              },
+              {
+                icon: Star,
+                title: "Quality Guaranteed",
+                description: "Premium components with extended warranties on all installations"
+              },
+              {
+                icon: Clock,
+                title: "Flexible Scheduling",
+                description: "Same-day service available for most add-on installations"
+              }
+            ].map((item, index) => (
+              <div key={index} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 text-center hover:bg-white/15 transition-all">
+                <div className="inline-flex p-4 bg-gradient-to-r from-amber-500 to-amber-600 rounded-xl mb-4">
+                  <item.icon className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-amber-100">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-amber-50 to-orange-50">
+        <div className="container mx-auto px-6 text-center">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+              Ready to Upgrade <span className="bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">Your HVAC System?</span>
+            </h2>
+            <p className="text-xl text-gray-600 mb-8">
               Contact us today for a free consultation and quote on any add-on service.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <div className="flex items-center gap-2 text-lg font-semibold">
-                <Phone className="h-5 w-5" />
-                (403) 613-6014
-              </div>
-              <Link href="/contact">
-                <Button size="lg" variant="secondary">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl hover:scale-105 transition-all text-lg px-8"
+                data-testid="button-cta-call"
+                asChild
+              >
+                <a href="tel:4036136014">
+                  <Phone className="w-5 h-5 mr-2" />
+                  (403) 613-6014
+                </a>
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="border-2 border-amber-600 text-amber-600 hover:bg-amber-50 text-lg px-8"
+                data-testid="button-cta-consultation"
+                asChild
+              >
+                <Link href="/contact">
                   Schedule Consultation
-                </Button>
-              </Link>
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 };
 
