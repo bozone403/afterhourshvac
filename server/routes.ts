@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { pool } from "./db";
 import { sendSMS } from "./services/sms";
+import { isUserAdmin, checkAdminAccess } from "./auth-utils";
 
 import { z } from "zod";
 import { 
@@ -130,7 +131,7 @@ function setupAuth(app: Express) {
 
   // Admin authentication middleware
   const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
-    if (!req.isAuthenticated() || (req.user as any)?.role !== "admin" || (req.user as any)?.username !== "JordanBoz") {
+    if (!req.isAuthenticated() || !checkAdminAccess(req.user)) {
       return res.status(403).json({ error: "Forbidden" });
     }
     next();
@@ -981,7 +982,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all bookings for admin dashboard
   app.get('/api/admin/bookings', requireAuth, async (req, res) => {
     try {
-      if (!req.user || !(req.user as any).isAdmin) {
+      if (!req.user || !checkAdminAccess(req.user)) {
         return res.status(403).json({ error: "Admin access required" });
       }
 
@@ -1315,7 +1316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // For now, only admins can edit topics (can be expanded later)
-      if (!user.isAdmin) {
+      if (!checkAdminAccess(user)) {
         return res.status(403).json({ error: "Only admins can edit forum topics" });
       }
       
@@ -1353,7 +1354,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check if user is admin or owns the topic
-      const isAdmin = user.isAdmin || user.username === 'JordanBoz';
+      const isAdmin = checkAdminAccess(user);
       const isOwner = topic.userId === user.id;
       
       if (!isAdmin && !isOwner) {
@@ -1414,7 +1415,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check if user is admin or owns the post
-      const isAdmin = user.isAdmin || user.username === 'JordanBoz';
+      const isAdmin = checkAdminAccess(user);
       const isOwner = post.userId === user.id;
       
       if (!isAdmin && !isOwner) {
@@ -1458,7 +1459,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check if user is admin or owns the post
-      const isAdmin = user.isAdmin || user.username === 'JordanBoz';
+      const isAdmin = checkAdminAccess(user);
       const isOwner = post.userId === user.id;
       
       if (!isAdmin && !isOwner) {
@@ -3516,7 +3517,7 @@ Login to manage: afterhourshvac.ca/admin`;
       const user = req.user as any;
       let emergencyRequests: any[];
       
-      if (user && user.isAdmin) {
+      if (user && checkAdminAccess(user)) {
         // Admin can see all requests
         emergencyRequests = await storage.getAllEmergencyRequests();
       } else if (user) {
@@ -4164,7 +4165,7 @@ Login to manage: afterhourshvac.ca/admin`;
       }
 
       // Only allow access if user is admin or belongs to this corporate account
-      if (!user.isAdmin && user.corporateAccountId !== accountId) {
+      if (!checkAdminAccess(user) && user.corporateAccountId !== accountId) {
         return res.status(403).json({ error: "Access denied" });
       }
 
