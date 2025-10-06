@@ -28,7 +28,8 @@ import {
   DollarSign,
   AlertTriangle,
   MapPin,
-  FileDown
+  FileDown,
+  Shield
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -105,27 +106,22 @@ const AdminPanel = () => {
   const [applicationFilter, setApplicationFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch job applications
   const { data: applications = [], isLoading: applicationsLoading } = useQuery({
     queryKey: ["/api/admin/job-applications"],
   });
 
-  // Fetch users for management
   const { data: users = [], isLoading: usersLoading } = useQuery({
     queryKey: ["/api/admin/users"],
   });
 
-  // Fetch consultation bookings
   const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
     queryKey: ["/api/admin/bookings"],
   });
 
-  // Fetch contact submissions
   const { data: contacts = [], isLoading: contactsLoading } = useQuery({
     queryKey: ["/api/admin/contact-submissions"],
   });
 
-  // Update application status
   const updateApplicationStatus = useMutation({
     mutationFn: async ({ id, status }: { id: number; status: string }) => {
       return await apiRequest("PATCH", `/api/admin/job-applications/${id}`, { status });
@@ -146,7 +142,6 @@ const AdminPanel = () => {
     },
   });
 
-  // Update user role/access
   const updateUserAccess = useMutation({
     mutationFn: async ({ userId, updates }: { userId: number; updates: any }) => {
       return await apiRequest("PATCH", `/api/admin/users/${userId}`, updates);
@@ -179,12 +174,15 @@ const AdminPanel = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'reviewing': return 'bg-blue-100 text-blue-800';
-      case 'interviewing': return 'bg-purple-100 text-purple-800';
-      case 'hired': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pending': return 'bg-amber-500/20 text-amber-200 border-amber-500/30';
+      case 'reviewing': return 'bg-blue-500/20 text-blue-200 border-blue-500/30';
+      case 'interviewing': return 'bg-purple-500/20 text-purple-200 border-purple-500/30';
+      case 'hired': return 'bg-green-500/20 text-green-200 border-green-500/30';
+      case 'rejected': return 'bg-slate-500/20 text-slate-200 border-slate-500/30';
+      case 'new': return 'bg-amber-500/20 text-amber-200 border-amber-500/30';
+      case 'contacted': return 'bg-blue-500/20 text-blue-200 border-blue-500/30';
+      case 'resolved': return 'bg-green-500/20 text-green-200 border-green-500/30';
+      default: return 'bg-slate-500/20 text-slate-200 border-slate-500/30';
     }
   };
 
@@ -200,53 +198,80 @@ const AdminPanel = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4 max-w-7xl">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 py-8 relative overflow-hidden">
+      {/* Animated background blur elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-700" />
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+      </div>
+
+      <div className="container mx-auto px-4 max-w-7xl relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center bg-red-100 border border-red-200 rounded-full px-6 py-3 mb-6">
-            <Settings className="h-5 w-5 text-red-700 mr-3" />
-            <span className="text-red-800 text-lg font-bold">Admin Panel</span>
+          <div className="inline-flex items-center bg-gradient-to-r from-amber-500/20 to-amber-600/20 backdrop-blur-sm border border-amber-500/30 rounded-full px-6 py-3 mb-6 shadow-lg shadow-amber-500/20">
+            <Shield className="h-5 w-5 text-amber-400 mr-3" />
+            <span className="text-amber-200 text-lg font-bold">Admin Panel</span>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">System Administration</h1>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+          <h1 className="text-5xl font-black text-white mb-4">System Administration</h1>
+          <p className="text-xl text-blue-200 max-w-3xl mx-auto">
             Manage job applications, user accounts, and system settings for AfterHours HVAC.
           </p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="applications" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-5 bg-white/5 backdrop-blur-sm border border-white/10 p-1 rounded-xl">
+            <TabsTrigger 
+              value="applications" 
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-amber-500/30 text-blue-200 rounded-lg transition-all duration-300"
+              data-testid="tab-applications"
+            >
               <Briefcase className="h-4 w-4" />
-              Job Applications
+              <span className="hidden sm:inline">Job Applications</span>
             </TabsTrigger>
-            <TabsTrigger value="bookings" className="flex items-center gap-2">
+            <TabsTrigger 
+              value="bookings" 
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-amber-500/30 text-blue-200 rounded-lg transition-all duration-300"
+              data-testid="tab-bookings"
+            >
               <Calendar className="h-4 w-4" />
-              Consultations
+              <span className="hidden sm:inline">Consultations</span>
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2">
+            <TabsTrigger 
+              value="users" 
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-amber-500/30 text-blue-200 rounded-lg transition-all duration-300"
+              data-testid="tab-users"
+            >
               <Users className="h-4 w-4" />
-              User Management
+              <span className="hidden sm:inline">User Management</span>
             </TabsTrigger>
-            <TabsTrigger value="contacts" className="flex items-center gap-2">
+            <TabsTrigger 
+              value="contacts" 
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-amber-500/30 text-blue-200 rounded-lg transition-all duration-300"
+              data-testid="tab-contacts"
+            >
               <MessageSquare className="h-4 w-4" />
-              Contact Forms
+              <span className="hidden sm:inline">Contact Forms</span>
             </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
+            <TabsTrigger 
+              value="settings" 
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-amber-500/30 text-blue-200 rounded-lg transition-all duration-300"
+              data-testid="tab-settings"
+            >
               <Settings className="h-4 w-4" />
-              System Settings
+              <span className="hidden sm:inline">System Settings</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Job Applications Tab */}
           <TabsContent value="applications" className="space-y-6">
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Briefcase className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">
+                  <Briefcase className="h-6 w-6 text-amber-400" />
                   Job Applications Management
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-blue-200">
                   Review and manage job applications from the careers page
                 </CardDescription>
               </CardHeader>
@@ -255,20 +280,21 @@ const AdminPanel = () => {
                 <div className="flex flex-col lg:flex-row gap-4 mb-6">
                   <div className="flex-1">
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-4 w-4" />
                       <Input
                         placeholder="Search applications..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/50"
+                        data-testid="input-search-applications"
                       />
                     </div>
                   </div>
                   <Select value={applicationFilter} onValueChange={setApplicationFilter}>
-                    <SelectTrigger className="w-48">
+                    <SelectTrigger className="w-full lg:w-48 bg-white/5 backdrop-blur-sm border-white/20 text-white" data-testid="select-filter-applications">
                       <SelectValue placeholder="Filter by status" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-slate-900 border-white/20">
                       <SelectItem value="all">All Applications</SelectItem>
                       <SelectItem value="pending">Pending</SelectItem>
                       <SelectItem value="reviewing">Under Review</SelectItem>
@@ -282,53 +308,53 @@ const AdminPanel = () => {
                 {/* Applications List */}
                 <div className="space-y-4">
                   {applicationsLoading ? (
-                    <div className="text-center py-8">Loading applications...</div>
+                    <div className="text-center py-8 text-blue-200">Loading applications...</div>
                   ) : filteredApplications.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">No applications found</div>
+                    <div className="text-center py-8 text-blue-300">No applications found</div>
                   ) : (
                     filteredApplications.map((application: JobApplication) => (
-                      <Card key={application.id} className="border-l-4 border-l-blue-500">
+                      <Card key={application.id} className="bg-white/5 backdrop-blur-sm border-l-4 border-l-amber-500 border-white/10 hover:bg-white/10 transition-all duration-300" data-testid={`card-application-${application.id}`}>
                         <CardContent className="p-6">
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-2">
-                                <h3 className="text-lg font-semibold">
+                                <h3 className="text-lg font-bold text-white" data-testid={`text-applicant-name-${application.id}`}>
                                   {application.firstName} {application.lastName}
                                 </h3>
-                                <Badge className={`flex items-center gap-1 ${getStatusColor(application.status)}`}>
+                                <Badge className={`flex items-center gap-1 border ${getStatusColor(application.status)}`} data-testid={`badge-status-${application.id}`}>
                                   {getStatusIcon(application.status)}
                                   {application.status}
                                 </Badge>
                               </div>
                               
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <Mail className="h-4 w-4" />
+                                <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-email-${application.id}`}>
+                                  <Mail className="h-4 w-4 text-amber-400" />
                                   {application.email}
                                 </div>
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <Phone className="h-4 w-4" />
+                                <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-phone-${application.id}`}>
+                                  <Phone className="h-4 w-4 text-amber-400" />
                                   {application.phone}
                                 </div>
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <Briefcase className="h-4 w-4" />
+                                <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-position-${application.id}`}>
+                                  <Briefcase className="h-4 w-4 text-amber-400" />
                                   {application.position}
                                 </div>
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <Calendar className="h-4 w-4" />
+                                <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-applied-date-${application.id}`}>
+                                  <Calendar className="h-4 w-4 text-amber-400" />
                                   Applied: {new Date(application.appliedAt).toLocaleDateString()}
                                 </div>
                               </div>
 
                               <div className="mb-4">
-                                <h4 className="font-medium mb-2">Experience:</h4>
-                                <p className="text-sm text-gray-600">{application.experience}</p>
+                                <h4 className="font-semibold text-white mb-2">Experience:</h4>
+                                <p className="text-sm text-blue-200" data-testid={`text-experience-${application.id}`}>{application.experience}</p>
                               </div>
 
                               {application.coverLetter && (
                                 <div className="mb-4">
-                                  <h4 className="font-medium mb-2">Cover Letter:</h4>
-                                  <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                                  <h4 className="font-semibold text-white mb-2">Cover Letter:</h4>
+                                  <p className="text-sm text-blue-200 bg-white/5 p-3 rounded-lg border border-white/10" data-testid={`text-cover-letter-${application.id}`}>
                                     {application.coverLetter}
                                   </p>
                                 </div>
@@ -336,7 +362,12 @@ const AdminPanel = () => {
 
                               <div className="flex gap-2">
                                 {application.resumeUrl && (
-                                  <Button variant="outline" size="sm">
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    className="bg-white/5 border-white/20 text-blue-200 hover:bg-white/10 hover:text-white"
+                                    data-testid={`button-download-resume-${application.id}`}
+                                  >
                                     <Download className="h-4 w-4 mr-2" />
                                     Download Resume
                                   </Button>
@@ -345,6 +376,8 @@ const AdminPanel = () => {
                                   variant="outline" 
                                   size="sm"
                                   onClick={() => window.open(`mailto:${application.email}`, '_blank')}
+                                  className="bg-white/5 border-white/20 text-blue-200 hover:bg-white/10 hover:text-white"
+                                  data-testid={`button-email-candidate-${application.id}`}
                                 >
                                   <Mail className="h-4 w-4 mr-2" />
                                   Email Candidate
@@ -354,16 +387,23 @@ const AdminPanel = () => {
 
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  className="text-blue-200 hover:text-white hover:bg-white/10"
+                                  data-testid={`button-actions-${application.id}`}
+                                >
                                   <MoreVertical className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
+                              <DropdownMenuContent align="end" className="bg-slate-900 border-white/20">
                                 <DropdownMenuItem
                                   onClick={() => updateApplicationStatus.mutate({ 
                                     id: application.id, 
                                     status: 'reviewing' 
                                   })}
+                                  className="text-blue-200 hover:bg-white/10"
+                                  data-testid={`menu-mark-reviewing-${application.id}`}
                                 >
                                   Mark as Reviewing
                                 </DropdownMenuItem>
@@ -372,6 +412,8 @@ const AdminPanel = () => {
                                     id: application.id, 
                                     status: 'interviewing' 
                                   })}
+                                  className="text-blue-200 hover:bg-white/10"
+                                  data-testid={`menu-schedule-interview-${application.id}`}
                                 >
                                   Schedule Interview
                                 </DropdownMenuItem>
@@ -380,6 +422,8 @@ const AdminPanel = () => {
                                     id: application.id, 
                                     status: 'hired' 
                                   })}
+                                  className="text-green-200 hover:bg-white/10"
+                                  data-testid={`menu-mark-hired-${application.id}`}
                                 >
                                   Mark as Hired
                                 </DropdownMenuItem>
@@ -388,6 +432,8 @@ const AdminPanel = () => {
                                     id: application.id, 
                                     status: 'rejected' 
                                   })}
+                                  className="text-red-200 hover:bg-white/10"
+                                  data-testid={`menu-reject-${application.id}`}
                                 >
                                   Reject Application
                                 </DropdownMenuItem>
@@ -405,74 +451,74 @@ const AdminPanel = () => {
 
           {/* Consultation Bookings Tab */}
           <TabsContent value="bookings" className="space-y-6">
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">
+                  <Calendar className="h-6 w-6 text-amber-400" />
                   Consultation Bookings
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-blue-200">
                   Manage commercial and residential consultation requests from customers
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {bookingsLoading ? (
-                    <div className="text-center py-8">Loading consultation bookings...</div>
+                    <div className="text-center py-8 text-blue-200">Loading consultation bookings...</div>
                   ) : bookings.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">No consultation bookings found</div>
+                    <div className="text-center py-8 text-blue-300">No consultation bookings found</div>
                   ) : (
                     bookings.map((booking: ServiceBooking) => (
-                      <Card key={booking.id} className="border-l-4 border-l-green-500">
+                      <Card key={booking.id} className="bg-white/5 backdrop-blur-sm border-l-4 border-l-amber-500 border-white/10 hover:bg-white/10 transition-all duration-300" data-testid={`card-booking-${booking.id}`}>
                         <CardContent className="p-6">
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-2">
-                                <h3 className="text-lg font-semibold">
+                                <h3 className="text-lg font-bold text-white" data-testid={`text-customer-name-${booking.id}`}>
                                   {booking.customerName}
                                 </h3>
-                                <Badge className={`flex items-center gap-1 ${
+                                <Badge className={`flex items-center gap-1 border ${
                                   booking.serviceType === 'commercial_consultation' 
-                                    ? 'bg-blue-100 text-blue-800' 
-                                    : 'bg-green-100 text-green-800'
-                                }`}>
+                                    ? 'bg-blue-500/20 text-blue-200 border-blue-500/30' 
+                                    : 'bg-green-500/20 text-green-200 border-green-500/30'
+                                }`} data-testid={`badge-service-type-${booking.id}`}>
                                   {booking.serviceType === 'commercial_consultation' ? 'Commercial' : 'Residential'}
                                 </Badge>
-                                <Badge className={`${getStatusColor(booking.status)}`}>
+                                <Badge className={`border ${getStatusColor(booking.status)}`} data-testid={`badge-booking-status-${booking.id}`}>
                                   {booking.status}
                                 </Badge>
                               </div>
                               
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <Phone className="h-4 w-4" />
+                                <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-customer-phone-${booking.id}`}>
+                                  <Phone className="h-4 w-4 text-amber-400" />
                                   {booking.customerPhone}
                                 </div>
                                 {booking.customerEmail && (
-                                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                                    <Mail className="h-4 w-4" />
+                                  <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-customer-email-${booking.id}`}>
+                                    <Mail className="h-4 w-4 text-amber-400" />
                                     {booking.customerEmail}
                                   </div>
                                 )}
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <Calendar className="h-4 w-4" />
+                                <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-booking-date-${booking.id}`}>
+                                  <Calendar className="h-4 w-4 text-amber-400" />
                                   {new Date(booking.bookingDate).toLocaleDateString()} at {booking.bookingTime}
                                 </div>
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <DollarSign className="h-4 w-4" />
+                                <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-booking-amount-${booking.id}`}>
+                                  <DollarSign className="h-4 w-4 text-amber-400" />
                                   ${booking.amount}
                                 </div>
                               </div>
 
                               <div className="mb-4">
-                                <h4 className="font-medium mb-2">Service Address:</h4>
-                                <p className="text-sm text-gray-600">{booking.serviceAddress}</p>
+                                <h4 className="font-semibold text-white mb-2">Service Address:</h4>
+                                <p className="text-sm text-blue-200" data-testid={`text-service-address-${booking.id}`}>{booking.serviceAddress}</p>
                               </div>
 
                               {booking.notes && (
                                 <div className="mb-4">
-                                  <h4 className="font-medium mb-2">Notes:</h4>
-                                  <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                                  <h4 className="font-semibold text-white mb-2">Notes:</h4>
+                                  <p className="text-sm text-blue-200 bg-white/5 p-3 rounded-lg border border-white/10" data-testid={`text-booking-notes-${booking.id}`}>
                                     {booking.notes}
                                   </p>
                                 </div>
@@ -483,6 +529,8 @@ const AdminPanel = () => {
                                   variant="outline" 
                                   size="sm"
                                   onClick={() => window.open(`tel:${booking.customerPhone}`, '_self')}
+                                  className="bg-white/5 border-white/20 text-blue-200 hover:bg-white/10 hover:text-white"
+                                  data-testid={`button-call-customer-${booking.id}`}
                                 >
                                   <Phone className="h-4 w-4 mr-2" />
                                   Call Customer
@@ -492,6 +540,8 @@ const AdminPanel = () => {
                                     variant="outline" 
                                     size="sm"
                                     onClick={() => window.open(`mailto:${booking.customerEmail}`, '_blank')}
+                                    className="bg-white/5 border-white/20 text-blue-200 hover:bg-white/10 hover:text-white"
+                                    data-testid={`button-email-customer-${booking.id}`}
                                   >
                                     <Mail className="h-4 w-4 mr-2" />
                                     Email Customer
@@ -503,32 +553,40 @@ const AdminPanel = () => {
                             <div className="ml-4">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="sm">
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm"
+                                    className="text-blue-200 hover:text-white hover:bg-white/10"
+                                    data-testid={`button-booking-actions-${booking.id}`}
+                                  >
                                     <MoreVertical className="h-4 w-4" />
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
+                                <DropdownMenuContent align="end" className="bg-slate-900 border-white/20">
                                   <DropdownMenuItem
                                     onClick={() => {
-                                      // Update booking status functionality
                                       console.log('Mark as confirmed:', booking.id);
                                     }}
+                                    className="text-blue-200 hover:bg-white/10"
+                                    data-testid={`menu-confirm-booking-${booking.id}`}
                                   >
                                     Mark as Confirmed
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
                                     onClick={() => {
-                                      // Update booking status functionality
                                       console.log('Mark as completed:', booking.id);
                                     }}
+                                    className="text-green-200 hover:bg-white/10"
+                                    data-testid={`menu-complete-booking-${booking.id}`}
                                   >
                                     Mark as Completed
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
                                     onClick={() => {
-                                      // Update booking status functionality
                                       console.log('Cancel booking:', booking.id);
                                     }}
+                                    className="text-red-200 hover:bg-white/10"
+                                    data-testid={`menu-cancel-booking-${booking.id}`}
                                   >
                                     Cancel Booking
                                   </DropdownMenuItem>
@@ -547,34 +605,40 @@ const AdminPanel = () => {
 
           {/* User Management Tab */}
           <TabsContent value="users" className="space-y-6">
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">
+                  <Users className="h-6 w-6 text-amber-400" />
                   User Account Management
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-blue-200">
                   Manage user accounts, roles, and Pro access permissions
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {usersLoading ? (
-                    <div className="text-center py-8">Loading users...</div>
+                    <div className="text-center py-8 text-blue-200">Loading users...</div>
                   ) : (
                     users.map((user: User) => (
-                      <Card key={user.id} className="border">
+                      <Card key={user.id} className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-300" data-testid={`card-user-${user.id}`}>
                         <CardContent className="p-4">
                           <div className="flex justify-between items-center">
                             <div>
-                              <h3 className="font-semibold">{user.username}</h3>
-                              <p className="text-sm text-gray-600">{user.email}</p>
+                              <h3 className="font-bold text-white" data-testid={`text-username-${user.id}`}>{user.username}</h3>
+                              <p className="text-sm text-blue-200" data-testid={`text-user-email-${user.id}`}>{user.email}</p>
                               <div className="flex gap-2 mt-2">
-                                <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                                <Badge 
+                                  className={`border ${user.role === 'admin' ? 'bg-amber-500/20 text-amber-200 border-amber-500/30' : 'bg-blue-500/20 text-blue-200 border-blue-500/30'}`}
+                                  data-testid={`badge-user-role-${user.id}`}
+                                >
                                   {user.role}
                                 </Badge>
                                 {user.hasProAccess && (
-                                  <Badge variant="outline" className="bg-yellow-50">
+                                  <Badge 
+                                    className="bg-amber-500/20 text-amber-200 border border-amber-500/30"
+                                    data-testid={`badge-pro-access-${user.id}`}
+                                  >
                                     Pro Access
                                   </Badge>
                                 )}
@@ -588,6 +652,8 @@ const AdminPanel = () => {
                                   userId: user.id,
                                   updates: { hasProAccess: !user.hasProAccess }
                                 })}
+                                className="bg-white/5 border-white/20 text-blue-200 hover:bg-white/10 hover:text-white"
+                                data-testid={`button-toggle-pro-${user.id}`}
                               >
                                 {user.hasProAccess ? 'Remove Pro' : 'Grant Pro'}
                               </Button>
@@ -599,6 +665,8 @@ const AdminPanel = () => {
                                     userId: user.id,
                                     updates: { role: 'admin' }
                                   })}
+                                  className="bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 hover:from-amber-600 hover:to-amber-700 shadow-lg shadow-amber-500/30"
+                                  data-testid={`button-make-admin-${user.id}`}
                                 >
                                   Make Admin
                                 </Button>
@@ -616,35 +684,35 @@ const AdminPanel = () => {
 
           {/* Contact Forms Tab */}
           <TabsContent value="contacts" className="space-y-6">
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">
+                  <MessageSquare className="h-6 w-6 text-amber-400" />
                   Contact Form Submissions
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-blue-200">
                   View and respond to customer inquiries from contact forms
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {contactsLoading ? (
-                    <div className="text-center py-8">Loading contact submissions...</div>
+                    <div className="text-center py-8 text-blue-200">Loading contact submissions...</div>
                   ) : contacts.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">No contact submissions found</div>
+                    <div className="text-center py-8 text-blue-300">No contact submissions found</div>
                   ) : (
                     contacts.map((contact: ContactSubmission) => (
-                      <Card key={contact.id}>
+                      <Card key={contact.id} className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-300" data-testid={`card-contact-${contact.id}`}>
                         <CardContent className="p-4">
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
-                              <h3 className="font-semibold">{contact.name}</h3>
-                              <div className="flex gap-4 text-sm text-gray-600 mb-3">
-                                <span>{contact.email}</span>
-                                <span>{contact.phone}</span>
+                              <h3 className="font-bold text-white" data-testid={`text-contact-name-${contact.id}`}>{contact.name}</h3>
+                              <div className="flex gap-4 text-sm text-blue-200 mb-3">
+                                <span data-testid={`text-contact-email-${contact.id}`}>{contact.email}</span>
+                                <span data-testid={`text-contact-phone-${contact.id}`}>{contact.phone}</span>
                               </div>
-                              <p className="text-sm">{contact.message}</p>
-                              <p className="text-xs text-gray-500 mt-2">
+                              <p className="text-sm text-blue-200" data-testid={`text-contact-message-${contact.id}`}>{contact.message}</p>
+                              <p className="text-xs text-blue-300 mt-2" data-testid={`text-contact-submitted-${contact.id}`}>
                                 Submitted: {new Date(contact.submittedAt).toLocaleString()}
                               </p>
                             </div>
@@ -652,6 +720,8 @@ const AdminPanel = () => {
                               variant="outline"
                               size="sm"
                               onClick={() => window.open(`mailto:${contact.email}`, '_blank')}
+                              className="bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 hover:from-amber-600 hover:to-amber-700 shadow-lg shadow-amber-500/30"
+                              data-testid={`button-reply-contact-${contact.id}`}
                             >
                               <Mail className="h-4 w-4 mr-2" />
                               Reply
@@ -668,57 +738,87 @@ const AdminPanel = () => {
 
           {/* System Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">
+                  <Settings className="h-6 w-6 text-amber-400" />
                   System Configuration
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-blue-200">
                   Manage system-wide settings and configurations
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card>
+                  <Card className="bg-white/5 backdrop-blur-sm border-white/10">
                     <CardHeader>
-                      <CardTitle className="text-lg">Pro Access Settings</CardTitle>
+                      <CardTitle className="text-lg text-white font-bold">Pro Access Settings</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         <div>
-                          <label className="text-sm font-medium">Monthly Pro Price</label>
-                          <Input value="$49" readOnly />
+                          <label className="text-sm font-medium text-blue-200">Monthly Pro Price</label>
+                          <Input 
+                            value="$49" 
+                            readOnly 
+                            className="bg-white/5 backdrop-blur-sm border-white/20 text-white mt-1"
+                            data-testid="input-monthly-price"
+                          />
                         </div>
                         <div>
-                          <label className="text-sm font-medium">Annual Pro Price</label>
-                          <Input value="$499" readOnly />
+                          <label className="text-sm font-medium text-blue-200">Annual Pro Price</label>
+                          <Input 
+                            value="$499" 
+                            readOnly 
+                            className="bg-white/5 backdrop-blur-sm border-white/20 text-white mt-1"
+                            data-testid="input-annual-price"
+                          />
                         </div>
                         <div>
-                          <label className="text-sm font-medium">Lifetime Pro Price</label>
-                          <Input value="$1500" readOnly />
+                          <label className="text-sm font-medium text-blue-200">Lifetime Pro Price</label>
+                          <Input 
+                            value="$1500" 
+                            readOnly 
+                            className="bg-white/5 backdrop-blur-sm border-white/20 text-white mt-1"
+                            data-testid="input-lifetime-price"
+                          />
                         </div>
                       </div>
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className="bg-white/5 backdrop-blur-sm border-white/10">
                     <CardHeader>
-                      <CardTitle className="text-lg">Contact Information</CardTitle>
+                      <CardTitle className="text-lg text-white font-bold">Contact Information</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         <div>
-                          <label className="text-sm font-medium">Primary Phone</label>
-                          <Input value="(403) 613-6014" readOnly />
+                          <label className="text-sm font-medium text-blue-200">Primary Phone</label>
+                          <Input 
+                            value="(403) 613-6014" 
+                            readOnly 
+                            className="bg-white/5 backdrop-blur-sm border-white/20 text-white mt-1"
+                            data-testid="input-primary-phone"
+                          />
                         </div>
                         <div>
-                          <label className="text-sm font-medium">Primary Email</label>
-                          <Input value="Jordan@Afterhourshvac.ca" readOnly />
+                          <label className="text-sm font-medium text-blue-200">Primary Email</label>
+                          <Input 
+                            value="Jordan@Afterhourshvac.ca" 
+                            readOnly 
+                            className="bg-white/5 backdrop-blur-sm border-white/20 text-white mt-1"
+                            data-testid="input-primary-email"
+                          />
                         </div>
                         <div>
-                          <label className="text-sm font-medium">Service Area</label>
-                          <Input value="Calgary & surrounding areas" readOnly />
+                          <label className="text-sm font-medium text-blue-200">Service Area</label>
+                          <Input 
+                            value="Calgary & surrounding areas" 
+                            readOnly 
+                            className="bg-white/5 backdrop-blur-sm border-white/20 text-white mt-1"
+                            data-testid="input-service-area"
+                          />
                         </div>
                       </div>
                     </CardContent>

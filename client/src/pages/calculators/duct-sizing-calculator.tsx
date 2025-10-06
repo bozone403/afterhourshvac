@@ -144,13 +144,13 @@ function DuctSizingCalculatorContent() {
         <meta name="description" content="Calculate proper duct sizes for HVAC systems with our professional calculator. Includes friction loss calculations and velocity optimization for all duct types." />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-8">
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 py-8">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl font-bold text-white mb-4">
               Professional Duct Sizing Calculator
             </h1>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-white/60 max-w-3xl mx-auto">
               Calculate optimal duct sizes with professional-grade algorithms including friction loss, 
               velocity optimization, and material-specific recommendations.
             </p>
@@ -158,18 +158,18 @@ function DuctSizingCalculatorContent() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Input Section */}
-            <Card className="border-orange-200">
-              <CardHeader>
-                <CardTitle className="flex items-center text-gray-900">
-                  <Settings className="h-5 w-5 mr-2 text-orange-600" />
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl border-orange-200">
+              
+                <CardTitle className="flex items-center text-white">
+                  <Settings className="h-5 w-5 mr-2 text-amber-500" />
                   System Parameters
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
+                </h2>
+              
+              <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="cfm" className="text-gray-700">Total System CFM</Label>
-                    <Input
+                    <Label htmlFor="cfm" className="text-white/80">Total System CFM</Label>
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="cfm"
                       type="number"
                       value={cfm}
@@ -179,7 +179,7 @@ function DuctSizingCalculatorContent() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="ductType" className="text-gray-700">Duct Material</Label>
+                    <Label htmlFor="ductType" className="text-white/80">Duct Material</Label>
                     <Select value={ductType} onValueChange={setDuctType}>
                       <SelectTrigger className="border-gray-300">
                         <SelectValue placeholder="Select duct type" />
@@ -198,12 +198,12 @@ function DuctSizingCalculatorContent() {
 
                 <div>
                   <div className="flex justify-between items-center mb-4">
-                    <Label className="text-gray-700 text-lg font-medium">Room Requirements</Label>
+                    <Label className="text-white/80 text-lg font-medium">Room Requirements</Label>
                     <Button 
                       onClick={addRoom} 
                       variant="outline" 
                       size="sm"
-                      className="border-orange-300 text-orange-600 hover:bg-orange-50"
+                      className="border-orange-300 text-amber-500 hover:bg-white/5 backdrop-blur-sm border border-white/10"
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Add Room
@@ -213,13 +213,13 @@ function DuctSizingCalculatorContent() {
                   <div className="space-y-3">
                     {rooms.map((room, index) => (
                       <div key={index} className="flex gap-2 items-center">
-                        <Input
+                        <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                           value={room.name}
                           onChange={(e) => updateRoom(index, 'name', e.target.value)}
                           placeholder="Room name"
                           className="flex-1 border-gray-300"
                         />
-                        <Input
+                        <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                           type="number"
                           value={room.cfm}
                           onChange={(e) => updateRoom(index, 'cfm', e.target.value)}
@@ -241,37 +241,37 @@ function DuctSizingCalculatorContent() {
 
                 <Button 
                   onClick={calculateDuctSizing} 
-                  className="w-full bg-orange-600 hover:bg-orange-700"
+                  className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg shadow-amber-500/50"
                   disabled={!cfm || !ductType}
                 >
                   <Calculator className="h-4 w-4 mr-2" />
                   Calculate Duct Sizing
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Results Section */}
-            <Card className="border-blue-200">
-              <CardHeader>
-                <CardTitle className="flex items-center text-gray-900">
-                  <Wind className="h-5 w-5 mr-2 text-blue-600" />
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl border-blue-200">
+              
+                <CardTitle className="flex items-center text-white">
+                  <Wind className="h-5 w-5 mr-2 text-blue-400" />
                   Sizing Results
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </h2>
+              
+              <div>
                 {result ? (
                   <div className="space-y-6">
                     {/* Supply Ducts */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Supply Ducts</h3>
+                      <h3 className="text-lg font-semibold text-white mb-3">Supply Ducts</h3>
                       <div className="space-y-3">
                         {Object.entries(result.supply).map(([room, sizing]) => (
-                          <div key={room} className="bg-blue-50 p-4 rounded-lg">
+                          <div key={room} className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-lg">
                             <div className="flex justify-between items-start">
-                              <h4 className="font-medium text-gray-900">{room}</h4>
+                              <h4 className="font-medium text-white">{room}</h4>
                               <Badge className="bg-blue-600">{sizing.diameter}"</Badge>
                             </div>
-                            <div className="grid grid-cols-2 gap-4 mt-2 text-sm text-gray-600">
+                            <div className="grid grid-cols-2 gap-4 mt-2 text-sm text-white/70">
                               <span>Velocity: {sizing.velocity} FPM</span>
                               <span>Friction: {sizing.friction}" w.c./100ft</span>
                             </div>
@@ -284,13 +284,13 @@ function DuctSizingCalculatorContent() {
 
                     {/* Return Duct */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Return Duct</h3>
-                      <div className="bg-green-50 p-4 rounded-lg">
+                      <h3 className="text-lg font-semibold text-white mb-3">Return Duct</h3>
+                      <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-lg">
                         <div className="flex justify-between items-start">
-                          <h4 className="font-medium text-gray-900">Main Return</h4>
+                          <h4 className="font-medium text-white">Main Return</h4>
                           <Badge className="bg-green-600">{result.return.diameter}"</Badge>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 mt-2 text-sm text-gray-600">
+                        <div className="grid grid-cols-2 gap-4 mt-2 text-sm text-white/70">
                           <span>Velocity: {result.return.velocity} FPM</span>
                           <span>Friction: {result.return.friction}" w.c./100ft</span>
                         </div>
@@ -301,13 +301,13 @@ function DuctSizingCalculatorContent() {
 
                     {/* Main Trunk */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Main Supply Trunk</h3>
-                      <div className="bg-orange-50 p-4 rounded-lg">
+                      <h3 className="text-lg font-semibold text-white mb-3">Main Supply Trunk</h3>
+                      <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-lg">
                         <div className="flex justify-between items-start">
-                          <h4 className="font-medium text-gray-900">Supply Trunk</h4>
+                          <h4 className="font-medium text-white">Supply Trunk</h4>
                           <Badge className="bg-orange-600">{result.mainTrunk.diameter}"</Badge>
                         </div>
-                        <div className="mt-2 text-sm text-gray-600">
+                        <div className="mt-2 text-sm text-white/70">
                           <span>Velocity: {result.mainTrunk.velocity} FPM</span>
                         </div>
                       </div>
@@ -325,14 +325,14 @@ function DuctSizingCalculatorContent() {
                 ) : (
                   <div className="text-center py-12">
                     <Wind className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Ready to Calculate</h3>
-                    <p className="text-gray-600">
+                    <h3 className="text-lg font-medium text-white mb-2">Ready to Calculate</h3>
+                    <p className="text-white/70">
                       Enter your system parameters and room requirements to get professional duct sizing recommendations.
                     </p>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>

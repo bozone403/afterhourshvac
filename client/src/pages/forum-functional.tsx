@@ -46,13 +46,11 @@ export default function ForumPage() {
   const [newTopicTitle, setNewTopicTitle] = useState("");
   const [newTopicContent, setNewTopicContent] = useState("");
 
-  // Get forum topics
   const { data: topics, isLoading, error } = useQuery({
     queryKey: ["/api/forum/topics"],
     enabled: !!user,
   });
 
-  // Create topic mutation
   const createTopicMutation = useMutation({
     mutationFn: async (topicData: { title: string; content: string; category: string }) => {
       const response = await apiRequest("POST", "/api/forum/topics", topicData);
@@ -77,7 +75,6 @@ export default function ForumPage() {
     },
   });
 
-  // Update topic mutation (for admin actions)
   const updateTopicMutation = useMutation({
     mutationFn: async ({ topicId, updates }: { topicId: number; updates: Partial<ForumTopic> }) => {
       const response = await apiRequest("PATCH", `/api/forum/topics/${topicId}`, updates);
@@ -99,7 +96,6 @@ export default function ForumPage() {
     },
   });
 
-  // Delete topic mutation
   const deleteTopicMutation = useMutation({
     mutationFn: async (topicId: number) => {
       const response = await apiRequest("DELETE", `/api/forum/topics/${topicId}`);
@@ -123,33 +119,40 @@ export default function ForumPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        </div>
+        
         <Helmet>
           <title>HVAC Community Forum - AfterHours HVAC</title>
           <meta name="description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners." />
         </Helmet>
-        <div className="container mx-auto py-24 px-4">
+        
+        <div className="container mx-auto py-24 px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">HVAC Forum</h1>
-            <Card>
-              <CardHeader>
-                <CardTitle>Login Required</CardTitle>
-                <CardDescription>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white">HVAC Forum</h1>
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl overflow-hidden">
+              <div className="p-8">
+                <h2 className="text-2xl font-bold text-white mb-3">Login Required</h2>
+                <p className="text-blue-200 mb-6">
                   Access to our community forum is restricted to registered users
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-center text-muted-foreground">
+                </p>
+                <p className="text-blue-100 mb-8">
                   Our forum is available to registered users only. Please log in or create an account
                   to join discussions about HVAC topics, ask questions, and share your experiences.
                 </p>
-              </CardContent>
-              <div className="flex justify-center p-6">
                 <Link href="/auth">
-                  <Button className="bg-orange-600 hover:bg-orange-700">Login or Register</Button>
+                  <Button 
+                    data-testid="button-login"
+                    className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-600 hover:via-amber-700 hover:to-amber-600 text-white shadow-lg shadow-amber-500/50 border-0 transition-all duration-300 hover:shadow-xl hover:shadow-amber-500/50"
+                  >
+                    Login or Register
+                  </Button>
                 </Link>
               </div>
-            </Card>
+            </div>
           </div>
         </div>
       </div>
@@ -157,7 +160,13 @@ export default function ForumPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-orange-50">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-500" />
+      </div>
+      
       <Helmet>
         <title>HVAC Community Forum - AfterHours HVAC</title>
         <meta name="description" content="Join the AfterHours HVAC community forum to discuss heating, cooling, and ventilation topics with professionals and homeowners." />
@@ -167,100 +176,104 @@ export default function ForumPage() {
         <meta name="keywords" content="HVAC forum, heating cooling discussion, HVAC community, HVAC questions, HVAC advice" />
       </Helmet>
       
-      <div className="hvac-container hvac-section">
+      <div className="container mx-auto py-12 px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="hvac-card mb-8">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-8 mb-8">
             <div className="flex justify-between items-center">
               <div>
-                <h1 className="hvac-heading-lg mb-4 bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+                <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
                   HVAC Discussion Forum
                 </h1>
-                <p className="hvac-text-base text-gray-600">Professional community for HVAC technicians and industry experts</p>
+                <p className="text-lg text-blue-200">Professional community for HVAC technicians and industry experts</p>
               </div>
-              <Button className="hvac-button-secondary">
+              <Button 
+                data-testid="button-contact-support"
+                className="bg-white/5 backdrop-blur-sm border border-white/20 text-white hover:bg-white/10 transition-all duration-300"
+              >
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Contact Support
               </Button>
             </div>
           </div>
         
-          <p className="text-gray-600 mb-8">
+          <p className="text-blue-200 mb-8">
             Welcome to the AfterHours HVAC forum! This is where community members can discuss HVAC topics,
             ask questions, share experiences, and get advice from professionals. Please be respectful and
             follow our community guidelines.
           </p>
           
-          {/* Pinned Admin Posts Section */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <Pin className="h-5 w-5 text-orange-600" />
-              <h2 className="text-xl font-semibold text-gray-900">Pinned by Admin</h2>
-              <Shield className="h-4 w-4 text-yellow-500" />
+              <Pin className="h-5 w-5 text-amber-400" />
+              <h2 className="text-xl font-semibold text-white">Pinned by Admin</h2>
+              <Shield className="h-4 w-4 text-yellow-400" />
             </div>
             
-            <Card className="bg-gradient-to-r from-orange-50 to-blue-50 border-orange-200">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Pin className="h-4 w-4 text-orange-600" />
-                      <h3 className="font-semibold text-gray-900">Welcome to the AfterHours HVAC Forum</h3>
-                      <Badge className="bg-orange-100 text-orange-800">Pinned</Badge>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">
-                      Welcome to our community! Please read our guidelines before posting. Be respectful, stay on topic, 
-                      and help create a positive environment for everyone to learn and share knowledge.
-                    </p>
-                    <div className="flex items-center gap-4 text-xs text-gray-500">
-                      <span className="flex items-center gap-1">
-                        <Shield className="h-3 w-3" />
-                        By Admin
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        Posted today
-                      </span>
-                    </div>
+            <div className="bg-gradient-to-r from-amber-500/20 to-blue-500/20 backdrop-blur-xl border border-amber-400/30 shadow-2xl rounded-2xl p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Pin className="h-4 w-4 text-amber-400" />
+                    <h3 className="font-semibold text-white">Welcome to the AfterHours HVAC Forum</h3>
+                    <Badge className="bg-amber-500/30 text-amber-100 border-amber-400/50">Pinned</Badge>
+                  </div>
+                  <p className="text-sm text-blue-200 mb-3">
+                    Welcome to our community! Please read our guidelines before posting. Be respectful, stay on topic, 
+                    and help create a positive environment for everyone to learn and share knowledge.
+                  </p>
+                  <div className="flex items-center gap-4 text-xs text-blue-300">
+                    <span className="flex items-center gap-1">
+                      <Shield className="h-3 w-3" />
+                      By Admin
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      Posted today
+                    </span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
-          {/* New Topic Button */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900">Community Discussions</h2>
+            <h2 className="text-2xl font-semibold text-white">Community Discussions</h2>
             <Button 
+              data-testid="button-new-discussion"
               onClick={() => setShowNewTopicForm(!showNewTopicForm)}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-600 hover:via-amber-700 hover:to-amber-600 text-white shadow-lg shadow-amber-500/50 border-0 transition-all duration-300 hover:shadow-xl hover:shadow-amber-500/50"
             >
               <Plus className="h-4 w-4 mr-2" />
               Start New Discussion
             </Button>
           </div>
 
-          {/* New Topic Form */}
           {showNewTopicForm && (
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Start a New Discussion</CardTitle>
-                <CardDescription>Share your HVAC questions, experiences, or insights with the community</CardDescription>
-              </CardHeader>
-              <CardContent>
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl overflow-hidden mb-6">
+              <div className="p-6 border-b border-white/10">
+                <h3 className="text-xl font-bold text-white">Start a New Discussion</h3>
+                <p className="text-blue-200 mt-1">Share your HVAC questions, experiences, or insights with the community</p>
+              </div>
+              <div className="p-6">
                 <div className="space-y-4">
                   <Input
+                    data-testid="input-topic-title"
                     placeholder="Discussion title..."
                     value={newTopicTitle}
                     onChange={(e) => setNewTopicTitle(e.target.value)}
+                    className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-300/50 focus:border-amber-400/50 transition-all duration-300"
                   />
                   <Textarea
+                    data-testid="textarea-topic-content"
                     placeholder="Share your thoughts, ask questions, or provide helpful information..."
                     value={newTopicContent}
                     onChange={(e) => setNewTopicContent(e.target.value)}
                     rows={4}
+                    className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-300/50 focus:border-amber-400/50 transition-all duration-300"
                   />
                   <div className="flex gap-2">
                     <Button 
+                      data-testid="button-post-discussion"
                       onClick={() => {
                         if (newTopicTitle.trim() && newTopicContent.trim()) {
                           createTopicMutation.mutate({
@@ -271,112 +284,113 @@ export default function ForumPage() {
                         }
                       }}
                       disabled={createTopicMutation.isPending || !newTopicTitle.trim() || !newTopicContent.trim()}
-                      className="bg-orange-600 hover:bg-orange-700"
+                      className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-600 hover:via-amber-700 hover:to-amber-600 text-white shadow-lg shadow-amber-500/50 border-0 transition-all duration-300"
                     >
                       {createTopicMutation.isPending ? "Posting..." : "Post Discussion"}
                     </Button>
                     <Button 
+                      data-testid="button-cancel-topic"
                       variant="outline" 
                       onClick={() => {
                         setShowNewTopicForm(false);
                         setNewTopicTitle("");
                         setNewTopicContent("");
                       }}
+                      className="bg-white/5 backdrop-blur-sm border-white/20 text-white hover:bg-white/10 transition-all duration-300"
                     >
                       Cancel
                     </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
-          {/* Topics List */}
           <div className="space-y-4">
             {isLoading ? (
               <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto"></div>
-                <p className="text-gray-500 mt-2">Loading discussions...</p>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-400 mx-auto"></div>
+                <p className="text-blue-200 mt-2">Loading discussions...</p>
               </div>
             ) : error ? (
-              <Card>
-                <CardContent className="text-center py-8">
-                  <p className="text-red-600">Error loading forum topics. Please try again.</p>
-                </CardContent>
-              </Card>
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-8 text-center">
+                <p className="text-red-400">Error loading forum topics. Please try again.</p>
+              </div>
             ) : Array.isArray(topics) && topics.length > 0 ? (
               topics.map((topic: ForumTopic) => (
-                <Card key={topic.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          {topic.isSticky && <Pin className="h-4 w-4 text-orange-600" />}
-                          <h3 className="font-semibold text-gray-900 hover:text-orange-600 cursor-pointer">
-                            {topic.title}
-                          </h3>
-                          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                            {topic.category}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                          {topic.content}
-                        </p>
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
-                          <span>By {topic.author}</span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {new Date(topic.createdAt).toLocaleDateString()}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Reply className="h-3 w-3" />
-                            {topic.replies} replies
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Eye className="h-3 w-3" />
-                            {topic.views} views
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <ThumbsUp className="h-3 w-3" />
-                            {topic.likes}
-                          </span>
-                        </div>
+                <div 
+                  key={topic.id} 
+                  data-testid={`card-topic-${topic.id}`}
+                  className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6 hover:bg-white/15 hover:border-amber-400/30 hover:shadow-amber-500/20 transition-all duration-300 group"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        {topic.isSticky && <Pin className="h-4 w-4 text-amber-400" data-testid={`icon-pinned-${topic.id}`} />}
+                        <h3 className="font-semibold text-white group-hover:text-amber-300 cursor-pointer transition-colors duration-300" data-testid={`text-topic-title-${topic.id}`}>
+                          {topic.title}
+                        </h3>
+                        <Badge variant="secondary" className="bg-blue-500/30 text-blue-100 border-blue-400/50" data-testid={`badge-category-${topic.id}`}>
+                          {topic.category}
+                        </Badge>
                       </div>
-                      
-                      {/* Admin Controls */}
-                      {user && (user as any).isAdmin && (
-                        <div className="flex gap-2 ml-4">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => updateTopicMutation.mutate({
-                              topicId: topic.id,
-                              updates: { isSticky: !topic.isSticky }
-                            })}
-                          >
-                            <Pin className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => deleteTopicMutation.mutate(topic.id)}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      )}
+                      <p className="text-sm text-blue-200 mb-3 line-clamp-2" data-testid={`text-topic-content-${topic.id}`}>
+                        {topic.content}
+                      </p>
+                      <div className="flex items-center gap-4 text-xs text-blue-300">
+                        <span data-testid={`text-author-${topic.id}`}>By {topic.author}</span>
+                        <span className="flex items-center gap-1" data-testid={`text-date-${topic.id}`}>
+                          <Clock className="h-3 w-3" />
+                          {new Date(topic.createdAt).toLocaleDateString()}
+                        </span>
+                        <span className="flex items-center gap-1" data-testid={`text-replies-${topic.id}`}>
+                          <Reply className="h-3 w-3" />
+                          {topic.replies} replies
+                        </span>
+                        <span className="flex items-center gap-1" data-testid={`text-views-${topic.id}`}>
+                          <Eye className="h-3 w-3" />
+                          {topic.views} views
+                        </span>
+                        <span className="flex items-center gap-1" data-testid={`text-likes-${topic.id}`}>
+                          <ThumbsUp className="h-3 w-3" />
+                          {topic.likes}
+                        </span>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+                    
+                    {user && (user as any).isAdmin && (
+                      <div className="flex gap-2 ml-4">
+                        <Button
+                          data-testid={`button-pin-${topic.id}`}
+                          size="sm"
+                          variant="outline"
+                          onClick={() => updateTopicMutation.mutate({
+                            topicId: topic.id,
+                            updates: { isSticky: !topic.isSticky }
+                          })}
+                          className="bg-white/5 backdrop-blur-sm border-white/20 text-white hover:bg-white/10 transition-all duration-300"
+                        >
+                          <Pin className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          data-testid={`button-delete-${topic.id}`}
+                          size="sm"
+                          variant="outline"
+                          onClick={() => deleteTopicMutation.mutate(topic.id)}
+                          className="bg-white/5 backdrop-blur-sm border-white/20 text-red-400 hover:bg-red-500/20 hover:border-red-400/50 transition-all duration-300"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               ))
             ) : (
-              <Card>
-                <CardContent className="text-center py-8">
-                  <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No discussions yet. Be the first to start a conversation!</p>
-                </CardContent>
-              </Card>
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-12 text-center">
+                <MessageSquare className="h-12 w-12 text-blue-400 mx-auto mb-4" />
+                <p className="text-blue-200">No discussions yet. Be the first to start a conversation!</p>
+              </div>
             )}
           </div>
         </div>

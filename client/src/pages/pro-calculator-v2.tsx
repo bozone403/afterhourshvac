@@ -452,17 +452,17 @@ const ProCalculatorV2 = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Project Information */}
             <div className="lg:col-span-1">
-              <Card className="bg-gray-800 border-gray-700 mb-6">
-                <CardHeader>
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl bg-gray-800 border-gray-700 mb-6">
+                
                   <CardTitle className="text-white flex items-center gap-2">
                     <FileText className="text-orange-500" />
                     Project Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                  </h2>
+                
+                <div className="space-y-4">
                   <div>
                     <Label htmlFor="projectName" className="text-white">Project Name</Label>
-                    <Input
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="projectName"
                       value={projectName}
                       onChange={(e) => setProjectName(e.target.value)}
@@ -473,7 +473,7 @@ const ProCalculatorV2 = () => {
                   
                   <div>
                     <Label htmlFor="customerName" className="text-white">Customer Name</Label>
-                    <Input
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="customerName"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
@@ -484,7 +484,7 @@ const ProCalculatorV2 = () => {
                   
                   <div>
                     <Label htmlFor="customerEmail" className="text-white">Customer Email</Label>
-                    <Input
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="customerEmail"
                       type="email"
                       value={customerEmail}
@@ -496,7 +496,7 @@ const ProCalculatorV2 = () => {
                   
                   <div>
                     <Label htmlFor="projectAddress" className="text-white">Project Address</Label>
-                    <Input
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="projectAddress"
                       value={projectAddress}
                       onChange={(e) => setProjectAddress(e.target.value)}
@@ -516,21 +516,21 @@ const ProCalculatorV2 = () => {
                       placeholder="Project notes..."
                     />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Pricing Settings */}
-              <Card className="bg-gray-800 border-gray-700">
-                <CardHeader>
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl bg-gray-800 border-gray-700">
+                
                   <CardTitle className="text-white flex items-center gap-2">
                     <DollarSign className="text-orange-500" />
                     Pricing Settings
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                  </h2>
+                
+                <div className="space-y-4">
                   <div>
                     <Label htmlFor="laborRate" className="text-white">Labor Rate ($/hour)</Label>
-                    <Input
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="laborRate"
                       type="number"
                       value={laborRate}
@@ -541,7 +541,7 @@ const ProCalculatorV2 = () => {
                   
                   <div>
                     <Label htmlFor="overhead" className="text-white">Overhead (%)</Label>
-                    <Input
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="overhead"
                       type="number"
                       value={overheadPercentage}
@@ -552,7 +552,7 @@ const ProCalculatorV2 = () => {
                   
                   <div>
                     <Label htmlFor="markup" className="text-white">Markup (%)</Label>
-                    <Input
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="markup"
                       type="number"
                       value={markupPercentage}
@@ -560,27 +560,27 @@ const ProCalculatorV2 = () => {
                       className="mt-1 bg-gray-700 border-gray-600 text-white"
                     />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
 
             {/* Material Selection */}
             <div className="lg:col-span-2">
-              <Card className="bg-gray-800 border-gray-700 mb-6">
-                <CardHeader>
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl bg-gray-800 border-gray-700 mb-6">
+                
                   <CardTitle className="text-white flex items-center gap-2">
                     <Search className="text-orange-500" />
                     Alggin Catalog Search
-                  </CardTitle>
+                  </h2>
                   <CardDescription className="text-gray-300">
                     Search and add materials from the real Alggin catalog
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+                  </p>
+                
+                <div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div>
                       <Label htmlFor="search" className="text-white">Search Materials</Label>
-                      <Input
+                      <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                         id="search"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -650,21 +650,21 @@ const ProCalculatorV2 = () => {
                       ))}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Material Takeoff */}
-              <Card className="bg-gray-800 border-gray-700">
-                <CardHeader>
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl bg-gray-800 border-gray-700">
+                
                   <CardTitle className="text-white flex items-center gap-2">
                     <Wrench className="text-orange-500" />
                     Material Takeoff
-                  </CardTitle>
+                  </h2>
                   <CardDescription className="text-gray-300">
                     Selected materials, labor, and custom items
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
+                  </p>
+                
+                <div className="space-y-6">
                   {/* Materials */}
                   {materials.length > 0 && (
                     <div>
@@ -677,7 +677,7 @@ const ProCalculatorV2 = () => {
                               <div className="text-sm text-gray-300">{item.catalogItem.stockNumber}</div>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Input
+                              <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                                 type="number"
                                 value={item.quantity}
                                 onChange={(e) => updateMaterialQuantity(item.id, parseFloat(e.target.value) || 0)}
@@ -716,13 +716,13 @@ const ProCalculatorV2 = () => {
                       <div className="space-y-2">
                         {laborItems.map((item) => (
                           <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg">
-                            <Input
+                            <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                               value={item.description}
                               onChange={(e) => updateLaborItem(item.id, { description: e.target.value })}
                               className="flex-1 bg-gray-600 border-gray-500 text-white"
                               placeholder="Labor description"
                             />
-                            <Input
+                            <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                               type="number"
                               value={item.hours}
                               onChange={(e) => updateLaborItem(item.id, { hours: parseFloat(e.target.value) || 0 })}
@@ -731,7 +731,7 @@ const ProCalculatorV2 = () => {
                               step="0.25"
                             />
                             <span className="text-gray-300">hrs</span>
-                            <Input
+                            <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                               type="number"
                               value={item.rate}
                               onChange={(e) => updateLaborItem(item.id, { rate: parseFloat(e.target.value) || 0 })}
@@ -767,13 +767,13 @@ const ProCalculatorV2 = () => {
                       <div className="space-y-2">
                         {customItems.map((item) => (
                           <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg">
-                            <Input
+                            <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                               value={item.description}
                               onChange={(e) => updateCustomItem(item.id, { description: e.target.value })}
                               className="flex-1 bg-gray-600 border-gray-500 text-white"
                               placeholder="Item description"
                             />
-                            <Input
+                            <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                               type="number"
                               value={item.quantity}
                               onChange={(e) => updateCustomItem(item.id, { quantity: parseFloat(e.target.value) || 0 })}
@@ -781,7 +781,7 @@ const ProCalculatorV2 = () => {
                               placeholder="Qty"
                               step="0.1"
                             />
-                            <Input
+                            <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                               type="number"
                               value={item.price}
                               onChange={(e) => updateCustomItem(item.id, { price: parseFloat(e.target.value) || 0 })}
@@ -861,8 +861,8 @@ const ProCalculatorV2 = () => {
                       Collect Payment
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           </div>
         </div>

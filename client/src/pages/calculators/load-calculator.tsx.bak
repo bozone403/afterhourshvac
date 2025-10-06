@@ -214,8 +214,8 @@ export default function LoadCalculator() {
             <div className="space-y-6">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="squareFootage" className="text-white/90">Square Footage</Label>
-                  <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                  <Label htmlFor="squareFootage">Square Footage</Label>
+                  <Input
                     id="squareFootage"
                     type="number"
                     placeholder="e.g., 1500"
@@ -224,9 +224,9 @@ export default function LoadCalculator() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="ceilingHeight" className="text-white/90">Ceiling Height (ft)</Label>
+                  <Label htmlFor="ceilingHeight">Ceiling Height (ft)</Label>
                   <Select value={formData.ceilingHeight} onValueChange={(value) => setFormData(prev => ({ ...prev, ceilingHeight: value }))}>
-                    <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -241,8 +241,8 @@ export default function LoadCalculator() {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="windowArea" className="text-white/90">Window Area (sq ft)</Label>
-                  <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                  <Label htmlFor="windowArea">Window Area (sq ft)</Label>
+                  <Input
                     id="windowArea"
                     type="number"
                     placeholder="e.g., 200"
@@ -251,8 +251,8 @@ export default function LoadCalculator() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="occupancy" className="text-white/90">Number of Occupants</Label>
-                  <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                  <Label htmlFor="occupancy">Number of Occupants</Label>
+                  <Input
                     id="occupancy"
                     type="number"
                     placeholder="e.g., 4"
@@ -263,9 +263,9 @@ export default function LoadCalculator() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="insulation" className="text-white/90">Insulation Quality</Label>
+                <Label htmlFor="insulation">Insulation Quality</Label>
                 <Select value={formData.insulation} onValueChange={(value) => setFormData(prev => ({ ...prev, insulation: value }))}>
-                  <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select insulation level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -278,9 +278,9 @@ export default function LoadCalculator() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="windowType" className="text-white/90">Window Type</Label>
+                <Label htmlFor="windowType">Window Type</Label>
                 <Select value={formData.windowType} onValueChange={(value) => setFormData(prev => ({ ...prev, windowType: value }))}>
-                  <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select window type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -293,9 +293,9 @@ export default function LoadCalculator() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="climate" className="text-white/90">Climate Zone</Label>
+                <Label htmlFor="climate">Climate Zone</Label>
                 <Select value={formData.climate} onValueChange={(value) => setFormData(prev => ({ ...prev, climate: value }))}>
-                  <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select climate zone" />
                   </SelectTrigger>
                   <SelectContent>
@@ -307,102 +307,97 @@ export default function LoadCalculator() {
                 </Select>
               </div>
 
-              <Button 
-                onClick={calculateLoad} 
-                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg shadow-amber-500/50" 
-                size="lg"
-                data-testid="button-calculate-load"
-              >
+              <Button onClick={calculateLoad} className="w-full" size="lg">
                 <Calculator className="h-4 w-4 mr-2" />
                 Calculate Load
               </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Results */}
           {results && (
             <div className="space-y-6">
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
-                
-                  <h2 className="flex items-center gap-2 text-2xl font-bold text-white mb-6">
-                    <Thermometer className="h-5 w-5 text-blue-400" />
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Thermometer className="h-5 w-5 text-blue-600" />
                     Load Calculations
-                  </h2>
-                
-                <div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
                       <div className="flex items-center justify-center gap-2 mb-2">
-                        <Snowflake className="h-5 w-5 text-blue-400" />
+                        <Snowflake className="h-5 w-5 text-blue-600" />
                       </div>
-                      <div className="text-2xl font-bold text-blue-400">{results.coolingTonnage} Tons</div>
-                      <div className="text-sm text-white/60">Cooling Capacity</div>
+                      <div className="text-2xl font-bold text-blue-600">{results.coolingTonnage} Tons</div>
+                      <div className="text-sm text-gray-600">Cooling Capacity</div>
                     </div>
-                    <div className="text-center p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                    <div className="text-center p-4 bg-orange-50 rounded-lg">
                       <div className="flex items-center justify-center gap-2 mb-2">
-                        <Wind className="h-5 w-5 text-amber-500" />
+                        <Wind className="h-5 w-5 text-orange-600" />
                       </div>
-                      <div className="text-2xl font-bold text-amber-500">{results.heatingBtu.toLocaleString()}</div>
-                      <div className="text-sm text-white/60">Heating BTU/hr</div>
+                      <div className="text-2xl font-bold text-orange-600">{results.heatingBtu.toLocaleString()}</div>
+                      <div className="text-sm text-gray-600">Heating BTU/hr</div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
               {/* Equipment Recommendations */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">Equipment Recommendations</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Equipment Recommendations</h3>
                 
                 {/* Daikin */}
-                <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
+                <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Daikin Equipment</h2>
-                  
+                    <CardTitle className="text-base">Daikin Equipment</CardTitle>
+                  </CardHeader>
                   <CardContent className="space-y-2">
-                    <div className="flex items-center justify-between p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded">
+                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded">
                       <span className="font-medium">Cooling Unit:</span>
                       <span className="text-sm">{results.equipmentOptions.daikin.cooling}</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded">
+                    <div className="flex items-center justify-between p-3 bg-orange-50 rounded">
                       <span className="font-medium">Heating Unit:</span>
                       <span className="text-sm">{results.equipmentOptions.daikin.heating}</span>
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
 
                 {/* Ducane */}
-                <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
+                <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Ducane Equipment</h2>
-                  
+                    <CardTitle className="text-base">Ducane Equipment</CardTitle>
+                  </CardHeader>
                   <CardContent className="space-y-2">
-                    <div className="flex items-center justify-between p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded">
+                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded">
                       <span className="font-medium">Cooling Unit:</span>
                       <span className="text-sm">{results.equipmentOptions.ducane.cooling}</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded">
+                    <div className="flex items-center justify-between p-3 bg-orange-50 rounded">
                       <span className="font-medium">Heating Unit:</span>
                       <span className="text-sm">{results.equipmentOptions.ducane.heating}</span>
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
 
                 {/* Lennox */}
-                <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
+                <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Lennox Equipment</h2>
-                  
+                    <CardTitle className="text-base">Lennox Equipment</CardTitle>
+                  </CardHeader>
                   <CardContent className="space-y-2">
-                    <div className="flex items-center justify-between p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded">
+                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded">
                       <span className="font-medium">Cooling Unit:</span>
                       <span className="text-sm">{results.equipmentOptions.lennox.cooling}</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded">
+                    <div className="flex items-center justify-between p-3 bg-orange-50 rounded">
                       <span className="font-medium">Heating Unit:</span>
                       <span className="text-sm">{results.equipmentOptions.lennox.heating}</span>
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               </div>
 
               <Card className="bg-gradient-to-r from-orange-500 to-blue-600 text-white">
@@ -411,12 +406,12 @@ export default function LoadCalculator() {
                     <Calculator className="h-8 w-8 mx-auto mb-3" />
                     <h3 className="text-lg font-bold mb-2">Need Professional Sizing?</h3>
                     <p className="mb-4 opacity-90">Get a detailed Manual J calculation from our experts</p>
-                    <Button variant="secondary" className="bg-white text-white hover:bg-gray-100">
+                    <Button variant="secondary" className="bg-white text-gray-900 hover:bg-gray-100">
                       Request Professional Quote
                     </Button>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </div>
           )}
         </div>

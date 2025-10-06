@@ -1015,30 +1015,30 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
             <FileCheck className="h-5 w-5 text-green-700 mr-3" />
             <span className="text-green-800 text-lg font-bold">Professional Quote Builder</span>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">Calgary HVAC Material Calculator</h1>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+          <h1 className="text-4xl font-bold text-white mb-3">Calgary HVAC Material Calculator</h1>
+          <p className="text-xl text-white/80 max-w-3xl mx-auto">
             Complete job estimating with real Alggin pricing data. Build comprehensive quotes for residential and commercial HVAC projects.
           </p>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           {/* Customer Information */}
-          <Card className="xl:col-span-1 shadow-lg border-0 bg-white">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl xl:col-span-1 shadow-lg border-0 bg-white">
             <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
               <CardTitle className="text-xl flex items-center gap-2">
                 <Package className="h-5 w-5" />
                 Customer & Job Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
+              </h2>
+            
+            <div className="p-6 space-y-4">
               <div>
                 <Label htmlFor="customerName" className="text-gray-800 font-semibold">Customer Name</Label>
-                <Input
+                <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                   id="customerName"
                   value={customerInfo.name}
                   onChange={(e) => setCustomerInfo(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="John Smith"
-                  className="mt-1 text-gray-900"
+                  className="mt-1 text-white"
                 />
               </div>
               <div>
@@ -1049,28 +1049,28 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                   onChange={(e) => setCustomerInfo(prev => ({ ...prev, address: e.target.value }))}
                   placeholder="123 Main St, Calgary, AB T2P 1A1"
                   rows={2}
-                  className="mt-1 text-gray-900"
+                  className="mt-1 text-white"
                 />
               </div>
               <div>
                 <Label htmlFor="customerPhone" className="text-gray-800 font-semibold">Phone Number</Label>
-                <Input
+                <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                   id="customerPhone"
                   value={customerInfo.phone}
                   onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: e.target.value }))}
                   placeholder="(403) 555-0123"
-                  className="mt-1 text-gray-900"
+                  className="mt-1 text-white"
                 />
               </div>
               <div>
                 <Label htmlFor="customerEmail" className="text-gray-800 font-semibold">Email Address</Label>
-                <Input
+                <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                   id="customerEmail"
                   type="email"
                   value={customerInfo.email}
                   onChange={(e) => setCustomerInfo(prev => ({ ...prev, email: e.target.value }))}
                   placeholder="john@example.com"
-                  className="mt-1 text-gray-900"
+                  className="mt-1 text-white"
                 />
               </div>
               <div>
@@ -1081,27 +1081,27 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                   onChange={(e) => setCustomerInfo(prev => ({ ...prev, jobDescription: e.target.value }))}
                   placeholder="Describe the scope of work, special requirements, or project details..."
                   rows={3}
-                  className="mt-1 text-gray-900"
+                  className="mt-1 text-white"
                 />
               </div>
               
               {/* Pricing Controls */}
-              <div className="grid grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="grid grid-cols-2 gap-4 p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg border border-blue-200">
                 <div>
                   <Label htmlFor="laborRate" className="text-gray-800 font-semibold">Labor Rate ($/hr)</Label>
-                  <Input
+                  <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                     id="laborRate"
                     type="number"
                     value={laborRate}
                     onChange={(e) => setLaborRate(parseFloat(e.target.value) || 0)}
                     placeholder="95"
-                    className="mt-1 text-gray-900"
+                    className="mt-1 text-white"
                   />
                 </div>
                 <div>
                   <Label className="text-gray-800 font-semibold">Category Multipliers</Label>
                   <div className="mt-1 p-2 bg-white rounded border text-xs">
-                    <div className="grid grid-cols-2 gap-1 text-gray-700">
+                    <div className="grid grid-cols-2 gap-1 text-white/80">
                       <div>Furnaces: 65.0%</div>
                       <div>A/C Units: 65.0%</div>
                       <div>Heat Pumps: 65.0%</div>
@@ -1116,36 +1116,36 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                       <div>Hardware: 60.0%</div>
                     </div>
                   </div>
-                  <div className="text-xs text-gray-600 mt-1">Automatic pricing based on category</div>
+                  <div className="text-xs text-white/60 mt-1">Automatic pricing based on category</div>
                 </div>
               </div>
               
               {/* Labor Hours Input */}
-              <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+              <div className="p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg border border-orange-200">
                 <Label htmlFor="laborHours" className="text-gray-800 font-semibold">Total Labor Hours</Label>
-                <Input
+                <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                   id="laborHours"
                   type="number"
                   step="0.5"
                   value={laborHours}
                   onChange={(e) => setLaborHours(parseFloat(e.target.value) || 0)}
                   placeholder="8.0"
-                  className="mt-1 text-gray-900"
+                  className="mt-1 text-white"
                 />
-                <div className="text-xs text-gray-600 mt-1">Enter estimated labor hours for the entire job</div>
+                <div className="text-xs text-white/60 mt-1">Enter estimated labor hours for the entire job</div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Add Items */}
-          <Card className="xl:col-span-1 shadow-lg border-0 bg-white">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl xl:col-span-1 shadow-lg border-0 bg-white">
             <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-t-lg">
               <CardTitle className="text-xl flex items-center gap-2">
                 <Plus className="h-5 w-5" />
                 Add Materials & Components
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
+              </h2>
+            
+            <div className="p-6 space-y-4">
               {/* Quick Selection Popular Items */}
               {!selectedCategory && (
                 <div className="mb-6">
@@ -1155,7 +1155,7 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                       <Button
                         key={itemName}
                         variant="outline"
-                        className="h-auto p-3 text-left justify-between hover:bg-green-50"
+                        className="h-auto p-3 text-left justify-between hover:bg-white/5 backdrop-blur-sm border border-white/10"
                         onClick={() => {
                           const categoryData = algginPricing[itemData.category as keyof typeof algginPricing];
                           if (categoryData && itemName in categoryData) {
@@ -1179,10 +1179,10 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                         }}
                       >
                         <div className="flex-1">
-                          <div className="font-medium text-gray-900 text-sm">{itemName.replace(/"/g, '"')}</div>
-                          <div className="text-green-600 font-bold text-xs">${(itemData.price * getCategoryMultiplier(itemData.category)).toFixed(2)}</div>
+                          <div className="font-medium text-white text-sm">{itemName.replace(/"/g, '"')}</div>
+                          <div className="text-green-400 font-bold text-xs">${(itemData.price * getCategoryMultiplier(itemData.category)).toFixed(2)}</div>
                         </div>
-                        <Plus className="h-4 w-4 text-green-600" />
+                        <Plus className="h-4 w-4 text-green-400" />
                       </Button>
                     ))}
                   </div>
@@ -1191,7 +1191,7 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                       variant="ghost" 
                       size="sm"
                       onClick={() => setSelectedCategory("elbowsRound")}
-                      className="text-blue-600 hover:text-blue-700"
+                      className="text-blue-400 hover:text-blue-700"
                     >
                       Browse All Categories →
                     </Button>
@@ -1204,11 +1204,11 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                 <Label className="text-gray-800 font-semibold">Search Materials</Label>
                 <div className="relative mt-1">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
+                  <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                     placeholder="Search by name or size (e.g. '4 inch elbow', 'galvanized pipe')..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 text-gray-900"
+                    className="pl-10 text-white"
                   />
                 </div>
               </div>
@@ -1318,12 +1318,12 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                     <Label htmlFor="search" className="text-gray-800 font-semibold">Search Items</Label>
                     <div className="relative mt-1">
                       <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
+                      <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                         id="search"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Search materials..."
-                        className="pl-10 text-gray-900"
+                        className="pl-10 text-white"
                       />
                     </div>
                   </div>
@@ -1341,8 +1341,8 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                           return (
                             <SelectItem key={item} value={item}>
                               <div className="flex justify-between items-center w-full">
-                                <span className="text-gray-900 font-medium">{item}</span>
-                                <span className="text-green-600 font-bold ml-4">${itemData?.price?.toFixed(2) || "0.00"}</span>
+                                <span className="text-white font-medium">{item}</span>
+                                <span className="text-green-400 font-bold ml-4">${itemData?.price?.toFixed(2) || "0.00"}</span>
                               </div>
                             </SelectItem>
                           );
@@ -1356,20 +1356,20 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
               {selectedItem && (
                 <div>
                   <Label htmlFor="quantity" className="text-gray-800 font-semibold">Quantity</Label>
-                  <Input
+                  <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                     id="quantity"
                     type="number"
                     step="0.1"
                     min="0.1"
                     value={quantity}
                     onChange={(e) => setQuantity(e.target.value)}
-                    className="mt-1 text-gray-900"
+                    className="mt-1 text-white"
                   />
-                  <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="mt-2 p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg border border-blue-200">
                     <div className="text-sm text-gray-800">
                       <div className="font-semibold text-blue-800">Item Details:</div>
-                      <div>Unit Price: <span className="font-bold text-green-600">${algginPricing[selectedCategory as keyof typeof algginPricing][selectedItem as any]?.price.toFixed(2)}</span></div>
-                      <div>Labor Hours: <span className="font-bold text-orange-600">{algginPricing[selectedCategory as keyof typeof algginPricing][selectedItem as any]?.laborHours} hrs</span></div>
+                      <div>Unit Price: <span className="font-bold text-green-400">${algginPricing[selectedCategory as keyof typeof algginPricing][selectedItem as any]?.price.toFixed(2)}</span></div>
+                      <div>Labor Hours: <span className="font-bold text-amber-500">{algginPricing[selectedCategory as keyof typeof algginPricing][selectedItem as any]?.laborHours} hrs</span></div>
                     </div>
                   </div>
                 </div>
@@ -1383,18 +1383,18 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                 <Plus className="h-4 w-4 mr-2" />
                 Add to Quote
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Quote Summary */}
-          <Card className="xl:col-span-1 shadow-lg border-0 bg-white">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl xl:col-span-1 shadow-lg border-0 bg-white">
             <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
               <CardTitle className="text-xl flex items-center gap-2">
                 <DollarSign className="h-5 w-5" />
                 Quote Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
+              </h2>
+            
+            <div className="p-6 space-y-4">
               <div className="space-y-3">
                 <div className="flex justify-between text-gray-800">
                   <span className="font-medium">Materials:</span>
@@ -1407,7 +1407,7 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                 <div className="flex justify-between items-center text-gray-800">
                   <span className="font-medium">Markup:</span>
                   <div className="flex items-center gap-2">
-                    <Input
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       type="number"
                       value={markupPercentage}
                       onChange={(e) => setMarkupPercentage(parseFloat(e.target.value) || 0)}
@@ -1433,15 +1433,15 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
               {/* Deposit Override Field */}
               <div className="pt-4 border-t border-gray-200">
                 <Label className="text-gray-800 font-semibold">Deposit Amount (Optional)</Label>
-                <Input
+                <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                   type="number"
                   step="0.01"
                   value={depositAmount}
                   onChange={(e) => setDepositAmount(e.target.value)}
                   placeholder="Leave blank for full payment"
-                  className="mt-1 text-gray-900"
+                  className="mt-1 text-white"
                 />
-                <div className="text-xs text-gray-600 mt-1">
+                <div className="text-xs text-white/60 mt-1">
                   For trusted customers - override payment amount
                 </div>
                 {depositAmount && parseFloat(depositAmount) > 0 && (
@@ -1486,44 +1486,44 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                   }
                 </Button>
                 
-                <div className="text-center text-sm text-gray-600">
+                <div className="text-center text-sm text-white/70">
                   <Clock className="h-4 w-4 inline mr-1" />
                   Estimated completion: {(quote.labor / laborRate / 8).toFixed(1)} days
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         {/* Quote Items List */}
         {quote.items.length > 0 && (
-          <Card className="shadow-lg border-0 bg-white">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl shadow-lg border-0 bg-white">
             <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg">
-              <CardTitle className="text-xl">Quote Line Items</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
+              <CardTitle className="text-xl">Quote Line Items</h2>
+            
+            <div className="p-6">
               <div className="space-y-4">
                 {quote.items.map((item, index) => (
                   <div key={item.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
                     <div className="flex-1">
-                      <div className="font-semibold text-gray-900 text-lg">{index + 1}. {item.item}</div>
-                      <div className="text-sm text-gray-600 mt-1">
+                      <div className="font-semibold text-white text-lg">{index + 1}. {item.item}</div>
+                      <div className="text-sm text-white/60 mt-1">
                         <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2">
                           {item.category}
                         </span>
                         <span className="mr-4">${item.unitPrice.toFixed(2)} each</span>
                         <span className="mr-4">{item.laborHours.toFixed(1)} labor hrs</span>
-                        <span className="font-bold text-green-600">Line Total: ${item.total.toFixed(2)}</span>
+                        <span className="font-bold text-green-400">Line Total: ${item.total.toFixed(2)}</span>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3 ml-4">
-                      <Input
+                      <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                         type="number"
                         step="0.1"
                         min="0.1"
                         value={item.quantity}
                         onChange={(e) => updateQuantity(item.id, parseFloat(e.target.value))}
-                        className="w-20 text-center text-gray-900"
+                        className="w-20 text-center text-white"
                       />
                       <Button
                         variant="outline"
@@ -1537,8 +1537,8 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
       </div>
     </div>

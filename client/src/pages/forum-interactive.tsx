@@ -57,12 +57,10 @@ export default function ForumInteractive() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Check authentication
   const { data: user } = useQuery<UserType>({
     queryKey: ["/api/user"]
   });
 
-  // Auto-populate username fields when user data loads
   useEffect(() => {
     if (user?.username) {
       setNewTopicUsername(user.username);
@@ -70,12 +68,10 @@ export default function ForumInteractive() {
     }
   }, [user]);
 
-  // Get forum categories
   const { data: categories = [] } = useQuery<ForumCategory[]>({
     queryKey: ["/api/forum/categories"]
   });
 
-  // Get forum topics for selected category
   const { data: topics = [], isLoading: topicsLoading } = useQuery<ExtendedForumTopic[]>({
     queryKey: ["/api/forum/topics", selectedCategory],
     queryFn: async () => {
@@ -83,14 +79,11 @@ export default function ForumInteractive() {
       if (!response.ok) throw new Error("Failed to fetch topics");
       const topics = await response.json();
       
-      // Enhance topics with like counts and user like status
       const enhancedTopics = await Promise.all(topics.map(async (topic: any) => {
         try {
-          // Get like count
           const likeResponse = await fetch(`/api/forum/likes/count?topicId=${topic.id}`);
           const { count } = likeResponse.ok ? await likeResponse.json() : { count: 0 };
           
-          // Check if user has liked (only if authenticated)
           let hasLiked = false;
           if (user) {
             const userLikeResponse = await fetch(`/api/forum/likes/check?topicId=${topic.id}`);
@@ -104,7 +97,7 @@ export default function ForumInteractive() {
             ...topic,
             likeCount: count,
             hasLiked,
-            postCount: 0, // TODO: Get actual post count
+            postCount: 0,
             lastActivity: topic.updatedAt,
             username: topic.username || 'Unknown User'
           };
@@ -124,7 +117,6 @@ export default function ForumInteractive() {
     enabled: !!selectedCategory
   });
 
-  // Get forum posts for selected topic
   const { data: posts = [], isLoading: postsLoading } = useQuery<ExtendedForumPost[]>({
     queryKey: ["/api/forum/posts", selectedTopic],
     queryFn: async () => {
@@ -134,14 +126,11 @@ export default function ForumInteractive() {
       if (!response.ok) throw new Error("Failed to fetch posts");
       const posts = await response.json();
       
-      // Enhance posts with like counts and user like status
       const enhancedPosts = await Promise.all(posts.map(async (post: any) => {
         try {
-          // Get like count
           const likeResponse = await fetch(`/api/forum/likes/count?postId=${post.id}`);
           const { count } = likeResponse.ok ? await likeResponse.json() : { count: 0 };
           
-          // Check if user has liked (only if authenticated)
           let hasLiked = false;
           if (user) {
             const userLikeResponse = await fetch(`/api/forum/likes/check?postId=${post.id}`);
@@ -172,7 +161,6 @@ export default function ForumInteractive() {
     enabled: !!selectedTopic
   });
 
-  // Create new topic mutation
   const createTopicMutation = useMutation({
     mutationFn: async (data: { title: string; content: string; categoryId: number; username?: string }) => {
       const response = await apiRequest("POST", "/api/forum/topics", data);
@@ -198,7 +186,6 @@ export default function ForumInteractive() {
     }
   });
 
-  // Create new post mutation
   const createPostMutation = useMutation({
     mutationFn: async (data: { content: string; topicId: number; username?: string }) => {
       const response = await apiRequest("POST", "/api/forum/posts", data);
@@ -222,7 +209,6 @@ export default function ForumInteractive() {
     }
   });
 
-  // Like/unlike topic mutation
   const likeTopicMutation = useMutation({
     mutationFn: async ({ topicId, isLiking }: { topicId: number; isLiking: boolean }) => {
       if (isLiking) {
@@ -245,7 +231,6 @@ export default function ForumInteractive() {
     }
   });
 
-  // Like/unlike post mutation
   const likePostMutation = useMutation({
     mutationFn: async ({ postId, isLiking }: { postId: number; isLiking: boolean }) => {
       if (isLiking) {
@@ -268,7 +253,6 @@ export default function ForumInteractive() {
     }
   });
 
-  // Edit post mutation
   const editPostMutation = useMutation({
     mutationFn: async ({ postId, content }: { postId: number; content: string }) => {
       const response = await apiRequest("PUT", `/api/forum/posts/${postId}`, { content });
@@ -292,7 +276,6 @@ export default function ForumInteractive() {
     }
   });
 
-  // Delete post mutation
   const deletePostMutation = useMutation({
     mutationFn: async (postId: number) => {
       const response = await apiRequest("DELETE", `/api/forum/posts/${postId}`);
@@ -442,7 +425,6 @@ export default function ForumInteractive() {
 
   const canEditPost = (post: ExtendedForumPost) => {
     if (!user) return false;
-    // isAdmin flag is set by backend based on email/username
     return user.isAdmin || post.userId === user.id;
   };
 
@@ -459,34 +441,42 @@ export default function ForumInteractive() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-500" />
+      </div>
+
       <Helmet>
         <title>Interactive Forum - AfterHours HVAC</title>
         <meta name="description" content="Join our interactive HVAC professional forum. Share knowledge, ask questions, and connect with industry experts." />
       </Helmet>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">HVAC Professional Forum</h1>
-          <p className="text-lg text-gray-700">Connect with industry professionals, share knowledge, and get expert advice</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">HVAC Professional Forum</h1>
+          <p className="text-lg text-blue-200">Connect with industry professionals, share knowledge, and get expert advice</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Categories Sidebar */}
           <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5" />
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl overflow-hidden sticky top-4">
+              <div className="p-6 border-b border-white/10">
+                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-amber-400" />
                   Categories
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
+                </h2>
+              </div>
+              <div className="p-4 space-y-2">
                 {categories.map((category) => (
                   <Button
                     key={category.id}
+                    data-testid={`button-category-${category.id}`}
                     variant={selectedCategory === category.id ? "default" : "ghost"}
-                    className="w-full justify-start"
+                    className={selectedCategory === category.id 
+                      ? "w-full justify-start bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 text-white shadow-lg shadow-amber-500/50 border-0"
+                      : "w-full justify-start bg-white/5 text-blue-200 hover:bg-white/10 hover:text-white transition-all duration-300"}
                     onClick={() => {
                       setSelectedCategory(category.id);
                       setSelectedTopic(null);
@@ -495,63 +485,77 @@ export default function ForumInteractive() {
                     {category.name}
                   </Button>
                 ))}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
-          {/* Main Content */}
           <div className="lg:col-span-3">
             {!selectedTopic ? (
-              /* Topics List */
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-2xl font-bold text-white">
                     {categories.find(c => c.id === selectedCategory)?.name || "Topics"}
                   </h2>
                   <Dialog open={showNewTopicDialog} onOpenChange={setShowNewTopicDialog}>
                     <DialogTrigger asChild>
-                      <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg">
+                      <Button 
+                        data-testid="button-new-topic"
+                        className="flex items-center gap-2 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-600 hover:via-amber-700 hover:to-amber-600 text-white shadow-lg shadow-amber-500/50 border-0 transition-all duration-300"
+                      >
                         <Plus className="h-4 w-4" />
                         New Topic
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl bg-white border-2 border-blue-200 shadow-xl">
-                      <DialogHeader className="bg-blue-50 -m-6 mb-6 p-6 rounded-t-lg">
-                        <DialogTitle className="text-xl font-bold text-blue-900">Create New Topic</DialogTitle>
+                    <DialogContent className="max-w-2xl bg-slate-900/95 backdrop-blur-xl border-2 border-amber-400/30 shadow-2xl">
+                      <DialogHeader className="bg-gradient-to-r from-amber-500/20 to-blue-500/20 -m-6 mb-6 p-6 rounded-t-lg border-b border-white/10">
+                        <DialogTitle className="text-xl font-bold text-white">Create New Topic</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Display Name</label>
+                          <label className="block text-sm font-medium text-blue-200 mb-2">Display Name</label>
                           <Input
+                            data-testid="input-topic-username"
                             value={newTopicUsername}
                             onChange={(e) => setNewTopicUsername(e.target.value)}
                             placeholder="Enter your display name for this post..."
+                            className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-300/50 focus:border-amber-400/50"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                          <label className="block text-sm font-medium text-blue-200 mb-2">Title</label>
                           <Input
+                            data-testid="input-topic-title"
                             value={newTopicTitle}
                             onChange={(e) => setNewTopicTitle(e.target.value)}
                             placeholder="Enter topic title..."
+                            className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-300/50 focus:border-amber-400/50"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                          <label className="block text-sm font-medium text-blue-200 mb-2">Content</label>
                           <Textarea
+                            data-testid="textarea-topic-content"
                             value={newTopicContent}
                             onChange={(e) => setNewTopicContent(e.target.value)}
                             placeholder="Enter topic content..."
                             rows={6}
+                            className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-300/50 focus:border-amber-400/50"
                           />
                         </div>
                         <div className="flex justify-end gap-2">
-                          <Button variant="outline" onClick={() => setShowNewTopicDialog(false)}>
+                          <Button 
+                            data-testid="button-cancel-topic"
+                            variant="outline" 
+                            onClick={() => setShowNewTopicDialog(false)}
+                            className="bg-white/5 backdrop-blur-sm border-white/20 text-white hover:bg-white/10"
+                          >
                             Cancel
                           </Button>
                           <Button 
+                            data-testid="button-create-topic"
                             onClick={handleCreateTopic}
                             disabled={createTopicMutation.isPending}
+                            className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-600 hover:via-amber-700 hover:to-amber-600 text-white shadow-lg shadow-amber-500/50 border-0"
                           >
                             {createTopicMutation.isPending ? "Creating..." : "Create Topic"}
                           </Button>
@@ -564,74 +568,79 @@ export default function ForumInteractive() {
                 {topicsLoading ? (
                   <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
-                      <Card key={i} className="animate-pulse">
-                        <CardContent className="p-6">
-                          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                        </CardContent>
-                      </Card>
+                      <div key={i} className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6 animate-pulse">
+                        <div className="h-4 bg-white/20 rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-white/20 rounded w-1/2"></div>
+                      </div>
                     ))}
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {topics.map((topic) => (
-                      <Card key={topic.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-                        <CardContent className="p-6">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1" onClick={() => setSelectedTopic(topic.id)}>
-                              <div className="flex items-center gap-2 mb-2">
-                                {topic.isPinned && <Pin className="h-4 w-4 text-blue-600" />}
-                                {topic.isLocked && <Lock className="h-4 w-4 text-red-600" />}
-                                <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600">
-                                  {topic.title}
-                                </h3>
-                              </div>
-                              <p className="text-gray-700 mb-4 line-clamp-2">{topic.content}</p>
-                              <div className="flex items-center gap-4 text-sm text-gray-600">
-                                <div className="flex items-center gap-1">
-                                  <User className="h-4 w-4" />
-                                  User {topic.userId}
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <Calendar className="h-4 w-4" />
-                                  {formatDate(topic.createdAt)}
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <Eye className="h-4 w-4" />
-                                  {topic.views} views
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <MessageSquare className="h-4 w-4" />
-                                  {topic.postCount || 0} replies
-                                </div>
-                              </div>
+                      <div 
+                        key={topic.id} 
+                        data-testid={`card-topic-${topic.id}`}
+                        className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6 hover:bg-white/15 hover:border-amber-400/30 hover:shadow-amber-500/20 transition-all duration-300 group"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 cursor-pointer" onClick={() => setSelectedTopic(topic.id)}>
+                            <div className="flex items-center gap-2 mb-2">
+                              {topic.isPinned && <Pin className="h-4 w-4 text-amber-400" data-testid={`icon-pinned-${topic.id}`} />}
+                              {topic.isLocked && <Lock className="h-4 w-4 text-red-400" data-testid={`icon-locked-${topic.id}`} />}
+                              <h3 className="text-lg font-semibold text-white group-hover:text-amber-300 transition-colors duration-300" data-testid={`text-topic-title-${topic.id}`}>
+                                {topic.title}
+                              </h3>
                             </div>
-                            <div className="ml-4">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className={`flex items-center gap-1 ${topic.hasLiked ? 'text-red-600' : 'text-gray-600'}`}
-                                onClick={() => handleLikeTopic(topic.id, topic.hasLiked || false)}
-                              >
-                                <Heart className={`h-4 w-4 ${topic.hasLiked ? 'fill-current' : ''}`} />
-                                {topic.likeCount || 0}
-                              </Button>
+                            <p className="text-blue-200 mb-4 line-clamp-2" data-testid={`text-topic-content-${topic.id}`}>{topic.content}</p>
+                            <div className="flex items-center gap-4 text-sm text-blue-300">
+                              <div className="flex items-center gap-1" data-testid={`text-user-${topic.id}`}>
+                                <User className="h-4 w-4" />
+                                User {topic.userId}
+                              </div>
+                              <div className="flex items-center gap-1" data-testid={`text-date-${topic.id}`}>
+                                <Calendar className="h-4 w-4" />
+                                {formatDate(topic.createdAt)}
+                              </div>
+                              <div className="flex items-center gap-1" data-testid={`text-views-${topic.id}`}>
+                                <Eye className="h-4 w-4" />
+                                {topic.views} views
+                              </div>
+                              <div className="flex items-center gap-1" data-testid={`text-replies-${topic.id}`}>
+                                <MessageSquare className="h-4 w-4" />
+                                {topic.postCount || 0} replies
+                              </div>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
+                          <div className="ml-4">
+                            <Button
+                              data-testid={`button-like-topic-${topic.id}`}
+                              variant="ghost"
+                              size="sm"
+                              className={`flex items-center gap-1 ${topic.hasLiked ? 'text-red-400' : 'text-blue-300'} hover:text-red-400 transition-colors duration-300`}
+                              onClick={() => handleLikeTopic(topic.id, topic.hasLiked || false)}
+                            >
+                              <Heart className={`h-4 w-4 ${topic.hasLiked ? 'fill-current' : ''}`} />
+                              <span data-testid={`text-likes-${topic.id}`}>{topic.likeCount || 0}</span>
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 )}
               </div>
             ) : (
-              /* Posts View */
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                  <Button variant="outline" onClick={() => setSelectedTopic(null)}>
+                  <Button 
+                    data-testid="button-back-topics"
+                    variant="outline" 
+                    onClick={() => setSelectedTopic(null)}
+                    className="bg-white/5 backdrop-blur-sm border-white/20 text-white hover:bg-white/10 transition-all duration-300"
+                  >
                     ← Back to Topics
                   </Button>
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-2xl font-bold text-white">
                     {topics.find(t => t.id === selectedTopic)?.title}
                   </h2>
                 </div>
@@ -639,151 +648,173 @@ export default function ForumInteractive() {
                 {postsLoading ? (
                   <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
-                      <Card key={i} className="animate-pulse">
-                        <CardContent className="p-6">
-                          <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
-                          <div className="h-3 bg-gray-200 rounded w-full mb-1"></div>
-                          <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-                        </CardContent>
-                      </Card>
+                      <div key={i} className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6 animate-pulse">
+                        <div className="h-4 bg-white/20 rounded w-1/4 mb-2"></div>
+                        <div className="h-3 bg-white/20 rounded w-full mb-1"></div>
+                        <div className="h-3 bg-white/20 rounded w-3/4"></div>
+                      </div>
                     ))}
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {posts.map((post, index) => (
-                      <Card key={post.id}>
-                        <CardContent className="p-6">
-                          <div className="flex items-start gap-4">
-                            <Avatar>
-                              <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold">
-                                {post.userName ? post.userName.charAt(0).toUpperCase() : 'U'}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium text-gray-900">{post.userName}</span>
-                                  <span className="text-sm text-gray-600">
-                                    {formatDate(post.createdAt)}
-                                  </span>
-                                  {post.isEdited && (
-                                    <Badge variant="secondary" className="text-xs">
-                                      Edited
-                                    </Badge>
-                                  )}
-                                  {index === 0 && (
-                                    <Badge variant="outline" className="text-xs">
-                                      Original Post
-                                    </Badge>
-                                  )}
-                                </div>
-                                {canEditPost(post) && (
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button variant="ghost" size="sm">
-                                        <MoreVertical className="h-4 w-4" />
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                      <DropdownMenuItem onClick={() => handleEditPost(post.id, post.content)}>
-                                        <Edit className="h-4 w-4 mr-2" />
-                                        Edit Post
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem 
-                                        onClick={() => handleDeletePost(post.id)}
-                                        className="text-red-600"
-                                      >
-                                        <Trash2 className="h-4 w-4 mr-2" />
-                                        Delete Post
-                                      </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
+                      <div 
+                        key={post.id} 
+                        data-testid={`card-post-${post.id}`}
+                        className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6 hover:bg-white/15 transition-all duration-300"
+                      >
+                        <div className="flex items-start gap-4">
+                          <Avatar>
+                            <AvatarFallback className="bg-amber-500/30 text-amber-100 font-semibold border border-amber-400/50">
+                              {post.userName ? post.userName.charAt(0).toUpperCase() : 'U'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-white" data-testid={`text-post-author-${post.id}`}>{post.userName}</span>
+                                <span className="text-sm text-blue-300" data-testid={`text-post-date-${post.id}`}>
+                                  {formatDate(post.createdAt)}
+                                </span>
+                                {post.isEdited && (
+                                  <Badge variant="secondary" className="text-xs bg-blue-500/30 text-blue-100 border-blue-400/50" data-testid={`badge-edited-${post.id}`}>
+                                    Edited
+                                  </Badge>
+                                )}
+                                {index === 0 && (
+                                  <Badge variant="outline" className="text-xs bg-amber-500/20 text-amber-100 border-amber-400/50" data-testid={`badge-original-${post.id}`}>
+                                    Original Post
+                                  </Badge>
                                 )}
                               </div>
-                              
-                              {editingPostId === post.id ? (
-                                <div className="space-y-3 mb-4">
-                                  <Textarea
-                                    value={editingContent}
-                                    onChange={(e) => setEditingContent(e.target.value)}
-                                    rows={4}
-                                  />
-                                  <div className="flex gap-2">
+                              {canEditPost(post) && (
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
                                     <Button 
-                                      size="sm" 
-                                      onClick={() => handleSaveEdit(post.id)}
-                                      disabled={editPostMutation.isPending}
+                                      data-testid={`button-post-menu-${post.id}`}
+                                      variant="ghost" 
+                                      size="sm"
+                                      className="text-white hover:bg-white/10"
                                     >
-                                      {editPostMutation.isPending ? "Saving..." : "Save"}
+                                      <MoreVertical className="h-4 w-4" />
                                     </Button>
-                                    <Button 
-                                      size="sm" 
-                                      variant="outline" 
-                                      onClick={handleCancelEdit}
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" className="bg-slate-900/95 backdrop-blur-xl border-white/20 text-white">
+                                    <DropdownMenuItem 
+                                      data-testid={`button-edit-post-${post.id}`}
+                                      onClick={() => handleEditPost(post.id, post.content)}
+                                      className="hover:bg-white/10"
                                     >
-                                      Cancel
-                                    </Button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <p className="text-gray-800 whitespace-pre-wrap mb-4">{post.content}</p>
+                                      <Edit className="h-4 w-4 mr-2" />
+                                      Edit Post
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem 
+                                      data-testid={`button-delete-post-${post.id}`}
+                                      onClick={() => handleDeletePost(post.id)}
+                                      className="text-red-400 hover:bg-red-500/20"
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      Delete Post
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               )}
-                              
-                              <div className="flex items-center gap-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className={`flex items-center gap-1 ${post.hasLiked ? 'text-red-600' : 'text-gray-600'}`}
-                                  onClick={() => handleLikePost(post.id, post.hasLiked || false)}
-                                >
-                                  <Heart className={`h-4 w-4 ${post.hasLiked ? 'fill-current' : ''}`} />
-                                  {post.likeCount || 0}
-                                </Button>
+                            </div>
+                            
+                            {editingPostId === post.id ? (
+                              <div className="space-y-3 mb-4">
+                                <Textarea
+                                  data-testid={`textarea-edit-post-${post.id}`}
+                                  value={editingContent}
+                                  onChange={(e) => setEditingContent(e.target.value)}
+                                  rows={4}
+                                  className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-300/50 focus:border-amber-400/50"
+                                />
+                                <div className="flex gap-2">
+                                  <Button 
+                                    data-testid={`button-save-edit-${post.id}`}
+                                    size="sm" 
+                                    onClick={() => handleSaveEdit(post.id)}
+                                    disabled={editPostMutation.isPending}
+                                    className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-600 hover:via-amber-700 hover:to-amber-600 text-white shadow-lg shadow-amber-500/50 border-0"
+                                  >
+                                    {editPostMutation.isPending ? "Saving..." : "Save"}
+                                  </Button>
+                                  <Button 
+                                    data-testid={`button-cancel-edit-${post.id}`}
+                                    size="sm" 
+                                    variant="outline" 
+                                    onClick={handleCancelEdit}
+                                    className="bg-white/5 backdrop-blur-sm border-white/20 text-white hover:bg-white/10"
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
                               </div>
+                            ) : (
+                              <p className="text-blue-100 whitespace-pre-wrap mb-4" data-testid={`text-post-content-${post.id}`}>{post.content}</p>
+                            )}
+                            
+                            <div className="flex items-center gap-2">
+                              <Button
+                                data-testid={`button-like-post-${post.id}`}
+                                variant="ghost"
+                                size="sm"
+                                className={`flex items-center gap-1 ${post.hasLiked ? 'text-red-400' : 'text-blue-300'} hover:text-red-400 transition-colors duration-300`}
+                                onClick={() => handleLikePost(post.id, post.hasLiked || false)}
+                              >
+                                <Heart className={`h-4 w-4 ${post.hasLiked ? 'fill-current' : ''}`} />
+                                <span data-testid={`text-post-likes-${post.id}`}>{post.likeCount || 0}</span>
+                              </Button>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
+                        </div>
+                      </div>
                     ))}
 
-                    {/* New Post Form */}
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Reply className="h-5 w-5" />
+                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl overflow-hidden">
+                      <div className="p-6 border-b border-white/10">
+                        <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                          <Reply className="h-5 w-5 text-amber-400" />
                           Reply to Topic
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
+                        </h3>
+                      </div>
+                      <div className="p-6">
                         <div className="space-y-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Display Name</label>
+                            <label className="block text-sm font-medium text-blue-200 mb-2">Display Name</label>
                             <Input
+                              data-testid="input-post-username"
                               value={newPostUsername}
                               onChange={(e) => setNewPostUsername(e.target.value)}
                               placeholder="Enter your display name for this reply..."
+                              className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-300/50 focus:border-amber-400/50"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Reply</label>
+                            <label className="block text-sm font-medium text-blue-200 mb-2">Reply</label>
                             <Textarea
+                              data-testid="textarea-post-content"
                               value={newPostContent}
                               onChange={(e) => setNewPostContent(e.target.value)}
                               placeholder="Enter your reply..."
                               rows={4}
+                              className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-300/50 focus:border-amber-400/50"
                             />
                           </div>
                           <div className="flex justify-end">
                             <Button 
+                              data-testid="button-post-reply"
                               onClick={handleCreatePost}
                               disabled={createPostMutation.isPending}
+                              className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-600 hover:via-amber-700 hover:to-amber-600 text-white shadow-lg shadow-amber-500/50 border-0 transition-all duration-300"
                             >
                               {createPostMutation.isPending ? "Posting..." : "Post Reply"}
                             </Button>
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

@@ -474,16 +474,16 @@ const ProCalculator = () => {
             </div>
 
             {/* Simple Material Search & Add */}
-            <Card className="mb-8 bg-gradient-to-r from-gray-800 to-gray-900 border-gray-600">
-              <CardHeader>
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl mb-8 bg-gradient-to-r from-gray-800 to-gray-900 border-gray-600">
+              
                 <CardTitle className="text-white text-xl flex items-center gap-2">
                   <Search className="w-5 h-5 text-blue-400" />
                   Add Materials from Alggin Catalog
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+                </h2>
+              
+              <div className="space-y-4">
                 <div className="flex gap-3">
-                  <Input
+                  <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                     placeholder="Search materials (furnace, ductwork, thermostat, etc.)"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -546,12 +546,12 @@ const ProCalculator = () => {
                     </div>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             <div className="grid md:grid-cols-2 gap-8">
               {/* Input Section */}
-              <Card className="relative bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-600 backdrop-blur-xl shadow-2xl overflow-hidden">
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl relative bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-600 backdrop-blur-xl shadow-2xl overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-orange-500/10"></div>
                 <CardHeader className="relative">
                   <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
@@ -559,15 +559,15 @@ const ProCalculator = () => {
                       <Home className="w-6 h-6 text-white" />
                     </div>
                     Project Details
-                  </CardTitle>
+                  </h2>
                   <CardDescription className="text-gray-300 text-lg">
                     Enter your project specifications for accurate Calgary market pricing
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="relative space-y-8">
+                  </p>
+                
+                <div className="relative space-y-8">
                   <div className="space-y-2">
                     <Label htmlFor="squareFootage" className="text-white text-lg font-semibold">Square Footage</Label>
-                    <Input
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="squareFootage"
                       type="number"
                       placeholder="e.g., 1800"
@@ -607,7 +607,7 @@ const ProCalculator = () => {
 
                   <div>
                     <Label htmlFor="systemAge" className="text-white">System Age (if applicable)</Label>
-                    <Input
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="systemAge"
                       type="number"
                       placeholder="e.g., 15"
@@ -674,11 +674,11 @@ const ProCalculator = () => {
                       Generate Professional Estimate
                     </div>
                   </Button>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Results Section */}
-              <Card className="relative bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-600 backdrop-blur-xl shadow-2xl overflow-hidden">
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl relative bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-600 backdrop-blur-xl shadow-2xl overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-600/10 to-blue-500/10"></div>
                 <CardHeader className="relative">
                   <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
@@ -686,12 +686,12 @@ const ProCalculator = () => {
                       <DollarSign className="w-6 h-6 text-white" />
                     </div>
                     Professional Estimate
-                  </CardTitle>
+                  </h2>
                   <CardDescription className="text-gray-300 text-lg">
                     Calgary market pricing with professional-grade accuracy
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="relative">
+                  </p>
+                
+                <div className="relative">
                   {estimate ? (
                     <div className="space-y-6">
                       <div className="text-center p-6 bg-gradient-to-r from-blue-600/20 to-orange-500/20 rounded-2xl border border-gray-600">
@@ -779,14 +779,14 @@ const ProCalculator = () => {
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <Calculator className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                      <Calculator className="w-16 h-16 text-white/60 mx-auto mb-4" />
                       <p className="text-gray-400">
                         Fill out the project details to generate your estimate
                       </p>
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
 
             <div className="mt-8 text-center">

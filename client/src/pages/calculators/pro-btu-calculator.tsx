@@ -100,41 +100,42 @@ function ProBTUCalculatorContent() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center bg-orange-100 border border-orange-200 rounded-full px-4 py-2 mb-4">
-          <Calculator className="h-4 w-4 text-orange-600 mr-2" />
-          <span className="text-orange-600 text-sm font-medium">Pro Tool</span>
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 p-6">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center bg-amber-500/20 border border-amber-500/30 rounded-full px-4 py-2 mb-4">
+            <Calculator className="h-4 w-4 text-amber-500 mr-2" />
+            <span className="text-amber-500 text-sm font-medium">Pro Tool</span>
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">Professional Load Calculator</h1>
+          <p className="text-white/70">Manual J-style load calculations for Alberta climate zones</p>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Professional Load Calculator</h1>
-        <p className="text-gray-600">Manual J-style load calculations for Alberta climate zones</p>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Input Form */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Home className="h-5 w-5 text-blue-600" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Input Form */}
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-white mb-6">
+              <Home className="h-5 w-5 text-amber-500" />
               Building Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            </h2>
+            <div className="space-y-4">
             <div>
-              <Label htmlFor="squareFootage">Square Footage</Label>
+              <Label htmlFor="squareFootage" className="text-white/90">Square Footage</Label>
               <Input
                 id="squareFootage"
                 type="number"
                 placeholder="e.g., 2000"
                 value={squareFootage}
                 onChange={(e) => setSquareFootage(e.target.value)}
+                className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                data-testid="input-square-footage"
               />
             </div>
 
             <div>
-              <Label htmlFor="ceilingHeight">Ceiling Height (feet)</Label>
+              <Label htmlFor="ceilingHeight" className="text-white/90">Ceiling Height (feet)</Label>
               <Select value={ceilingHeight} onValueChange={setCeilingHeight}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500" data-testid="select-ceiling-height">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -147,9 +148,9 @@ function ProBTUCalculatorContent() {
             </div>
 
             <div>
-              <Label htmlFor="insulationLevel">Insulation Level</Label>
+              <Label htmlFor="insulationLevel" className="text-white/90">Insulation Level</Label>
               <Select value={insulationLevel} onValueChange={setInsulationLevel}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500" data-testid="select-insulation">
                   <SelectValue placeholder="Select insulation level" />
                 </SelectTrigger>
                 <SelectContent>
@@ -162,20 +163,22 @@ function ProBTUCalculatorContent() {
             </div>
 
             <div>
-              <Label htmlFor="windowCount">Number of Windows</Label>
+              <Label htmlFor="windowCount" className="text-white/90">Number of Windows</Label>
               <Input
                 id="windowCount"
                 type="number"
                 placeholder="e.g., 15"
                 value={windowCount}
                 onChange={(e) => setWindowCount(e.target.value)}
+                className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                data-testid="input-window-count"
               />
             </div>
 
             <div>
-              <Label htmlFor="homeAge">Home Age</Label>
+              <Label htmlFor="homeAge" className="text-white/90">Home Age</Label>
               <Select value={homeAge} onValueChange={setHomeAge}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500" data-testid="select-home-age">
                   <SelectValue placeholder="Select home age" />
                 </SelectTrigger>
                 <SelectContent>
@@ -188,9 +191,9 @@ function ProBTUCalculatorContent() {
             </div>
 
             <div>
-              <Label htmlFor="climateZone">Alberta Climate Zone</Label>
+              <Label htmlFor="climateZone" className="text-white/90">Alberta Climate Zone</Label>
               <Select value={climateZone} onValueChange={setClimateZone}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500" data-testid="select-climate-zone">
                   <SelectValue placeholder="Select climate zone" />
                 </SelectTrigger>
                 <SelectContent>
@@ -204,80 +207,80 @@ function ProBTUCalculatorContent() {
 
             <Button 
               onClick={calculateLoad} 
-              className="w-full bg-orange-600 hover:bg-orange-700"
+              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg shadow-amber-500/50"
               disabled={!squareFootage || !insulationLevel || !windowCount || !homeAge || !climateZone}
+              data-testid="button-calculate-load"
             >
               <Calculator className="h-4 w-4 mr-2" />
               Calculate Load
             </Button>
-          </CardContent>
-        </Card>
+            </div>
+          </div>
 
-        {/* Results */}
-        {result && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Thermometer className="h-5 w-5 text-orange-600" />
+          {/* Results */}
+          {result && (
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
+              <h2 className="flex items-center gap-2 text-2xl font-bold text-white mb-6">
+                <Thermometer className="h-5 w-5 text-amber-500" />
                 Load Calculation Results
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <Snowflake className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-blue-600">
-                    {result.heatingLoad.toLocaleString()}
+              </h2>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                    <Snowflake className="h-8 w-8 text-blue-400 mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-white" data-testid="text-heating-load">
+                      {result.heatingLoad.toLocaleString()}
+                    </div>
+                    <div className="text-sm text-white/60">BTU/hr Heating</div>
                   </div>
-                  <div className="text-sm text-gray-600">BTU/hr Heating</div>
+                  
+                  <div className="text-center p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                    <Thermometer className="h-8 w-8 text-amber-500 mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-white" data-testid="text-cooling-load">
+                      {result.coolingLoad.toLocaleString()}
+                    </div>
+                    <div className="text-sm text-white/60">BTU/hr Cooling</div>
+                  </div>
                 </div>
-                
-                <div className="text-center p-4 bg-orange-50 rounded-lg">
-                  <Thermometer className="h-8 w-8 text-orange-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-orange-600">
-                    {result.coolingLoad.toLocaleString()}
+
+                <div className="h-px bg-white/20 my-4"></div>
+
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-white">Equipment Recommendations</h4>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/70">Furnace Size:</span>
+                    <span className="px-3 py-1 bg-white/10 border border-white/20 rounded-lg text-blue-400 font-semibold" data-testid="text-furnace-size">
+                      {result.recommendedFurnaceSize.toLocaleString()} BTU/hr
+                    </span>
                   </div>
-                  <div className="text-sm text-gray-600">BTU/hr Cooling</div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/70">AC Size:</span>
+                    <span className="px-3 py-1 bg-white/10 border border-white/20 rounded-lg text-amber-400 font-semibold" data-testid="text-ac-size">
+                      {result.recommendedACSize} tons
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/70">Efficiency:</span>
+                    <span className="px-3 py-1 bg-white/10 border border-white/20 rounded-lg text-green-400 font-semibold" data-testid="text-efficiency">
+                      {result.efficiency}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-4 flex gap-3">
+                  <AlertCircle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-white/70">
+                    These calculations are estimates based on Manual J principles. Professional engineering 
+                    calculations may be required for complex installations or permit applications.
+                  </p>
                 </div>
               </div>
-
-              <Separator />
-
-              <div className="space-y-3">
-                <h4 className="font-semibold text-gray-900">Equipment Recommendations</h4>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Furnace Size:</span>
-                  <Badge variant="outline" className="text-blue-600 border-blue-200">
-                    {result.recommendedFurnaceSize.toLocaleString()} BTU/hr
-                  </Badge>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">AC Size:</span>
-                  <Badge variant="outline" className="text-orange-600 border-orange-200">
-                    {result.recommendedACSize} tons
-                  </Badge>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Efficiency:</span>
-                  <Badge variant="outline" className="text-green-600 border-green-200">
-                    {result.efficiency}
-                  </Badge>
-                </div>
-              </div>
-
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  These calculations are estimates based on Manual J principles. Professional engineering 
-                  calculations may be required for complex installations or permit applications.
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

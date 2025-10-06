@@ -188,48 +188,50 @@ export default function BTUCalculator() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 p-4">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Calculator className="h-8 w-8 text-blue-600" />
-            <Thermometer className="h-8 w-8 text-orange-600" />
+            <Calculator className="h-8 w-8 text-amber-500" />
+            <Thermometer className="h-8 w-8 text-amber-400" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">BTU Calculator</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-white mb-4">BTU Calculator</h1>
+          <p className="text-xl text-white/70 max-w-2xl mx-auto">
             Calculate the right heating and cooling capacity for any room or space
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Input Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Home className="h-5 w-5 text-blue-600" />
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
+            <div className="mb-6">
+              <h2 className="flex items-center gap-2 text-2xl font-bold text-white mb-2">
+                <Home className="h-5 w-5 text-amber-500" />
                 Room Information
-              </CardTitle>
-              <CardDescription>
+              </h2>
+              <p className="text-white/60">
                 Enter room details for accurate BTU calculation
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+              </p>
+            </div>
+            <div className="space-y-6">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="squareFootage">Square Footage</Label>
+                  <Label htmlFor="squareFootage" className="text-white/90">Square Footage</Label>
                   <Input
                     id="squareFootage"
                     type="number"
                     placeholder="e.g., 300"
                     value={formData.squareFootage}
                     onChange={(e) => setFormData(prev => ({ ...prev, squareFootage: e.target.value }))}
+                    className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                    data-testid="input-square-footage"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="ceilingHeight">Ceiling Height (ft)</Label>
+                  <Label htmlFor="ceilingHeight" className="text-white/90">Ceiling Height (ft)</Label>
                   <Select value={formData.ceilingHeight} onValueChange={(value) => setFormData(prev => ({ ...prev, ceilingHeight: value }))}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500" data-testid="select-ceiling-height">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -243,9 +245,9 @@ export default function BTUCalculator() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="roomType">Room Type</Label>
+                <Label htmlFor="roomType" className="text-white/90">Room Type</Label>
                 <Select value={formData.roomType} onValueChange={(value) => setFormData(prev => ({ ...prev, roomType: value }))}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500" data-testid="select-room-type">
                     <SelectValue placeholder="Select room type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -262,31 +264,35 @@ export default function BTUCalculator() {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="windowCount">Number of Windows</Label>
+                  <Label htmlFor="windowCount" className="text-white/90">Number of Windows</Label>
                   <Input
                     id="windowCount"
                     type="number"
                     placeholder="e.g., 2"
                     value={formData.windowCount}
                     onChange={(e) => setFormData(prev => ({ ...prev, windowCount: e.target.value }))}
+                    className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                    data-testid="input-window-count"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="occupancy">Average Occupancy</Label>
+                  <Label htmlFor="occupancy" className="text-white/90">Average Occupancy</Label>
                   <Input
                     id="occupancy"
                     type="number"
                     placeholder="e.g., 2"
                     value={formData.occupancy}
                     onChange={(e) => setFormData(prev => ({ ...prev, occupancy: e.target.value }))}
+                    className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                    data-testid="input-occupancy"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="insulation">Insulation Quality</Label>
+                <Label htmlFor="insulation" className="text-white/90">Insulation Quality</Label>
                 <Select value={formData.insulation} onValueChange={(value) => setFormData(prev => ({ ...prev, insulation: value }))}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500" data-testid="select-insulation">
                     <SelectValue placeholder="Select insulation level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -299,9 +305,9 @@ export default function BTUCalculator() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="exposures">Sun Exposure</Label>
+                <Label htmlFor="exposures" className="text-white/90">Sun Exposure</Label>
                 <Select value={formData.exposures} onValueChange={(value) => setFormData(prev => ({ ...prev, exposures: value }))}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500" data-testid="select-sun-exposure">
                     <SelectValue placeholder="Primary sun exposure" />
                   </SelectTrigger>
                   <SelectContent>
@@ -313,111 +319,108 @@ export default function BTUCalculator() {
                 </Select>
               </div>
 
-              <Button onClick={calculateBTU} className="w-full" size="lg">
+              <Button 
+                onClick={calculateBTU} 
+                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg shadow-amber-500/50" 
+                size="lg"
+                data-testid="button-calculate-btu"
+              >
                 <Calculator className="h-4 w-4 mr-2" />
                 Calculate BTU Requirements
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Results */}
           {results && (
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Thermometer className="h-5 w-5 text-blue-600" />
-                    BTU Requirements
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="flex items-center justify-center gap-2 mb-2">
-                        <Snowflake className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <div className="text-2xl font-bold text-blue-600">{results.coolingTonnage} Tons</div>
-                      <div className="text-sm text-gray-600">Cooling Capacity</div>
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
+                <h2 className="flex items-center gap-2 text-2xl font-bold text-white mb-6">
+                  <Thermometer className="h-5 w-5 text-amber-500" />
+                  BTU Requirements
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <Snowflake className="h-5 w-5 text-blue-400" />
                     </div>
-                    <div className="text-center p-4 bg-orange-50 rounded-lg">
-                      <div className="flex items-center justify-center gap-2 mb-2">
-                        <Wind className="h-5 w-5 text-orange-600" />
-                      </div>
-                      <div className="text-2xl font-bold text-orange-600">{results.heatingBtu.toLocaleString()}</div>
-                      <div className="text-sm text-gray-600">Heating BTU/hr</div>
-                    </div>
+                    <div className="text-2xl font-bold text-white" data-testid="text-cooling-tonnage">{results.coolingTonnage} Tons</div>
+                    <div className="text-sm text-white/60">Cooling Capacity</div>
                   </div>
-                </CardContent>
-              </Card>
+                  <div className="text-center p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <Wind className="h-5 w-5 text-amber-500" />
+                    </div>
+                    <div className="text-2xl font-bold text-white" data-testid="text-heating-btu">{results.heatingBtu.toLocaleString()}</div>
+                    <div className="text-sm text-white/60">Heating BTU/hr</div>
+                  </div>
+                </div>
+              </div>
 
               {/* Equipment Recommendations */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Recommended Equipment</h3>
+                <h3 className="text-lg font-semibold text-white">Recommended Equipment</h3>
                 
                 {/* Ducane */}
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base text-blue-600">Ducane Equipment</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="p-3 bg-blue-50 rounded-lg">
-                      <div className="font-medium text-sm text-blue-900 mb-1">Air Conditioner</div>
-                      <div className="text-sm text-gray-700">{results.ducaneModels.cooling}</div>
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-4">
+                  <h4 className="text-base text-amber-500 font-bold mb-3">Ducane Equipment</h4>
+                  <div className="space-y-3">
+                    <div className="p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                      <div className="font-medium text-sm text-blue-400 mb-1">Air Conditioner</div>
+                      <div className="text-sm text-white/80" data-testid="text-ducane-cooling">{results.ducaneModels.cooling}</div>
                     </div>
-                    <div className="p-3 bg-orange-50 rounded-lg">
-                      <div className="font-medium text-sm text-orange-900 mb-1">Furnace</div>
-                      <div className="text-sm text-gray-700">{results.ducaneModels.heating}</div>
+                    <div className="p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                      <div className="font-medium text-sm text-amber-400 mb-1">Furnace</div>
+                      <div className="text-sm text-white/80" data-testid="text-ducane-heating">{results.ducaneModels.heating}</div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {/* Daikin */}
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base text-blue-600">Daikin Equipment</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="p-3 bg-blue-50 rounded-lg">
-                      <div className="font-medium text-sm text-blue-900 mb-1">Air Conditioner</div>
-                      <div className="text-sm text-gray-700">{results.daikinModels.cooling}</div>
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-4">
+                  <h4 className="text-base text-amber-500 font-bold mb-3">Daikin Equipment</h4>
+                  <div className="space-y-3">
+                    <div className="p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                      <div className="font-medium text-sm text-blue-400 mb-1">Air Conditioner</div>
+                      <div className="text-sm text-white/80" data-testid="text-daikin-cooling">{results.daikinModels.cooling}</div>
                     </div>
-                    <div className="p-3 bg-orange-50 rounded-lg">
-                      <div className="font-medium text-sm text-orange-900 mb-1">Furnace</div>
-                      <div className="text-sm text-gray-700">{results.daikinModels.heating}</div>
+                    <div className="p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                      <div className="font-medium text-sm text-amber-400 mb-1">Furnace</div>
+                      <div className="text-sm text-white/80" data-testid="text-daikin-heating">{results.daikinModels.heating}</div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {/* Lennox */}
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base text-blue-600">Lennox Equipment</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="p-3 bg-blue-50 rounded-lg">
-                      <div className="font-medium text-sm text-blue-900 mb-1">Air Conditioner</div>
-                      <div className="text-sm text-gray-700">{results.lennoxModels.cooling}</div>
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-4">
+                  <h4 className="text-base text-amber-500 font-bold mb-3">Lennox Equipment</h4>
+                  <div className="space-y-3">
+                    <div className="p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                      <div className="font-medium text-sm text-blue-400 mb-1">Air Conditioner</div>
+                      <div className="text-sm text-white/80" data-testid="text-lennox-cooling">{results.lennoxModels.cooling}</div>
                     </div>
-                    <div className="p-3 bg-orange-50 rounded-lg">
-                      <div className="font-medium text-sm text-orange-900 mb-1">Furnace</div>
-                      <div className="text-sm text-gray-700">{results.lennoxModels.heating}</div>
+                    <div className="p-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                      <div className="font-medium text-sm text-amber-400 mb-1">Furnace</div>
+                      <div className="text-sm text-white/80" data-testid="text-lennox-heating">{results.lennoxModels.heating}</div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </div>
 
-              <Card className="bg-gradient-to-r from-orange-500 to-blue-600 text-white">
-                <CardContent className="p-6">
-                  <div className="text-center">
-                    <Calculator className="h-8 w-8 mx-auto mb-3" />
-                    <h3 className="text-lg font-bold mb-2">Ready for Installation?</h3>
-                    <p className="mb-4 opacity-90">Get professional installation from AfterHours HVAC</p>
-                    <Button variant="secondary" className="bg-white text-gray-900 hover:bg-gray-100">
-                      Get Free Quote
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="bg-gradient-to-r from-amber-500 to-amber-600 shadow-2xl shadow-amber-500/50 rounded-2xl p-6">
+                <div className="text-center">
+                  <Calculator className="h-8 w-8 mx-auto mb-3 text-white" />
+                  <h3 className="text-lg font-bold mb-2 text-white">Ready for Installation?</h3>
+                  <p className="mb-4 text-white/90">Get professional installation from AfterHours HVAC</p>
+                  <Button 
+                    variant="secondary" 
+                    className="bg-white text-slate-900 hover:bg-white/90 font-semibold"
+                    data-testid="button-get-quote"
+                  >
+                    Get Free Quote
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
         </div>

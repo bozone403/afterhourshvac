@@ -400,23 +400,23 @@ Calgary, Alberta
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <div className="text-center mb-8">
         <div className="inline-flex items-center bg-green-100 border border-green-200 rounded-full px-4 py-2 mb-4">
-          <FileCheck className="h-4 w-4 text-green-600 mr-2" />
-          <span className="text-green-600 text-sm font-medium">Pro Tool</span>
+          <FileCheck className="h-4 w-4 text-green-400 mr-2" />
+          <span className="text-green-400 text-sm font-medium">Pro Tool</span>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Professional Quote Builder</h1>
-        <p className="text-gray-600">Real-time quoting with Alggin Calgary pricing</p>
+        <h1 className="text-3xl font-bold text-white mb-2">Professional Quote Builder</h1>
+        <p className="text-white/70">Real-time quoting with Alggin Calgary pricing</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Customer Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Customer Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
+          
+            <h2 className="text-2xl font-bold text-white mb-6">Customer Information</h2>
+          
+          <div className="space-y-4">
             <div>
-              <Label htmlFor="customerName">Customer Name</Label>
-              <Input
+              <Label htmlFor="customerName" className="text-white/90">Customer Name</Label>
+              <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                 id="customerName"
                 value={customerInfo.name}
                 onChange={(e) => setCustomerInfo(prev => ({ ...prev, name: e.target.value }))}
@@ -424,7 +424,7 @@ Calgary, Alberta
               />
             </div>
             <div>
-              <Label htmlFor="customerAddress">Address</Label>
+              <Label htmlFor="customerAddress" className="text-white/90">Address</Label>
               <Textarea
                 id="customerAddress"
                 value={customerInfo.address}
@@ -434,8 +434,8 @@ Calgary, Alberta
               />
             </div>
             <div>
-              <Label htmlFor="customerPhone">Phone</Label>
-              <Input
+              <Label htmlFor="customerPhone" className="text-white/90">Phone</Label>
+              <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                 id="customerPhone"
                 value={customerInfo.phone}
                 onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: e.target.value }))}
@@ -443,8 +443,8 @@ Calgary, Alberta
               />
             </div>
             <div>
-              <Label htmlFor="customerEmail">Email</Label>
-              <Input
+              <Label htmlFor="customerEmail" className="text-white/90">Email</Label>
+              <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                 id="customerEmail"
                 type="email"
                 value={customerInfo.email}
@@ -452,19 +452,19 @@ Calgary, Alberta
                 placeholder="john@example.com"
               />
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Add Items */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Add Quote Items</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
+          
+            <h2 className="text-2xl font-bold text-white mb-6">Add Quote Items</h2>
+          
+          <div className="space-y-4">
             <div>
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category" className="text-white/90">Category</Label>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -479,9 +479,9 @@ Calgary, Alberta
 
             {selectedCategory && (
               <div>
-                <Label htmlFor="item">Item</Label>
+                <Label htmlFor="item" className="text-white/90">Item</Label>
                 <Select value={selectedItem} onValueChange={setSelectedItem}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/5 backdrop-blur-sm border-white/20 text-white focus:border-amber-500">
                     <SelectValue placeholder="Select item" />
                   </SelectTrigger>
                   <SelectContent>
@@ -495,8 +495,8 @@ Calgary, Alberta
 
             {selectedItem && (
               <div>
-                <Label htmlFor="quantity">Quantity</Label>
-                <Input
+                <Label htmlFor="quantity" className="text-white/90">Quantity</Label>
+                <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                   id="quantity"
                   type="number"
                   step="0.1"
@@ -504,7 +504,7 @@ Calgary, Alberta
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
                 />
-                <div className="text-sm text-gray-600 mt-1">
+                <div className="text-sm text-white/60 mt-1">
                   Unit Price: ${algginPricing[selectedCategory as keyof typeof algginPricing][selectedItem as any]?.price.toFixed(2)}
                 </div>
               </div>
@@ -518,18 +518,18 @@ Calgary, Alberta
               <Plus className="h-4 w-4 mr-2" />
               Add Item
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Quote Summary */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-green-600" />
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
+          
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-white mb-6">
+              <DollarSign className="h-5 w-5 text-green-400" />
               Quote Summary
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            </h2>
+          
+          <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Materials:</span>
@@ -550,12 +550,12 @@ Calgary, Alberta
               <Separator />
               <div className="flex justify-between font-bold text-lg">
                 <span>Total:</span>
-                <span className="text-green-600">${quote.total.toFixed(2)}</span>
+                <span className="text-green-400">${quote.total.toFixed(2)}</span>
               </div>
             </div>
 
             <Button 
-              className="w-full"
+              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg shadow-amber-500/50"
               onClick={() => {
                 const quoteText = generateQuoteText();
                 navigator.clipboard.writeText(quoteText);
@@ -565,28 +565,28 @@ Calgary, Alberta
               <Download className="h-4 w-4 mr-2" />
               Copy Quote
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Quote Items List */}
       {quote.items.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Quote Items</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-6">
+          
+            <h2 className="text-2xl font-bold text-white mb-6">Quote Items</h2>
+          
+          <div>
             <div className="space-y-3">
               {quote.items.map(item => (
                 <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex-1">
                     <div className="font-medium">{item.item}</div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-white/70">
                       {item.category} • ${item.unitPrice.toFixed(2)} each • {item.laborHours.toFixed(1)} labor hrs
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Input
+                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       type="number"
                       step="0.1"
                       min="0.1"
@@ -606,8 +606,8 @@ Calgary, Alberta
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );
