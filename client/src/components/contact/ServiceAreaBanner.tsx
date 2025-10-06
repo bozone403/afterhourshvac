@@ -21,17 +21,19 @@ const ServiceAreaBanner = () => {
   }, [cities.length]);
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-blue-700 py-4 overflow-hidden">
+    <div className="bg-gradient-to-r from-slate-800 via-blue-800 to-slate-800 py-4 overflow-hidden border-b border-amber-500/20">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-center space-x-2 text-white">
-          <MapPin className="h-5 w-5 text-blue-200" />
-          <span className="text-sm md:text-base font-medium">
-            Now serving 
-          </span>
-          <div className="relative h-6 md:h-7 flex items-center">
+        <div className="flex flex-wrap items-center justify-center gap-2 text-white">
+          <div className="flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-amber-400" />
+            <span className="text-sm md:text-base font-medium">
+              Now serving
+            </span>
+          </div>
+          <div className="relative min-w-[150px] h-7 flex items-center justify-center">
             <span 
               key={currentCityIndex}
-              className="absolute whitespace-nowrap font-bold text-sm md:text-base animate-in slide-in-from-top-2 duration-500"
+              className="absolute inset-0 flex items-center justify-center font-black text-base md:text-lg text-amber-400 animate-in fade-in slide-in-from-bottom-2 duration-500"
             >
               {cities[currentCityIndex]}
             </span>
