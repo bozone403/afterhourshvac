@@ -32,7 +32,7 @@ import { promisify } from "util";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
-import { getEarlResponse, analyzeHVACSymptoms } from "./services/anthropic";
+import { getEarlResponse, analyzeHVACSymptoms } from "./services/gemini";
 
 // Initialize Stripe with the provided secret key
 import Stripe from 'stripe';
