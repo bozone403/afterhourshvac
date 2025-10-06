@@ -159,7 +159,7 @@ const Home = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg" className="hvac-button-secondary text-lg px-8 py-4">
+                  <Button size="lg" className="hvac-button-secondary text-lg px-8 py-4" data-testid="button-call-hero">
                     <Phone className="w-5 h-5 mr-2" />
                     Call (403) 613-6014
                   </Button>
@@ -168,6 +168,7 @@ const Home = () => {
                     variant="outline" 
                     className="border-2 border-white text-white hover:bg-white hover:text-blue-900 text-lg px-8 py-4"
                     asChild
+                    data-testid="button-schedule-hero"
                   >
                     <Link href="/contact">
                       <Calendar className="w-5 h-5 mr-2" />
@@ -194,25 +195,28 @@ const Home = () => {
                       type="text"
                       placeholder="Your Name"
                       className="hvac-input"
+                      data-testid="input-name-estimate"
                     />
                     <input
                       type="tel"
                       placeholder="Phone Number"
                       className="hvac-input"
+                      data-testid="input-phone-estimate"
                     />
                     <input
                       type="email"
                       placeholder="Email Address"
                       className="hvac-input"
+                      data-testid="input-email-estimate"
                     />
-                    <select className="hvac-input">
+                    <select className="hvac-input" data-testid="select-service-estimate">
                       <option>Select Service</option>
                       <option>Furnace Installation</option>
                       <option>AC Repair</option>
                       <option>Duct Cleaning</option>
                       <option>Emergency Service</option>
                     </select>
-                    <Button className="w-full hvac-button-primary text-lg py-3">
+                    <Button className="w-full hvac-button-primary text-lg py-3" data-testid="button-submit-estimate">
                       Get My Free Quote
                       <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
@@ -232,6 +236,8 @@ const Home = () => {
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     index === currentSlide ? "bg-white" : "bg-white/40"
                   }`}
+                  data-testid={`button-carousel-${index}`}
+                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
@@ -288,7 +294,7 @@ const Home = () => {
                         </li>
                       ))}
                     </ul>
-                    <Button asChild className="w-full hvac-button-primary">
+                    <Button asChild className="w-full hvac-button-primary" data-testid={`button-shop-${category.title.toLowerCase().replace(/\s+/g, '-')}`}>
                       <Link href={category.link}>
                         Shop Now
                         <ArrowRight className="w-4 h-4 ml-2" />
@@ -324,10 +330,10 @@ const Home = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button className="hvac-button-primary" asChild>
+                  <Button className="hvac-button-primary" asChild data-testid="button-learn-more">
                     <Link href="/about">Learn More About Us</Link>
                   </Button>
-                  <Button variant="outline" className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white" asChild>
+                  <Button variant="outline" className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white" asChild data-testid="button-get-in-touch">
                     <Link href="/contact">Get In Touch</Link>
                   </Button>
                 </div>
@@ -373,7 +379,7 @@ const Home = () => {
                 to restore your system quickly and efficiently.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="hvac-button-secondary text-lg px-8 py-4">
+                <Button size="lg" className="hvac-button-secondary text-lg px-8 py-4" data-testid="button-emergency-call">
                   <Phone className="w-5 h-5 mr-2" />
                   Emergency: (403) 613-6014
                 </Button>
@@ -382,6 +388,7 @@ const Home = () => {
                   variant="outline" 
                   className="border-2 border-white text-white hover:bg-white hover:text-blue-900 text-lg px-8 py-4"
                   asChild
+                  data-testid="button-request-emergency"
                 >
                   <Link href="/emergency">
                     <Wrench className="w-5 h-5 mr-2" />
