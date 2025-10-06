@@ -344,7 +344,7 @@ export default function ForumPage() {
                       </div>
                       
                       {/* Admin Controls */}
-                      {user && (user as any).isAdmin && (user as any).username === 'JordanBoz' && (
+                      {user && (user as any).isAdmin && (
                         <div className="flex gap-2 ml-4">
                           <Button
                             size="sm"

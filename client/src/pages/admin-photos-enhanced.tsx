@@ -63,8 +63,8 @@ const AdminPhotosEnhanced = () => {
     isActive: true
   });
 
-  // Check if user is admin
-  if (!user || user.role !== 'admin' || user.username !== 'JordanBoz') {
+  // Check if user is admin (isAdmin flag set by backend based on email/username)
+  if (!user || !user.isAdmin) {
     return (
       <>
         <Helmet>

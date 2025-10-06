@@ -162,9 +162,16 @@ function setupAuth(app: Express) {
       req.login(user, (err) => {
         if (err) return next(err);
         
-        // Return the user data without the password
+        // Return the user data without the password, with admin status properly set
         const { password, ...userWithoutPassword } = user;
-        res.status(201).json(userWithoutPassword);
+        
+        // Use centralized admin check to set isAdmin flag
+        const isAdmin = checkAdminAccess(user);
+        
+        res.status(201).json({
+          ...userWithoutPassword,
+          isAdmin
+        });
       });
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -186,9 +193,16 @@ function setupAuth(app: Express) {
         storage.updateUser(user.id, { lastLogin: new Date() })
           .catch(err => console.error("Failed to update last login:", err));
         
-        // Return the user data without the password
+        // Return the user data without the password, with admin status properly set
         const { password, ...userWithoutPassword } = user;
-        res.json(userWithoutPassword);
+        
+        // Use centralized admin check to set isAdmin flag
+        const isAdmin = checkAdminAccess(user);
+        
+        res.json({
+          ...userWithoutPassword,
+          isAdmin
+        });
       });
     })(req, res, next);
   });
@@ -216,9 +230,16 @@ function setupAuth(app: Express) {
         return res.status(404).json({ error: "User not found" });
       }
       
-      // Return the user data without the password
+      // Return the user data without the password, with admin status properly set
       const { password, ...userWithoutPassword } = freshUser;
-      res.json(userWithoutPassword);
+      
+      // Use centralized admin check to set isAdmin flag
+      const isAdmin = checkAdminAccess(freshUser);
+      
+      res.json({
+        ...userWithoutPassword,
+        isAdmin
+      });
     } catch (error: any) {
       console.error("Error fetching user data:", error);
       res.status(500).json({ error: "Error fetching user data" });

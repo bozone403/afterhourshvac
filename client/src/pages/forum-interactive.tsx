@@ -442,7 +442,8 @@ export default function ForumInteractive() {
 
   const canEditPost = (post: ExtendedForumPost) => {
     if (!user) return false;
-    return user.isAdmin || user.username === 'JordanBoz' || post.userId === user.id;
+    // isAdmin flag is set by backend based on email/username
+    return user.isAdmin || post.userId === user.id;
   };
 
   const formatDate = (dateString: string | Date | null) => {

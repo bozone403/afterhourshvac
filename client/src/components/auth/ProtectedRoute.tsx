@@ -38,8 +38,8 @@ export function ProtectedRoute({
     );
   }
 
-  // Admin only routes - only JordanBoz admin access
-  if (adminOnly && (user.role !== "admin" || user.username !== "JordanBoz")) {
+  // Admin only routes - check isAdmin flag (set by backend based on email/username)
+  if (adminOnly && !user.isAdmin) {
     return (
       <Route path={path}>
         <Redirect to="/" />
