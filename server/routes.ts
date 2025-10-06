@@ -22,6 +22,7 @@ import {
   insertHvacMaterialsSchema,
   insertHvacAccessoriesSchema,
   insertEmergencyRequestSchema,
+  insertServiceBookingSchema,
   insertJobApplicationSchema,
   users
 } from "@shared/schema";
@@ -327,27 +328,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Emergency service request API
   app.post("/api/emergency-request", async (req, res) => {
     try {
-      const { name, phone, issue, description } = req.body;
+      const { name, phone, email, address, issue, description, urgencyLevel } = req.body;
+      
+      // Validate required fields
+      if (!name || !phone || !issue) {
+        return res.status(400).json({ error: "Missing required fields: name, phone, and issue are required" });
+      }
+      
+      // Validate request data with Zod schema
+      const validatedData = insertEmergencyRequestSchema.parse({
+        customerId: null,
+        name,
+        email: email || null,
+        phone,
+        address: address || 'Not provided',
+        issueDescription: description || issue,
+        urgencyLevel: urgencyLevel || 'high',
+        status: 'pending',
+        priority: urgencyLevel || 'urgent',
+        emergencyType: issue,
+        severity: urgencyLevel || 'high',
+      });
+      
+      // Save emergency request to database
+      const emergencyRequest = await storage.createEmergencyRequest(validatedData);
       
       // Log emergency request for immediate attention
-      console.log("EMERGENCY REQUEST RECEIVED:", {
+      console.log("EMERGENCY REQUEST SAVED:", {
+        id: emergencyRequest.id,
         name,
         phone,
         issue,
-        description,
         timestamp: new Date().toISOString()
       });
       
       // In production, this would trigger SMS/email alerts to on-call technicians
-      const requestId = `EMG-${Date.now()}`;
       
       res.json({ 
         success: true, 
-        requestId,
+        requestId: emergencyRequest.id,
         message: "Emergency request received. A technician will contact you within 15 minutes."
       });
     } catch (error: any) {
       console.error("Error processing emergency request:", error);
+      if (error.name === 'ZodError') {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
       res.status(500).json({ error: "Failed to process emergency request" });
     }
   });
@@ -357,24 +383,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const booking = req.body;
       
-      // For now, just return success to test the frontend flow
-      // In production, this would integrate with email notifications and database storage
-      const bookingId = Math.floor(Math.random() * 10000);
+      // Extract and validate required fields
+      const name = booking.customerName || booking.name;
+      const phone = booking.customerPhone || booking.phone;
+      const email = booking.customerEmail || booking.email;
+      const address = booking.address;
+      const serviceType = booking.serviceType;
       
-      console.log("Service booking received:", {
-        customer: booking.customerName,
-        service: booking.serviceType,
-        price: booking.price,
-        address: booking.address
+      // Validate required fields
+      if (!name || !phone || !address || !serviceType) {
+        return res.status(400).json({ 
+          error: "Missing required fields: name, phone, address, and serviceType are required" 
+        });
+      }
+      
+      // Validate request data with Zod schema
+      const validatedData = insertServiceBookingSchema.parse({
+        customerId: null,
+        userId: req.isAuthenticated() ? (req.user as any)?.id : null,
+        name,
+        email: email || null,
+        phone,
+        address,
+        serviceType,
+        description: booking.description || booking.notes || null,
+        preferredDate: booking.preferredDate ? new Date(booking.preferredDate) : null,
+        preferredTime: booking.preferredTime || null,
+        status: 'pending',
+        assignedTechnician: null,
+        totalCost: booking.price ? booking.price.toString() : null,
+        notes: booking.notes || null,
+      });
+      
+      // Save booking to database
+      const serviceBooking = await storage.createServiceBooking(validatedData);
+      
+      console.log("Service booking created:", {
+        id: serviceBooking.id,
+        customer: serviceBooking.name,
+        service: serviceBooking.serviceType,
+        address: serviceBooking.address
       });
 
       res.json({ 
         success: true, 
-        bookingId: bookingId,
+        bookingId: serviceBooking.id,
         message: "Booking created successfully" 
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Service booking error:", error);
+      if (error.name === 'ZodError') {
+        return res.status(400).json({ error: "Invalid booking data", details: error.errors });
+      }
       res.status(500).json({ error: "Failed to create booking" });
     }
   });
