@@ -8,10 +8,9 @@ import { Loader2, CreditCard, CheckCircle } from "lucide-react";
 
 // Make sure to call `loadStripe` outside of a component's render to avoid
 // recreating the `Stripe` object on every render.
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+const stripePromise = import.meta.env.VITE_STRIPE_PUBLIC_KEY 
+  ? loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY)
+  : null;
 
 const CheckoutForm = ({ clientSecret }: { clientSecret: string }) => {
   const stripe = useStripe();
@@ -157,6 +156,24 @@ export default function Checkout() {
       setClientSecret('missing');
     }
   }, [location]);
+
+  if (!stripePromise) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6 text-center">
+            <div className="text-yellow-600 mb-4">
+              <CreditCard className="h-12 w-12 mx-auto mb-2" />
+              <h2 className="text-xl font-semibold">Payment System Not Configured</h2>
+              <p className="text-gray-600 mt-2">
+                Stripe payment system is not configured. Please contact support.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!clientSecret || clientSecret === 'missing') {
     return (

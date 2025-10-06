@@ -3,6 +3,7 @@ import { eq, and, gte, lte, desc, count } from "drizzle-orm";
 import { db } from "./db";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
+import pg from "pg";
 
 const PostgresSessionStore = connectPg(session);
 
@@ -225,8 +226,12 @@ export class DatabaseStorage implements IStorage {
   sessionStore: session.Store;
 
   constructor() {
+    const pool = new pg.Pool({
+      connectionString: process.env.DATABASE_URL,
+    });
+    
     this.sessionStore = new PostgresSessionStore({
-      pgPromise: require('pg-promise')()(process.env.DATABASE_URL),
+      pool: pool,
       createTableIfMissing: true,
       tableName: 'sessions'
     });

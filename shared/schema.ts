@@ -172,11 +172,7 @@ export const forumLikes = pgTable("forum_likes", {
   postId: integer("post_id").references(() => forumPosts.id),
   likeType: text("like_type").default("like"), // like, dislike, helpful, etc.
   createdAt: timestamp("created_at").defaultNow(),
-}, (table) => ({
-  // Ensure user can only like a topic/post once
-  uniqueUserTopicLike: primaryKey(table.userId, table.topicId, table.likeType),
-  uniqueUserPostLike: primaryKey(table.userId, table.postId, table.likeType),
-}));
+});
 
 // Gallery for photos
 export const galleryImages = pgTable("gallery_images", {
