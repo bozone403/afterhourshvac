@@ -21,7 +21,8 @@ import {
   Mic,
   MicOff,
   Volume2,
-  VolumeX
+  VolumeX,
+  Building
 } from 'lucide-react';
 
 const EarlChatbot = () => {
@@ -476,6 +477,36 @@ const ProPortal = () => {
                       <Link href="/calculators/enhanced-quote-builder">
                         <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
                           Build Quote
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-blue-50 to-blue-100">
+                    <CardHeader className="pb-3">
+                      <Calculator className="h-8 w-8 text-blue-600 mb-2" />
+                      <CardTitle className="text-lg">Material Estimator</CardTitle>
+                      <CardDescription className="text-sm">Real-time pricing with custom multipliers</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Link href="/pro-calculator">
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                          Estimate Materials
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="hover:shadow-lg transition-shadow bg-gradient-to-br from-cyan-50 to-cyan-100">
+                    <CardHeader className="pb-3">
+                      <Building className="h-8 w-8 text-cyan-600 mb-2" />
+                      <CardTitle className="text-lg">Commercial Estimator</CardTitle>
+                      <CardDescription className="text-sm">Complex commercial HVAC calculations</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Link href="/calculators/commercial-estimator">
+                        <Button className="w-full bg-cyan-600 hover:bg-cyan-700">
+                          Commercial Calculator
                         </Button>
                       </Link>
                     </CardContent>
