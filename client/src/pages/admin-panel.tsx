@@ -29,7 +29,8 @@ import {
   AlertTriangle,
   MapPin,
   FileDown,
-  Shield
+  Shield,
+  Siren
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -46,6 +47,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import jsPDF from "jspdf";
 
 interface JobApplication {
   id: number;
@@ -100,6 +102,31 @@ interface ServiceBooking {
   updatedAt: string;
 }
 
+interface EmergencyRequest {
+  id: number;
+  customerId?: number;
+  name: string;
+  email?: string;
+  phone: string;
+  address: string;
+  issueDescription: string;
+  urgencyLevel: string;
+  status: string;
+  requestedAt: string;
+  completedAt?: string;
+  location?: string;
+  priority?: string;
+  assignedTo?: number;
+  createdAt: string;
+  updatedAt: string;
+  emergencyType?: string;
+  description?: string;
+  severity?: string;
+  assignedTechnician?: string;
+  estimatedArrival?: string;
+  totalCost?: string;
+}
+
 const AdminPanel = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("applications");
@@ -120,6 +147,10 @@ const AdminPanel = () => {
 
   const { data: contacts = [], isLoading: contactsLoading } = useQuery({
     queryKey: ["/api/admin/contact-submissions"],
+  });
+
+  const { data: emergencyRequests = [], isLoading: emergencyRequestsLoading } = useQuery({
+    queryKey: ["/api/admin/emergency-requests"],
   });
 
   const updateApplicationStatus = useMutation({
@@ -161,6 +192,108 @@ const AdminPanel = () => {
       });
     },
   });
+
+  const updateEmergencyRequestStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: number; status: string }) => {
+      return await apiRequest("PUT", `/api/admin/emergency-requests/${id}/status`, { status });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/emergency-requests"] });
+      toast({
+        title: "Request Updated",
+        description: "Emergency request status has been updated successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update emergency request status.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const generateEmergencyRequestPDF = (request: EmergencyRequest) => {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("AfterHours HVAC", 105, 20, { align: "center" });
+    
+    doc.setFontSize(16);
+    doc.text("Emergency Service Request", 105, 30, { align: "center" });
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Request ID: ${request.id}`, 20, 45);
+    doc.text(`Date: ${new Date(request.createdAt).toLocaleString()}`, 20, 52);
+    
+    doc.setLineWidth(0.5);
+    doc.line(20, 58, 190, 58);
+    
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Customer Information", 20, 68);
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Name: ${request.name}`, 20, 76);
+    doc.text(`Phone: ${request.phone}`, 20, 83);
+    if (request.email) {
+      doc.text(`Email: ${request.email}`, 20, 90);
+    }
+    doc.text(`Address: ${request.address}`, 20, request.email ? 97 : 90);
+    
+    const addressY = request.email ? 107 : 100;
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Emergency Details", 20, addressY);
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Urgency Level: ${request.urgencyLevel.toUpperCase()}`, 20, addressY + 8);
+    doc.text(`Status: ${request.status.replace(/_/g, ' ').toUpperCase()}`, 20, addressY + 15);
+    if (request.emergencyType) {
+      doc.text(`Emergency Type: ${request.emergencyType}`, 20, addressY + 22);
+    }
+    
+    const descY = request.emergencyType ? addressY + 32 : addressY + 25;
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Issue Description", 20, descY);
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const splitDescription = doc.splitTextToSize(request.issueDescription, 170);
+    doc.text(splitDescription, 20, descY + 8);
+    
+    const descHeight = splitDescription.length * 5;
+    const nextY = descY + descHeight + 15;
+    
+    if (request.assignedTechnician) {
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text("Assignment Information", 20, nextY);
+      
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Technician: ${request.assignedTechnician}`, 20, nextY + 8);
+      if (request.estimatedArrival) {
+        doc.text(`Estimated Arrival: ${new Date(request.estimatedArrival).toLocaleString()}`, 20, nextY + 15);
+      }
+    }
+    
+    doc.setFontSize(8);
+    doc.setTextColor(128, 128, 128);
+    doc.text("AfterHours HVAC - 24/7 Emergency Service", 105, 280, { align: "center" });
+    
+    doc.save(`emergency-request-${request.id}.pdf`);
+    
+    toast({
+      title: "PDF Downloaded",
+      description: `Emergency request #${request.id} has been downloaded as PDF.`,
+    });
+  };
 
   const filteredApplications = applications.filter((app: JobApplication) => {
     const matchesFilter = applicationFilter === "all" || app.status === applicationFilter;
@@ -220,7 +353,7 @@ const AdminPanel = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 bg-white/5 backdrop-blur-sm border border-white/10 p-1 rounded-xl">
+          <TabsList className="grid w-full grid-cols-6 bg-white/5 backdrop-blur-sm border border-white/10 p-1 rounded-xl">
             <TabsTrigger 
               value="applications" 
               className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-amber-500/30 text-blue-200 rounded-lg transition-all duration-300"
@@ -236,6 +369,14 @@ const AdminPanel = () => {
             >
               <Calendar className="h-4 w-4" />
               <span className="hidden sm:inline">Consultations</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="emergency-requests" 
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-amber-500/30 text-blue-200 rounded-lg transition-all duration-300"
+              data-testid="tab-emergency-requests"
+            >
+              <Siren className="h-4 w-4" />
+              <span className="hidden sm:inline">Emergency Requests</span>
             </TabsTrigger>
             <TabsTrigger 
               value="users" 
@@ -592,6 +733,179 @@ const AdminPanel = () => {
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Emergency Requests Tab */}
+          <TabsContent value="emergency-requests" className="space-y-6">
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">
+                  <Siren className="h-6 w-6 text-amber-400" />
+                  Emergency Service Requests
+                </CardTitle>
+                <CardDescription className="text-blue-200">
+                  Manage emergency HVAC service requests and dispatch technicians
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {emergencyRequestsLoading ? (
+                    <div className="text-center py-8 text-blue-200">Loading emergency requests...</div>
+                  ) : emergencyRequests.length === 0 ? (
+                    <div className="text-center py-8 text-blue-300">No emergency requests found</div>
+                  ) : (
+                    emergencyRequests.map((request: EmergencyRequest) => (
+                      <Card key={request.id} className="bg-white/5 backdrop-blur-sm border-l-4 border-l-red-500 border-white/10 hover:bg-white/10 transition-all duration-300" data-testid={`card-emergency-request-${request.id}`}>
+                        <CardContent className="p-6">
+                          <div className="flex justify-between items-start gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <h3 className="text-lg font-bold text-white" data-testid={`text-request-customer-name-${request.id}`}>
+                                  {request.name}
+                                </h3>
+                                <Badge 
+                                  className={`flex items-center gap-1 border ${
+                                    request.urgencyLevel === 'critical' 
+                                      ? 'bg-red-500/30 text-red-200 border-red-500/50' 
+                                      : request.urgencyLevel === 'high'
+                                      ? 'bg-orange-500/30 text-orange-200 border-orange-500/50'
+                                      : 'bg-amber-500/30 text-amber-200 border-amber-500/50'
+                                  }`}
+                                  data-testid={`badge-urgency-level-${request.id}`}
+                                >
+                                  <AlertTriangle className="h-3 w-3" />
+                                  {request.urgencyLevel.toUpperCase()}
+                                </Badge>
+                                <Badge 
+                                  className={`border ${getStatusColor(request.status)}`}
+                                  data-testid={`badge-request-status-${request.id}`}
+                                >
+                                  {request.status.replace(/_/g, ' ').toUpperCase()}
+                                </Badge>
+                              </div>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-request-phone-${request.id}`}>
+                                  <Phone className="h-4 w-4 text-amber-400" />
+                                  {request.phone}
+                                </div>
+                                {request.email && (
+                                  <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-request-email-${request.id}`}>
+                                    <Mail className="h-4 w-4 text-amber-400" />
+                                    {request.email}
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-request-address-${request.id}`}>
+                                  <MapPin className="h-4 w-4 text-amber-400" />
+                                  {request.address}
+                                </div>
+                                <div className="flex items-center gap-2 text-sm text-blue-200" data-testid={`text-request-timestamp-${request.id}`}>
+                                  <Clock className="h-4 w-4 text-amber-400" />
+                                  {new Date(request.createdAt).toLocaleString()}
+                                </div>
+                              </div>
+
+                              {request.emergencyType && (
+                                <div className="mb-3">
+                                  <h4 className="font-semibold text-white mb-1 text-sm">Emergency Type:</h4>
+                                  <p className="text-sm text-blue-200" data-testid={`text-emergency-type-${request.id}`}>
+                                    {request.emergencyType}
+                                  </p>
+                                </div>
+                              )}
+
+                              <div className="mb-4">
+                                <h4 className="font-semibold text-white mb-2">Issue Description:</h4>
+                                <p className="text-sm text-blue-200 bg-white/5 p-3 rounded-lg border border-white/10" data-testid={`text-issue-description-${request.id}`}>
+                                  {request.issueDescription}
+                                </p>
+                              </div>
+
+                              {request.assignedTechnician && (
+                                <div className="mb-3">
+                                  <h4 className="font-semibold text-white mb-1 text-sm">Assigned Technician:</h4>
+                                  <p className="text-sm text-green-200" data-testid={`text-assigned-tech-${request.id}`}>
+                                    {request.assignedTechnician}
+                                  </p>
+                                </div>
+                              )}
+
+                              <div className="flex gap-2 flex-wrap">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => window.open(`tel:${request.phone}`, '_self')}
+                                  className="bg-white/5 border-white/20 text-blue-200 hover:bg-white/10 hover:text-white"
+                                  data-testid={`button-call-customer-${request.id}`}
+                                >
+                                  <Phone className="h-4 w-4 mr-2" />
+                                  Call Customer
+                                </Button>
+                                {request.email && (
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => window.open(`mailto:${request.email}`, '_blank')}
+                                    className="bg-white/5 border-white/20 text-blue-200 hover:bg-white/10 hover:text-white"
+                                    data-testid={`button-email-customer-${request.id}`}
+                                  >
+                                    <Mail className="h-4 w-4 mr-2" />
+                                    Email Customer
+                                  </Button>
+                                )}
+                                <Button 
+                                  variant="default" 
+                                  size="sm"
+                                  onClick={() => generateEmergencyRequestPDF(request)}
+                                  className="bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 shadow-lg shadow-amber-500/30"
+                                  data-testid={`button-download-pdf-${request.id}`}
+                                >
+                                  <FileDown className="h-4 w-4 mr-2" />
+                                  Download PDF
+                                </Button>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                              <Select
+                                value={request.status}
+                                onValueChange={(newStatus) => {
+                                  updateEmergencyRequestStatus.mutate({
+                                    id: request.id,
+                                    status: newStatus
+                                  });
+                                }}
+                              >
+                                <SelectTrigger 
+                                  className="w-48 bg-white/5 backdrop-blur-sm border-white/20 text-white"
+                                  data-testid={`select-status-${request.id}`}
+                                >
+                                  <SelectValue placeholder="Update Status" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-900 border-white/20">
+                                  <SelectItem value="pending" data-testid={`option-pending-${request.id}`}>
+                                    Pending
+                                  </SelectItem>
+                                  <SelectItem value="dispatched" data-testid={`option-dispatched-${request.id}`}>
+                                    Dispatched
+                                  </SelectItem>
+                                  <SelectItem value="in_progress" data-testid={`option-in-progress-${request.id}`}>
+                                    In Progress
+                                  </SelectItem>
+                                  <SelectItem value="completed" data-testid={`option-completed-${request.id}`}>
+                                    Completed
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
                             </div>
                           </div>
                         </CardContent>
