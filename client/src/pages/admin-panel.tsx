@@ -25,7 +25,10 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  DollarSign
+  DollarSign,
+  AlertTriangle,
+  MapPin,
+  FileDown
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";

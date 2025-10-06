@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Loader2, AirVent } from "lucide-react";
+import { Loader2, AirVent, Lock, User } from "lucide-react";
 import { Helmet } from 'react-helmet-async';
 
 const loginSchema = z.object({
@@ -46,42 +46,54 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-dark flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center px-4 relative overflow-hidden">
       <Helmet>
         <title>Login | AfterHours HVAC</title>
         <meta name="description" content="Login to access AfterHours HVAC Pro Calculator tools and exclusive features" />
       </Helmet>
 
-      <div className="w-full max-w-md">
-        <Card className="bg-darkgray border-gray-700">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="bg-primary/20 p-3 rounded-full">
-                <AirVent className="h-8 w-8 text-primary" />
-              </div>
-            </div>
-            <CardTitle className="text-2xl font-bold text-white">Welcome Back</CardTitle>
-            <CardDescription className="text-lightgray">
-              Sign in to access your AfterHours HVAC account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-700" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo/Brand Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-2xl shadow-amber-500/50 mb-6">
+            <AirVent className="h-10 w-10 text-white" />
+          </div>
+          <h1 className="text-4xl font-black text-white mb-2">
+            Welcome Back
+          </h1>
+          <p className="text-blue-200">
+            Sign in to access your premium HVAC tools
+          </p>
+        </div>
+
+        <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
+          <CardContent className="p-8">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
                   name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-white">Username</FormLabel>
+                      <FormLabel className="text-white font-semibold">Username</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter your username"
-                          className="bg-dark border-gray-600 text-white"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-300" />
+                          <Input
+                            placeholder="Enter your username"
+                            className="pl-11 bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/50 h-12 rounded-xl"
+                            data-testid="input-username"
+                            {...field}
+                          />
+                        </div>
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-amber-300" />
                     </FormItem>
                   )}
                 />
@@ -90,27 +102,32 @@ export default function LoginPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-white">Password</FormLabel>
+                      <FormLabel className="text-white font-semibold">Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Enter your password"
-                          className="bg-dark border-gray-600 text-white"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-300" />
+                          <Input
+                            type="password"
+                            placeholder="Enter your password"
+                            className="pl-11 bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/50 h-12 rounded-xl"
+                            data-testid="input-password"
+                            {...field}
+                          />
+                        </div>
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-amber-300" />
                     </FormItem>
                   )}
                 />
                 <Button
                   type="submit"
-                  className="w-full bg-primary hover:bg-primary/80"
+                  className="w-full h-12 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-600 hover:via-amber-700 hover:to-amber-600 text-white font-bold rounded-xl shadow-xl shadow-amber-500/30 hover:shadow-2xl hover:shadow-amber-500/50 transition-all duration-300 hover:scale-105"
                   disabled={loginMutation.isPending}
+                  data-testid="button-signin"
                 >
                   {loginMutation.isPending ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                       Signing In...
                     </>
                   ) : (
@@ -120,12 +137,13 @@ export default function LoginPage() {
               </form>
             </Form>
             
-            <div className="mt-6 text-center">
-              <p className="text-lightgray text-sm">
+            <div className="mt-8 pt-6 border-t border-white/10">
+              <p className="text-blue-100 text-center">
                 Need an account?{" "}
                 <button
                   onClick={() => navigate("/register")}
-                  className="text-primary hover:text-primary/80 underline"
+                  className="text-amber-400 hover:text-amber-300 font-semibold transition-colors underline decoration-amber-400/50 hover:decoration-amber-300"
+                  data-testid="link-register"
                 >
                   Create one here
                 </button>
@@ -133,6 +151,11 @@ export default function LoginPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Additional help text */}
+        <p className="text-center text-blue-300 text-sm mt-6">
+          AfterHours HVAC Professional Services
+        </p>
       </div>
     </div>
   );
