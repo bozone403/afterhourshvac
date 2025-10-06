@@ -462,45 +462,45 @@ const ProCalculatorV2 = () => {
                 <CardContent className="space-y-4">
                   <div>
                     <Label htmlFor="projectName" className="text-white">Project Name</Label>
-                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                    <Input 
+                      className="mt-1 bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="projectName"
                       value={projectName}
                       onChange={(e) => setProjectName(e.target.value)}
-                      className="mt-1 bg-gray-700 border-gray-600 text-white"
                       placeholder="e.g., Furnace Installation"
                     />
                   </div>
                   
                   <div>
                     <Label htmlFor="customerName" className="text-white">Customer Name</Label>
-                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                    <Input 
+                      className="mt-1 bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="customerName"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      className="mt-1 bg-gray-700 border-gray-600 text-white"
                       placeholder="Customer name"
                     />
                   </div>
                   
                   <div>
                     <Label htmlFor="customerEmail" className="text-white">Customer Email</Label>
-                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                    <Input 
+                      className="mt-1 bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="customerEmail"
                       type="email"
                       value={customerEmail}
                       onChange={(e) => setCustomerEmail(e.target.value)}
-                      className="mt-1 bg-gray-700 border-gray-600 text-white"
                       placeholder="customer@email.com"
                     />
                   </div>
                   
                   <div>
                     <Label htmlFor="projectAddress" className="text-white">Project Address</Label>
-                    <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
+                    <Input 
+                      className="mt-1 bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       id="projectAddress"
                       value={projectAddress}
                       onChange={(e) => setProjectAddress(e.target.value)}
-                      className="mt-1 bg-gray-700 border-gray-600 text-white"
                       placeholder="Street address"
                     />
                   </div>
@@ -511,7 +511,7 @@ const ProCalculatorV2 = () => {
                       id="projectNotes"
                       value={projectNotes}
                       onChange={(e) => setProjectNotes(e.target.value)}
-                      className="mt-1 bg-gray-700 border-gray-600 text-white"
+                      className="mt-1 bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
                       rows={3}
                       placeholder="Project notes..."
                     />
