@@ -64,11 +64,25 @@ export default {
         dark: "#1A1A1A",
         darkgray: "#2A2A2A",
         lightgray: "#B0BEC5",
+        // V2 Industrial Design System
+        void: '#0A0A0A',
+        charcoal: '#1A1A1A',
+        gunmetal: '#2A2A2A',
+        steel: '#3A3A3A',
+        iron: '#4A4A4A',
+        cyberCyan: '#00F0FF',
+        hazardAmber: '#FFB800',
+        techGreen: '#00FF88',
+        alertRed: '#FF3366',
       },
       fontFamily: {
         header: ['Montserrat', 'sans-serif'],
         body: ['Open Sans', 'sans-serif'],
         sans: ['Open Sans', 'sans-serif'],
+        // V2 Industrial Typography
+        industrial: ['Space Grotesk', 'sans-serif'],
+        tech: ['Inter', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
       keyframes: {
         "accordion-down": {
