@@ -405,7 +405,7 @@ const AdminPanel = () => {
           </TabsList>
 
           {/* Job Applications Tab */}
-          <TabsContent value="applications" className="space-y-6">
+          <TabsContent value="applications" className="space-y-6" data-testid="tabcontent-applications">
             <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">
@@ -591,7 +591,7 @@ const AdminPanel = () => {
           </TabsContent>
 
           {/* Consultation Bookings Tab */}
-          <TabsContent value="bookings" className="space-y-6">
+          <TabsContent value="bookings" className="space-y-6" data-testid="tabcontent-bookings">
             <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">
@@ -745,7 +745,7 @@ const AdminPanel = () => {
           </TabsContent>
 
           {/* Emergency Requests Tab */}
-          <TabsContent value="emergency-requests" className="space-y-6">
+          <TabsContent value="emergency-requests" className="space-y-6" data-testid="tabcontent-emergency-requests">
             <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">
@@ -918,7 +918,7 @@ const AdminPanel = () => {
           </TabsContent>
 
           {/* User Management Tab */}
-          <TabsContent value="users" className="space-y-6">
+          <TabsContent value="users" className="space-y-6" data-testid="tabcontent-users">
             <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">
@@ -997,7 +997,7 @@ const AdminPanel = () => {
           </TabsContent>
 
           {/* Contact Forms Tab */}
-          <TabsContent value="contacts" className="space-y-6">
+          <TabsContent value="contacts" className="space-y-6" data-testid="tabcontent-contacts">
             <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">
@@ -1051,7 +1051,7 @@ const AdminPanel = () => {
           </TabsContent>
 
           {/* System Settings Tab */}
-          <TabsContent value="settings" className="space-y-6">
+          <TabsContent value="settings" className="space-y-6" data-testid="tabcontent-settings">
             <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white font-black text-2xl">

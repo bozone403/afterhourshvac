@@ -92,7 +92,7 @@ export default function RegisterPage() {
         <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
           <CardContent className="p-8">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" data-testid="form-register">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <FormField
                     control={form.control}

@@ -163,7 +163,7 @@ function DuctSizingCalculatorContent() {
                 <CardTitle className="flex items-center text-white">
                   <Settings className="h-5 w-5 mr-2 text-amber-500" />
                   System Parameters
-                </h2>
+                </CardTitle>
               
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
@@ -256,7 +256,7 @@ function DuctSizingCalculatorContent() {
                 <CardTitle className="flex items-center text-white">
                   <Wind className="h-5 w-5 mr-2 text-blue-400" />
                   Sizing Results
-                </h2>
+                </CardTitle>
               
               <div>
                 {result ? (

@@ -452,14 +452,14 @@ const ProCalculatorV2 = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Project Information */}
             <div className="lg:col-span-1">
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl bg-gray-800 border-gray-700 mb-6">
-                
+              <Card className="bg-gray-800 border-gray-700 mb-6">
+                <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
                     <FileText className="text-orange-500" />
                     Project Information
-                  </h2>
-                
-                <div className="space-y-4">
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <div>
                     <Label htmlFor="projectName" className="text-white">Project Name</Label>
                     <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
@@ -516,18 +516,18 @@ const ProCalculatorV2 = () => {
                       placeholder="Project notes..."
                     />
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
               {/* Pricing Settings */}
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl bg-gray-800 border-gray-700">
-                
+              <Card className="bg-gray-800 border-gray-700">
+                <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
                     <DollarSign className="text-orange-500" />
                     Pricing Settings
-                  </h2>
-                
-                <div className="space-y-4">
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <div>
                     <Label htmlFor="laborRate" className="text-white">Labor Rate ($/hour)</Label>
                     <Input className="bg-white/5 backdrop-blur-sm border-white/20 text-white placeholder:text-white/40 focus:border-amber-500"
@@ -560,23 +560,23 @@ const ProCalculatorV2 = () => {
                       className="mt-1 bg-gray-700 border-gray-600 text-white"
                     />
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Material Selection */}
             <div className="lg:col-span-2">
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl bg-gray-800 border-gray-700 mb-6">
-                
+              <Card className="bg-gray-800 border-gray-700 mb-6">
+                <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
                     <Search className="text-orange-500" />
                     Alggin Catalog Search
-                  </h2>
+                  </CardTitle>
                   <CardDescription className="text-gray-300">
                     Search and add materials from the real Alggin catalog
-                  </p>
-                
-                <div>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div>
                       <Label htmlFor="search" className="text-white">Search Materials</Label>
@@ -650,21 +650,21 @@ const ProCalculatorV2 = () => {
                       ))}
                     </div>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
               {/* Material Takeoff */}
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl bg-gray-800 border-gray-700">
-                
+              <Card className="bg-gray-800 border-gray-700">
+                <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
                     <Wrench className="text-orange-500" />
                     Material Takeoff
-                  </h2>
+                  </CardTitle>
                   <CardDescription className="text-gray-300">
                     Selected materials, labor, and custom items
-                  </p>
-                
-                <div className="space-y-6">
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
                   {/* Materials */}
                   {materials.length > 0 && (
                     <div>
@@ -861,8 +861,8 @@ const ProCalculatorV2 = () => {
                       Collect Payment
                     </Button>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>

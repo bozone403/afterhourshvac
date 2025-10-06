@@ -75,7 +75,7 @@ export default function LoginPage() {
         <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
           <CardContent className="p-8">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-login">
                 <FormField
                   control={form.control}
                   name="username"

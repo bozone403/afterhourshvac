@@ -236,6 +236,7 @@ const EarlChatbot = () => {
             <div
               key={message.id}
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              data-testid={`message-${message.sender}-${message.id}`}
             >
               <div
                 className={`max-w-[80%] p-4 rounded-2xl ${
@@ -244,7 +245,7 @@ const EarlChatbot = () => {
                     : 'bg-white/10 backdrop-blur-sm text-white border border-white/20'
                 }`}
               >
-                <p className="text-sm leading-relaxed">{message.text}</p>
+                <p className="text-sm leading-relaxed" data-testid={`text-message-${message.id}`}>{message.text}</p>
               </div>
             </div>
           ))}
@@ -382,7 +383,7 @@ const ProPortal = () => {
             <p className="text-xl text-blue-200 max-w-3xl mx-auto">
               Access professional HVAC tools, expert AI assistance, and comprehensive documentation
             </p>
-            <Badge className="mt-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 px-4 py-2 text-sm font-semibold shadow-lg shadow-amber-500/30">
+            <Badge className="mt-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 px-4 py-2 text-sm font-semibold shadow-lg shadow-amber-500/30" data-testid="badge-pro-member">
               <Crown className="h-4 w-4 mr-2" />
               Pro Member Access
             </Badge>
@@ -425,7 +426,7 @@ const ProPortal = () => {
                       <CardDescription className="text-blue-200 text-sm">Professional AI with natural conversation flow</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href="/tools/pro-voice-assistant">
+                      <Link href="/tools/pro-voice-assistant" data-testid="link-pro-voice-assistant">
                         <Button className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 hover:from-blue-600 hover:via-blue-700 hover:to-blue-600 text-white font-semibold h-11 rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/50 transition-all duration-300" data-testid="button-advanced-voice">
                           Start Advanced Voice
                         </Button>
@@ -442,7 +443,7 @@ const ProPortal = () => {
                       <CardDescription className="text-blue-200 text-sm">Advanced system performance analysis</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href="/tools/system-analyzer">
+                      <Link href="/tools/system-analyzer" data-testid="link-system-analyzer">
                         <Button className="w-full bg-gradient-to-r from-green-500 via-green-600 to-green-500 hover:from-green-600 hover:via-green-700 hover:to-green-600 text-white font-semibold h-11 rounded-xl shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/50 transition-all duration-300" data-testid="button-system-analyzer">
                           Analyze System
                         </Button>
@@ -474,7 +475,7 @@ const ProPortal = () => {
                       <CardDescription className="text-blue-200 text-sm">Manual J load calculations</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href="/calculators/pro-btu">
+                      <Link href="/calculators/pro-btu" data-testid="link-pro-btu">
                         <Button className="w-full bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 hover:from-purple-600 hover:via-purple-700 hover:to-purple-600 text-white font-semibold h-11 rounded-xl shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/50 transition-all duration-300" data-testid="button-load-calculator">
                           Open Calculator
                         </Button>
@@ -491,7 +492,7 @@ const ProPortal = () => {
                       <CardDescription className="text-blue-200 text-sm">Manual D ductwork design</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href="/calculators/duct-sizing">
+                      <Link href="/calculators/duct-sizing" data-testid="link-duct-sizing">
                         <Button className="w-full bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-500 hover:from-indigo-600 hover:via-indigo-700 hover:to-indigo-600 text-white font-semibold h-11 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/50 transition-all duration-300" data-testid="button-duct-sizing">
                           Size Ducts
                         </Button>
@@ -508,7 +509,7 @@ const ProPortal = () => {
                       <CardDescription className="text-blue-200 text-sm">Professional job estimating</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href="/calculators/enhanced-quote-builder">
+                      <Link href="/calculators/enhanced-quote-builder" data-testid="link-quote-builder">
                         <Button className="w-full bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-500 hover:from-emerald-600 hover:via-emerald-700 hover:to-emerald-600 text-white font-semibold h-11 rounded-xl shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/50 transition-all duration-300" data-testid="button-quote-builder">
                           Build Quote
                         </Button>
@@ -525,7 +526,7 @@ const ProPortal = () => {
                       <CardDescription className="text-blue-200 text-sm">Real-time pricing with custom multipliers</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href="/pro-calculator">
+                      <Link href="/pro-calculator" data-testid="link-pro-calculator">
                         <Button className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 hover:from-blue-600 hover:via-blue-700 hover:to-blue-600 text-white font-semibold h-11 rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/50 transition-all duration-300" data-testid="button-material-estimator">
                           Estimate Materials
                         </Button>
@@ -542,7 +543,7 @@ const ProPortal = () => {
                       <CardDescription className="text-blue-200 text-sm">Complex commercial HVAC calculations</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href="/calculators/commercial-estimator">
+                      <Link href="/calculators/commercial-estimator" data-testid="link-commercial-estimator">
                         <Button className="w-full bg-gradient-to-r from-cyan-500 via-cyan-600 to-cyan-500 hover:from-cyan-600 hover:via-cyan-700 hover:to-cyan-600 text-white font-semibold h-11 rounded-xl shadow-lg shadow-cyan-500/30 hover:shadow-xl hover:shadow-cyan-500/50 transition-all duration-300" data-testid="button-commercial-estimator">
                           Commercial Calculator
                         </Button>
@@ -614,7 +615,7 @@ const ProPortal = () => {
                       <CardDescription className="text-blue-200 text-sm">Manuals, guides, and reference materials</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Link href="/tools/hvac-literature">
+                      <Link href="/tools/hvac-literature" data-testid="link-hvac-literature">
                         <Button className="w-full bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 hover:from-yellow-600 hover:via-yellow-700 hover:to-yellow-600 text-white font-semibold h-11 rounded-xl shadow-lg shadow-yellow-500/30 hover:shadow-xl hover:shadow-yellow-500/50 transition-all duration-300" data-testid="button-hvac-literature">
                           <Download className="h-4 w-4 mr-2" />
                           Access Literature

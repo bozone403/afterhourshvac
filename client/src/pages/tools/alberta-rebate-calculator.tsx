@@ -166,14 +166,15 @@ export default function AlbertaRebateCalculator() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Calculator Form */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl shadow-lg border-0 bg-white">
+            <Card className="bg-white shadow-lg border-0">
               <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
                 <CardTitle className="text-2xl flex items-center gap-3">
                   <Calculator className="h-6 w-6" />
                   Equipment & Usage Information
-                </h2>
+                </CardTitle>
+              </CardHeader>
               
-              <div className="p-6 space-y-6">
+              <CardContent className="p-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="current-equipment" className="text-white/90">Current Equipment *</Label>
@@ -265,19 +266,20 @@ export default function AlbertaRebateCalculator() {
                     </>
                   )}
                 </Button>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
             {/* Results */}
             {results && (
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl shadow-lg border-0 bg-white">
+              <Card className="bg-white shadow-lg border-0">
                 <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
                   <CardTitle className="text-2xl flex items-center gap-3">
                     <TrendingUp className="h-6 w-6" />
                     Your Investment Analysis
-                  </h2>
+                  </CardTitle>
+                </CardHeader>
                 
-                <div className="p-6">
+                <CardContent className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div className="bg-white/5 backdrop-blur-sm border border-white/10 border border-blue-200 rounded-lg p-4">
                       <h4 className="text-lg font-bold text-blue-900 mb-3">Investment Breakdown</h4>
@@ -363,22 +365,22 @@ export default function AlbertaRebateCalculator() {
                       Request Free Quote & Rebate Verification
                     </Button>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             )}
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Current Rebates */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl shadow-lg border-0 bg-white">
+            <Card className="bg-white shadow-lg border-0">
               <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
                 <CardTitle className="text-xl flex items-center gap-3">
                   <Award className="h-5 w-5" />
                   2025 Alberta Rebates
-                </h2>
-              
-              <div className="p-4">
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
                 <div className="space-y-4">
                   {albertaRebates.slice(0, 3).map((rebate, index) => (
                     <div key={index} className="border-b pb-3 last:border-b-0">
@@ -399,18 +401,18 @@ export default function AlbertaRebateCalculator() {
                     Our technicians will verify current programs during your consultation.
                   </p>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
             {/* Natural Gas Prices */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl shadow-lg border-0 bg-white">
+            <Card className="bg-white shadow-lg border-0">
               <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-t-lg">
                 <CardTitle className="text-xl flex items-center gap-3">
                   <DollarSign className="h-5 w-5" />
                   Current Alberta Rates
-                </h2>
-              
-              <div className="p-4">
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-white/80">Natural Gas:</span>
@@ -431,12 +433,12 @@ export default function AlbertaRebateCalculator() {
                     Rates updated monthly. Calculator uses current provincial averages.
                   </p>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
             {/* Contact */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl shadow-lg border-0 bg-white">
-              <div className="p-4">
+            <Card className="bg-white shadow-lg border-0">
+              <CardContent className="p-4">
                 <div className="text-center">
                   <h4 className="font-bold text-white mb-2">Expert Rebate Assistance</h4>
                   <p className="text-sm text-white/80 mb-3">
@@ -447,8 +449,8 @@ export default function AlbertaRebateCalculator() {
                     (403) 613-6014
                   </Button>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
 

@@ -1028,7 +1028,8 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
               <CardTitle className="text-xl flex items-center gap-2">
                 <Package className="h-5 w-5" />
                 Customer & Job Details
-              </h2>
+              </CardTitle>
+            </CardHeader>
             
             <div className="p-6 space-y-4">
               <div>
@@ -1143,7 +1144,8 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
               <CardTitle className="text-xl flex items-center gap-2">
                 <Plus className="h-5 w-5" />
                 Add Materials & Components
-              </h2>
+              </CardTitle>
+            </CardHeader>
             
             <div className="p-6 space-y-4">
               {/* Quick Selection Popular Items */}
@@ -1392,7 +1394,8 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
               <CardTitle className="text-xl flex items-center gap-2">
                 <DollarSign className="h-5 w-5" />
                 Quote Summary
-              </h2>
+              </CardTitle>
+            </CardHeader>
             
             <div className="p-6 space-y-4">
               <div className="space-y-3">
@@ -1499,7 +1502,8 @@ Thank you for choosing AfterHours HVAC for your project needs.`;
         {quote.items.length > 0 && (
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl shadow-lg border-0 bg-white">
             <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg">
-              <CardTitle className="text-xl">Quote Line Items</h2>
+              <CardTitle className="text-xl">Quote Line Items</CardTitle>
+            </CardHeader>
             
             <div className="p-6">
               <div className="space-y-4">
